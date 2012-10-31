@@ -1,0 +1,21 @@
+{
+  "name": "rendr",
+  "version": "0.0.0",
+  "description": "A small web framework that lets you use Node and Backbone to render on both sides.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/spikebrehm/rendr.git"
+  },
+  "keywords": [
+    "Backbone",
+    "view",
+    "web",
+    "framework"
+  ],
+  "author": "Spike Brehm <ocelot@gmail.com>",
+  "license": "BSD"
+}

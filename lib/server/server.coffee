@@ -68,7 +68,7 @@ initMiddleware = ->
     app.use(express.bodyParser())
     app.use(express.cookieParser())
     app.use(express.methodOverride())
-    app.use(express.static(__dirname + '/../public'))
+    app.use(express.static(rendr.entryPath + '/public'))
     app.use(mw.startRequest())
     app.use(mw.createAppInstance())
     # app.use(mw.getAccessToken())

@@ -10,23 +10,8 @@ module.exports = class ClientApp extends App
       results[name] = modelOrCollection
     @fetcher.storeModels results
 
-  loadData: (data) ->
-    for key in ['locales', 'currencies']
-      console.log("loadData #{key}=", data[key])
-
-  loadUser: (data) ->
-    if data.phrases
-      Polyglot.extend(data.phrases)
-
-
   start: ->
-    @SessionManager.checkCachedLogin()
-
     @router = new Router(app: @)
 
     Backbone.history.start
       pushState: true
-
-
-window.t = (key, data) ->
-  Polyglot.t(key, data)

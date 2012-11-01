@@ -4,6 +4,7 @@
 if window?
   window.isServer = false
   window.global = window
+  window.rendr = global.rendr
 else
   global.isServer = true
 
@@ -15,7 +16,7 @@ if isServer
 
 
 fetcher = require('./fetcher')
-SessionManager = require('./models/session_manager')
+# SessionManager = require('./models/session_manager')
 # State = require('./models/state')
 
 instance = null
@@ -27,7 +28,7 @@ module.exports = class App extends Backbone.Model
   Data: {}
 
   initialize: ->
-    @SessionManager = new SessionManager {}, {app: @}
+    # @SessionManager = new SessionManager {}, {app: @}
     # @State = new State @get('state')
 
     @fetcher = fetcher

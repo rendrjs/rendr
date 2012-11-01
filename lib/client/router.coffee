@@ -1,7 +1,3 @@
-AppView = require('../views/app_view')
-
-routes = require('../routes')
-
 extractParamNamesRe = /:(\w+)/g
 firstRender = true
 
@@ -12,14 +8,18 @@ module.exports = class Router extends Backbone.Router
 
   initialize: (options) ->
     @app = options.app
-    @app.appView = new AppView({app: @app})
-    @$content = $('#content')
-
     @initRoutes()
-
     @on 'action', @trackAction
 
+    @$content = $('#content')
+
+    @postInitialize()
+
+  postInitialize: ->
+
   initRoutes: ->
+    routes = require(rendr.entryPath + '/app/routes')
+
     # We have to iterate through the routes backwards,
     # so Backbone.History matches in same order as Express.
     patterns = _.keys(routes).reverse()
@@ -46,7 +46,7 @@ module.exports = class Router extends Backbone.Router
 
   authenticationFilter: (handler, route) ->
     (params, callback) =>
-      if route.authenticated && !@app.SessionManager.loggedIn()
+      if route.authenticated && false # !@app.SessionManager.loggedIn()
         @redirectTo('/login')
       else
         handler.call(@, params, callback)

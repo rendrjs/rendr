@@ -34,7 +34,7 @@ handleErr = (err, req, res) ->
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->
-    if routeInfo.authenticated && !req.appContext.SessionManager.loggedIn()
+    if routeInfo.authenticated && false # !req.appContext.SessionManager.loggedIn()
       res.redirect('/login')
     else
       next()

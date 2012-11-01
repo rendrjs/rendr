@@ -39,7 +39,7 @@ exports.createAppInstance = ->
 
 exports.getAccessToken = ->
   (req, res, next) ->
-    access_token = req.cookies.access_token
-    if access_token
-      req.appContext.SessionManager.set {access_token}
+    # access_token = req.cookies.access_token
+    # if access_token
+    #   req.appContext.SessionManager.set {access_token}
     next()

@@ -24,8 +24,6 @@ module.exports = class ClientApp extends App
 
     @router = new Router(app: @)
 
-    moment.lang("en")
-
     Backbone.history.start
       pushState: true
 

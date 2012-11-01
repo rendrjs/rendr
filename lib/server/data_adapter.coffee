@@ -1,6 +1,6 @@
 url = require('url')
 _ = require('underscore')
-airRequest = require('../lib/airRequest')
+airRequest = require('./lib/airRequest')
 apiRouteMap = require('../../config/api_route_map')
 
 ##

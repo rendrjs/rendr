@@ -1,5 +1,5 @@
-templateFinder = require('./helpers/template_finder')
-model_utils = require('./helpers/model_utils')
+templateFinder = require('./template_finder')
+model_utils = require('./model_utils')
 fetcher = require('./fetcher')
 
 module.exports = class BaseView extends Backbone.View

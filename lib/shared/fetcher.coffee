@@ -34,7 +34,7 @@
 
 async = if global.isServer then require('async') else window.async
 
-model_utils = require('./helpers/model_utils')
+model_utils = require('./model_utils')
 MemoryStore = require('./memory_store')
 ModelStore = require('./model_store')
 

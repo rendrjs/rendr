@@ -4,7 +4,7 @@ fs = require('fs')
 layout_path = "#{rendr.entryPath}/app/templates/layout.hbs"
 cache = {}
 
-fetcher = require('../fetcher')
+fetcher = require('../shared/fetcher')
 
 module.exports = (view_path, data, callback) ->
   data.locals ||= {}

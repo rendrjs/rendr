@@ -6,11 +6,11 @@ _ = require('underscore')
 async = require('async')
 env = require('../../config/environments/env')
 router = require('./router')
-logger = require('../lib/logger')
-statsd = require('../lib/statsd')
+logger = require('./lib/logger')
+statsd = require('./lib/statsd')
 dataAdapter = require('./data_adapter')
-airRequest = require('../lib/airRequest')
-assetCompiler = require('../lib/assetCompiler')
+airRequest = require('./lib/airRequest')
+assetCompiler = require('./lib/assetCompiler')
 mw = require('./middleware')
 
 # Module variables
@@ -108,7 +108,7 @@ initLibs = (callback) ->
         assetCompiler.compile(cb)
 
   if (env.current.zookeeper && env.current.zookeeper.enabled)
-    zk = require('../lib/lib/zk')
+    zk = require('./lib/zk')
     libs.zk = (cb) ->
       zk.init(env.current.zookeeper, logger, cb)
 

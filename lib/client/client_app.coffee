@@ -1,5 +1,5 @@
-App = require('../app')
-Router = require('router')
+App = require('../shared/app')
+Router = require('./router')
 
 module.exports = class ClientApp extends App
 

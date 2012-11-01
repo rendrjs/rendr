@@ -1,5 +1,5 @@
 templateFinder = require('./template_finder')
-cdn = require('../lib/cdn') if global.isServer
+cdn = require('../server/lib/cdn') if global.isServer
 
 # Temporary, to fix bug in Handlebars
 # SEE https://github.com/wycats/handlebars.js/issues/342

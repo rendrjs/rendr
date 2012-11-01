@@ -25,7 +25,7 @@ exports.config =
     config:
       connect: "localhost:2181"
       timeout: 200000
-      debug_level: require(rootDir + '/lib/lib/zk').ZOO_LOG_LEVEL_INFO
+      debug_level: require(rootDir + '/lib/server/lib/zk').ZOO_LOG_LEVEL_INFO
       host_order_deterministic: false
 
   assets:

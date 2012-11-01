@@ -1,5 +1,5 @@
 fs = require('fs') if global.isServer
-handlebars_helpers = require('../helpers/handlebars_helpers')
+handlebars_helpers = require('./handlebars_helpers')
 
 templates = null
 

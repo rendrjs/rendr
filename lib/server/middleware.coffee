@@ -1,8 +1,6 @@
 logger = require('../lib/logger')
-helper = require('../app/helpers/helper')
 async = require('async')
-polyglot = require('node-polyglot')
-App = require('../app/app')
+App = require('../app')
 
 # start request timer
 exports.startRequest = ->
@@ -45,25 +43,3 @@ exports.getAccessToken = ->
     if access_token
       req.appContext.SessionManager.set {access_token}
     next()
-
-# load userConfig (currency/locale/phrases) and stash in req.userConfig
-exports.userConfig = ->
-  return (req, res, next) ->
-    locale = if req.query.locale then req.query.locale else 'en'
-    batched =
-      currencies: (cb) -> helper.currencies(cb)
-      phrases: (cb) -> helper.phrases({locale:locale}, cb)
-      locales: (cb) -> helper.locales(cb)
-    async.parallel batched, (err, data) ->
-      if (err)
-        logger.error(err)
-      # stash setttings in request
-      req.globalConfig =
-        currencies: data.currencies
-        locales: data.locales
-      req.currentUser =
-        locale: locale
-        currency: helper.currencyFor(data.currencies, locale)
-        phrases: data.phrases
-      polyglot.extend(data.phrases)
-      next()

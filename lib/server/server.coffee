@@ -3,17 +3,15 @@
 #
 express = require('express')
 _ = require('underscore')
-async = require('async');
-env = require('../config/environments/env');
+async = require('async')
+env = require('../../config/environments/env')
 router = require('./router')
 logger = require('../lib/logger')
 statsd = require('../lib/statsd')
 dataAdapter = require('./data_adapter')
 airRequest = require('../lib/airRequest')
 assetCompiler = require('../lib/assetCompiler')
-helper = require('../app/helpers/helper')
 mw = require('./middleware')
-gzippo = require('gzippo')
 
 # Module variables
 app = express()
@@ -25,10 +23,8 @@ FATAL_EXIT_CODE = 13
 #
 module.exports.init = (options, callback) ->
   initMiddleware()
-  router.buildRoutes(app)
+  router.buildRoutes(app, options.routes)
   initLibs(callback)
-  loadCache (err, results) ->
-    # don't wait for loadCache callback
 
 #
 # options
@@ -62,33 +58,33 @@ module.exports.isShuttingDown = () ->
 #
 # Initialize middleware stack
 #
-initMiddleware = () ->
-  app.configure () ->
-    app.set('views', __dirname + '/../app/views')
+initMiddleware = ->
+  app.configure ->
+    app.set('views', rendr.entryPath + '/app/views')
     app.set('view engine', 'coffee')
     app.engine('coffee', require('./view_engine'))
+    app.use(express.logger())
+    app.use(express.compress())
     app.use(express.bodyParser())
     app.use(express.cookieParser())
-    app.use(gzippo.compress({filter:compressFilter}));
     app.use(express.methodOverride())
     app.use(express.static(__dirname + '/../public'))
     app.use(mw.startRequest())
     app.use(mw.createAppInstance())
-    app.use(mw.getAccessToken())
-    app.use(mw.userConfig())
+    # app.use(mw.getAccessToken())
+    # app.use(mw.userConfig())
     app.use(app.router)
     # app.use(mw.logResponse())
-    app.use('/api', router.apiProxy())
+    app.use('/api', apiProxy)
 
-  app.configure 'test', () ->
+  app.configure 'test', ->
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
 
-  app.configure 'development', () ->
+  app.configure 'development', ->
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
 
-  app.configure 'production', () ->
+  app.configure 'production', ->
     app.use(express.errorHandler())
-
 
 #
 # Initialize our libraries
@@ -112,7 +108,7 @@ initLibs = (callback) ->
         assetCompiler.compile(cb)
 
   if (env.current.zookeeper && env.current.zookeeper.enabled)
-    zk = require('../lib/zk')
+    zk = require('../lib/lib/zk')
     libs.zk = (cb) ->
       zk.init(env.current.zookeeper, logger, cb)
 
@@ -126,18 +122,14 @@ initLibs = (callback) ->
 closeLibs = (callback) ->
   callback()
 
-#
-# preload our cache
-#
-loadCache = (callback) ->
-  batched =
-    currencies: (cb) -> helper.currencies(cb)
-    locales: (cb) -> helper.locales(cb)
-  async.parallel batched, callback
 
-# CompressFilter is used by gzippo to determine which file types to compress
-compressFilter = (req, res) ->
-  type = res.getHeader('Content-Type') || ''
-  # return type.match(/json|text|javascript/);
-  return type.match(/json|text/)
+# middleware handler for intercepting api routes
+apiProxy = (req, res, next) ->
+  dataAdapter.makeRequest req, (err, response, data) ->
+    return next(err) if err
+    # Pass through statusCode, but not if it's an i.e. 304.
+    if response.statusCode? && _.include(['5', '4'], response.statusCode.toString()[0])
+      res.status(response.statusCode)
+    res.json(data)
+    mw.logline(err, req, res)
 

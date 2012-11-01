@@ -1,7 +1,7 @@
 url = require('url')
 _ = require('underscore')
 airRequest = require('../lib/airRequest')
-apiRouteMap = require('../config/api_route_map')
+apiRouteMap = require('../../config/api_route_map')
 
 ##
 # Initialize AirBnB API module.  Provice config with host and key.
@@ -44,10 +44,10 @@ requestFor = (req) ->
   api.query = req.query || {}
   api.query.key = config.key
 
-  if req.appContext
-    access_token = req.appContext.SessionManager.get('access_token')
-    if access_token
-      api.query.oauth_token = access_token
+  # if req.appContext
+    # access_token = req.appContext.SessionManager.get('access_token')
+    # if access_token
+    #   api.query.oauth_token = access_token
   api.body = req.body
   api.statsd = "api." + apiConfig.statsd if apiConfig.statsd
   api

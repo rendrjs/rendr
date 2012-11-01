@@ -1,5 +1,4 @@
 AppView = require('../views/app_view')
-IsoView = require('../views/iso_view')
 
 routes = require('../routes')
 
@@ -38,7 +37,7 @@ module.exports = class Router extends Backbone.Router
       @trigger 'action', route
       if firstRender
         firstRender = false
-        IsoView.attach(@app)
+        rendr.BaseView.attach(@app)
       else
         params = @getParamsHash(pattern, paramsArray)
         handler = @getController(route.controller)[route.action]
@@ -82,7 +81,7 @@ module.exports = class Router extends Backbone.Router
     @currentFragment = Backbone.history.getFragment()
 
   getView: (key) ->
-    View = IsoView.getView(key)
+    View = rendr.BaseView.getView(key)
     if not _.isFunction(View)
       throw new Error("View '#{key}' not found.")
     View

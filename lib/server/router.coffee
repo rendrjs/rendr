@@ -1,8 +1,5 @@
 # Functions for getting Controllers and Actions.
-routes = require('../app/routes')
-dataAdapter = require('./data_adapter')
 mw = require('./middleware')
-sessionsController = require('./sessions_controller')
 _ = require('underscore')
 
 # given a name, eg "listings#show"
@@ -12,7 +9,7 @@ getAction = (config) ->
   controller[config.action]
 
 getController = (controllerName) ->
-  require("../app/controllers/#{controllerName}_controller")
+  require(rendr.entryPath + "/app/controllers/#{controllerName}_controller")
 
 getHandler = (action) ->
   (req, res, next) ->
@@ -43,21 +40,10 @@ getAuthenticate = (routeInfo) ->
       next()
 
 # Attach our routes to our server
-exports.buildRoutes = (server) ->
+exports.buildRoutes = (server, routes) ->
   for own path, routeInfo of routes
     action = getAction(routeInfo)
     handler = getHandler(action)
     authenticate = getAuthenticate(routeInfo)
 
     server.get("/#{path}", authenticate, handler)
-
-# middleware handler for intercepting api routes
-exports.apiProxy = ->
-  (req, res, next) ->
-    dataAdapter.makeRequest req, (err, response, data) ->
-      return next(err) if err
-      # Pass through statusCode, but not if it's an i.e. 304.
-      if response.statusCode? && _.include(['5', '4'], response.statusCode.toString()[0])
-        res.status(response.statusCode)
-      res.json(data)
-      mw.logline(err, req, res)

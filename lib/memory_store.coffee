@@ -1,5 +1,3 @@
-BaseStore = require('./base_store')
-
 module.exports = class MemoryStore
 
   constructor: ->

@@ -1,4 +1,4 @@
-dataAdapter = require('../server/data_adapter') if isServer
+dataAdapter = require('./server/data_adapter') if global.isServer
 
 methodMap =
   'create': 'POST'

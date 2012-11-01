@@ -1,13 +1,10 @@
-IsoView = require('../app/views/iso_view')
 path = require('path')
 fs = require('fs')
-Handlebars = require('handlebars')
-_ = require('underscore')
 
-layout_path = "#{__dirname}/../app/templates/layout.hbs"
+layout_path = "#{rendr.entryPath}/app/templates/layout.hbs"
 cache = {}
 
-fetcher = require('../app/fetcher')
+fetcher = require('../fetcher')
 
 module.exports = (view_path, data, callback) ->
   data.locals ||= {}
@@ -20,7 +17,7 @@ module.exports = (view_path, data, callback) ->
   bootstrappedLocals = _.clone data.locals
 
   view_key = path.basename(view_path).replace('.coffee', '')
-  View = IsoView.getView(view_key)
+  View = rendr.BaseView.getView(view_key)
   view = new View(viewLocals)
   view_html = view.getHtml()
 

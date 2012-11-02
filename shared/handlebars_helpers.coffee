@@ -1,4 +1,4 @@
-BaseView = require('./base_view')
+BaseView = null
 templateFinder = require('./template_finder')
 cdn = require('../server/lib/cdn') if global.isServer
 
@@ -13,6 +13,8 @@ module.exports =
     cdn.assetUrl(path)
 
   view: (viewName, block) ->
+    BaseView ||= require('./base_view')
+
     options = block.hash || {}
 
     app = @_app

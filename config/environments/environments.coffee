@@ -15,7 +15,7 @@ exports.config =
 
   assetCompiler:
     enabled: false
-    jsSrcPaths: [rootDir + '/tmp/assetCompiler', rendr.entryPath, rendr.entryPath + '/../client']
+    jsSrcPaths: [rootDir + '/tmp/assetCompiler', rendr.entryPath]
     stichedJsFile: publicDir + '/mergedAssets.js'
     minify: true
 

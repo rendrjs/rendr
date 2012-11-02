@@ -19,8 +19,6 @@ fetcher = require('./fetcher')
 # SessionManager = require('./models/session_manager')
 # State = require('./models/state')
 
-instance = null
-
 module.exports = class App extends Backbone.Model
   defaults:
     loading: false

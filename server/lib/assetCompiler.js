@@ -67,7 +67,7 @@ module.exports.init = function(options, logger, callback) {
 
   // If certain ones need to go first, list them.
   dependencies = [
-    'jquery-1.6.2.min.js',
+    'jquery-1.8.2.min.js',
     'underscore-1.4.2.js'
   ];
 

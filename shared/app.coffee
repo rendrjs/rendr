@@ -4,7 +4,9 @@
 if window?
   window.isServer = false
   window.global = window
-  window.rendr = global.rendr
+  window.rendr = {
+    entryPath: ''
+  }
 else
   global.isServer = true
 
@@ -16,6 +18,8 @@ if isServer
 
 
 fetcher = require('./fetcher')
+Router = require('../client/router')
+
 # SessionManager = require('./models/session_manager')
 # State = require('./models/state')
 
@@ -25,9 +29,25 @@ module.exports = class App extends Backbone.Model
 
   Data: {}
 
+  # @shared
   initialize: ->
     # @SessionManager = new SessionManager {}, {app: @}
     # @State = new State @get('state')
 
     @fetcher = fetcher
     @fetcher.app = @
+
+  # @client
+  bootstrapData: (modelMap) ->
+    results = {}
+    for own name, map of modelMap
+      modelOrCollection = @fetcher.getModelForSpec(map.summary, map.data)
+      results[name] = modelOrCollection
+    @fetcher.storeModels results
+
+  # @client
+  start: ->
+    @router = new Router(app: @)
+
+    Backbone.history.start
+      pushState: true

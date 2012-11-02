@@ -208,7 +208,7 @@ module.exports = class BaseView extends Backbone.View
   # Class methods
   # -------------
   @getView: (viewName) ->
-    require(rendr.entryPath + "/app/views/#{viewName}")
+    require(rendr.entryPath + "/views/#{viewName}")
 
   @attach: (app, scope) ->
     $('[data-view]', scope).each (i, el) =>

@@ -1,7 +1,8 @@
 path = require('path')
 fs = require('fs')
+BaseView = require('../shared/base_view')
 
-layout_path = "#{rendr.entryPath}/app/templates/layout.hbs"
+layout_path = "#{rendr.entryPath}/templates/layout.hbs"
 cache = {}
 
 fetcher = require('../shared/fetcher')
@@ -17,7 +18,7 @@ module.exports = (view_path, data, callback) ->
   bootstrappedLocals = _.clone data.locals
 
   view_key = path.basename(view_path).replace('.coffee', '')
-  View = rendr.BaseView.getView(view_key)
+  View = BaseView.getView(view_key)
   view = new View(viewLocals)
   view_html = view.getHtml()
 

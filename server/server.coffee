@@ -4,7 +4,7 @@
 express = require('express')
 _ = require('underscore')
 async = require('async')
-env = require('../../config/environments/env')
+env = require('../config/environments/env')
 router = require('./router')
 logger = require('./lib/logger')
 statsd = require('./lib/statsd')
@@ -60,7 +60,7 @@ module.exports.isShuttingDown = () ->
 #
 initMiddleware = ->
   app.configure ->
-    app.set('views', rendr.entryPath + '/app/views')
+    app.set('views', rendr.entryPath + '/views')
     app.set('view engine', 'coffee')
     app.engine('coffee', require('./view_engine'))
     app.use(express.logger())
@@ -68,7 +68,7 @@ initMiddleware = ->
     app.use(express.bodyParser())
     app.use(express.cookieParser())
     app.use(express.methodOverride())
-    app.use(express.static(rendr.entryPath + '/public'))
+    app.use(express.static(rendr.entryPath + '/../public'))
     app.use(mw.startRequest())
     app.use(mw.createAppInstance())
     # app.use(mw.getAccessToken())

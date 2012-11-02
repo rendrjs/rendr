@@ -1,3 +1,5 @@
+BaseView = require('../shared/base_view')
+
 extractParamNamesRe = /:(\w+)/g
 firstRender = true
 
@@ -18,7 +20,7 @@ module.exports = class Router extends Backbone.Router
   postInitialize: ->
 
   initRoutes: ->
-    routes = require(rendr.entryPath + '/app/routes')
+    routes = require(rendr.entryPath + '/routes')
 
     # We have to iterate through the routes backwards,
     # so Backbone.History matches in same order as Express.
@@ -37,7 +39,7 @@ module.exports = class Router extends Backbone.Router
       @trigger 'action', route
       if firstRender
         firstRender = false
-        rendr.BaseView.attach(@app)
+        BaseView.attach(@app)
       else
         params = @getParamsHash(pattern, paramsArray)
         handler = @getController(route.controller)[route.action]
@@ -81,7 +83,7 @@ module.exports = class Router extends Backbone.Router
     @currentFragment = Backbone.history.getFragment()
 
   getView: (key) ->
-    View = rendr.BaseView.getView(key)
+    View = BaseView.getView(key)
     if not _.isFunction(View)
       throw new Error("View '#{key}' not found.")
     View

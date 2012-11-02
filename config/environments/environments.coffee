@@ -2,7 +2,7 @@
 # Global config settings, over-ridden by NODE_ENV settings
 #
 exports.rootDir = rootDir = __dirname + '/../..'
-exports.publicDir = publicDir = rendr.entryPath + '/public'
+exports.publicDir = publicDir = rendr.entryPath + '/../public'
 
 exports.config =
   api:
@@ -15,7 +15,7 @@ exports.config =
 
   assetCompiler:
     enabled: false
-    jsSrcPaths: [rootDir + '/tmp/assetCompiler', rendr.entryPath + '/app', rendr.entryPath + '/client']
+    jsSrcPaths: [rootDir + '/tmp/assetCompiler', rendr.entryPath, rendr.entryPath + '/../client']
     stichedJsFile: publicDir + '/mergedAssets.js'
     minify: true
 
@@ -25,7 +25,7 @@ exports.config =
     config:
       connect: "localhost:2181"
       timeout: 200000
-      debug_level: require(rootDir + '/lib/server/lib/zk').ZOO_LOG_LEVEL_INFO
+      debug_level: require(rootDir + '/server/lib/zk').ZOO_LOG_LEVEL_INFO
       host_order_deterministic: false
 
   assets:

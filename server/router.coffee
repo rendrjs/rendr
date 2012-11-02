@@ -9,7 +9,7 @@ getAction = (config) ->
   controller[config.action]
 
 getController = (controllerName) ->
-  require(rendr.entryPath + "/app/controllers/#{controllerName}_controller")
+  require(rendr.entryPath + "/controllers/#{controllerName}_controller")
 
 getHandler = (action) ->
   (req, res, next) ->

@@ -1,7 +1,7 @@
 url = require('url')
 _ = require('underscore')
 airRequest = require('./lib/airRequest')
-apiRouteMap = require('../../config/api_route_map')
+apiRouteMap = require('../config/api_route_map')
 
 ##
 # Initialize AirBnB API module.  Provice config with host and key.

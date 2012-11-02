@@ -1,3 +1,4 @@
+BaseView = require('./base_view')
 templateFinder = require('./template_finder')
 cdn = require('../server/lib/cdn') if global.isServer
 
@@ -18,7 +19,7 @@ module.exports =
     options.app = app if app?
 
     # get the Backbone.View based on viewName
-    ViewClass = rendr.BaseView.getView(viewName)
+    ViewClass = BaseView.getView(viewName)
     view = new ViewClass(options)
 
     # create the outerHTML using className, tagName

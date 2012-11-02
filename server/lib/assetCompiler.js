@@ -16,15 +16,17 @@ var handlebars = require('handlebars');
 var exec = require('child_process').exec;
 
 var baseDir = rendr.entryPath;
-var rootDir = path.normalize(__dirname + '/../../..');
+var rootDir = path.normalize(__dirname + '/../..');
+var publicDir = baseDir + '/../public';
+var assetsDir = baseDir + '/../assets';
 
 var config = {
-  stitchedJsFile: baseDir + '/public/mergedAssets.js',
-  stylusEntryFile: baseDir + '/assets/stylesheets/index.styl',
-  cssOutputFile: baseDir + '/public/styles.css',
-  fingerprintedImagesDir: baseDir + '/public/fingerprinted',
+  stitchedJsFile: publicDir + '/mergedAssets.js',
+  stylusEntryFile: assetsDir + '/stylesheets/index.styl',
+  cssOutputFile: publicDir + '/styles.css',
+  fingerprintedImagesDir: publicDir + '/fingerprinted',
   tempDir: rootDir + '/tmp',
-  hbsTemplateSrcPath: baseDir + '/app/templates',
+  hbsTemplateSrcPath: baseDir + '/templates',
   minify: true
 };
 
@@ -56,7 +58,7 @@ module.exports.init = function(options, logger, callback) {
 
   // Before we can create the Stitch package, let's grab the filenames
   // of all non-CommonJS dependencies.
-  var walker = walk.walk(baseDir + '/assets/vendor')
+  var walker = walk.walk(assetsDir + '/vendor')
     , vendorFiles = []
     , dependencies
     , i
@@ -84,7 +86,7 @@ module.exports.init = function(options, logger, callback) {
 
   // Full path.
   for (i in dependencies) {
-    dependencies[i] = baseDir + '/assets/vendor/' + dependencies[i];
+    dependencies[i] = assetsDir + '/vendor/' + dependencies[i];
   }
 
   walker.on('end', function(){
@@ -103,7 +105,7 @@ module.exports.init = function(options, logger, callback) {
 function compileStylus(stylusPath, callback) {
   fs.readFile(stylusPath, function(err, stylusFile) {
     stylus(stylusFile.toString())
-      .include(baseDir + '/assets/stylesheets')
+      .include(assetsDir + '/stylesheets')
       .set('filename', config.cssOutputFile)
       .set('compress', config.minify)
       .define('asset-url', stylusHelpers.assetUrl())
@@ -127,7 +129,7 @@ function compileHbs(options, callback) {
 
   // compile handlebar templates
   // reference handlebars locally vs globally
-  var handlebarsCmd = __dirname + '/../../../node_modules/.bin/handlebars'
+  var handlebarsCmd = rootDir + '/node_modules/.bin/handlebars'
   exec(handlebarsCmd + ' ' + srcPath + '/*.hbs', function(err, stdout, stderr) {
     if (err) return callback(err);
     // write compiled templates to file
@@ -150,7 +152,7 @@ module.exports.compile = function(callback) {
     },
     function(next){
       mkdirp.sync(config.tempDir + '/assetCompiler/rendr');
-      exec('cp -R '+rootDir+'/lib/client '+rootDir+'/tmp/assetCompiler/rendr/; cp -R '+rootDir+'/lib/shared '+rootDir+'/tmp/assetCompiler/rendr/', next);
+      exec('cp -R '+rootDir+'/client '+rootDir+'/tmp/assetCompiler/rendr/; cp -R '+rootDir+'/shared '+rootDir+'/tmp/assetCompiler/rendr/', next);
     },
     function(next){
       jsPackage.compile(function (err, source) {

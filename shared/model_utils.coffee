@@ -1,12 +1,12 @@
 
 exports.getModel = (path, attrs = {}, options = {}) ->
   path = underscorize(path)
-  model = require(rendr.entryPath + "/app/models/#{path}")
+  model = require(rendr.entryPath + "/models/#{path}")
   new model(attrs, options)
 
 exports.getCollection = (path, models = [], options = {}) ->
   path = underscorize(path)
-  collection = require(rendr.entryPath + "/app/collections/#{path}")
+  collection = require(rendr.entryPath + "/collections/#{path}")
   new collection(models, options)
 
 uppercaseRe = /([A-Z])/g

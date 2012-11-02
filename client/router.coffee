@@ -1,5 +1,10 @@
 BaseView = require('../shared/base_view')
 
+try
+  AppView = require(rendr.entryPath + '/views/app_view')
+catch e
+  AppView = require('../shared/app_view')
+
 extractParamNamesRe = /:(\w+)/g
 firstRender = true
 
@@ -13,7 +18,8 @@ module.exports = class Router extends Backbone.Router
     @initRoutes()
     @on 'action', @trackAction
 
-    @$content = $('#content')
+    @appView = new AppView({@app})
+    @appView.render()
 
     @postInitialize()
 
@@ -75,8 +81,7 @@ module.exports = class Router extends Backbone.Router
     View = @getView(view_key)
     @currentView = new View data
     $(window).scrollTop 0
-    el = @currentView.render().el
-    @$content.html el
+    @appView.setCurrentView(@currentView)
 
   trackAction: (route) =>
     @previousFragment = @currentFragment

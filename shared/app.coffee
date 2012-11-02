@@ -16,24 +16,15 @@ if isServer
   global.Handlebars = require('handlebars')
   global.Polyglot = require('node-polyglot')
 
-
 fetcher = require('./fetcher')
-Router = require('../client/router')
-
-# SessionManager = require('./models/session_manager')
-# State = require('./models/state')
+ClientRouter = require('../client/router')
 
 module.exports = class App extends Backbone.Model
   defaults:
     loading: false
 
-  Data: {}
-
   # @shared
   initialize: ->
-    # @SessionManager = new SessionManager {}, {app: @}
-    # @State = new State @get('state')
-
     @fetcher = fetcher
     @fetcher.app = @
 
@@ -47,7 +38,7 @@ module.exports = class App extends Backbone.Model
 
   # @client
   start: ->
-    @router = new Router(app: @)
+    @router = new ClientRouter(app: @)
 
     Backbone.history.start
       pushState: true

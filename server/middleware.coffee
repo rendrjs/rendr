@@ -1,6 +1,6 @@
 logger = require('./lib/logger')
 async = require('async')
-App = require('../shared/app')
+App = require(rendr.entryPath + '/app')
 
 # start request timer
 exports.startRequest = ->

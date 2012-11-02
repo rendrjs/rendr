@@ -14,7 +14,7 @@ assetCompiler = require('./lib/assetCompiler')
 mw = require('./middleware')
 
 # Module variables
-app = express()
+server = express()
 isShuttingDown = false
 FATAL_EXIT_CODE = 13
 
@@ -23,7 +23,7 @@ FATAL_EXIT_CODE = 13
 #
 module.exports.init = (options, callback) ->
   initMiddleware()
-  router.buildRoutes(app, options.routes)
+  router.buildRoutes(server, options.routes)
   initLibs(callback)
 
 #
@@ -33,9 +33,9 @@ module.exports.init = (options, callback) ->
 module.exports.start = (options, callback) ->
   port = 3000
   port = options.port if (options && options.port)
-  app.listen port, undefined, (callback) ->
-    if (app.settings.env != 'test')
-      console.log("server listening on port #{port} in #{app.settings.env} mode")
+  server.listen port, undefined, (callback) ->
+    if (server.settings.env != 'test')
+      console.log("server listening on port #{port} in #{server.settings.env} mode")
 
 
 stop = module.exports.stop = (exitCode = 0) ->
@@ -59,32 +59,32 @@ module.exports.isShuttingDown = () ->
 # Initialize middleware stack
 #
 initMiddleware = ->
-  app.configure ->
-    app.set('views', rendr.entryPath + '/views')
-    app.set('view engine', 'coffee')
-    app.engine('coffee', require('./view_engine'))
-    app.use(express.logger())
-    app.use(express.compress())
-    app.use(express.bodyParser())
-    app.use(express.cookieParser())
-    app.use(express.methodOverride())
-    app.use(express.static(rendr.entryPath + '/../public'))
-    app.use(mw.startRequest())
-    app.use(mw.createAppInstance())
-    # app.use(mw.getAccessToken())
-    # app.use(mw.userConfig())
-    app.use(app.router)
-    # app.use(mw.logResponse())
-    app.use('/api', apiProxy)
+  server.configure ->
+    server.set('views', rendr.entryPath + '/views')
+    server.set('view engine', 'coffee')
+    server.engine('coffee', require('./view_engine'))
+    server.use(express.logger())
+    server.use(express.compress())
+    server.use(express.bodyParser())
+    server.use(express.cookieParser())
+    server.use(express.methodOverride())
+    server.use(express.static(rendr.entryPath + '/../public'))
+    server.use(mw.startRequest())
+    server.use(mw.createAppInstance())
+    # server.use(mw.getAccessToken())
+    # server.use(mw.userConfig())
+    server.use(server.router)
+    # server.use(mw.logResponse())
+    server.use('/api', apiProxy)
 
-  app.configure 'test', ->
-    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
+  server.configure 'test', ->
+    server.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
 
-  app.configure 'development', ->
-    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
+  server.configure 'development', ->
+    server.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
 
-  app.configure 'production', ->
-    app.use(express.errorHandler())
+  server.configure 'production', ->
+    server.use(express.errorHandler())
 
 #
 # Initialize our libraries

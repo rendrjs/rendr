@@ -1,4 +1,4 @@
-logger = require('./lib/logger')
+# logger = require('./lib/logger')
 async = require('async')
 App = require(rendr.entryPath + '/app')
 
@@ -30,16 +30,9 @@ exports.logline = (err, req, res) ->
   # } else {
   #   logger.info(info.join(' '));
   # }
-  logger.info info.join ' '
+  # logger.info info.join ' '
 
 exports.createAppInstance = ->
   (req, res, next) ->
     req.appContext = new App
-    next()
-
-exports.getAccessToken = ->
-  (req, res, next) ->
-    # access_token = req.cookies.access_token
-    # if access_token
-    #   req.appContext.SessionManager.set {access_token}
     next()

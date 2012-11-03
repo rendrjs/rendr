@@ -12,6 +12,7 @@ dataAdapter = require('./data_adapter')
 airRequest = require('./lib/airRequest')
 assetCompiler = require('./lib/assetCompiler')
 mw = require('./middleware')
+configureCallbacks = []
 
 # Module variables
 server = module.exports.server = express()
@@ -55,6 +56,12 @@ module.exports.shutdown = (errorMessage = "SHUTDOWN") ->
 module.exports.isShuttingDown = () ->
   isShuttingDown
 
+module.exports.configure = (callback) ->
+  configureCallbacks.push(callback)
+
+runUserMiddleware = ->
+  callback(server) for callback in configureCallbacks
+
 #
 # Initialize middleware stack
 #
@@ -71,8 +78,9 @@ initMiddleware = ->
     server.use(express.static(rendr.entryPath + '/../public'))
     server.use(mw.startRequest())
     server.use(mw.createAppInstance())
-    # server.use(mw.getAccessToken())
-    # server.use(mw.userConfig())
+
+    runUserMiddleware()
+
     server.use(server.router)
     # server.use(mw.logResponse())
     server.use('/api', apiProxy)

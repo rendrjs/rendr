@@ -14,7 +14,7 @@ assetCompiler = require('./lib/assetCompiler')
 mw = require('./middleware')
 
 # Module variables
-server = express()
+server = module.exports.server = express()
 isShuttingDown = false
 FATAL_EXIT_CODE = 13
 

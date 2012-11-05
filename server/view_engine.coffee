@@ -1,6 +1,6 @@
 path = require('path')
 fs = require('fs')
-BaseView = require('../shared/base_view')
+BaseView = require('../shared/base/view')
 
 layout_path = "#{rendr.entryPath}/templates/layout.hbs"
 cache = {}

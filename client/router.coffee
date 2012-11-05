@@ -1,9 +1,9 @@
-BaseView = require('../shared/base_view')
+BaseView = require('../shared/base/view')
 
 try
   AppView = require(rendr.entryPath + '/views/app_view')
 catch e
-  AppView = require('../shared/app_view')
+  AppView = require('../shared/base/app_view')
 
 extractParamNamesRe = /:(\w+)/g
 firstRender = true

@@ -1,4 +1,4 @@
-BaseView = require('./base_view')
+BaseView = require('./view')
 
 module.exports = class AppView extends BaseView
   el: 'body'

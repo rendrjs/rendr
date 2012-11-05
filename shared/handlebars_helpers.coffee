@@ -13,7 +13,7 @@ module.exports =
     cdn.assetUrl(path)
 
   view: (viewName, block) ->
-    BaseView ||= require('./base_view')
+    BaseView ||= require('./base/view')
 
     options = block.hash || {}
 

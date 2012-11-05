@@ -19,15 +19,6 @@ exports.config =
     stichedJsFile: publicDir + '/mergedAssets.js'
     minify: true
 
-  zookeeper:
-    enabled: false
-    loggerEnabled: true
-    config:
-      connect: "localhost:2181"
-      timeout: 200000
-      debug_level: require(rootDir + '/server/lib/zk').ZOO_LOG_LEVEL_INFO
-      host_order_deterministic: false
-
   assets:
     publicDir: publicDir
     cdn:

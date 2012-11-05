@@ -115,11 +115,6 @@ initLibs = (callback) ->
         return cb(err) if err
         assetCompiler.compile(cb)
 
-  if (env.current.zookeeper && env.current.zookeeper.enabled)
-    zk = require('./lib/zk')
-    libs.zk = (cb) ->
-      zk.init(env.current.zookeeper, logger, cb)
-
   async.parallel libs, (err, results) ->
     logger.debug("initlibs complete")
     return callback(err, results)

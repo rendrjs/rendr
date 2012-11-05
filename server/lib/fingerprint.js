@@ -1,3 +1,5 @@
+'use strict';
+
 var md5 = require('MD5'),
     fs = require('fs'),
     async = require('async'),
@@ -11,7 +13,7 @@ var getDigest = module.exports.getDigest = function(sourcePath, callback){
     if (err) return callback(err);
     callback(null, bufferToMd5(buffer));
   });
-}
+};
 
 var getDigestSync = module.exports.getDigestSync = function(sourcePath){
   sourcePath = path.normalize(sourcePath);
@@ -46,7 +48,7 @@ module.exports.fingerprintAssets = function(sourceDir, destinationDir, callback)
       }, callback);
     });
   });
-}
+};
 
 var getFingerprintedPath = module.exports.getFingerprintedPath = function(sourcePath, destinationDir, absolute, callback){
   sourcePath = sourcePath.replace('?', '');
@@ -54,7 +56,7 @@ var getFingerprintedPath = module.exports.getFingerprintedPath = function(source
     var fingerprintedPath = addFingerprintToPath(sourcePath, destinationDir, digest, absolute);
     callback(err, fingerprintedPath);
   });
-}
+};
 
 module.exports.getFingerprintedPathSync = function(sourcePath, destinationDir, absolute){
   sourcePath = sourcePath.replace('?', '');

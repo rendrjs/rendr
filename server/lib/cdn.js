@@ -1,13 +1,22 @@
-var env = require('../../config/environments/env')
-  , fingerprint = require('./fingerprint')
-  , config = env.current.assets
-  , cdnConfig = config.cdn
-  , publicDir = config.publicDir
-  , timestamp = Date.now()
-  ;
+'use strict';
+
+var env = require('../../config/environments/env'),
+    fingerprint = require('./fingerprint'),
+    config = env.current.assets,
+    cdnConfig = config.cdn,
+    publicDir = config.publicDir,
+    timestamp = Date.now();
+
+function strHash(string){
+  var hash = 0;
+  for (var i = 0, len = string.length; i < len; i++) {
+    hash += string.charCodeAt(i);
+  }
+  return +hash;
+}
 
 module.exports.assetUrl = function(sourcePath) {
-  var url, cname, hash, pathPrefix, assetPath;
+  var url, cname, pathPrefix;
 
   if (sourcePath[0] !== '/') {
     sourcePath = '/' + sourcePath;
@@ -29,11 +38,3 @@ module.exports.assetUrl = function(sourcePath) {
   url = cdnConfig.protocol + '://' + cname + pathPrefix + sourcePath;
   return url;
 };
-
-function strHash(string){
-  var hash = 0;
-  for (var i = 0, len = string.length; i < len; i++) {
-    hash += string.charCodeAt(i);
-  }
-  return +hash;
-}

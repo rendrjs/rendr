@@ -1,3 +1,7 @@
+/*global require, module, rendr, __dirname */
+
+'use strict';
+
 /**
   Compile and combine handlebar templates into one js file.  Then stitch all javascript files
   (including templates) into one js file
@@ -12,7 +16,6 @@ var async = require('async');
 var walk = require('walk');
 var stylusHelpers = require('./stylusHelpers');
 var jsPackage;
-var handlebars = require('handlebars');
 var exec = require('child_process').exec;
 
 var baseDir = rendr.entryPath;
@@ -58,12 +61,11 @@ module.exports.init = function(options, logger, callback) {
 
   // Before we can create the Stitch package, let's grab the filenames
   // of all non-CommonJS dependencies.
-  var walker = walk.walk(assetsDir + '/vendor')
-    , vendorFiles = []
-    , dependencies
-    , i
-    , filename
-    ;
+  var walker = walk.walk(assetsDir + '/vendor'),
+      vendorFiles = [],
+      dependencies,
+      i,
+      filename;
 
   // If certain ones need to go first, list them.
   dependencies = [
@@ -98,9 +100,9 @@ module.exports.init = function(options, logger, callback) {
       paths: config.jsSrcPaths,
       dependencies: dependencies.concat(vendorFiles)
     });
-    callback(undefined, "OK")
+    callback(undefined, "OK");
   });
-}
+};
 
 function compileStylus(stylusPath, callback) {
   fs.readFile(stylusPath, function(err, stylusFile) {
@@ -129,7 +131,7 @@ function compileHbs(options, callback) {
 
   // compile handlebar templates
   // reference handlebars locally vs globally
-  var handlebarsCmd = rootDir + '/node_modules/.bin/handlebars'
+  var handlebarsCmd = rootDir + '/node_modules/.bin/handlebars';
   exec(handlebarsCmd + ' ' + srcPath + '/*.hbs', function(err, stdout, stderr) {
     if (err) return callback(err);
     // write compiled templates to file
@@ -182,11 +184,11 @@ module.exports.compile = function(callback) {
     });
     callback(null, hash);
   });
-}
+};
 
 /**
   return path to compiled/combined javascript file
 */
 module.exports.stitchedJsFile = function stitchedJsFile() {
   return config.stitchedJsFile;
-}
+};

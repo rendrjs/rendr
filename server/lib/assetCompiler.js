@@ -1,7 +1,5 @@
 /*global require, module, rendr, __dirname */
 
-'use strict';
-
 /**
   Compile and combine handlebar templates into one js file.  Then stitch all javascript files
   (including templates) into one js file

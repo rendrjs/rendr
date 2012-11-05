@@ -1,5 +1,3 @@
-'use strict';
-
 var env = require('../../config/environments/env'),
     fingerprint = require('./fingerprint'),
     config = env.current.assets,

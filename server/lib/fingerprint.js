@@ -1,5 +1,3 @@
-'use strict';
-
 var md5 = require('MD5'),
     fs = require('fs'),
     async = require('async'),

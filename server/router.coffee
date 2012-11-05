@@ -1,6 +1,7 @@
 # Functions for getting Controllers and Actions.
 mw = require('./middleware')
 _ = require('underscore')
+routes = require(rendr.entryPath + '/routes')
 
 # given a name, eg "listings#show"
 # return function that matches that controller's action (eg the show method of the listings controller)
@@ -40,7 +41,7 @@ getAuthenticate = (routeInfo) ->
       next()
 
 # Attach our routes to our server
-exports.buildRoutes = (server, routes) ->
+exports.buildRoutes = (server) ->
   for own path, routeInfo of routes
     action = getAction(routeInfo)
     handler = getHandler(action)

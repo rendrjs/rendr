@@ -22,9 +22,9 @@ FATAL_EXIT_CODE = 13
 #
 # Initialize our server
 #
-module.exports.init = (options, callback) ->
+module.exports.init = (callback) ->
   initMiddleware()
-  router.buildRoutes(server, options.routes)
+  router.buildRoutes(server)
   initLibs(callback)
 
 #

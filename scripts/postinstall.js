@@ -9,7 +9,8 @@ var dependencies = [
   'underscore',
   'backbone',
   'async',
-  'node-polyglot'
+  'node-polyglot',
+  'handlebars'
 ];
 
 var root = __dirname + '/..';

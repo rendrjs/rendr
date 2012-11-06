@@ -34,7 +34,7 @@ function buildKey(servicePath) {
 module.exports.timing = function(servicePath, ms) {
   var key = buildKey(servicePath);
   client.timing(key, ms);
-  if (logger) logger.debug("statsd timing: " + key + ' ' + ms + 'ms');
+  if (logger) logger.info("statsd timing: " + key + ' ' + ms + 'ms');
   return key;
 }
 
@@ -44,7 +44,7 @@ module.exports.timing = function(servicePath, ms) {
 module.exports.increment = function(servicePath) {
   var key = buildKey(servicePath);
   client.increment(key);
-  if (logger) logger.debug("statsd increment: " + key);
+  if (logger) logger.info("statsd increment: " + key);
   return key;
 }
 
@@ -54,7 +54,7 @@ module.exports.increment = function(servicePath) {
 module.exports.decrement = function(servicePath) {
   var key = buildKey(servicePath);
   client.decrement(key);
-  if (logger) logger.debug("statsd decrement: " + key);
+  if (logger) logger.info("statsd decrement: " + key);
   return key;
 }
 

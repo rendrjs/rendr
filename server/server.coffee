@@ -49,9 +49,7 @@ stop = module.exports.stop = (exitCode = 0) ->
 
 module.exports.shutdown = (errorMessage = "SHUTDOWN") ->
   console.log(errorMessage)
-  logger.fatal(errorMessage)
-  logger.flush () ->
-    stop(FATAL_EXIT_CODE);
+  logger.error(errorMessage)
 
 module.exports.isShuttingDown = () ->
   isShuttingDown
@@ -98,7 +96,6 @@ initMiddleware = ->
 # Initialize our libraries
 #
 initLibs = (callback) ->
-  logger.init(env.current.logger)
   statsd.init(env.current.statsd, logger)
 
   # collect libs to init in parallel

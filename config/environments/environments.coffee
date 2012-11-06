@@ -9,10 +9,6 @@ exports.config =
     host: 'https://api.localhost.airbnb.com:3001'
     key: '9f1axjd321k41kdo3114qx9ba'
 
-  logger:
-    logLevel:'info'
-    stdioEnabled:true
-
   assetCompiler:
     enabled: false
     jsSrcPaths: [rootDir + '/tmp/assetCompiler', rendr.entryPath]

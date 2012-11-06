@@ -68,7 +68,10 @@ module.exports.init = function(options, logger, callback) {
   // If certain ones need to go first, list them.
   dependencies = [
     'jquery-1.8.2.min.js',
-    'underscore-1.4.2.js'
+    'node_modules/underscore/underscore.js',
+    'node_modules/backbone/backbone.js',
+    'node_modules/async/lib/async.js',
+    'node_modules/node-polyglot/lib/polyglot.js'
   ];
 
   walker.on('names', function(root, files){
@@ -86,7 +89,13 @@ module.exports.init = function(options, logger, callback) {
 
   // Full path.
   for (i in dependencies) {
-    dependencies[i] = assetsDir + '/vendor/' + dependencies[i];
+    var dep = dependencies[i];
+    if (~dep.indexOf('/')) {
+      dep = rootDir + '/' + dep;
+    } else {
+      dep = assetsDir + '/vendor/' + dep;
+    }
+    dependencies[i] = dep;
   }
 
   walker.on('end', function(){

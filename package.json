@@ -1,6 +1,6 @@
 {
   "name": "rendr",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A small web framework that lets you use Node and Backbone to render on both sides.",
   "main": "index.js",
   "scripts": {

@@ -4,7 +4,8 @@
   "description": "A small web framework that lets you use Node and Backbone to render on both sides.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node ./scripts/postinstall.js"
   },
   "repository": {
     "type": "git",

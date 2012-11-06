@@ -80,8 +80,7 @@ initMiddleware = ->
     runUserMiddleware()
 
     server.use(server.router)
-    # server.use(mw.logResponse())
-    server.use('/api', apiProxy)
+    server.use('/api', stubApiProxy)
 
   server.configure 'test', ->
     server.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
@@ -122,14 +121,5 @@ initLibs = (callback) ->
 closeLibs = (callback) ->
   callback()
 
-
-# middleware handler for intercepting api routes
-apiProxy = (req, res, next) ->
-  dataAdapter.makeRequest req, (err, response, data) ->
-    return next(err) if err
-    # Pass through statusCode, but not if it's an i.e. 304.
-    if response.statusCode? && _.include(['5', '4'], response.statusCode.toString()[0])
-      res.status(response.statusCode)
-    res.json(data)
-    mw.logline(err, req, res)
-
+stubApiProxy = (req, res, next) ->
+  next('API PROXY: You need to setup a custom API proxy by mounting middleware at "/api"')

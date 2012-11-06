@@ -21,7 +21,6 @@
     "stylus":"~> 0.29",
     "stitch": "0.3.3",
     "async":"0.1.22",
-    "node-statsd":"0.0.3",
     "request":"2.11.1",
     "MD5": "1.0.1",
     "mkdirp": "*",

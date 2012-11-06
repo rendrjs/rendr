@@ -7,7 +7,6 @@ async = require('async')
 env = require('../config/environments/env')
 router = require('./router')
 logger = require('./lib/logger')
-statsd = require('./lib/statsd')
 dataAdapter = require('./data_adapter')
 assetCompiler = require('./lib/assetCompiler')
 mw = require('./middleware')
@@ -101,20 +100,18 @@ initMiddleware = ->
 # Initialize our libraries
 #
 initLibs = (callback) ->
-  statsd.init(env.current.statsd, logger)
-
   # collect libs to init in parallel
-  libs = {}
+  libs = []
 
   if (env.current.assetCompiler && env.current.assetCompiler.enabled)
-    libs.assetCompiler = (cb) ->
+    libs.push (cb) ->
       assetCompiler.init env.current.assetCompiler, logger, (err) ->
         return cb(err) if err
         assetCompiler.compile(cb)
 
-  async.parallel libs, (err, results) ->
+  async.parallel libs, (err) ->
     logger.debug("initlibs complete")
-    return callback(err, results)
+    return callback(err)
 
 #
 # Library cleanup

@@ -25,7 +25,3 @@ exports.config =
       enabled: false
       sourcePath: publicDir
       destinationPath: rootDir + '/static'
-
-  statsd:
-    host: '127.0.0.1'
-    port: 8125

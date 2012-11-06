@@ -27,6 +27,10 @@ module.exports.init = (callback) ->
   router.buildRoutes(server)
   initLibs(callback)
 
+# Use default, stubbed dataAdapter.
+# To be overridden by application.
+module.exports.dataAdapter = dataAdapter
+
 #
 # options
 # - port
@@ -99,11 +103,6 @@ initLibs = (callback) ->
 
   # collect libs to init in parallel
   libs = {}
-  libs.api = (cb) ->
-    dataAdapter.init(env.current.api, cb)
-
-  libs.airRequest = (cb) ->
-    airRequest.init(undefined, logger, statsd, cb)
 
   if (env.current.assetCompiler && env.current.assetCompiler.enabled)
     libs.assetCompiler = (cb) ->

@@ -1,4 +1,4 @@
-dataAdapter = require('../server/data_adapter') if global.isServer
+server = require('../server/server') if global.isServer
 
 methodMap =
   'create': 'POST'
@@ -28,8 +28,8 @@ serverSync = (method, model, options) ->
   else
     req.query = options.data
 
-  dataAdapter.makeRequest req, (err, res, json) ->
-    err ||= getErrForResponse(res)
+  server.dataAdapter.makeRequest req, (err, response, body) ->
+    err ||= getErrForResponse(response)
 
     if err
       if options.error
@@ -37,7 +37,7 @@ serverSync = (method, model, options) ->
       else
         throw err
     else
-      options.success(json)
+      options.success(body)
 
 # Convert 4xx, 5xx responses to be errors.
 getErrForResponse = (res) ->

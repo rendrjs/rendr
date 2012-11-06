@@ -1,4 +1,4 @@
-var airApi = require(__dirname + '/../../../lib/airApi');
+var airApi = require(__dirname + '/../../lib/airApi');
 var expect = require('expect.js');
 var should = require('should');
 var _ = require('underscore');

@@ -30,7 +30,9 @@ handleErr = (err, req, res) ->
   if err.statusCode && err.statusCode is 401
     res.redirect('/login')
   else
-    res.send(err.statusCode)
+    # Throw the error, let Express catch it.
+    throw err
+    # res.send(err.statusCode || 500)
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->

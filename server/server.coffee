@@ -26,9 +26,12 @@ module.exports.init = (callback) ->
   router.buildRoutes(server)
   initLibs(callback)
 
+exports.setDataAdapter = (dataAdapter) ->
+  exports.dataAdapter = dataAdapter
+
 # Use default, stubbed dataAdapter.
 # To be overridden by application.
-module.exports.dataAdapter = dataAdapter
+exports.setDataAdapter(dataAdapter)
 
 #
 # options
@@ -83,7 +86,7 @@ initMiddleware = ->
     runUserMiddleware()
 
     server.use(server.router)
-    server.use('/api', stubApiProxy)
+    server.use('/api', apiProxy())
 
   server.configure 'test', ->
     server.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
@@ -119,5 +122,14 @@ initLibs = (callback) ->
 closeLibs = (callback) ->
   callback()
 
-stubApiProxy = (req, res, next) ->
-  next('API PROXY: You need to setup a custom API proxy by mounting middleware at "/api"')
+
+# middleware handler for intercepting api routes
+apiProxy = ->
+  (req, res, next) ->
+    exports.dataAdapter.makeRequest req, (err, response, body) ->
+      return next(err) if err
+      # Pass through statusCode, but not if it's an i.e. 304.
+      if response.statusCode? && _.include(['5', '4'], response.statusCode.toString()[0])
+        res.status(response.statusCode)
+      res.json(body)
+

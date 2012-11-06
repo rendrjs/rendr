@@ -9,7 +9,6 @@ router = require('./router')
 logger = require('./lib/logger')
 statsd = require('./lib/statsd')
 dataAdapter = require('./data_adapter')
-airRequest = require('./lib/airRequest')
 assetCompiler = require('./lib/assetCompiler')
 mw = require('./middleware')
 configureCallbacks = []

@@ -66,37 +66,30 @@ module.exports.init = function(options, logger, callback) {
       i,
       filename;
 
-  // If certain ones need to go first, list them.
+  // Files in rendr.
   dependencies = [
-    'jquery-1.8.2.min.js',
+    'assets/vendor/jquery-1.8.2.min.js',
+    'assets/vendor/handlebars-runtime-1.0.rc.1.js',
     'node_modules/underscore/underscore.js',
     'node_modules/backbone/backbone.js',
     'node_modules/async/lib/async.js',
     'node_modules/node-polyglot/lib/polyglot.js'
   ];
 
+  // Grab any files in application's 'assets/vendor' dir.
   walker.on('names', function(root, files){
     for (i in files) {
       filename = root + '/' + files[i];
-      // Ignore explicitly-ordered deps.
-      if (dependencies.indexOf(files[i]) === -1) {
-        // Ignore dirs.
-        if (filename.slice(filename.length - 3) === '.js') {
-          vendorFiles.push(filename);
-        }
+      // Ignore dirs.
+      if (filename.slice(filename.length - 3) === '.js') {
+        vendorFiles.push(filename);
       }
     }
   });
 
   // Full path.
   for (i in dependencies) {
-    var dep = dependencies[i];
-    if (~dep.indexOf('/')) {
-      dep = rootDir + '/' + dep;
-    } else {
-      dep = assetsDir + '/vendor/' + dep;
-    }
-    dependencies[i] = dep;
+    dependencies[i] = rootDir + '/' + dependencies[i];
   }
 
   walker.on('end', function(){

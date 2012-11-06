@@ -1,3 +1,4 @@
+/*jshint strict: false */
 /*global require, module, rendr, __dirname */
 
 /**
@@ -191,11 +192,4 @@ module.exports.compile = function(callback) {
     });
     callback(null, hash);
   });
-};
-
-/**
-  return path to compiled/combined javascript file
-*/
-module.exports.stitchedJsFile = function stitchedJsFile() {
-  return config.stitchedJsFile;
 };

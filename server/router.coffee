@@ -25,7 +25,6 @@ getHandler = (action) ->
     action.call context, params, (err, template, data) ->
       return handleErr(err, req, res) if err
       res.render(template, locals: data, app: req.appContext, req: req)
-      mw.logline(null, req, res)
 
 handleErr = (err, req, res) ->
   if err.statusCode && err.statusCode is 401

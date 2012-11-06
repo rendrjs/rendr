@@ -14,4 +14,10 @@ var dependencies = [
 
 var root = __dirname + '/..';
 
-exec('cd ' + root + '; npm install');
+exec('cd ' + root + '; npm install', function(err, stdout, stderr) {
+  console.log('POSTINSTALL: ' + stdout);
+  console.log('POSTINSTALL stderr: ' + stderr);
+  if (error !== null) {
+    console.error('POSTINSTALL error: ' + error);
+  }
+});

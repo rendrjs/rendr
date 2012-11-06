@@ -26,6 +26,7 @@
     "MD5": "1.0.1",
     "mkdirp": "*",
     "walk": "2.2.1",
+    "winston":"0.6.2",
     "node-polyglot": "*"
   },
   "devDependencies": {

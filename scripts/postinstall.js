@@ -1,7 +1,8 @@
 // We have to make sure some client-side dependencies
 // actually exist in node_modules.
 
-var exec = require('child_process').exec;
+var _ = require('underscore'),
+    exec = require('child_process').exec;
 
 // TODO: Don't duplicate; pull from assetCompiler.
 var dependencies = [
@@ -12,12 +13,11 @@ var dependencies = [
   'handlebars'
 ];
 
-var root = __dirname + '/..';
+var root = __dirname + '/..',
+    cmd;
 
-exec('cd ' + root + '; npm install', function(err, stdout, stderr) {
-  console.log('POSTINSTALL: ' + stdout);
-  console.log('POSTINSTALL stderr: ' + stderr);
-  if (error !== null) {
-    console.error('POSTINSTALL error: ' + error);
-  }
+_.each(dependencies, function(dep) {
+  cmd = 'npm install ' + dep;
+  console.log('POSTINSTALL: ' + cmd);
+  exec('cd ' + root + '; ' + cmd);
 });

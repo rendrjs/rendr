@@ -2,49 +2,42 @@ path = require('path')
 fs = require('fs')
 BaseView = require('../shared/base/view')
 
-layout_path = "#{rendr.entryPath}/templates/layout.hbs"
-cache = {}
+layoutPath = "#{rendr.entryPath}/templates/layout.hbs"
 
 fetcher = require('../shared/fetcher')
 
-module.exports = (view_path, data, callback) ->
+module.exports = (viewPath, data, callback) ->
   data.locals ||= {}
 
-  viewLocals = _.clone data.locals
+  layoutData =
+    body: getViewHtml(viewPath, data.locals, data.app)
+    bootstrappedData: getBootstrappedData(data.locals)
+    _app: data.app
 
+  renderWithLayout(layoutData, callback)
+
+# render with a layout
+renderWithLayout = (locals, cb) ->
+  fs.readFile layoutPath, 'utf8', (err, str) ->
+    return cb(err) if (err)
+
+    templateFn = Handlebars.compile(str)
+    html = templateFn(locals)
+    cb(null, html)
+
+getViewHtml = (viewPath, locals, app) ->
+  locals = _.clone locals
   # Pass in the app.
-  viewLocals.app = data.app
+  locals.app = app
 
-  bootstrappedLocals = _.clone data.locals
+  name = path.basename(viewPath).replace('.coffee', '')
+  View = BaseView.getView(name)
+  view = new View(locals)
+  view.getHtml()
 
-  view_key = path.basename(view_path).replace('.coffee', '')
-  View = BaseView.getView(view_key)
-  view = new View(viewLocals)
-  view_html = view.getHtml()
-
+getBootstrappedData = (locals) ->
   bootstrappedData = {}
-  for own name, modelOrCollection of bootstrappedLocals
+  for own name, modelOrCollection of locals
     bootstrappedData[name] =
       summary: fetcher.summarize(modelOrCollection)
       data: modelOrCollection.toJSON()
-
-  layoutData =
-    body: view_html
-    bootstrappedData: JSON.stringify(bootstrappedData)
-    globalConfig: JSON.stringify(data.req.globalConfig)
-    currentUser: JSON.stringify(data.req.currentUser)
-    _app: data.app
-
-  render_with_layout(layoutData, callback)
-
-  # render with a layout
-render_with_layout = (locals, cb) ->
-  fs.readFile layout_path, 'utf8', (err, str) ->
-    return cb(err) if (err)
-
-    layout_template = Handlebars.compile(str)
-    cache[layout_path] = layout_template
-
-    html = layout_template(locals)
-    cb(null, html)
-

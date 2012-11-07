@@ -1,5 +1,6 @@
 path = require('path')
 fs = require('fs')
+_ = require('underscore')
 BaseView = require('../shared/base/view')
 
 layoutPath = "#{rendr.entryPath}/templates/layout.hbs"
@@ -9,7 +10,7 @@ fetcher = require('../shared/fetcher')
 module.exports = (viewPath, data, callback) ->
   data.locals ||= {}
 
-  layoutData =
+  layoutData = _.extend {}, data,
     body: getViewHtml(viewPath, data.locals, data.app)
     bootstrappedData: getBootstrappedData(data.locals)
     _app: data.app

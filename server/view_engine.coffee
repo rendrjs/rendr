@@ -12,6 +12,7 @@ module.exports = (viewPath, data, callback) ->
 
   layoutData = _.extend {}, data,
     body: getViewHtml(viewPath, data.locals, data.app)
+    appData: data.app.toJSON()
     bootstrappedData: getBootstrappedData(data.locals)
     _app: data.app
 

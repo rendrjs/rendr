@@ -32,3 +32,6 @@ module.exports =
     template = templateFinder.getTemplate(templateName)
     html = template(this)
     new Handlebars.SafeString(html)
+
+  json: (object) ->
+    new Handlebars.SafeString JSON.stringify(object) || 'null'

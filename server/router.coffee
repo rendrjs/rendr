@@ -27,11 +27,17 @@ getHandler = (action) ->
       res.render(template, locals: data, app: req.appContext, req: req)
 
 handleErr = (err, req, res) ->
+  # stash rndr in request for propper middleware logging
+  if (!req.rndr) 
+    req.rndr = {}
+  req.rndr.err = err
+
   if err.statusCode && err.statusCode is 401
     res.redirect('/login')
   else
     # Throw the error, let Express catch it.
     throw err
+    # res.redirect('/error')
     # res.send(err.statusCode || 500)
 
 getAuthenticate = (routeInfo) ->

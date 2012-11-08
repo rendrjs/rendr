@@ -17,13 +17,24 @@ server = module.exports.server = express()
 isShuttingDown = false
 FATAL_EXIT_CODE = 13
 
+
 #
 # Initialize our server
+# - options
+#   - logger
+#   - afterRenderFn: a function that will be called when render is complete. 
+#     Pass in args (req, res)
 #
-module.exports.init = (callback) ->
+module.exports.init = (options, callback) ->
+  if (options && options.logger)
+    logger.init(options.logger)
+  if (options && options.afterRenderFn)
+    mw.setAfterRender(options.afterRenderFn)
+    
   initMiddleware()
   router.buildRoutes(server)
   initLibs(callback)
+
 
 exports.setDataAdapter = (dataAdapter) ->
   exports.dataAdapter = dataAdapter
@@ -31,6 +42,7 @@ exports.setDataAdapter = (dataAdapter) ->
 # Use default, stubbed dataAdapter.
 # To be overridden by application.
 exports.setDataAdapter(dataAdapter)
+
 
 #
 # options
@@ -75,11 +87,10 @@ initMiddleware = ->
     server.engine('coffee', require('./view_engine'))
     server.use(express.compress())
     server.use(express.static(rendr.entryPath + '/../public'))
-    server.use(express.logger())
+    server.use(mw.responseWrapper())
     server.use(express.bodyParser())
     server.use(express.cookieParser())
     server.use(express.methodOverride())
-    server.use(mw.startRequest())
     server.use(mw.createAppInstance())
 
     runUserMiddleware()
@@ -110,7 +121,7 @@ initLibs = (callback) ->
         assetCompiler.compile(cb)
 
   async.parallel libs, (err) ->
-    logger.debug("initlibs complete")
+    console.log("initlibs complete")
     return callback(err)
 
 #

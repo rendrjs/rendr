@@ -1,36 +1,32 @@
-# logger = require('./lib/logger')
+logger = require('./lib/logger')
 async = require('async')
 App = require(rendr.entryPath + '/app')
 
-# start request timer
-exports.startRequest = ->
+##
+# Wrap the request -- set the timer at the beginning, and log at the end
+# Optionally call additional after-render functionality
+#
+exports.responseWrapper = ->
   return (req, res, next) ->
-    req.start = new Date
-    req.requestId = 0 # think up something a little more unique
+    req.rndr = {} # place to stash
+    req.rndr.start = new Date
+    req.rndr.requestId = 0
+    end = res.end;
+    res.end = (chunk, encoding) ->
+      res.end = end;
+      res.end(chunk, encoding);
+
+      req.rndr.runtime = new Date - req.rndr.start
+      logger.logRequest(req, res, req.rndr)
+      if (afterRender)
+        afterRender(req, res)
+
     next()
 
-exports.logline = (err, req, res) ->
-  runtime = new Date - req.start
-  userId = 0
-  requestId = 0
-  maskedUrl = req.originalUrl.replace /password=[^&?]*/g, "password=***"
-  clientIP = req.headers['client_ip'] || req.connection.remoteAddress  || 'unknown'
-  info = ["MOWEB:[#{requestId}]"];
-  info.push clientIP
-  info.push userId
-  info.push '"' + req.method + ' ' + maskedUrl + ' ' + req.httpVersion + '"'
-  info.push res.statusCode
-  #length = res.body ? res.body.length : 0
-  info.push "#{runtime}ms"
+afterRender = null;
+exports.setAfterRender = (arhFunction) ->
+  afterRender = arhFunction;
 
-  # if (err && err.stack) {
-  #   logger.fatal(info.join(' ') + err.stack);
-  # } else if (err) {
-  #   logger.error(info.join(' '));
-  # } else {
-  #   logger.info(info.join(' '));
-  # }
-  # logger.info info.join ' '
 
 exports.createAppInstance = ->
   (req, res, next) ->

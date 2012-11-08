@@ -5,6 +5,9 @@
 e = require('./environments')
 _ = require('underscore')
 
+exports.rootDir = rootDir = __dirname + '/../..'
+exports.publicDir = publicDir = rendr.entryPath + '/../public'
+
 productionConfig =
   api:
     host: 'https://api.airbnb.com'
@@ -18,7 +21,7 @@ productionConfig =
       pathPrefix: '/airbnb/moweb'
     fingerprint:
       enabled: true,
-      sourcePath: e.publicDir,
-      destinationPath: e.rootDir + '/static'
+      sourcePath: publicDir
+      destinationPath: rendr.entryPath + '/../static'
 
 exports.config = _.extend(e.config, productionConfig)

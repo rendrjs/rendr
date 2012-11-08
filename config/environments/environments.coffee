@@ -24,4 +24,4 @@ exports.config =
     fingerprint:
       enabled: false
       sourcePath: publicDir
-      destinationPath: rootDir + '/static'
+      destinationPath: rendr.entryPath + '/../static'

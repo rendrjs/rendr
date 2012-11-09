@@ -1,17 +1,19 @@
 #
 # Config settings for NODE_ENV=production
-# Extends environments.js
 #
-e = require('./environments')
-_ = require('underscore')
-
 exports.rootDir = rootDir = __dirname + '/../..'
 exports.publicDir = publicDir = rendr.entryPath + '/../public'
 
-productionConfig =
+exports.config =
   api:
     host: 'https://api.airbnb.com'
     key: '9f1axjd321k41kdo3114qx9ba'
+
+  assetCompiler:
+    enabled: false
+    jsSrcPaths: [rootDir + '/tmp/assetCompiler', rendr.entryPath]
+    stichedJsFile: publicDir + '/mergedAssets.js'
+    minify: true
 
   assets:
     publicDir: e.publicDir
@@ -23,5 +25,3 @@ productionConfig =
       enabled: true,
       sourcePath: publicDir
       destinationPath: rendr.entryPath + '/../static'
-
-exports.config = _.extend(e.config, productionConfig)

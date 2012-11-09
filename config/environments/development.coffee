@@ -1,12 +1,27 @@
 # 
 # Config settings for NODE_ENV=development
-# Extends environments.js
 #
-e = require('./environments')
-_ = require('underscore')
+exports.rootDir = rootDir = __dirname + '/../..'
+exports.publicDir = publicDir = rendr.entryPath + '/../public'
 
-developmentConfig = 
-  assetCompiler: 
-    _.extend(e.config.assetCompiler, {enabled:true, minify:false})
+exports.config =
+  api:
+    host: 'https://api.localhost.airbnb.com:3001'
+    key: '9f1axjd321k41kdo3114qx9ba'
 
-exports.config = _.extend(e.config, developmentConfig)
+  assetCompiler:
+    enabled: true
+    jsSrcPaths: [rootDir + '/tmp/assetCompiler', rendr.entryPath]
+    stichedJsFile: publicDir + '/mergedAssets.js'
+    minify: false
+
+  assets:
+    publicDir: publicDir
+    cdn:
+      protocol: 'http'
+      cnames: ['0.0.0.0:3030']
+      pathPrefix: '/'
+    fingerprint:
+      enabled: false
+      sourcePath: publicDir
+      destinationPath: rendr.entryPath + '/../static'

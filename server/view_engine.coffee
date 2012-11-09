@@ -45,3 +45,5 @@ getBootstrappedData = (locals) ->
       bootstrappedData[name] =
         summary: fetcher.summarize(modelOrCollection)
         data: modelOrCollection.toJSON()
+
+  bootstrappedData

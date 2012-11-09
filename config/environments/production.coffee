@@ -16,7 +16,7 @@ exports.config =
     minify: true
 
   assets:
-    publicDir: e.publicDir
+    publicDir: publicDir
     cdn:
       protocol: 'https'
       cnames: [0,1,2,3].map((i) -> return "a" + i + ".muscache.com")

@@ -76,28 +76,25 @@ module.exports = class BaseView extends Backbone.View
 
     attributes
 
-  # Turn template into HTML
-  getHtml: (options = {}) ->
-    _.defaults options,
-      outerHtml: true
-
+  # Turn template into HTML, minus the wrapper element.
+  getInnerHtml: ->
     data = @getTemplateData()
     data = @decorateTemplateData(data)
     template = @getTemplate()
     throw new Error("#{@constructor.name}: template \"#{@getTemplateName()}\" not found.") unless template?
-    html = template(data)
+    template(data)
 
-    if options.outerHtml
-      attributes = @getAttributes()
-      attrString = _.reduce(attributes, (memo, value, key) ->
-        memo += " #{key}=\"#{value}\""
-      , '')
-      html = "<#{@tagName}#{attrString}>#{html}</#{@tagName}>"
-
-    html
+  # Get the HTML for the view, including the wrapper element.
+  getHtml: ->
+    html = this.getInnerHtml()
+    attributes = @getAttributes()
+    attrString = _.reduce(attributes, (memo, value, key) ->
+      memo += " #{key}=\"#{value}\""
+    , '')
+    "<#{@tagName}#{attrString}>#{html}</#{@tagName}>"
 
   render: =>
-    html = @getHtml(outerHtml: false)
+    html = @getInnerHtml()
     # Gross for now.
     @$el.html html
     @attachChildViews()

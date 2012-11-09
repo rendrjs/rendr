@@ -34,7 +34,7 @@
 
 async = if global.isServer then require('async') else window.async
 
-model_utils = require('./model_utils')
+modelUtils = require('./model_utils')
 MemoryStore = require('./memory_store')
 ModelStore = require('./model_store')
 
@@ -64,7 +64,7 @@ exports.getModelForSpec = getModelForSpec = (spec, attrsOrModels = {}, options =
   _.defaults options,
     app: exports.app
 
-  model_utils[method](modelName, attrsOrModels, options)
+  modelUtils[method](modelName, attrsOrModels, options)
 
 # map fetchSpecs to models and fetch data in parallel
 retrieve = (fetchSpecs, callback) ->
@@ -130,11 +130,12 @@ getResponseStoreKey = (spec) ->
 
 exports.summarize = summarize = (modelOrCollection) ->
   # Is it a Collection?
-  if modelOrCollection.length?
+  summary = {}
+  if modelUtils.isCollection(modelOrCollection)
     summary =
       collection: modelOrCollection.constructor.name
       ids: modelOrCollection.pluck('id')
-  else
+  else if modelUtils.isModel(modelOrCollection)
     summary =
       model: modelOrCollection.constructor.name
       id: modelOrCollection.id
@@ -167,7 +168,7 @@ exports.hydrate = (summaries) ->
       summary.ids.forEach (id) ->
         modelName = getModelNameFromCollectionName(summary.collection)
         models.push (modelStore.get modelName, id)
-      results[name] = model_utils.getCollection(summary.collection, models)
+      results[name] = modelUtils.getCollection(summary.collection, models)
   results
 
 exports.fetch = (fetchSpecs, callback) ->

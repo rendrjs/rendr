@@ -2,6 +2,7 @@ path = require('path')
 fs = require('fs')
 _ = require('underscore')
 BaseView = require('../shared/base/view')
+modelUtils = require('../shared/model_utils')
 
 layoutPath = "#{rendr.entryPath}/templates/layout.hbs"
 
@@ -40,6 +41,7 @@ getViewHtml = (viewPath, locals, app) ->
 getBootstrappedData = (locals) ->
   bootstrappedData = {}
   for own name, modelOrCollection of locals
-    bootstrappedData[name] =
-      summary: fetcher.summarize(modelOrCollection)
-      data: modelOrCollection.toJSON()
+    if modelUtils.isModel(modelOrCollection) or modelUtils.isCollection(modelOrCollection)
+      bootstrappedData[name] =
+        summary: fetcher.summarize(modelOrCollection)
+        data: modelOrCollection.toJSON()

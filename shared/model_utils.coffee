@@ -1,3 +1,5 @@
+BaseModel = require('./base/model')
+BaseCollection = require('./base/collection')
 
 exports.getModel = (path, attrs = {}, options = {}) ->
   path = underscorize(path)
@@ -8,6 +10,13 @@ exports.getCollection = (path, models = [], options = {}) ->
   path = underscorize(path)
   collection = require(rendr.entryPath + "/collections/#{path}")
   new collection(models, options)
+
+exports.isModel = (obj) ->
+  obj instanceof BaseModel
+
+exports.isCollection = (obj) ->
+  obj instanceof BaseCollection
+
 
 uppercaseRe = /([A-Z])/g
 exports.underscorize = underscorize = (name) ->

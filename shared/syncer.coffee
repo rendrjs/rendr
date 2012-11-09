@@ -1,4 +1,5 @@
 server = require('../server/server') if global.isServer
+qs = require('qs') if global.isServer
 
 methodMap =
   'create': 'POST'
@@ -16,17 +17,19 @@ clientSync = (method, model, options) ->
 serverSync = (method, model, options) ->
   options.url = getUrl(model, options.url)
   verb = methodMap[method]
+  urlParts = options.url.split('?')
   req =
     method: verb
-    url: options.url
+    path: urlParts[0]
     appContext: model.app
+    query: qs.parse(urlParts[1]) || {}
 
   # Put the data as form data if POST or PUT,
   # otherwise query string.
   if verb is 'POST' or verb is 'PUT'
     req.body = options.data
   else
-    req.query = options.data
+    _.extend req.query, options.data
 
   server.dataAdapter.makeRequest req, (err, response, body) ->
     err ||= getErrForResponse(response)

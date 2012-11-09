@@ -2,6 +2,8 @@ templateFinder = require('../template_finder')
 model_utils = require('../model_utils')
 fetcher = require('../fetcher')
 
+noop = ->
+
 module.exports = class BaseView extends Backbone.View
 
   constructor: ->
@@ -27,23 +29,6 @@ module.exports = class BaseView extends Backbone.View
     @model = @options.model
     @collection = @options.collection
 
-  # A noop on the server, because it does DOM stuff.
-  _ensureElement: ->
-    if global.isServer
-
-    else
-      super
-
-  # A noop on the server, because it does DOM stuff.
-  delegateEvents: ->
-    if global.isServer
-
-    else
-      super
-
-  # Instance methods
-  # ----------------
-
   # Key for the template
   name: null
 
@@ -53,7 +38,7 @@ module.exports = class BaseView extends Backbone.View
     if @model
       @model.toJSON()
     else if @collection
-      collection: @collection.toJSON()
+      models: @collection.toJSON()
     else
       _.clone @options
 
@@ -63,9 +48,12 @@ module.exports = class BaseView extends Backbone.View
     data._collection = @collection if @collection
     data
 
+  getTemplateName: ->
+    @name
+
   # Get template function
   getTemplate: ->
-    templateFinder.getTemplate(@name)
+    templateFinder.getTemplate(@getTemplateName())
 
   # Get HTML attributes to add to el.
   getAttributes: ->
@@ -96,7 +84,7 @@ module.exports = class BaseView extends Backbone.View
     data = @getTemplateData()
     data = @decorateTemplateData(data)
     template = @getTemplate()
-    throw new Error("#{@constructor.name}: template \"#{@name}\" not found.") unless template?
+    throw new Error("#{@constructor.name}: template \"#{@getTemplateName()}\" not found.") unless template?
     html = template(data)
 
     if options.outerHtml
@@ -114,7 +102,6 @@ module.exports = class BaseView extends Backbone.View
     @$el.html html
     @attachChildViews()
     @_postRender()
-    @postRender()
     @
 
   # If rendered on the client missing its data,
@@ -143,9 +130,10 @@ module.exports = class BaseView extends Backbone.View
 
   # Anything to do after rendering on the client.
   _postRender: ->
+    @postRender()
 
-  # NOOP, to be overridden by subclasses.
-  postRender: ->
+  # To be overridden by subclasses.
+  postRender: noop
 
   # Hydrate this view with the data it needs, if being attached
   # to pre-exisitng DOM.
@@ -184,7 +172,7 @@ module.exports = class BaseView extends Backbone.View
 
     # We have to call postRender() so client-only things happen,
     # i.e. initialize slideshows, etc.
-    @postRender()
+    @_postRender()
 
     # If the view says it should try to be lazy loaded, and it doesn't
     # have a model or collection, then do so.
@@ -221,3 +209,8 @@ module.exports = class BaseView extends Backbone.View
         view = new ViewClass(options)
         view.attach($el)
 
+
+# Noops on the server, because they do DOM stuff.
+if global.isServer
+  BaseView::_ensureElement = noop
+  BaseView::delegateEvents = noop

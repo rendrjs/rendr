@@ -14,15 +14,15 @@ configureCallbacks = []
 
 # Module variables
 server = module.exports.server = express()
+module.exports.express = express
 isShuttingDown = false
 FATAL_EXIT_CODE = 13
-
 
 #
 # Initialize our server
 # - options
 #   - logger
-#   - afterRenderFn: a function that will be called when render is complete. 
+#   - afterRenderFn: a function that will be called when render is complete.
 #     Pass in args (req, res)
 #
 module.exports.init = (options, callback) ->
@@ -30,7 +30,7 @@ module.exports.init = (options, callback) ->
     logger.init(options.logger)
   if (options && options.afterRenderFn)
     mw.setAfterRender(options.afterRenderFn)
-    
+
   initMiddleware()
   router.buildRoutes(server)
   initLibs(callback)

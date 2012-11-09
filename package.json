@@ -26,7 +26,8 @@
     "mkdirp": "*",
     "walk": "2.2.1",
     "winston":"0.6.2",
-    "node-polyglot": "*"
+    "node-polyglot": "*",
+    "qs": "0.5.1"
   },
   "devDependencies": {
     "mocha": "*",

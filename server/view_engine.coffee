@@ -1,12 +1,7 @@
 path = require('path')
 fs = require('fs')
 _ = require('underscore')
-BaseView = require('../shared/base/view')
-modelUtils = require('../shared/model_utils')
 
-layoutPath = "#{rendr.entryPath}/templates/layout.hbs"
-
-fetcher = require('../shared/fetcher')
 
 module.exports = (viewPath, data, callback) ->
   data.locals ||= {}
@@ -19,8 +14,11 @@ module.exports = (viewPath, data, callback) ->
 
   renderWithLayout(layoutData, callback)
 
+
 # render with a layout
 renderWithLayout = (locals, cb) ->
+  layoutPath = "#{rendr.entryPath}/templates/layout.hbs"
+
   fs.readFile layoutPath, 'utf8', (err, str) ->
     return cb(err) if (err)
 
@@ -28,7 +26,10 @@ renderWithLayout = (locals, cb) ->
     html = templateFn(locals)
     cb(null, html)
 
+
 getViewHtml = (viewPath, locals, app) ->
+  BaseView = require('../shared/base/view')
+
   locals = _.clone locals
   # Pass in the app.
   locals.app = app
@@ -38,7 +39,11 @@ getViewHtml = (viewPath, locals, app) ->
   view = new View(locals)
   view.getHtml()
 
+
 getBootstrappedData = (locals) ->
+  fetcher = require('../shared/fetcher')
+  modelUtils = require('../shared/model_utils')
+
   bootstrappedData = {}
   for own name, modelOrCollection of locals
     if modelUtils.isModel(modelOrCollection) or modelUtils.isCollection(modelOrCollection)

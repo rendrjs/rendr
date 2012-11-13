@@ -17,10 +17,12 @@ var stylusHelpers = require('./stylusHelpers');
 var jsPackage;
 var exec = require('child_process').exec;
 
-var baseDir = rendr.entryPath;
-var rootDir = path.normalize(__dirname + '/../..');
-var publicDir = baseDir + '/../public';
-var assetsDir = baseDir + '/../assets';
+// THESE VALUES SHOULD NOT BE IN THE LIB -- PASS IN VIA CONFIG!
+var paths = require('../../config/environments/env').paths;
+var baseDir = paths.entryPath; //rendr.entryPath;
+var rootDir = paths.rootDir;//path.normalize(__dirname + '/../..');
+var publicDir = paths.publicDir;//baseDir + '/../public';
+var assetsDir = paths.assetsDir;//baseDir + '/../assets';
 
 var config = {
   stitchedJsFile: publicDir + '/mergedAssets.js',
@@ -28,7 +30,7 @@ var config = {
   cssOutputFile: publicDir + '/styles.css',
   fingerprintedImagesDir: publicDir + '/fingerprinted',
   tempDir: rootDir + '/tmp',
-  hbsTemplateSrcPath: baseDir + '/templates',
+  hbsTemplateSrcPath: paths.templatesDir,
   minify: true
 };
 

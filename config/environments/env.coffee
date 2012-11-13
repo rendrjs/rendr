@@ -6,4 +6,4 @@ exports.get = (env) ->
 
 exports.name = env
 exports.current = exports.get(env)
-
+exports.paths = require('./paths')

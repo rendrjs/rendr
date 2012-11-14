@@ -23,3 +23,5 @@ module.exports = class Base extends Backbone.Collection
       resp
 
   sync: syncer.getSync()
+
+  getUrl: syncer.getUrl

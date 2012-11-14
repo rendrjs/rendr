@@ -38,8 +38,7 @@ handleErr = (err, req, res) ->
     if (env.name == 'development')
       throw err
     else
-      error_message = "We're sorry, something went wrong..." # todo: must be standardized/internationalized
-      res.render('error_view', locals: {error_message: error_message}, app: req.appContext, req: req);
+      res.render('error_view', app: req.appContext, req: req);
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->

@@ -28,6 +28,10 @@ module.exports = class App extends Backbone.Model
     @fetcher = fetcher
     @fetcher.app = @
 
+  # To be overridden.
+  loggedIn: ->
+    false
+
   # @client
   bootstrapData: (modelMap) ->
     results = {}

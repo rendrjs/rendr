@@ -28,7 +28,7 @@ getHandler = (action) ->
 
 handleErr = (err, req, res) ->
   # stash rndr in request for propper middleware logging
-  if (!req.rndr) 
+  if (!req.rndr)
     req.rndr = {}
   req.rndr.err = err
 
@@ -43,7 +43,7 @@ handleErr = (err, req, res) ->
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->
-    if routeInfo.authenticated && false # !req.appContext.SessionManager.loggedIn()
+    if routeInfo.authenticated && !req.appContext.loggedIn()
       res.redirect('/login')
     else
       next()

@@ -9,6 +9,9 @@ module.exports = class Base extends Backbone.Model
     @options = options
     @app = @options.app
 
+    if !@app && @collection
+      @app = @collection.app
+
   # Idempotent parse
   parse: (resp) ->
     if @jsonKey

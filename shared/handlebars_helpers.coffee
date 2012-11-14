@@ -28,9 +28,13 @@ module.exports =
     html = view.getHtml()
     new Handlebars.SafeString(html)
 
-  partial: (templateName) ->
+  partial: (templateName, block) ->
     template = templateFinder.getTemplate(templateName)
-    html = template(this)
+
+    options = block.hash || {}
+    data = options.context || this
+
+    html = template(data)
     new Handlebars.SafeString(html)
 
   json: (object) ->

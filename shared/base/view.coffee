@@ -6,12 +6,13 @@ noop = ->
 
 module.exports = class BaseView extends Backbone.View
 
-  constructor: ->
-    super
+  constructor: (options) ->
     @name ||= model_utils.underscorize(@constructor.name)
-    @parseOptions()
+    @parseOptions(options)
+    super
 
   parseOptions: (options = {}) ->
+    @options ||= {}
     _.extend @options, options
 
     @app = @options.app

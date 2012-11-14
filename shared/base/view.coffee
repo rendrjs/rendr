@@ -149,9 +149,8 @@ module.exports = class BaseView extends Backbone.View
           ids: @options.model_ids
 
     if fetchSummary
-      data = fetcher.hydrate fetchSummary
-      _.extend @options, data
-
+      results = fetcher.hydrate fetchSummary
+      @parseOptions(results)
 
   setLoading: (loading) ->
     @$el.toggleClass('loading', loading)

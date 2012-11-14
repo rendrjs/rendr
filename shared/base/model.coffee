@@ -17,3 +17,5 @@ module.exports = class Base extends Backbone.Model
       resp
 
   sync: syncer.getSync()
+
+  getUrl: syncer.getUrl

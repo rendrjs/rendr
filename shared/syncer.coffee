@@ -8,14 +8,13 @@ methodMap =
   'read':   'GET'
 
 clientSync = (method, model, options) ->
-  url = getUrl(model, options.url)
-  options.url = "/api#{url}"
+  options.url = @getUrl(options.url, true)
   Backbone.emulateJSON = true
   options.data = addApiParams(method, model, options.data)
   Backbone.sync(method, model, options)
 
 serverSync = (method, model, options) ->
-  options.url = getUrl(model, options.url)
+  options.url = @getUrl(options.url)
   verb = methodMap[method]
   urlParts = options.url.split('?')
   req =
@@ -76,10 +75,10 @@ exports.getSync = ->
 
 # 'model' is either a model or collection that
 # has a 'url' property, which can be a string or function.
-getUrl = (model, url) ->
-  if !url
-    url = _.result(model, 'url')
-  interpolateParams(model, url)
+exports.getUrl = (url = null, clientPrefix = false) ->
+  url ||= _.result(@, 'url')
+  url = "/api#{url}" if clientPrefix
+  interpolateParams(@, url)
 
 extractParamNamesRe = /:(\w+)/g
 

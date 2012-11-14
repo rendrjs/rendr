@@ -1,5 +1,6 @@
 # Functions for getting Controllers and Actions.
-paths = require('../config/environments/env').paths
+env = require('../config/environments/env')
+paths = env.paths
 routes = require(paths.entryPath + '/routes')
 
 # given a name, eg "listings#show"
@@ -34,10 +35,11 @@ handleErr = (err, req, res) ->
   if err.statusCode && err.statusCode is 401
     res.redirect('/login')
   else
-    # Throw the error, let Express catch it.
-    throw err
-    # res.redirect('/error')
-    # res.send(err.statusCode || 500)
+    if (env.name == 'development')
+      throw err
+    else
+      error_message = "We're sorry, something went wrong..." # todo: must be standardized/internationalized
+      res.render('error_view', locals: {error_message: error_message}, app: req.appContext, req: req);
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->

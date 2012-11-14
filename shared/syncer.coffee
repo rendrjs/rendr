@@ -58,8 +58,6 @@ addApiParams = (method, model, params = {}) ->
   ret = _.extend {}, params,
     locale:       app.State.get('locale')
     currency:     app.State.get('currency')
-  # oauth_token = app.SessionManager.get('access_token')
-  # ret.oauth_token = oauth_token if oauth_token?
 
   # So, by default Backbone sends all of the model's
   # attributes if we don't pass any in explicitly.

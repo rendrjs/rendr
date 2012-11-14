@@ -54,7 +54,7 @@ module.exports = class Router extends Backbone.Router
 
   authenticationFilter: (handler, route) ->
     (params, callback) =>
-      if route.authenticated && false # !@app.SessionManager.loggedIn()
+      if route.authenticated && !@app.loggedIn()
         @redirectTo('/login')
       else
         handler.call(@, params, callback)

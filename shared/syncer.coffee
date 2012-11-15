@@ -35,21 +35,26 @@ serverSync = (method, model, options) ->
 
     if err
       if options.error
-        options.error(err)
+        options.error(model, body, options)
       else
         throw err
     else
+      # This `success` has signature of $.ajax, not Backbone.sync.
       options.success(body)
 
 # Convert 4xx, 5xx responses to be errors.
 getErrForResponse = (res) ->
   statusCode = +res.statusCode
   err = null
-  if statusCode >= 400 and statusCode < 600
+  if isErrorStatus(statusCode)
     err = new Error("#{statusCode} status")
     err.statusCode = statusCode
     err.body = res.body
   err
+
+isErrorStatus = (statusCode) ->
+  statusCode = +statusCode
+  statusCode >= 400 and statusCode < 600
 
 # We want to always add the
 addApiParams = (method, model, params = {}) ->

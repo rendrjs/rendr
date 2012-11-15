@@ -98,9 +98,10 @@ fetchFromApi = (spec, callback) ->
   model = getModelForSpec(spec)
   model.fetch
     data: spec.params
-    success: (model, data) ->
+    success: (model, body) ->
       callback(null, model)
-    error: (model, err, options) ->
+    error: (model, body, options) ->
+      err = new Error(body)
       callback(err)
 
 getResponseFromStore = (spec, callback) ->

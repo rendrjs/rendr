@@ -3,6 +3,8 @@ env = require('../config/environments/env')
 paths = env.paths
 routes = require(paths.entryPath + '/routes')
 
+registerErrorFn = null
+
 # given a name, eg "listings#show"
 # return function that matches that controller's action (eg the show method of the listings controller)
 getAction = (config) ->
@@ -27,10 +29,8 @@ getHandler = (action) ->
       res.render(template, locals: data, app: req.appContext, req: req)
 
 handleErr = (err, req, res) ->
-  # stash rndr in request for propper middleware logging
-  if (!req.rndr)
-    req.rndr = {}
-  req.rndr.err = err
+  if (registerErrorFn) 
+    registerErrorFn(req, err)
 
   if err.statusCode && err.statusCode is 401
     res.redirect('/login')
@@ -47,15 +47,14 @@ getAuthenticate = (routeInfo) ->
     else
       next()
 
-# Attach our routes to our server
-exports.buildRoutes = (server) ->
-  routeSummary = []
+# define routes
+exports.routes = (registerError) ->
+  registerErrorFn = registerError
+  routeSpecs = []
   for own path, routeInfo of routes
     action = getAction(routeInfo)
     handler = getHandler(action)
     authenticate = getAuthenticate(routeInfo)
+    routeSpecs.push(['get', "/#{path}", authenticate, handler])
 
-    routeSummary.push("get /#{path}")
-    server.get("/#{path}", authenticate, handler)
-
-  routeSummary
+  routeSpecs

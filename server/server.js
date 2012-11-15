@@ -18,8 +18,8 @@ exports.viewConfig =  {
 
 // ===== ROUTES =====
 
-exports.buildRoutes = function(server) {
-  return router.buildRoutes(server);
+exports.routes = function(registerErrorFn) {
+  return router.routes(registerErrorFn);
 };
 
 
@@ -34,8 +34,8 @@ var createAppInstance = function() {
 };
 
 
-exports.addMiddleware = function(server) {
-  server.use(createAppInstance());
+exports.middleware = function() {
+  return [ createAppInstance() ];
 };
 
 

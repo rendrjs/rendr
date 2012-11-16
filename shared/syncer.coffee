@@ -26,7 +26,7 @@ serverSync = (method, model, options) ->
   # Put the data as form data if POST or PUT,
   # otherwise query string.
   if verb is 'POST' or verb is 'PUT'
-    req.body = options.data
+    req.json = options.data
   else
     _.extend req.query, options.data
 

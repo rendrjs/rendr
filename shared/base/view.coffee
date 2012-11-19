@@ -100,6 +100,10 @@ module.exports = class BaseView extends Backbone.View
   render: =>
     html = @getInnerHtml()
     @$el.html html
+    # Because we only set the attributes of the outer element
+    # when calling getHtml() (server), let's make sure it also
+    # happens during render() (client).
+    @$el.attr @getAttributes()
     @attachChildViews()
     @_postRender()
     @

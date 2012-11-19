@@ -170,7 +170,8 @@ exports.hydrate = (summaries, options = {}) ->
         modelName = getModelNameFromCollectionName(summary.collection)
         models.push modelStore.get(modelName, id)
       results[name] = modelUtils.getCollection(summary.collection, models)
-    results[name].app = options.app if options.app?
+    if results[name]? and options.app?
+      results[name].app = options.app
   results
 
 exports.fetch = (fetchSpecs, callback) ->

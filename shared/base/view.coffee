@@ -81,6 +81,7 @@ module.exports = class BaseView extends Backbone.View
 
   # Turn template into HTML, minus the wrapper element.
   getInnerHtml: ->
+    @_preRender()
     data = @getTemplateData()
     data = @decorateTemplateData(data)
     template = @getTemplate()
@@ -97,7 +98,6 @@ module.exports = class BaseView extends Backbone.View
     "<#{@tagName}#{attrString}>#{html}</#{@tagName}>"
 
   render: =>
-    @_preRender()
     html = @getInnerHtml()
     @$el.html html
     @attachChildViews()

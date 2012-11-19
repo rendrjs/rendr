@@ -97,8 +97,8 @@ module.exports = class BaseView extends Backbone.View
     "<#{@tagName}#{attrString}>#{html}</#{@tagName}>"
 
   render: =>
+    @_preRender()
     html = @getInnerHtml()
-    # Gross for now.
     @$el.html html
     @attachChildViews()
     @_postRender()
@@ -128,9 +128,18 @@ module.exports = class BaseView extends Backbone.View
       @parseOptions(results)
       @render()
 
+  # Anything to do before rendering on the client or server.
+  # This is useful for i.e. accessing @model in the client after
+  # @hydrate() is called, but before @getTemplateData() is called.
+  _preRender: ->
+    @preRender()
+
   # Anything to do after rendering on the client.
   _postRender: ->
     @postRender()
+
+  # To be overridden by subclasses.
+  preRender: noop
 
   # To be overridden by subclasses.
   postRender: noop
@@ -168,6 +177,10 @@ module.exports = class BaseView extends Backbone.View
     # Hydrate looks if there is a model or collection associated
     # with this view, and tries to load it from memory.
     @hydrate()
+
+    # Call preRender() so we can access things setup by @hydrate()
+    # (like @model) in i.e. @getTemplateData().
+    @_preRender()
 
     # We have to call postRender() so client-only things happen,
     # i.e. initialize slideshows, etc.

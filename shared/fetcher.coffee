@@ -158,18 +158,19 @@ exports.storeModels = storeModels = (results) ->
         modelName = getModelNameFromCollectionName(summary.collection)
         modelStore.set modelName, model
 
-exports.hydrate = (summaries) ->
+exports.hydrate = (summaries, options = {}) ->
   results = {}
   for own name, summary of summaries
     if summary.model?
-      results[name] = modelStore.get summary.model, summary.id
+      results[name] = modelStore.get(summary.model, summary.id)
     # Also support getting all models for a collection.
-    else
+    else if summary.collection?
       models = []
-      summary.ids.forEach (id) ->
+      _.each summary.ids, (id) ->
         modelName = getModelNameFromCollectionName(summary.collection)
-        models.push (modelStore.get modelName, id)
+        models.push modelStore.get(modelName, id)
       results[name] = modelUtils.getCollection(summary.collection, models)
+    results[name].app = options.app if options.app?
   results
 
 exports.fetch = (fetchSpecs, callback) ->

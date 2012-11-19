@@ -81,6 +81,7 @@ module.exports = class BaseView extends Backbone.View
 
   # Turn template into HTML, minus the wrapper element.
   getInnerHtml: ->
+    @_preRender()
     data = @getTemplateData()
     data = @decorateTemplateData(data)
     template = @getTemplate()
@@ -97,9 +98,12 @@ module.exports = class BaseView extends Backbone.View
     "<#{@tagName}#{attrString}>#{html}</#{@tagName}>"
 
   render: =>
-    @_preRender()
     html = @getInnerHtml()
     @$el.html html
+    # Because we only set the attributes of the outer element
+    # when calling getHtml() (server), let's make sure it also
+    # happens during render() (client).
+    @$el.attr @getAttributes()
     @attachChildViews()
     @_postRender()
     @
@@ -158,7 +162,7 @@ module.exports = class BaseView extends Backbone.View
           ids: @options.model_ids
 
     if fetchSummary
-      results = fetcher.hydrate fetchSummary
+      results = fetcher.hydrate(fetchSummary, {app: @app})
       @parseOptions(results)
 
   setLoading: (loading) ->

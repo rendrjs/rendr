@@ -162,7 +162,7 @@ module.exports = class BaseView extends Backbone.View
           ids: @options.model_ids
 
     if fetchSummary
-      results = fetcher.hydrate fetchSummary
+      results = fetcher.hydrate(fetchSummary, {app: @app})
       @parseOptions(results)
 
   setLoading: (loading) ->

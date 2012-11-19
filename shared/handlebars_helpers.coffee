@@ -32,7 +32,12 @@ module.exports =
     template = templateFinder.getTemplate(templateName)
 
     options = block.hash || {}
-    data = options.context || this
+    data = if _.isEmpty(options)
+        this
+      else if options.context
+        options.context
+      else
+        options
 
     html = template(data)
     new Handlebars.SafeString(html)

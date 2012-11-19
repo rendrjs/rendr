@@ -1,4 +1,5 @@
 var router = require('./router');
+var viewEngine = require('./view_engine');
 var env = require('../config/environments/env');
 var assetCompiler = require('./lib/assetCompiler');
 
@@ -9,7 +10,7 @@ exports.dataAdapter = null;
 
 exports.viewConfig =  {
   engineName: 'coffee',
-  engine:require('./view_engine'),
+  engine: viewEngine.engine,
   viewDir: env.paths.viewDir,
   publicDir: env.paths.publicDir,
   apiPath:'/api'
@@ -18,8 +19,8 @@ exports.viewConfig =  {
 
 // ===== ROUTES =====
 
-exports.routes = function(registerErrorFn) {
-  return router.routes(registerErrorFn);
+exports.routes = function() {
+  return router.routes();
 };
 
 
@@ -48,6 +49,9 @@ exports.middleware = function() {
 */
 exports.initLibs = function(options, callback) {
   if (!options) options = {};
+
+  // pass down stashError and stashPerf to router
+  router.init(options);
 
   exports.dataAdapter = options.dataAdapter;
 

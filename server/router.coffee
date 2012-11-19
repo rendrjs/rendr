@@ -3,7 +3,7 @@ env = require('../config/environments/env')
 paths = env.paths
 routes = require(paths.entryPath + '/routes')
 
-registerErrorFn = null
+config = null;
 
 # given a name, eg "listings#show"
 # return function that matches that controller's action (eg the show method of the listings controller)
@@ -24,13 +24,19 @@ getHandler = (action) ->
     req.route.keys.forEach (routeKey) ->
       params[routeKey.name] = req.route.params[routeKey.name]
 
+    start = new Date;
     action.call context, params, (err, template, data) ->
+      if (config && config.stashPerf) 
+        config.stashPerf(req, "data", new Date - start)
       return handleErr(err, req, res) if err
+      start = new Date;
       res.render(template, locals: data, app: req.appContext, req: req)
+      if (config && config.stashPerf) 
+        config.stashPerf(req, "render", new Date - start)
 
 handleErr = (err, req, res) ->
-  if (registerErrorFn) 
-    registerErrorFn(req, err)
+  if (config && config.stashError) 
+    config.stashError(req, err)
 
   if err.statusCode && err.statusCode is 401
     res.redirect('/login')
@@ -47,9 +53,15 @@ getAuthenticate = (routeInfo) ->
     else
       next()
 
+# config
+# - stashError(req, err)
+# - stashPerf(req, name, runtime)
+exports.init = (conf) ->
+  config = conf
+
+
 # define routes
-exports.routes = (registerError) ->
-  registerErrorFn = registerError
+exports.routes = () ->
   routeSpecs = []
   for own path, routeInfo of routes
     action = getAction(routeInfo)

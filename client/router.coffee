@@ -49,6 +49,7 @@ module.exports = class Router extends Backbone.Router
       else
         params = @getParamsHash(pattern, paramsArray)
         handler = @getController(route.controller)[route.action]
+        throw new Error("Missing action \"#{route.action}\" for controller \"#{route.controller}\"") unless handler
         handler = @authenticationFilter(handler, route)
         handler.call(@, params, @render)
 

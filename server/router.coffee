@@ -5,6 +5,10 @@ routes = require(paths.entryPath + '/routes')
 
 config = null;
 
+stashPerf = (req, name, value) ->
+  if (config && config.stashPerf) 
+    config.stashPerf(req, name, value)
+
 # given a name, eg "listings#show"
 # return function that matches that controller's action (eg the show method of the listings controller)
 getAction = (config) ->
@@ -26,14 +30,13 @@ getHandler = (action) ->
 
     start = new Date;
     action.call context, params, (err, template, data) ->
-      if (config && config.stashPerf) 
-        config.stashPerf(req, "data", new Date - start)
+      stashPerf(req, "data", new Date - start)
       return handleErr(err, req, res) if err
+
       start = new Date;
       res.render(template, locals: data, app: req.appContext, req: req)
-      if (config && config.stashPerf) 
-        config.stashPerf(req, "render", new Date - start)
-        config.stashPerf(req, "afterRenderTotalTime")
+      stashPerf(req, "render", new Date - start)
+      next()
 
 handleErr = (err, req, res) ->
   if (config && config.stashError) 
@@ -46,6 +49,7 @@ handleErr = (err, req, res) ->
       throw err
     else
       res.render('error_view', app: req.appContext, req: req);
+      next()
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->
@@ -53,8 +57,14 @@ getAuthenticate = (routeInfo) ->
     if routeInfo.authenticated && !req.appContext.loggedIn()
       res.redirect('/login')
     else
-      config.stashPerf(req, "authenticate", new Date - start)
+      stashPerf(req, "authenticate", new Date - start)
       next()
+
+afterRender = () ->
+  (req, res, next) ->
+    if (config && config.afterRender)
+      config.afterRender(req, res)
+    # DO NOT CALL NEXT!  END FILTER CHAIN HERE
 
 # config
 # - stashError(req, err)
@@ -70,6 +80,6 @@ exports.routes = () ->
     action = getAction(routeInfo)
     handler = getHandler(action)
     authenticate = getAuthenticate(routeInfo)
-    routeSpecs.push(['get', "/#{path}", authenticate, handler])
+    routeSpecs.push(['get', "/#{path}", authenticate, handler, afterRender()])
 
   routeSpecs

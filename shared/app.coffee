@@ -1,20 +1,7 @@
 # This is the app instance that is shared between client and server.
 # The client also subclasses it for client-specific stuff.
 
-if window?
-  window.isServer = false
-  window.global = window
-  window.rendr = {
-    entryPath: ''
-  }
-else
-  global.isServer = true
-
-if isServer
-  global._ = require('underscore')
-  global.Backbone = require('backbone')
-  global.Handlebars = require('handlebars')
-  global.Polyglot = require('node-polyglot')
+require('./globals');
 
 fetcher = require('./fetcher')
 ClientRouter = require('../client/router')

@@ -3,12 +3,12 @@ BaseCollection = require('./base/collection')
 
 exports.getModel = (path, attrs = {}, options = {}) ->
   path = underscorize(path)
-  model = require(rendr.entryPath + "/models/#{path}")
+  model = classMap[path] || require(rendr.entryPath + "/models/#{path}")
   new model(attrs, options)
 
 exports.getCollection = (path, models = [], options = {}) ->
   path = underscorize(path)
-  collection = require(rendr.entryPath + "/collections/#{path}")
+  collection = classMap[path] || require(rendr.entryPath + "/collections/#{path}")
   new collection(models, options)
 
 exports.isModel = (obj) ->
@@ -16,6 +16,13 @@ exports.isModel = (obj) ->
 
 exports.isCollection = (obj) ->
   obj instanceof BaseCollection
+
+
+classMap = {}
+# Use this to specify class constructors based on
+# model/collection name. Useful i.e. for testing.
+exports.addClassMapping = (key, modelConstructor) ->
+ classMap[underscorize(key)] = modelConstructor
 
 
 uppercaseRe = /([A-Z])/g

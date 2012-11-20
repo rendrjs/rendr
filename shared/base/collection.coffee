@@ -1,6 +1,10 @@
 syncer = require('../syncer')
 
+BaseModel = require('./model')
+
 module.exports = class Base extends Backbone.Collection
+
+  model: BaseModel
 
   meta: {}
 

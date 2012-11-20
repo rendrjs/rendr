@@ -33,6 +33,7 @@ getHandler = (action) ->
       res.render(template, locals: data, app: req.appContext, req: req)
       if (config && config.stashPerf) 
         config.stashPerf(req, "render", new Date - start)
+        config.stashPerf(req, "afterRenderTotalTime")
 
 handleErr = (err, req, res) ->
   if (config && config.stashError) 
@@ -48,9 +49,11 @@ handleErr = (err, req, res) ->
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->
+    start = new Date;
     if routeInfo.authenticated && !req.appContext.loggedIn()
       res.redirect('/login')
     else
+      config.stashPerf(req, "authenticate", new Date - start)
       next()
 
 # config

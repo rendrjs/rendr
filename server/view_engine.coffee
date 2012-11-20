@@ -23,7 +23,9 @@ renderWithLayout = (locals, cb) ->
     return cb(err) if (err)
 
     templateFn = Handlebars.compile(str)
+    start = new Date
     html = templateFn(locals)
+    console.log(">>>>>>renderWithLayout.compile", new Date - start)
     cb(null, html)
 
 

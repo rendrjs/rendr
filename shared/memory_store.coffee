@@ -26,4 +26,7 @@ module.exports = class MemoryStore
 
 
   clear: (key) ->
-    delete @cache[key]
+    if key?
+      delete @cache[key]
+    else
+      @cache = {}

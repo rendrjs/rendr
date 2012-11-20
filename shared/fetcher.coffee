@@ -151,7 +151,8 @@ exports.summarize = summarize = (modelOrCollection) ->
 
 # TODO don't just remove the 's'
 getModelNameFromCollectionName = (collectionName) ->
-  collectionName.slice(0, collectionName.length - 1)
+  Collection = modelUtils.getCollectionConstructor(collectionName)
+  Collection::model.name
 
 exports.storeModels = storeModels = (results) ->
   for own name, modelOrCollection of results

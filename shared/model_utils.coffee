@@ -1,35 +1,43 @@
 BaseModel = require('./base/model')
 BaseCollection = require('./base/collection')
 
-exports.getModel = (path, attrs = {}, options = {}) ->
-  path = underscorize(path)
-  model = classMap[path] || require(rendr.entryPath + "/models/#{path}")
-  new model(attrs, options)
+utils = module.exports
 
-exports.getCollection = (path, models = [], options = {}) ->
-  path = underscorize(path)
-  collection = classMap[path] || require(rendr.entryPath + "/collections/#{path}")
-  new collection(models, options)
+utils.getModel = (path, attrs = {}, options = {}) ->
+  Model = utils.getModelConstructor(path)
+  new Model(attrs, options)
 
-exports.isModel = (obj) ->
+utils.getCollection = (path, models = [], options = {}) ->
+  Collection = utils.getCollectionConstructor(path)
+  new Collection(models, options)
+
+utils.getModelConstructor = (path) ->
+  path = utils.underscorize(path)
+  classMap[path] || require(rendr.entryPath + "/models/#{path}")
+
+utils.getCollectionConstructor = (path) ->
+  path = utils.underscorize(path)
+  classMap[path] || require(rendr.entryPath + "/collections/#{path}")
+
+utils.isModel = (obj) ->
   obj instanceof BaseModel
 
-exports.isCollection = (obj) ->
+utils.isCollection = (obj) ->
   obj instanceof BaseCollection
 
 
 classMap = {}
 # Use this to specify class constructors based on
 # model/collection name. Useful i.e. for testing.
-exports.addClassMapping = (key, modelConstructor) ->
- classMap[underscorize(key)] = modelConstructor
+utils.addClassMapping = (key, modelConstructor) ->
+ classMap[utils.underscorize(key)] = modelConstructor
 
 
 uppercaseRe = /([A-Z])/g
-exports.underscorize = underscorize = (name) ->
+utils.underscorize = (name) ->
   name = name.replace(uppercaseRe, (char) -> "_" + char.toLowerCase())
   name = name.slice(1) if name[0] is '_'
   name
 
-exports.modelName = (modelOrCollection) ->
-  underscorize(modelOrCollection.constructor.name)
+utils.modelName = (modelOrCollection) ->
+  utils.underscorize(modelOrCollection.constructor.name)

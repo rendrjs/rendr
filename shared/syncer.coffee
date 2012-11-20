@@ -1,4 +1,3 @@
-server = require('../server/server') if global.isServer
 qs = require('qs') if global.isServer
 
 methodMap =
@@ -29,6 +28,9 @@ serverSync = (method, model, options) ->
     req.json = options.data
   else
     _.extend req.query, options.data
+
+  if !server?
+    server = require('../server/server') if global.isServer
 
   server.dataAdapter.makeRequest req, (err, response, body) ->
     err ||= getErrForResponse(response)

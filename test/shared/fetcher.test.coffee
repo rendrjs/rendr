@@ -6,7 +6,22 @@ modelUtils = require('../../shared/model_utils')
 BaseModel = require('../../shared/base/model')
 BaseCollection = require('../../shared/base/collection')
 
+listingResponses =
+  1:
+    id: 1
+    name: 'Fetching!'
+  2:
+    id: 2
+    name: 'Fetching!'
+    city: 'San Francisco'
+
 class Listing extends BaseModel
+  fetch: (options) ->
+    id = options.data.id
+    resp = listingResponses[id]
+    @set resp
+    options.success(this, resp)
+
 class Listings extends BaseCollection
 
 modelUtils.addClassMapping 'Listing', Listing
@@ -58,3 +73,18 @@ describe 'fetcher', ->
       listings = hydrated.listings
       listings.should.be.an.instanceOf Listings
       should.deepEqual listings.toJSON(), rawListings
+
+
+    it "should be able to fetch a model", (done) ->
+      fetchSpec =
+        model:
+          model: 'Listing'
+          params:
+            id: 1
+      fetcher.fetch fetchSpec, (err, results) ->
+        done(err) if err
+        results.model.should.be.an.instanceOf(Listing)
+        results.model.toJSON().should.eql({id: 1, name: 'Fetching!'})
+        done()
+
+

@@ -1,4 +1,4 @@
-syncer = require('../../../app/syncer')
+syncer = require('../../shared/syncer')
 Backbone = require('backbone')
 should = require('should')
 

@@ -7,22 +7,31 @@ BaseModel = require('../../shared/base/model')
 BaseCollection = require('../../shared/base/collection')
 
 listingResponses =
-  1:
-    id: 1
+  basic:
     name: 'Fetching!'
-  2:
-    id: 2
+  full:
     name: 'Fetching!'
     city: 'San Francisco'
 
 class Listing extends BaseModel
   fetch: (options) ->
-    id = options.data.id
-    resp = listingResponses[id]
+    resp = getModelResponse('full', options.data.id)
     @set resp
     options.success(this, resp)
 
 class Listings extends BaseCollection
+  model: Listing
+
+  fetch: (options) ->
+    resp = buildCollectionResponse()
+    @reset resp
+    options.success(this, resp)
+
+getModelResponse = (version, id) ->
+  _.extend {}, listingResponses[version], {id}
+
+buildCollectionResponse = ->
+  [1..5].map (id) -> getModelResponse('basic', id)
 
 modelUtils.addClassMapping 'Listing', Listing
 modelUtils.addClassMapping 'Listings', Listings
@@ -30,6 +39,9 @@ modelUtils.addClassMapping 'Listings', Listings
 describe 'fetcher', ->
 
   describe 'hydrate', ->
+
+    beforeEach ->
+      fetcher.modelStore.clear()
 
     it "should be able store and hydrate a model", ->
       rawListing = {id: 9, name: 'Sunny'}
@@ -75,16 +87,71 @@ describe 'fetcher', ->
       should.deepEqual listings.toJSON(), rawListings
 
 
+  describe 'fetch', ->
+
+    beforeEach ->
+      fetcher.modelStore.clear()
+
     it "should be able to fetch a model", (done) ->
       fetchSpec =
-        model:
-          model: 'Listing'
-          params:
-            id: 1
+        model: { model: 'Listing', params: { id: 1 } }
       fetcher.fetch fetchSpec, (err, results) ->
         done(err) if err
         results.model.should.be.an.instanceOf(Listing)
-        results.model.toJSON().should.eql({id: 1, name: 'Fetching!'})
+        results.model.toJSON().should.eql(getModelResponse('full', 1))
         done()
 
+    it "should be able to fetch a collection", (done) ->
+      fetchSpec =
+        collection: { collection: 'Listings' }
+      fetcher.fetch fetchSpec, (err, results) ->
+        done(err) if err
+        results.collection.should.be.an.instanceOf(Listings)
+        results.collection.toJSON().should.eql(buildCollectionResponse())
+        done()
 
+    it "should be able to re-fetch if already exists but is missing key", (done) ->
+      # First, fetch the collection, which has smaller versions of the models.
+      fetchSpec =
+        collection: { collection: 'Listings' }
+      fetcher.fetch fetchSpec, {writeToCache: true}, (err, results) ->
+        done(err) if err
+        results.collection.toJSON().should.eql(buildCollectionResponse())
+
+        # Make sure that the basic version is stored in modelStore.
+        fetcher.modelStore.get('Listing', 1).toJSON().should.eql getModelResponse('basic', 1)
+
+        # Then, fetch the single model, which should be cached.
+        fetchSpec =
+          model: { model: 'Listing', params: { id: 1 } }
+        fetcher.fetch fetchSpec, {readFromCache: true}, (err, results) ->
+          done(err) if err
+          results.model.toJSON().should.eql(getModelResponse('basic', 1))
+
+          # Finally, fetch the single model, but specifiy that certain key must be present.
+          fetchSpec =
+            model: { model: 'Listing', params: { id: 1 }, ensureKeys: ['city'] }
+          fetcher.fetch fetchSpec, {readFromCache: true}, (err, results) ->
+            done(err) if err
+            results.model.toJSON().should.eql(getModelResponse('full', 1))
+            done()
+
+  describe 'isMissingKeys', ->
+    before ->
+      @modelData =
+        id: 1
+        name: 'foobar'
+
+    it "should be false if keys not passed in", ->
+      fetcher.isMissingKeys(@modelData, undefined).should.be.false
+      fetcher.isMissingKeys(@modelData, []).should.be.false
+
+    it "should be false if keys passed in but are present", ->
+      fetcher.isMissingKeys(@modelData, 'name').should.be.false
+      fetcher.isMissingKeys(@modelData, ['name']).should.be.false
+      fetcher.isMissingKeys(@modelData, ['id', 'name']).should.be.false
+
+    it "should be true if keys passed in are not present", ->
+      fetcher.isMissingKeys(@modelData, 'city').should.be.true
+      fetcher.isMissingKeys(@modelData, ['city']).should.be.true
+      fetcher.isMissingKeys(@modelData, ['id', 'city']).should.be.true

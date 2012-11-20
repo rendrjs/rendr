@@ -67,18 +67,18 @@ exports.getModelForSpec = getModelForSpec = (spec, attrsOrModels = {}, options =
   modelUtils[method](modelName, attrsOrModels, options)
 
 # map fetchSpecs to models and fetch data in parallel
-retrieve = (fetchSpecs, callback) ->
+retrieve = (fetchSpecs, options, callback) ->
   batchedRequests = {}
 
   for own name, spec of fetchSpecs
     batchedRequests[name] = (cb) ->
-      if global.isServer
+      if !options.readFromCache
         fetchFromApi(spec, cb)
       else
         # First, see if it's a model, and we have stored it.
         if spec.model?
           modelData = modelStore.get spec.model, spec.params.id
-        if modelData?
+        if modelData? && !isMissingKeys(modelData.toJSON(), spec.ensureKeys)
           model = getModelForSpec(spec, modelData)
           cb(null, model)
         else
@@ -93,6 +93,13 @@ retrieve = (fetchSpecs, callback) ->
               fetchFromApi(spec, cb)
 
   async.parallel batchedRequests, callback
+
+exports.isMissingKeys = isMissingKeys = (modelData, keys) ->
+  return false unless keys?
+  keys = [keys] unless _.isArray(keys)
+  for key in keys
+    return true unless modelData[key]?
+  false
 
 fetchFromApi = (spec, callback) ->
   model = getModelForSpec(spec)
@@ -174,11 +181,26 @@ exports.hydrate = (summaries, options = {}) ->
       results[name].app = options.app
   results
 
-exports.fetch = (fetchSpecs, callback) ->
-  retrieve fetchSpecs, (err, results) ->
+exports.fetch = (fetchSpecs, options, callback) ->
+  # Support both (fetchSpecs, options, callback)
+  # and (fetchSpecs, callback).
+  if arguments.length is 2
+    callback = options
+    options = {}
+  else
+    options ||= {}
+
+  if global.isServer
+    options.readFromCache ?= false
+    options.writeToCache ?= false
+  else
+    options.readFromCache ?= true
+    options.writeToCache ?= true
+
+  retrieve fetchSpecs, options, (err, results) ->
     return callback(err) if err
 
-    if !global.isServer
+    if options.writeToCache
       storeResponse results, fetchSpecs
       storeModels results
 

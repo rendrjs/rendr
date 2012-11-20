@@ -36,6 +36,9 @@ getHandler = (action) ->
       start = new Date;
       res.render template, locals: data, app: req.appContext, req: req, (err, html) ->
         # TODO! consider setting pragma-no-cache headers based on route!
+        if (err) 
+          console.log("RENDER ERROR", err)
+        return handleErr(err, req, res) if err
         res.end(html)
         stashPerf(req, "render", new Date - start)
         next()

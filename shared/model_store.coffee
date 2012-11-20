@@ -5,7 +5,14 @@ module.exports = class ModelStore extends MemoryStore
 
   set: (modelName, model) ->
     key = getModelStoreKey(modelName, model.id)
-    super key, model.toJSON(), null
+    # We want to merge the model attrs with whatever is already
+    # present in the store.
+    existingModel = @get(modelName, model.id)
+    # TODO: Don't create a model just to call toJSON().
+    attrs = existingModel?.toJSON() || {}
+    newAttrs = _.extend {}, attrs, model.toJSON()
+
+    super key, newAttrs, null
 
   get: (modelName, id) ->
     key = getModelStoreKey(modelName, id)

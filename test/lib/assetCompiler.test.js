@@ -1,4 +1,4 @@
-var assetCompiler = require(__dirname + '/../../../lib/assetCompiler');
+var assetCompiler = require('../../server/lib/assetCompiler');
 var fs = require('fs');
 var path = require('path');
 var expect = require('expect.js');
@@ -7,7 +7,7 @@ var should = require('should');
 
 var testAssetConfig = {
   tempDir: path.normalize(__dirname + '/../testtmp'),
-}
+};
 
 function clean(callback) {
   if (fs.existsSync(testAssetConfig.tempDir + '/templates.js')) {
@@ -34,7 +34,7 @@ describe('assetCompiler', function() {
       fs.existsSync(testAssetConfig.tempDir).should.be.false;
       assetCompiler.init(testAssetConfig, undefined, function(err, response) {
         if (err) throw err;
-        response.should.equal("OK")
+        response.should.equal("OK");
         done();
       });
     });
@@ -47,22 +47,12 @@ describe('assetCompiler', function() {
       assetCompiler.compile(function(err, results) {
         if (err) throw err;
         console.log(results);
-        results.js.should.match(/\/public\/mergedAssets.js$/)
+        results.js.should.match(/\/public\/mergedAssets.js$/);
         fs.existsSync(results.js).should.be.true;
-        results.css.should.match(/\/public\/styles.css$/)
+        results.css.should.match(/\/public\/styles.css$/);
         fs.existsSync(results.css).should.be.true;
         done();
       })
-    });
-  });
-
-  it('should return path to mergedAssets', function(done) {
-    assetCompiler.init(testAssetConfig, undefined, function(err) {
-      if (err) throw err;
-
-      var filename = assetCompiler.stitchedJsFile();
-      filename.should.match(/\/public\/mergedAssets.js$/)
-      done();
     });
   });
 

@@ -1,7 +1,16 @@
+require('../../shared/globals')
 fetcher = require('../../shared/fetcher')
 should = require('should')
-Listing = require('../../app/models/listing')
-Listings = require('../../app/collections/listings')
+
+modelUtils = require('../../shared/model_utils')
+BaseModel = require('../../shared/base/model')
+BaseCollection = require('../../shared/base/collection')
+
+class Listing extends BaseModel
+class Listings extends BaseCollection
+
+modelUtils.addClassMapping 'Listing', Listing
+modelUtils.addClassMapping 'Listings', Listings
 
 describe 'fetcher', ->
 

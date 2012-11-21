@@ -1,4 +1,5 @@
 syncer = require('../syncer')
+fetcher = null
 
 module.exports = class Base extends Backbone.Model
 
@@ -22,3 +23,8 @@ module.exports = class Base extends Backbone.Model
   sync: syncer.getSync()
 
   getUrl: syncer.getUrl
+
+  # Class method to get a Listing instance from the modelStore.
+  @fetchFromCache: (id) ->
+    fetcher ?= require('../fetcher')
+    fetcher.modelStore.get @name, id

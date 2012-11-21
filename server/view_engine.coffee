@@ -19,9 +19,7 @@ exports.engine = (viewPath, data, callback) ->
 renderWithLayout = (locals, cb) ->
   getLayoutTemplate (err, templateFn) ->
     return cb(err) if err
-    start = new Date
     html = templateFn(locals)
-    console.log(">>>>>>renderWithLayout.render", new Date - start)
     cb(null, html)
 
 

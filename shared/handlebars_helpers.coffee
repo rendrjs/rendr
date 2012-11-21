@@ -8,9 +8,13 @@ Handlebars.log ||= (obj) -> console.log obj
 
 Polyglot.registerHandlebars(Handlebars)
 
+localCache = {}
+
 module.exports =
   asset_url: (path) ->
-    cdn.assetUrl(path)
+    if (!localCache[path])
+      localCache[path] = cdn.assetUrl(path)
+    localCache[path]
 
   view: (viewName, block) ->
     BaseView ||= require('./base/view')

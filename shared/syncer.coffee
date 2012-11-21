@@ -61,9 +61,11 @@ isErrorStatus = (statusCode) ->
 # We want to always add the
 addApiParams = (method, model, params = {}) ->
   app = model.app
+  # BAD BAD BAD
+  # This needs to happen on the moweb side.
   ret = _.extend {}, params,
-    locale:       app.State.get('locale')
-    currency:     app.State.get('currency')
+    locale:       app.get('locale')
+    currency:     app.get('currency')
 
   # So, by default Backbone sends all of the model's
   # attributes if we don't pass any in explicitly.

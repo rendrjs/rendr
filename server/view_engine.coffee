@@ -19,15 +19,23 @@ exports.engine = (viewPath, data, callback) ->
 renderWithLayout = (locals, cb) ->
   layoutPath = "#{rendr.entryPath}/templates/layout.hbs"
 
-  fs.readFile layoutPath, 'utf8', (err, str) ->
-    return cb(err) if (err)
-
-    templateFn = Handlebars.compile(str)
+  getLayoutTemplate (err, templateFn) ->
+    return cb(err) if err
     start = new Date
     html = templateFn(locals)
-    console.log(">>>>>>renderWithLayout.compile", new Date - start)
+    console.log(">>>>>>renderWithLayout.render", new Date - start)
     cb(null, html)
 
+
+layoutTemplate = null
+# Cache layout template function.
+getLayoutTemplate = (callback) ->
+  return callback(null, layoutTemplate) if layoutTemplate
+  layoutPath = "#{rendr.entryPath}/templates/layout.hbs"
+  fs.readFile layoutPath, 'utf8', (err, str) ->
+    return callback (err) if (err)
+    layoutTemplate = Handlebars.compile(str)
+    callback(null, layoutTemplate)
 
 getViewHtml = (viewPath, locals, app) ->
   BaseView = require('../shared/base/view')

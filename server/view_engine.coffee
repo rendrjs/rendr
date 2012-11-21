@@ -17,8 +17,6 @@ exports.engine = (viewPath, data, callback) ->
 
 # render with a layout
 renderWithLayout = (locals, cb) ->
-  layoutPath = "#{rendr.entryPath}/templates/layout.hbs"
-
   getLayoutTemplate (err, templateFn) ->
     return cb(err) if err
     start = new Date

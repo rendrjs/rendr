@@ -6,7 +6,7 @@ routes = require(paths.entryPath + '/routes')
 config = null;
 
 stashPerf = (req, name, value) ->
-  if (config && config.stashPerf) 
+  if (config && config.stashPerf)
     config.stashPerf(req, name, value)
 
 # given a name, eg "listings#show"
@@ -21,7 +21,7 @@ getController = (controllerName) ->
 getHandler = (action) ->
   (req, res, next) ->
     context =
-      app: req.appContext
+      app: req.rendrApp
       redirectTo: (url) -> res.redirect(url)
 
     params = req.query || {}
@@ -34,9 +34,9 @@ getHandler = (action) ->
       return handleErr(err, req, res) if err
 
       start = new Date;
-      res.render template, locals: data, app: req.appContext, req: req, (err, html) ->
+      res.render template, locals: data, app: req.rendrApp, req: req, (err, html) ->
         # TODO! consider setting pragma-no-cache headers based on route!
-        if (err) 
+        if (err)
           console.log("RENDER ERROR", err)
         return handleErr(err, req, res) if err
         res.end(html)
@@ -45,7 +45,7 @@ getHandler = (action) ->
 
 
 handleErr = (err, req, res) ->
-  if (config && config.stashError) 
+  if (config && config.stashError)
     config.stashError(req, err)
 
   if err.statusCode && err.statusCode is 401
@@ -54,13 +54,13 @@ handleErr = (err, req, res) ->
     if (env.name == 'development')
       throw err
     else
-      res.render('error_view', app: req.appContext, req: req);
+      res.render('error_view', app: req.rendrApp, req: req);
       next()
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->
     start = new Date;
-    if routeInfo.authenticated && !req.appContext.loggedIn()
+    if routeInfo.authenticated && !req.rendrApp.loggedIn()
       res.redirect('/login')
     else
       stashPerf(req, "authenticate", new Date - start)

@@ -29,7 +29,7 @@ exports.routes = function() {
 var createAppInstance = function() {
   return function(req, res, next) {
     var App = require(env.paths.entryPath + "/app");  // moweb/app/app.coffee
-    req.appContext = new App;
+    req.rendrApp = new App;
     next();
   };
 };

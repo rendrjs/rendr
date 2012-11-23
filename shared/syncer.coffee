@@ -19,7 +19,7 @@ serverSync = (method, model, options) ->
   req =
     method: verb
     path: urlParts[0]
-    appContext: model.app
+    rendrApp: model.app
     query: qs.parse(urlParts[1]) || {}
 
   # Put the data as form data if POST or PUT,

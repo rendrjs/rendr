@@ -192,7 +192,7 @@ module.exports = class BaseView extends Backbone.View
 
     # If the view says it should try to be lazy loaded, and it doesn't
     # have a model or collection, then do so.
-    if @options.lazy? && !@options.collection? && !@options.model?
+    if @options.lazy is true && !@options.collection? && !@options.model?
       @fetchLazy()
 
   # Happens client-side.

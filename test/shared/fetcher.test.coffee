@@ -49,23 +49,29 @@ describe 'fetcher', ->
         listing: new Listing(rawListing)
       fetchSummary =
         listing: { model: 'listing', id: 9 }
-      fetcher.storeModels results, fetchSummary
+      fetcher.storeModels results
       hydrated = fetcher.hydrate fetchSummary
       listing = hydrated.listing
       listing.should.be.an.instanceOf Listing
-      should.deepEqual listing.toJSON(), rawListing
+      listing.toJSON().should.eql rawListing
 
     it "should be able to store and hydrate a collection", ->
       rawListings = [{id: 1, name: 'Sunny'}, {id: 3, name: 'Cloudy'}, {id: 99, name: 'Tall'}]
+      params =
+        items_per_page: 99
       results =
-        listings: new Listings(rawListings)
+        listings: new Listings(rawListings, params: params)
       fetchSummary =
-        listings: { collection: 'listings', ids: [1,3,99] }
-      fetcher.storeModels results, fetchSummary
+        listings: { collection: 'listings', ids: [1,3,99], params: params }
+      fetcher.storeModels results
       hydrated = fetcher.hydrate fetchSummary
       listings = hydrated.listings
       listings.should.be.an.instanceOf Listings
-      should.deepEqual listings.toJSON(), rawListings
+      listings.toJSON().should.eql rawListings
+      listings.params.should.eql params
+
+      should.not.exist fetcher.collectionStore.get('Listings', {})
+      fetcher.collectionStore.get('Listings', params).should.eql listings.pluck('id')
 
     it "should be able to hydrate multiple objects at once", ->
       rawListing = {id: 9, name: 'Sunny'}
@@ -76,7 +82,7 @@ describe 'fetcher', ->
       fetchSummary =
         listing: { model: 'listing', id: 9 }
         listings: { collection: 'listings', ids: [1,3,99] }
-      fetcher.storeModels results, fetchSummary
+      fetcher.storeModels results
       hydrated = fetcher.hydrate fetchSummary
       listing = hydrated.listing
       listing.should.be.an.instanceOf Listing
@@ -86,6 +92,21 @@ describe 'fetcher', ->
       listings.should.be.an.instanceOf Listings
       should.deepEqual listings.toJSON(), rawListings
 
+    it "should inject the app instance", ->
+      listing1 = new Listing(id: 1)
+      fetcher.modelStore.set 'Listing', listing1
+
+      summaries =
+        model:
+          id: 1
+          model: 'Listing'
+
+      app =
+        fake: 'app'
+
+      results = fetcher.hydrate(summaries, app: app)
+      model = results.model
+      model.app.should.eql(app)
 
   describe 'fetch', ->
 
@@ -155,3 +176,36 @@ describe 'fetcher', ->
       fetcher.isMissingKeys(@modelData, 'city').should.be.true
       fetcher.isMissingKeys(@modelData, ['city']).should.be.true
       fetcher.isMissingKeys(@modelData, ['id', 'city']).should.be.true
+
+  describe 'summarize', ->
+
+    it "should summarize a model", ->
+      attrs =
+        id: 1234
+        blahblah: 'boomtown'
+      model = new Listing(attrs)
+      summary = fetcher.summarize(model)
+
+      summary.model.should.eql 'Listing'
+      summary.id.should.eql attrs.id
+
+    it "should summarize a collection", ->
+      models = [{
+        id: 1
+        name: 'foo'
+      }, {
+        id: 2
+        name: 'bar'
+      }]
+      params =
+        some: 'key'
+        other: 'value'
+      collection = new Listings(models)
+      collection.params = params
+      summary = fetcher.summarize(collection)
+
+      summary.collection.should.eql 'Listings'
+      summary.ids.should.eql [1,2]
+      summary.params.should.eql params
+
+

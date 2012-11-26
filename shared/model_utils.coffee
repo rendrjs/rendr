@@ -25,6 +25,9 @@ utils.isModel = (obj) ->
 utils.isCollection = (obj) ->
   obj instanceof BaseCollection
 
+utils.getModelNameForCollectionName = (collectionName) ->
+  Collection = utils.getCollectionConstructor(collectionName)
+  utils.modelName(Collection::model)
 
 classMap = {}
 # Use this to specify class constructors based on
@@ -39,5 +42,5 @@ utils.underscorize = (name) ->
   name = name.slice(1) if name[0] is '_'
   name
 
-utils.modelName = (modelOrCollection) ->
-  utils.underscorize(modelOrCollection.constructor.name)
+utils.modelName = (modelOrCollectionClass) ->
+  utils.underscorize(modelOrCollectionClass.name)

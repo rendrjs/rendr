@@ -19,14 +19,14 @@ module.exports = class BaseView extends Backbone.View
 
     @app = @options.app
 
-    if @options.model
+    if @options.model?
       if !(@options.model instanceof Backbone.Model) && @options.model_name
         @options.model = model_utils.getModel(@options.model_name, @options.model, {parse:true})
 
-      @options.model_name ||= model_utils.modelName(@options.model)
+      @options.model_name ||= model_utils.modelName(@options.model.constructor)
       @options.model_id = @options.model.id
-    else if @options.collection
-      @options.collection_name ||= model_utils.modelName(@options.collection)
+    else if @options.collection?
+      @options.collection_name ||= model_utils.modelName(@options.collection.constructor)
       @options.model_ids = @options.collection.pluck('id')
 
     @model = @options.model
@@ -76,6 +76,9 @@ module.exports = class BaseView extends Backbone.View
           value = JSON.stringify(value.pluck('id'))
         if !_.isObject(value)
           attributes["data-#{key}"] = value
+
+    if @name is 'reviews_view'
+      console.log 'getAttributes>>>>>', @collection, @options.collection
 
     attributes
 

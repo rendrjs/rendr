@@ -37,9 +37,11 @@ async = if global.isServer then require('async') else window.async
 modelUtils = require('./model_utils')
 MemoryStore = require('./memory_store')
 ModelStore = require('./model_store')
+CollectionStore = require('./collection_store')
 
 responseStore = exports.responseStore = new MemoryStore
 modelStore = exports.modelStore = new ModelStore
+collectionStore = exports.collectionStore = new CollectionStore
 
 # Returns an instance of Model or Collection.
 exports.getModelForSpec = getModelForSpec = (spec, attrsOrModels = {}, options = {}) ->
@@ -136,6 +138,10 @@ getResponseStoreKey = (spec) ->
   paramsKey = if params? then JSON.stringify(params) else ''
   "#{modelKey}:#{paramsKey}"
 
+exports.retrieveModels = retrieveModels = (modelName, modelIds) ->
+  _.map modelIds, (id) ->
+    modelStore.get modelName, id
+
 exports.summarize = summarize = (modelOrCollection) ->
   # Is it a Collection?
   summary = {}
@@ -143,28 +149,27 @@ exports.summarize = summarize = (modelOrCollection) ->
     summary =
       collection: modelOrCollection.constructor.name
       ids: modelOrCollection.pluck('id')
+      params: modelOrCollection.params
   else if modelUtils.isModel(modelOrCollection)
     summary =
       model: modelOrCollection.constructor.name
       id: modelOrCollection.id
   summary
 
-# TODO don't just remove the 's'
-getModelNameFromCollectionName = (collectionName) ->
-  Collection = modelUtils.getCollectionConstructor(collectionName)
-  Collection::model.name
-
 exports.storeModels = storeModels = (results) ->
   for own name, modelOrCollection of results
     summary = summarize(modelOrCollection)
     if summary.model?
       modelStore.set summary.model, modelOrCollection
-    # Also support putting all models for a collection.
     else
+      # Store all models for a collection.
       summary.ids.forEach (id) ->
         model = modelOrCollection.get(id)
-        modelName = getModelNameFromCollectionName(summary.collection)
+        modelName = modelUtils.getModelNameForCollectionName(summary.collection)
         modelStore.set modelName, model
+
+      # Then store the model ids based on params.
+      collectionStore.set modelOrCollection, modelOrCollection.params
 
 exports.hydrate = (summaries, options = {}) ->
   results = {}
@@ -173,11 +178,9 @@ exports.hydrate = (summaries, options = {}) ->
       results[name] = modelStore.get(summary.model, summary.id)
     # Also support getting all models for a collection.
     else if summary.collection?
-      models = []
-      _.each summary.ids, (id) ->
-        modelName = getModelNameFromCollectionName(summary.collection)
-        models.push modelStore.get(modelName, id)
-      results[name] = modelUtils.getCollection(summary.collection, models)
+      modelName = modelUtils.getModelNameForCollectionName(summary.collection)
+      models = retrieveModels(modelName, summary.ids)
+      results[name] = modelUtils.getCollection(summary.collection, models, params: summary.params)
     if results[name]? and options.app?
       results[name].app = options.app
   results

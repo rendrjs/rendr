@@ -77,9 +77,6 @@ module.exports = class BaseView extends Backbone.View
         if !_.isObject(value)
           attributes["data-#{key}"] = value
 
-    if @name is 'reviews_view'
-      console.log 'getAttributes>>>>>', @collection, @options.collection
-
     attributes
 
   # Turn template into HTML, minus the wrapper element.

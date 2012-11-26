@@ -6,8 +6,6 @@ module.exports = class Base extends Backbone.Collection
 
   model: BaseModel
 
-  meta: {}
-
   constructor: (models, options = {}) ->
     super
 
@@ -21,12 +19,8 @@ module.exports = class Base extends Backbone.Collection
     # query for these models.
     @params = @options.params
 
-    _.extend(@meta, options.meta) if options.meta?
-
-
   # Idempotent parse
   parse: (resp) ->
-    _.extend(@meta, resp.meta) if resp.meta?
     if @jsonKey
       resp[@jsonKey] || resp
     else

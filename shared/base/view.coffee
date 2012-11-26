@@ -104,7 +104,6 @@ module.exports = class BaseView extends Backbone.View
     # when calling getHtml() (server), let's make sure it also
     # happens during render() (client).
     @$el.attr @getAttributes()
-    @attachChildViews()
     @_postRender()
     @
 
@@ -140,6 +139,7 @@ module.exports = class BaseView extends Backbone.View
 
   # Anything to do after rendering on the client.
   _postRender: ->
+    @attachChildViews()
     @postRender()
 
   # To be overridden by subclasses.

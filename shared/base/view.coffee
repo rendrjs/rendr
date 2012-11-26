@@ -67,7 +67,7 @@ module.exports = class BaseView extends Backbone.View
     # For now, view key is same as template.
     attributes['data-view'] = @name
     for own key, value of @options
-      if value
+      if value?
         if key is 'model'
           key = 'model_id'
           value = value.id

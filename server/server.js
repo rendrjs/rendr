@@ -1,7 +1,7 @@
 var router = require('./router');
 var viewEngine = require('./view_engine');
 var env = require('../config/environments/env');
-var assetCompiler = require('./lib/assetCompiler');
+//var assetCompiler = require('./lib/assetCompiler');
 
 exports.dataAdapter = null;
 
@@ -55,14 +55,15 @@ exports.initLibs = function(options, callback) {
 
   exports.dataAdapter = options.dataAdapter;
 
-  if (env.current.assetCompiler && env.current.assetCompiler.enabled) {
-    assetCompiler.init(env.current.assetCompiler, options.logger, function(err) {
-      if (err) return callback(err);
-      assetCompiler.compile(callback);
-    });
-  } else {
-    callback();
-  }
+  callback();
+  // if (env.current.assetCompiler && env.current.assetCompiler.enabled) {
+  //   assetCompiler.init(env.current.assetCompiler, options.logger, function(err) {
+  //     if (err) return callback(err);
+  //     assetCompiler.compile(callback);
+  //   });
+  // } else {
+  //   callback();
+  // }
 };
 
 exports.closeLibs = function(callback) {

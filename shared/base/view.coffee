@@ -170,13 +170,13 @@ module.exports = class BaseView extends Backbone.View
 
   # When HTML is already present (rendered by server),
   # this is what gets called to bind to the element.
-  attach: (element) ->
+  attach: (element, parentView = null) ->
     $el = $(element)
     $el.data('view-attached', true)
-    # Save the instance on the DOM el so we can grab later
-    # TODO does this cause a memory leak?
-    $el.data('view-instance', @)
     @setElement($el)
+
+    # Store a reference to the parent view.
+    @parentView = parentView
 
     # Hydrate looks if there is a model or collection associated
     # with this view, and tries to load it from memory.
@@ -201,12 +201,11 @@ module.exports = class BaseView extends Backbone.View
   # Call @getView()
   # Attach childView
   attachChildViews: ->
-    BaseView.attach(@app, @$el)
+    @childViews = BaseView.attach(@app, @)
 
   remove: ->
-    # TODO is this necessary or does it happen automatically when
-    # DOM el is removed?
-    @$el.data('view-instance', null)
+    @childViews = null
+    @parentView = null
     super
 
   # Class methods
@@ -214,8 +213,9 @@ module.exports = class BaseView extends Backbone.View
   @getView: (viewName) ->
     require(rendr.entryPath + "/views/#{viewName}")
 
-  @attach: (app, scope) ->
-    $('[data-view]', scope).each (i, el) =>
+  @attach: (app, parentView = null) ->
+    scope = parentView?.$el
+    views = $('[data-view]', scope).map (i, el) =>
       $el = $(el)
       if !$el.data('view-attached')
         viewName = $el.data('view')
@@ -223,7 +223,9 @@ module.exports = class BaseView extends Backbone.View
         options.app = app
         ViewClass = BaseView.getView(viewName)
         view = new ViewClass(options)
-        view.attach($el)
+        view.attach($el, parentView)
+        view
+    _.compact(views)
 
 
 # Noops on the server, because they do DOM stuff.

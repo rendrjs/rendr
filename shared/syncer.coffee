@@ -7,13 +7,16 @@ methodMap =
   'read':   'GET'
 
 clientSync = (method, model, options) ->
-  options.url = @getUrl(options.url, true)
+  data = _.clone options.data
+  options.url = @getUrl(options.url, true, data)
   Backbone.emulateJSON = true
-  options.data = addApiParams(method, model, options.data)
+  data = addApiParams(method, model, data)
+  options.data = data
   Backbone.sync(method, model, options)
 
 serverSync = (method, model, options) ->
-  options.url = @getUrl(options.url)
+  data = _.clone options.data
+  options.url = @getUrl(options.url, false, data)
   verb = methodMap[method]
   urlParts = options.url.split('?')
   req =
@@ -25,9 +28,9 @@ serverSync = (method, model, options) ->
   # Put the data as form data if POST or PUT,
   # otherwise query string.
   if verb is 'POST' or verb is 'PUT'
-    req.json = options.data
+    req.json = data
   else
-    _.extend req.query, options.data
+    _.extend req.query, data
 
   if !server?
     server = require('../server/server') if global.isServer
@@ -84,16 +87,16 @@ exports.getSync = ->
 
 # 'model' is either a model or collection that
 # has a 'url' property, which can be a string or function.
-exports.getUrl = (url = null, clientPrefix = false) ->
+exports.getUrl = (url = null, clientPrefix = false, params = {}) ->
   url ||= _.result(@, 'url')
   url = "/api#{url}" if clientPrefix
-  interpolateParams(@, url)
+  interpolateParams(@, url, params)
 
 extractParamNamesRe = /:(\w+)/g
 
 # This maps i.e. '/listings/:id' to '/listings/3' if
 # the model you supply has model.get('id') == 3.
-exports.interpolateParams = interpolateParams = (model, url) ->
+exports.interpolateParams = interpolateParams = (model, url, params = {}) ->
   matches = url.match(extractParamNamesRe)
   if matches
     matches.forEach (param) ->
@@ -105,4 +108,7 @@ exports.interpolateParams = interpolateParams = (model, url) ->
       else
         value = model.get(property)
       url = url.replace(param, value)
+      # Delete the param from params hash, so we don't get urls like:
+      #   /v1/threads/1234?id=1234...
+      delete params[property]
   url

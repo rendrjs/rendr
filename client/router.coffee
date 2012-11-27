@@ -17,6 +17,7 @@ module.exports = class Router extends Backbone.Router
     @app = options.app
     @initRoutes()
     @on 'action', @trackAction
+    @app.on 'reload', @renderView
 
     @appView = new AppView({@app})
     @appView.render()
@@ -45,13 +46,21 @@ module.exports = class Router extends Backbone.Router
       @trigger 'action', route
       if firstRender
         firstRender = false
-        BaseView.attach(@app)
+        views = BaseView.attach(@app)
+        @currentView = @getMainView(views)
       else
         params = @getParamsHash(pattern, paramsArray)
         handler = @getController(route.controller)[route.action]
         throw new Error("Missing action \"#{route.action}\" for controller \"#{route.controller}\"") unless handler
         handler = @authenticationFilter(handler, route)
         handler.call(@, params, @render)
+
+  # Hmm, there's probably a better way to do this.
+  # By default, expect that there's only a single, main
+  # view in the layout. Can be overridden by applications
+  # if the initial render is more complicated.
+  getMainView: (views) ->
+    views[0]
 
   authenticationFilter: (handler, route) ->
     (params, callback) =>
@@ -82,6 +91,9 @@ module.exports = class Router extends Backbone.Router
     View = @getView(view_key)
     @currentView = new View data
     $(window).scrollTop 0
+    @renderView()
+
+  renderView: =>
     @appView.setCurrentView(@currentView)
 
   trackAction: (route) =>

@@ -131,6 +131,18 @@ describe 'fetcher', ->
         results.collection.toJSON().should.eql(buildCollectionResponse())
         done()
 
+    it "should be able to fetch both a model and a collection at the same time", (done) ->
+      fetchSpec =
+        model: { model: 'Listing', params: { id: 1 } }
+        collection: { collection: 'Listings' }
+      fetcher.fetch fetchSpec, (err, results) ->
+        done(err) if err
+        results.model.should.be.an.instanceOf(Listing)
+        results.model.toJSON().should.eql(getModelResponse('full', 1))
+        results.collection.should.be.an.instanceOf(Listings)
+        results.collection.toJSON().should.eql(buildCollectionResponse())
+        done()
+
     it "should be able to re-fetch if already exists but is missing key", (done) ->
       # First, fetch the collection, which has smaller versions of the models.
       fetchSpec =

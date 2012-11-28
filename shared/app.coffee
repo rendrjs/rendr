@@ -4,7 +4,7 @@
 require('./globals');
 
 fetcher = require('./fetcher')
-ClientRouter = require('../client/router')
+ClientRouter = require(rendr.entryPath + "/router");
 
 module.exports = class App extends Backbone.Model
   defaults:

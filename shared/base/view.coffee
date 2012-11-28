@@ -207,7 +207,7 @@ module.exports = class BaseView extends Backbone.View
     @childViews = BaseView.attach(@app, @)
 
   remove: ->
-    view.remove() for view in @childViews
+    view.remove() for view in @childViews || []
     @childViews = null
     @parentView = null
     super

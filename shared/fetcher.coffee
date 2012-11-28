@@ -72,7 +72,7 @@ exports.getModelForSpec = getModelForSpec = (spec, attrsOrModels = {}, options =
 retrieve = (fetchSpecs, options, callback) ->
   batchedRequests = {}
 
-  for own name, spec of fetchSpecs
+  _.each fetchSpecs, (spec, name) ->
     batchedRequests[name] = (cb) ->
       if !options.readFromCache
         fetchFromApi(spec, cb)
@@ -163,7 +163,7 @@ exports.storeModels = storeModels = (results) ->
       modelStore.set summary.model, modelOrCollection
     else
       # Store all models for a collection.
-      summary.ids.forEach (id) ->
+      _.each summary.ids, (id) ->
         model = modelOrCollection.get(id)
         modelName = modelUtils.getModelNameForCollectionName(summary.collection)
         modelStore.set modelName, model

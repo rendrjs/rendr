@@ -25,7 +25,8 @@ module.exports = class BaseView extends Backbone.View
 
       @options.model_name ||= model_utils.modelName(@options.model.constructor)
       @options.model_id = @options.model.id
-    else if @options.collection?
+
+    if @options.collection?
       @options.collection_name ||= model_utils.modelName(@options.collection.constructor)
       @options.model_ids = @options.collection.pluck('id')
 
@@ -151,15 +152,17 @@ module.exports = class BaseView extends Backbone.View
   # Hydrate this view with the data it needs, if being attached
   # to pre-exisitng DOM.
   hydrate: ->
-    fetchSummary =
-      if @options.model_name? && @options.model_id?
-        model:
-          model: @options.model_name
-          id: @options.model_id
-      else if @options.collection_name? && @options.model_ids?
-        collection:
-          collection: @options.collection_name
-          ids: @options.model_ids
+    fetchSummary = {}
+
+    if @options.model_name? && @options.model_id?
+      fetchSummary.model =
+        model: @options.model_name
+        id: @options.model_id
+
+    if @options.collection_name? && @options.model_ids?
+      fetchSummary.collection =
+        collection: @options.collection_name
+        ids: @options.model_ids
 
     if fetchSummary
       results = fetcher.hydrate(fetchSummary, {app: @app})

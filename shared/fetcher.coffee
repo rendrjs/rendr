@@ -43,6 +43,9 @@ responseStore = exports.responseStore = new MemoryStore
 modelStore = exports.modelStore = new ModelStore
 collectionStore = exports.collectionStore = new CollectionStore
 
+# Mixin Backbone.Events for events that work in client & server.
+_.extend exports, Backbone.Events
+
 # Returns an instance of Model or Collection.
 exports.getModelForSpec = getModelForSpec = (spec, attrsOrModels = {}, options = {}) ->
   if spec.model?
@@ -185,6 +188,8 @@ exports.hydrate = (summaries, options = {}) ->
       results[name].app = options.app
   results
 
+exports.pendingFetches = 0
+
 exports.fetch = (fetchSpecs, options, callback) ->
   # Support both (fetchSpecs, options, callback)
   # and (fetchSpecs, callback).
@@ -201,7 +206,11 @@ exports.fetch = (fetchSpecs, options, callback) ->
     options.readFromCache ?= true
     options.writeToCache ?= true
 
+  exports.pendingFetches++
+  exports.trigger 'fetch:start', fetchSpecs
   retrieve fetchSpecs, options, (err, results) ->
+    exports.pendingFetches--
+    exports.trigger 'fetch:end', fetchSpecs
     return callback(err) if err
 
     if options.writeToCache

@@ -16,16 +16,20 @@ listingResponses =
 class Listing extends BaseModel
   fetch: (options) ->
     resp = getModelResponse('full', options.data.id)
-    @set resp
-    options.success(this, resp)
+    setTimeout =>
+      @set resp
+      options.success(this, resp)
+    , 1
 
 class Listings extends BaseCollection
   model: Listing
 
   fetch: (options) ->
     resp = buildCollectionResponse()
-    @reset resp
-    options.success(this, resp)
+    setTimeout =>
+      @reset resp
+      options.success(this, resp)
+    , 1
 
 getModelResponse = (version, id) ->
   _.extend {}, listingResponses[version], {id}
@@ -112,43 +116,53 @@ describe 'fetcher', ->
 
     beforeEach ->
       fetcher.modelStore.clear()
+      fetcher.off(null, null)
 
     it "should be able to fetch a model", (done) ->
       fetchSpec =
         model: { model: 'Listing', params: { id: 1 } }
+      fetcher.pendingFetches.should.eql 0
       fetcher.fetch fetchSpec, (err, results) ->
-        done(err) if err
+        fetcher.pendingFetches.should.eql 0
+        return done(err) if err
         results.model.should.be.an.instanceOf(Listing)
         results.model.toJSON().should.eql(getModelResponse('full', 1))
         done()
+      fetcher.pendingFetches.should.eql 1
 
     it "should be able to fetch a collection", (done) ->
       fetchSpec =
         collection: { collection: 'Listings' }
+      fetcher.pendingFetches.should.eql 0
       fetcher.fetch fetchSpec, (err, results) ->
-        done(err) if err
+        fetcher.pendingFetches.should.eql 0
+        return done(err) if err
         results.collection.should.be.an.instanceOf(Listings)
         results.collection.toJSON().should.eql(buildCollectionResponse())
         done()
+      fetcher.pendingFetches.should.eql 1
 
     it "should be able to fetch both a model and a collection at the same time", (done) ->
       fetchSpec =
         model: { model: 'Listing', params: { id: 1 } }
         collection: { collection: 'Listings' }
+      fetcher.pendingFetches.should.eql 0
       fetcher.fetch fetchSpec, (err, results) ->
-        done(err) if err
+        fetcher.pendingFetches.should.eql 0
+        return done(err) if err
         results.model.should.be.an.instanceOf(Listing)
         results.model.toJSON().should.eql(getModelResponse('full', 1))
         results.collection.should.be.an.instanceOf(Listings)
         results.collection.toJSON().should.eql(buildCollectionResponse())
         done()
+      fetcher.pendingFetches.should.eql 1
 
     it "should be able to re-fetch if already exists but is missing key", (done) ->
       # First, fetch the collection, which has smaller versions of the models.
       fetchSpec =
         collection: { collection: 'Listings' }
       fetcher.fetch fetchSpec, {writeToCache: true}, (err, results) ->
-        done(err) if err
+        return done(err) if err
         results.collection.toJSON().should.eql(buildCollectionResponse())
 
         # Make sure that the basic version is stored in modelStore.
@@ -158,16 +172,42 @@ describe 'fetcher', ->
         fetchSpec =
           model: { model: 'Listing', params: { id: 1 } }
         fetcher.fetch fetchSpec, {readFromCache: true}, (err, results) ->
-          done(err) if err
+          return done(err) if err
           results.model.toJSON().should.eql(getModelResponse('basic', 1))
 
           # Finally, fetch the single model, but specifiy that certain key must be present.
           fetchSpec =
             model: { model: 'Listing', params: { id: 1 }, ensureKeys: ['city'] }
           fetcher.fetch fetchSpec, {readFromCache: true}, (err, results) ->
-            done(err) if err
+            return done(err) if err
             results.model.toJSON().should.eql(getModelResponse('full', 1))
             done()
+
+    it "should emit events", (done) ->
+      startEmitted = false
+      endEmitted = false
+
+      fetcher.on 'fetch:start', (eventFetchSpec) ->
+        startEmitted = true
+        eventFetchSpec.should.eql fetchSpec
+
+      fetcher.on 'fetch:end', (eventFetchSpec) ->
+        endEmitted = true
+        eventFetchSpec.should.eql fetchSpec
+
+      fetchSpec =
+        model: { model: 'Listing', params: { id: 1 } }
+
+      fetcher.fetch fetchSpec, (err, results) ->
+        startEmitted.should.be.true
+        endEmitted.should.be.true
+        done(err) if err
+        results.model.should.be.an.instanceOf(Listing)
+        results.model.toJSON().should.eql(getModelResponse('full', 1))
+        done()
+
+      startEmitted.should.be.true
+      endEmitted.should.be.false
 
   describe 'isMissingKeys', ->
     before ->
@@ -219,5 +259,4 @@ describe 'fetcher', ->
       summary.collection.should.eql 'Listings'
       summary.ids.should.eql [1,2]
       summary.params.should.eql params
-
 

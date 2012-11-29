@@ -4,7 +4,7 @@
   "description": "A small web framework that lets you use Node and Backbone to render on both sides.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --ui bdd --reporter spec --ignore-leaks ./test/**/*.test.* --timeout 6000 --require coffee-script",
+    "test": "mocha --ui bdd --reporter spec --ignore-leaks $(find ./test -name *.test.*) --timeout 6000 --require coffee-script",
     "postinstall": "node ./scripts/postinstall.js"
   },
   "repository": {

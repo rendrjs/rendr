@@ -43,6 +43,10 @@ module.exports = class Base extends Backbone.Model
 
   getUrl: syncer.getUrl
 
+  # Class method to store in the modelStore.
+  store: ->
+    getFetcher().modelStore.set @constructor.name, @
+
   # Class method to get a model instance from the modelStore.
   @fetchFromCache: (id) ->
     getFetcher().modelStore.get @name, id

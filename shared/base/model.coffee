@@ -4,14 +4,24 @@ fetcher = null
 module.exports = class Base extends Backbone.Model
 
   constructor: (models, options = {}) ->
-    super
-
     # Capture the options as instance variable.
     @options = options
+
+    # Store a reference to the app instance.
     @app = @options.app
+
+    super
 
     if !@app && @collection
       @app = @collection.app
+
+    @on 'change', @updateInModelStore
+
+  # TODO: Should we keep a reference on the model to its modelStore?
+  # Or not, because there could be a one-to-many mapping?
+  # Or should it only exist in one?
+  updateInModelStore: =>
+    getFetcher().modelStore.set @constructor.name, @
 
   # Idempotent parse
   parse: (resp) ->
@@ -24,7 +34,9 @@ module.exports = class Base extends Backbone.Model
 
   getUrl: syncer.getUrl
 
-  # Class method to get a Listing instance from the modelStore.
+  # Class method to get a model instance from the modelStore.
   @fetchFromCache: (id) ->
-    fetcher ?= require('../fetcher')
-    fetcher.modelStore.get @name, id
+    getFetcher().modelStore.get @name, id
+
+getFetcher = ->
+  fetcher ?= require('../fetcher')

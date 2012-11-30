@@ -7,13 +7,13 @@ module.exports = class Base extends Backbone.Collection
   model: BaseModel
 
   constructor: (models, options = {}) ->
-    super
-
     # Capture the options as instance variable.
     @options = options
 
     # Store a reference to the app instance.
     @app = @options.app
+
+    super
 
     # Store a reference to the params that were used to
     # query for these models.

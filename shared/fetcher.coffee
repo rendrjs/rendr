@@ -168,8 +168,7 @@ exports.storeModels = storeModels = (results) ->
       # Store all models for a collection.
       _.each summary.ids, (id) ->
         model = modelOrCollection.get(id)
-        modelName = modelUtils.getModelNameForCollectionName(summary.collection)
-        modelStore.set modelName, model
+        model.store()
 
       # Then store the model ids based on params.
       collectionStore.set modelOrCollection, modelOrCollection.params

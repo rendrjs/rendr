@@ -20,5 +20,8 @@ module.exports = class CollectionStore extends BaseClass
     key = getStoreKey(collectionName, params)
     super key
 
+  _formatKey: (key) ->
+   "_cs:#{key}"
+
 getStoreKey = (collectionName, params) ->
   "#{collectionName.toLowerCase()}:#{JSON.stringify(params)}"

@@ -8,3 +8,6 @@ else
   LocalStorageStore
 
 module.exports = class ResponseStore extends BaseClass
+
+  _formatKey: (key) ->
+   "_rs:#{key}"

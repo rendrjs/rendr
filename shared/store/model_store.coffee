@@ -30,5 +30,8 @@ module.exports = class ModelStore extends BaseClass
       else
         undefined
 
+  _formatKey: (key) ->
+   "_ms:#{key}"
+
 getModelStoreKey = (model, id) ->
   "#{model.toLowerCase()}:#{id}"

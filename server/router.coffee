@@ -39,6 +39,7 @@ getHandler = (action) ->
         if (err)
           console.log("RENDER ERROR", err)
         return handleErr(err, req, res) if err
+        res.type('html')
         res.end(html)
         stashPerf(req, "render", new Date - start)
         next()

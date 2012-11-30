@@ -120,10 +120,6 @@ fetchFromApi = (spec, callback) ->
 getResponseFromStore = (spec, callback) ->
   key = getResponseStoreKey(spec)
   value = responseStore.get key
-  if value?
-    console.log "FETCHER: Cache HIT for key: \"#{key}\"."
-  else
-    console.log "FETCHER: Cache MISS for key: \"#{key}\"."
   callback(null, value)
 
 storeResponse = (results, fetchSpecs) ->

@@ -1,7 +1,14 @@
 MemoryStore = require('./memory_store')
-modelUtils = require('./model_utils')
+LocalStorageStore = require('./local_storage_store')
+modelUtils = require('../model_utils')
 
-module.exports = class ModelStore extends MemoryStore
+# TODO: be less magical. Use composition instead of inheritance.
+BaseClass = if global.isServer
+  MemoryStore
+else
+  LocalStorageStore
+
+module.exports = class ModelStore extends BaseClass
 
   set: (modelName, model) ->
     key = getModelStoreKey(modelName, model.id)

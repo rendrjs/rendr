@@ -1,4 +1,4 @@
-MemoryStore = require('../../shared/memory_store')
+MemoryStore = require('../../shared/store/memory_store')
 should = require('should')
 
 describe 'MemoryStore', ->

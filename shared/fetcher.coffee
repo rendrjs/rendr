@@ -35,11 +35,12 @@
 async = if global.isServer then require('async') else window.async
 
 modelUtils = require('./model_utils')
-MemoryStore = require('./memory_store')
-ModelStore = require('./model_store')
-CollectionStore = require('./collection_store')
+MemoryStore = require('./store/memory_store')
+ResponseStore = require('./store/response_store')
+ModelStore = require('./store/model_store')
+CollectionStore = require('./store/collection_store')
 
-responseStore = exports.responseStore = new MemoryStore
+responseStore = exports.responseStore = new ResponseStore
 modelStore = exports.modelStore = new ModelStore
 collectionStore = exports.collectionStore = new CollectionStore
 

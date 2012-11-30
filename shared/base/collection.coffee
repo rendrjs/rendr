@@ -19,10 +19,17 @@ module.exports = class Base extends Backbone.Collection
     # query for these models.
     @params = @options.params
 
+    # Add 'meta' property to store the parts of the response
+    # that aren't part of the jsonKey.
+    @meta = {}
+    _.extend(@meta, @options.meta) if _.isObject(@options.meta)
+
   # Idempotent parse
   parse: (resp) ->
-    if @jsonKey
-      resp[@jsonKey] || resp
+    if @jsonKey && (jsonResp = resp[@jsonKey])
+      meta = _.omit(resp, @jsonKey)
+      _.extend(@meta, meta)
+      jsonResp
     else
       resp
 

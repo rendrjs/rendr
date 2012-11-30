@@ -17,6 +17,15 @@ module.exports = class Base extends Backbone.Model
 
     @on 'change', @updateInModelStore
 
+  # Override 'add' to make sure models have '@app' attribute.
+  add: (models, options) ->
+    models = [models] unless _.isArray(models)
+
+    model.app = @app for model in models
+
+    super models, options
+
+
   # TODO: Should we keep a reference on the model to its modelStore?
   # Or not, because there could be a one-to-many mapping?
   # Or should it only exist in one?

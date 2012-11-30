@@ -16,7 +16,7 @@ module.exports = class Router extends Backbone.Router
   initialize: (options) ->
     @app = options.app
     @initRoutes()
-    @on 'action', @trackAction
+    @on 'action:start', @trackAction
     @app.on 'reload', @renderView
 
     @appView = new AppView({@app})
@@ -43,17 +43,21 @@ module.exports = class Router extends Backbone.Router
 
   getHandler: (pattern, route) ->
     (paramsArray...) =>
-      @trigger 'action', route
+      @trigger 'action:start', route
       if firstRender
         firstRender = false
         views = BaseView.attach(@app)
         @currentView = @getMainView(views)
+        @trigger 'action:end', route
       else
         params = @getParamsHash(pattern, paramsArray)
         handler = @getController(route.controller)[route.action]
         throw new Error("Missing action \"#{route.action}\" for controller \"#{route.controller}\"") unless handler
         handler = @authenticationFilter(handler, route)
-        handler.call(@, params, @render)
+        renderCallback = (args...) =>
+          @render(args...)
+          @trigger 'action:end', route
+        handler.call(@, params, renderCallback)
 
   # Hmm, there's probably a better way to do this.
   # By default, expect that there's only a single, main

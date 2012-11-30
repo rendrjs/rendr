@@ -3,7 +3,7 @@ env = require('../config/environments/env')
 paths = env.paths
 routes = require(paths.entryPath + '/routes')
 
-config = null;
+config = null
 
 stashPerf = (req, name, value) ->
   if (config && config.stashPerf)
@@ -12,7 +12,7 @@ stashPerf = (req, name, value) ->
 # given a name, eg "listings#show"
 # return function that matches that controller's action (eg the show method of the listings controller)
 getAction = (config) ->
-  controller = getController(config.controller);
+  controller = getController(config.controller)
   controller[config.action]
 
 getController = (controllerName) ->
@@ -28,12 +28,12 @@ getHandler = (action) ->
     req.route.keys.forEach (routeKey) ->
       params[routeKey.name] = req.route.params[routeKey.name]
 
-    start = new Date;
+    start = new Date
     action.call context, params, (err, template, data) ->
       stashPerf(req, "data", new Date - start)
       return handleErr(err, req, res) if err
 
-      start = new Date;
+      start = new Date
       res.render template, locals: data, app: req.rendrApp, req: req, (err, html) ->
         # TODO! consider setting pragma-no-cache headers based on route!
         if (err)
@@ -55,12 +55,12 @@ handleErr = (err, req, res) ->
     if (env.name == 'development')
       throw err
     else
-      res.render('error_view', app: req.rendrApp, req: req);
+      res.render('error_view', app: req.rendrApp, req: req)
       next()
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->
-    start = new Date;
+    start = new Date
     if routeInfo.authenticated && !req.rendrApp.loggedIn()
       res.redirect('/login')
     else

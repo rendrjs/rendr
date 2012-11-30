@@ -6,7 +6,7 @@ module.exports = class LocalStorageStore extends MemoryStore
     @_keys = {}
 
   _get: (key) ->
-    json = window.localStorage.getItem(formatKey(key))
+    json = window.localStorage.getItem(@_formatKey(key))
     data = try
       JSON.parse(json)
     catch e
@@ -15,17 +15,14 @@ module.exports = class LocalStorageStore extends MemoryStore
 
   _set: (key, data) ->
     json = JSON.stringify(data)
-    window.localStorage.setItem(formatKey(key), json)
+    window.localStorage.setItem(@_formatKey(key), json)
     @_keys[key] = true
 
   _clear: (key) ->
-    window.localStorage.removeItem(formatKey(key))
+    window.localStorage.removeItem(@_formatKey(key))
     delete @_keys[key]
 
   _clearAll: ->
     for key, value of @_keys
-      window.localStorage.removeItem(formatKey(key))
+      window.localStorage.removeItem(@_formatKey(key))
     @_keys = {}
-
-formatKey = (key) ->
-  "_lss:#{key}"

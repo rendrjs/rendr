@@ -25,13 +25,13 @@ module.exports = class MemoryStore
     return true
 
   _get: (key) ->
-    @cache[key]
+    @cache[@_formatKey(key)]
 
   _set: (key, data) ->
-    @cache[key] = data
+    @cache[@_formatKey(key)] = data
 
   _clear: (key) ->
-    delete @cache[key]
+    delete @cache[@_formatKey(key)]
 
   _clearAll: ->
     @cache = {}
@@ -41,3 +41,6 @@ module.exports = class MemoryStore
       @_clear(key)
     else
       @_clearAll()
+
+  _formatKey: (key) ->
+    key

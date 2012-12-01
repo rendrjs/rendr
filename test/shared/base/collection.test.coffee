@@ -17,7 +17,7 @@ describe 'BaseCollection', ->
       # Make 'sync' a noop.
       collection.sync = ->
 
-      should.not.exist collection.params
+      collection.params.should.eql {}
 
       collection.fetch
         url: 'foo'

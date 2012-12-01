@@ -22,7 +22,9 @@ module.exports = class Base extends Backbone.Collection
     # Add 'meta' property to store the parts of the response
     # that aren't part of the jsonKey.
     @meta = {}
-    _.extend(@meta, @options.meta) if _.isObject(@options.meta)
+    if _.isObject(@options.meta)
+      _.extend(@meta, @options.meta)
+      delete @options.meta
 
   # Idempotent parse
   parse: (resp) ->

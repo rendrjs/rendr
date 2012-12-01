@@ -17,7 +17,6 @@ module.exports = class CollectionStore extends BaseClass
       ids: collection.pluck('id')
       meta: collection.meta
     super key, data, null
-    console.log '>>>>>>>>>', key
 
   # Returns an array of model ids.
   get: (collectionName, params = {}) ->

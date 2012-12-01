@@ -22,16 +22,16 @@ describe 'BaseModel', ->
 
     fetcher.modelStore.set(MyModel.name, model)
     stored = fetcher.modelStore.get(MyModel.name, model.id)
-    stored.toJSON().should.eql attrs
+    stored.should.eql attrs
 
     # Change an attribute, make sure the store gets updated.
     attrs.status = 'accepted'
     model.set(status: attrs.status)
     stored = fetcher.modelStore.get(MyModel.name, model.id)
-    stored.toJSON().should.eql attrs
+    stored.should.eql attrs
 
     # Add an attribute, make sure the store gets updated.
     attrs.name = 'Bobert'
     model.set(name: attrs.name)
     stored = fetcher.modelStore.get(MyModel.name, model.id)
-    stored.toJSON().should.eql attrs
+    stored.should.eql attrs

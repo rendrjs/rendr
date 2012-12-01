@@ -17,7 +17,7 @@ module.exports = class Base extends Backbone.Collection
 
     # Store a reference to the params that were used to
     # query for these models.
-    @params = @options.params
+    @params = @options.params || {}
 
     # Add 'meta' property to store the parts of the response
     # that aren't part of the jsonKey.

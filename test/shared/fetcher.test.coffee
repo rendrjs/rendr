@@ -14,28 +14,45 @@ listingResponses =
     city: 'San Francisco'
 
 class Listing extends BaseModel
+  jsonKey: 'listing'
+
   fetch: (options) ->
-    resp = getModelResponse('full', options.data.id)
+    resp = getModelResponse('full', options.data.id, true)
     setTimeout =>
-      @set resp
-      options.success(this, resp)
+      parsed = @parse(resp)
+      @set(parsed)
+      options.success(this, parsed)
     , 1
 
 class Listings extends BaseCollection
   model: Listing
+  jsonKey: 'listings'
 
   fetch: (options) ->
-    resp = buildCollectionResponse()
+    resp = buildCollectionResponse(true)
+    if options.data?
+      resp.meta = options.data
     setTimeout =>
-      @reset resp
-      options.success(this, resp)
+      parsed = @parse(resp)
+      @reset(parsed.map (attrs) => new @model(attrs, parse: true))
+      options.success(this, parsed)
     , 1
 
-getModelResponse = (version, id) ->
-  _.extend {}, listingResponses[version], {id}
+getModelResponse = (version, id, addJsonKey = false) ->
+  resp = _.extend({}, listingResponses[version], {id})
+  if addJsonKey
+    _.tap {}, (obj) ->
+      obj.listing = resp
+  else
+    resp
 
-buildCollectionResponse = ->
-  [1..5].map (id) -> getModelResponse('basic', id)
+buildCollectionResponse = (addJsonKey = false) ->
+  resp = [1..5].map (id) -> getModelResponse('basic', id, addJsonKey)
+  if addJsonKey
+    _.tap {}, (obj) ->
+      obj.listings = resp
+  else
+    resp
 
 modelUtils.addClassMapping 'Listing', Listing
 modelUtils.addClassMapping 'Listings', Listings
@@ -46,6 +63,7 @@ describe 'fetcher', ->
 
     beforeEach ->
       fetcher.modelStore.clear()
+      fetcher.collectionStore.clear()
 
     it "should be able store and hydrate a model", ->
       rawListing = {id: 9, name: 'Sunny'}
@@ -53,7 +71,7 @@ describe 'fetcher', ->
         listing: new Listing(rawListing)
       fetchSummary =
         listing: { model: 'listing', id: 9 }
-      fetcher.storeModels results
+      fetcher.storeResults results
       hydrated = fetcher.hydrate fetchSummary
       listing = hydrated.listing
       listing.should.be.an.instanceOf Listing
@@ -66,8 +84,8 @@ describe 'fetcher', ->
       results =
         listings: new Listings(rawListings, params: params)
       fetchSummary =
-        listings: { collection: 'listings', ids: [1,3,99], params: params }
-      fetcher.storeModels results
+        listings: { collection: 'listings', ids: _.pluck(rawListings, 'id'), params: params }
+      fetcher.storeResults results
       hydrated = fetcher.hydrate fetchSummary
       listings = hydrated.listings
       listings.should.be.an.instanceOf Listings
@@ -75,7 +93,9 @@ describe 'fetcher', ->
       listings.params.should.eql params
 
       should.not.exist fetcher.collectionStore.get('Listings', {})
-      fetcher.collectionStore.get('Listings', params).should.eql listings.pluck('id')
+      fetcher.collectionStore.get('Listings', params).should.eql
+        ids: listings.pluck('id')
+        meta: {}
 
     it "should be able to hydrate multiple objects at once", ->
       rawListing = {id: 9, name: 'Sunny'}
@@ -86,7 +106,7 @@ describe 'fetcher', ->
       fetchSummary =
         listing: { model: 'listing', id: 9 }
         listings: { collection: 'listings', ids: [1,3,99] }
-      fetcher.storeModels results
+      fetcher.storeResults results
       hydrated = fetcher.hydrate fetchSummary
       listing = hydrated.listing
       listing.should.be.an.instanceOf Listing
@@ -116,6 +136,7 @@ describe 'fetcher', ->
 
     beforeEach ->
       fetcher.modelStore.clear()
+      fetcher.collectionStore.clear()
       fetcher.off(null, null)
 
     it "should be able to fetch a model", (done) ->
@@ -166,7 +187,7 @@ describe 'fetcher', ->
         results.collection.toJSON().should.eql(buildCollectionResponse())
 
         # Make sure that the basic version is stored in modelStore.
-        fetcher.modelStore.get('Listing', 1).toJSON().should.eql getModelResponse('basic', 1)
+        fetcher.modelStore.get('Listing', 1).should.eql getModelResponse('basic', 1)
 
         # Then, fetch the single model, which should be cached.
         fetchSpec =
@@ -259,4 +280,5 @@ describe 'fetcher', ->
       summary.collection.should.eql 'Listings'
       summary.ids.should.eql [1,2]
       summary.params.should.eql params
+
 

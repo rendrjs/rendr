@@ -49,7 +49,7 @@ module.exports = class Base extends Backbone.Model
 
   # Class method to get a model instance from the modelStore.
   @fetchFromCache: (id) ->
-    getFetcher().modelStore.get @name, id
+    getFetcher().modelStore.get(@name, id, true)
 
 getFetcher = ->
   fetcher ?= require('../fetcher')

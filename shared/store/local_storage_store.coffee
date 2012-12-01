@@ -26,3 +26,6 @@ module.exports = class LocalStorageStore extends MemoryStore
     for key, value of @_keys
       window.localStorage.removeItem(@_formatKey(key))
     @_keys = {}
+
+  @canHaz = ->
+    window?.localStorage?

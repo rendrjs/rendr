@@ -25,7 +25,7 @@ module.exports = class App extends Backbone.Model
     for own name, map of modelMap
       modelOrCollection = @fetcher.getModelForSpec(map.summary, map.data, params: map.params)
       results[name] = modelOrCollection
-    @fetcher.storeModels results
+    @fetcher.storeResults results
 
   # @client
   start: ->

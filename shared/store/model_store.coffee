@@ -3,10 +3,10 @@ LocalStorageStore = require('./local_storage_store')
 modelUtils = require('../model_utils')
 
 # TODO: be less magical. Use composition instead of inheritance.
-BaseClass = if global.isServer
-  MemoryStore
-else
+BaseClass = if LocalStorageStore.canHaz()
   LocalStorageStore
+else
+  MemoryStore
 
 module.exports = class ModelStore extends BaseClass
 
@@ -14,21 +14,21 @@ module.exports = class ModelStore extends BaseClass
     key = getModelStoreKey(modelName, model.id)
     # We want to merge the model attrs with whatever is already
     # present in the store.
-    existingModel = @get(modelName, model.id)
-    # TODO: Don't create a model just to call toJSON().
-    attrs = existingModel?.toJSON() || {}
-    newAttrs = _.extend {}, attrs, model.toJSON()
+    existingAttrs = @get(modelName, model.id) || {}
+    newAttrs = _.extend {}, existingAttrs, model.toJSON()
 
     super key, newAttrs, null
 
-  get: (modelName, id) ->
+  get: (modelName, id, returnModelInstance = false) ->
     key = getModelStoreKey(modelName, id)
     modelData = super key
-    model =
-      if modelData
+    if modelData
+      if returnModelInstance
         modelUtils.getModel(modelName, modelData)
       else
-        undefined
+        modelData
+    else
+      undefined
 
   _formatKey: (key) ->
    "_ms:#{key}"

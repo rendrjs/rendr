@@ -35,12 +35,9 @@
 async = if global.isServer then require('async') else window.async
 
 modelUtils = require('./model_utils')
-MemoryStore = require('./store/memory_store')
-ResponseStore = require('./store/response_store')
 ModelStore = require('./store/model_store')
 CollectionStore = require('./store/collection_store')
 
-responseStore = exports.responseStore = new ResponseStore
 modelStore = exports.modelStore = new ModelStore
 collectionStore = exports.collectionStore = new CollectionStore
 
@@ -81,22 +78,25 @@ retrieve = (fetchSpecs, options, callback) ->
       if !options.readFromCache
         fetchFromApi(spec, cb)
       else
-        # First, see if it's a model, and we have stored it.
+        modelData = null
+        modelOptions = {}
+
+        # First, see if we have stored the model or collection.
         if spec.model?
-          modelData = modelStore.get spec.model, spec.params.id
-        if modelData? && !isMissingKeys(modelData.toJSON(), spec.ensureKeys)
-          model = getModelForSpec(spec, modelData)
+          modelData = modelStore.get(spec.model, spec.params.id)
+        else if spec.collection?
+          collectionData = collectionStore.get(spec.collection, spec.params)
+          if collectionData
+            modelData = retrieveModelsForCollectionName(spec.collection, collectionData.ids)
+            modelOptions =
+              meta: collectionData.meta
+
+        if modelData? && !isMissingKeys(modelData, spec.ensureKeys)
+          model = getModelForSpec(spec, modelData, modelOptions)
           cb(null, model)
         else
-          # Then, see if we have cached this data.
-          getResponseFromStore spec, (err, value) ->
-            return cb(err) if err
-            if value?
-              model = getModelForSpec(spec, value)
-              cb(null, model)
-            else
-              # Else, fetch anew.
-              fetchFromApi(spec, cb)
+          # Else, fetch anew.
+          fetchFromApi(spec, cb)
 
   async.parallel batchedRequests, callback
 
@@ -117,30 +117,13 @@ fetchFromApi = (spec, callback) ->
       err = new Error(body)
       callback(err)
 
-getResponseFromStore = (spec, callback) ->
-  key = getResponseStoreKey(spec)
-  value = responseStore.get key
-  callback(null, value)
-
-storeResponse = (results, fetchSpecs) ->
-  for own name, model of results
-    spec = fetchSpecs[name]
-    key = getResponseStoreKey(spec)
-    expires = spec.expires || 0
-    responseStore.set key, model.toJSON(), expires
-
-# TODO key should be independent of params order
-# I.e., params = {per_page: 10, offset: 0} should
-# return same key as params = {offset: 0, per_page: 10}
-getResponseStoreKey = (spec) ->
-  modelKey = spec.model || spec.collection
-  params = spec.params
-  paramsKey = if params? then JSON.stringify(params) else ''
-  "#{modelKey}:#{paramsKey}"
+retrieveModelsForCollectionName = (collectionName, modelIds) ->
+  modelName = modelUtils.getModelNameForCollectionName(collectionName)
+  retrieveModels(modelName, modelIds)
 
 exports.retrieveModels = retrieveModels = (modelName, modelIds) ->
   _.map modelIds, (id) ->
-    modelStore.get modelName, id
+    modelStore.get(modelName, id)
 
 exports.summarize = summarize = (modelOrCollection) ->
   # Is it a Collection?
@@ -156,29 +139,26 @@ exports.summarize = summarize = (modelOrCollection) ->
       id: modelOrCollection.id
   summary
 
-exports.storeModels = storeModels = (results) ->
+exports.storeResults = storeResults = (results) ->
   for own name, modelOrCollection of results
-    summary = summarize(modelOrCollection)
-    if summary.model?
-      modelStore.set summary.model, modelOrCollection
+    if modelUtils.isModel(modelOrCollection)
+      # Store a single model.
+      modelOrCollection.store()
     else
       # Store all models for a collection.
-      _.each summary.ids, (id) ->
-        model = modelOrCollection.get(id)
-        model.store()
+      modelOrCollection.each (model) -> model.store()
 
       # Then store the model ids based on params.
-      collectionStore.set modelOrCollection, modelOrCollection.params
+      collectionStore.set modelOrCollection
 
 exports.hydrate = (summaries, options = {}) ->
   results = {}
   for own name, summary of summaries
     if summary.model?
-      results[name] = modelStore.get(summary.model, summary.id)
+      results[name] = modelStore.get(summary.model, summary.id, true)
     # Also support getting all models for a collection.
     else if summary.collection?
-      modelName = modelUtils.getModelNameForCollectionName(summary.collection)
-      models = retrieveModels(modelName, summary.ids)
+      models = retrieveModelsForCollectionName(summary.collection, summary.ids)
       results[name] = modelUtils.getCollection(summary.collection, models, params: summary.params)
     if results[name]? and options.app?
       results[name].app = options.app
@@ -210,7 +190,6 @@ exports.fetch = (fetchSpecs, options, callback) ->
     return callback(err) if err
 
     if options.writeToCache
-      storeResponse results, fetchSpecs
-      storeModels results
+      storeResults results
 
     callback(null, results)

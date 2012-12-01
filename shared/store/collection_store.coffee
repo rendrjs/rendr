@@ -3,17 +3,21 @@ LocalStorageStore = require('./local_storage_store')
 modelUtils = require('../model_utils')
 
 # TODO: be less magical. Use composition instead of inheritance.
-BaseClass = if global.isServer
-  MemoryStore
-else
+BaseClass = if LocalStorageStore.canHaz()
   LocalStorageStore
+else
+  MemoryStore
 
 module.exports = class CollectionStore extends BaseClass
 
-  set: (collection, params = {}) ->
+  set: (collection, params = null) ->
+    params ||= collection.params
     key = getStoreKey(collection.constructor.name, params)
-    modelIds = collection.pluck('id')
-    super key, modelIds, null
+    data =
+      ids: collection.pluck('id')
+      meta: collection.meta
+    super key, data, null
+    console.log '>>>>>>>>>', key
 
   # Returns an array of model ids.
   get: (collectionName, params = {}) ->

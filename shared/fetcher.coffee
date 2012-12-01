@@ -133,6 +133,7 @@ exports.summarize = summarize = (modelOrCollection) ->
       collection: modelOrCollection.constructor.name
       ids: modelOrCollection.pluck('id')
       params: modelOrCollection.params
+      meta: modelOrCollection.meta
   else if modelUtils.isModel(modelOrCollection)
     summary =
       model: modelOrCollection.constructor.name
@@ -158,8 +159,12 @@ exports.hydrate = (summaries, options = {}) ->
       results[name] = modelStore.get(summary.model, summary.id, true)
     # Also support getting all models for a collection.
     else if summary.collection?
-      models = retrieveModelsForCollectionName(summary.collection, summary.ids)
-      results[name] = modelUtils.getCollection(summary.collection, models, params: summary.params)
+      collectionData = collectionStore.get(summary.collection, summary.params)
+      models = retrieveModelsForCollectionName(summary.collection, collectionData.ids)
+      options =
+        params: summary.params
+        meta: collectionData.meta
+      results[name] = modelUtils.getCollection(summary.collection, models, options)
     if results[name]? and options.app?
       results[name].app = options.app
   results

@@ -273,12 +273,15 @@ describe 'fetcher', ->
       params =
         some: 'key'
         other: 'value'
-      collection = new Listings(models)
-      collection.params = params
+      meta =
+        the: 'one'
+        foo: 'butt'
+      collection = new Listings(models, {params, meta})
       summary = fetcher.summarize(collection)
 
       summary.collection.should.eql 'Listings'
       summary.ids.should.eql [1,2]
       summary.params.should.eql params
+      summary.meta.should.eql meta
 
 

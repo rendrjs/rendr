@@ -23,7 +23,7 @@ module.exports = class App extends Backbone.Model
   bootstrapData: (modelMap) ->
     results = {}
     for own name, map of modelMap
-      modelOrCollection = @fetcher.getModelForSpec(map.summary, map.data, params: map.params)
+      modelOrCollection = @fetcher.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'))
       results[name] = modelOrCollection
     @fetcher.storeResults results
 

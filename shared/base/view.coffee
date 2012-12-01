@@ -28,7 +28,7 @@ module.exports = class BaseView extends Backbone.View
 
     if @options.collection?
       @options.collection_name ||= model_utils.modelName(@options.collection.constructor)
-      @options.model_ids = @options.collection.pluck('id')
+      @options.collection_params = @options.collection.params
 
     @model = @options.model
     @collection = @options.collection
@@ -73,8 +73,8 @@ module.exports = class BaseView extends Backbone.View
           key = 'model_id'
           value = value.id
         else if key is 'collection'
-          key = 'model_ids'
-          value = JSON.stringify(value.pluck('id'))
+          key = 'collection_params'
+          value = JSON.stringify(value.params)
         if !_.isObject(value)
           attributes["data-#{key}"] = value
 
@@ -159,10 +159,10 @@ module.exports = class BaseView extends Backbone.View
         model: @options.model_name
         id: @options.model_id
 
-    if @options.collection_name? && @options.model_ids?
+    if @options.collection_name? && @options.collection_params?
       fetchSummary.collection =
         collection: @options.collection_name
-        ids: @options.model_ids
+        params: @options.collection_params
 
     if fetchSummary
       results = fetcher.hydrate(fetchSummary, {app: @app})

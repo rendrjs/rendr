@@ -2,12 +2,55 @@
 env = require('../config/environments/env')
 paths = env.paths
 routes = require(paths.entryPath + '/routes')
+utils = require('./utils')
+async = require('async')
 
-config = null
 
-stashPerf = (req, name, value) ->
-  if (config && config.stashPerf)
-    config.stashPerf(req, name, value)
+bindAppToRequest = () ->
+  (req, res, next) ->
+    App = require(env.paths.entryPath + "/app")
+    req.rendrApp = new App
+
+    sessionData = {}
+    if (req.session && req.session.data)
+      sessionData = req.session.data
+
+    initApp req.rendrApp, sessionData, (err) ->
+      return handleErr(err, req, res) if err
+      next()
+
+initApp = (rendrApp, sessionData, callback) ->
+  return callback() if (!rendrApp)
+
+  # set session manager defaults (locale/currency)
+  locale = 'en'
+  sm = rendrApp.sessionManager
+  if (sm && sessionData)
+    sm.set(sessionData, silent: true)
+    locale = sm.get('locale')
+
+  props = utils.rendrProperties()
+  if (props) 
+    rendrApp.set props
+
+  batched =
+    phrases: (cb) -> utils.phrases(locale, cb)
+    currencies: (cb) -> utils.currencies(cb)
+    locales: (cb) -> utils.locales(cb)
+  async.parallel batched, (err, results) ->
+    return callback(err) if (err)
+    Polyglot.extend(results.phrases)
+    rendrApp.set(results)
+    return callback()
+
+getAuthenticate = (routeInfo) ->
+  (req, res, next) ->
+    start = new Date
+    if routeInfo.authenticated && !req.rendrApp.loggedIn()
+      res.redirect('/login')
+    else
+      utils.stashPerf(req, "authenticate", new Date - start)
+      next()
 
 # given a name, eg "listings#show"
 # return function that matches that controller's action (eg the show method of the listings controller)
@@ -18,6 +61,7 @@ getAction = (config) ->
 getController = (controllerName) ->
   require(paths.entryPath + "/controllers/#{controllerName}_controller")
 
+# this is the method that renders the request
 getHandler = (action) ->
   (req, res, next) ->
     context =
@@ -30,7 +74,7 @@ getHandler = (action) ->
 
     start = new Date
     action.call context, params, (err, template, data) ->
-      stashPerf(req, "data", new Date - start)
+      utils.stashPerf(req, "data", new Date - start)
       return handleErr(err, req, res) if err
 
       start = new Date
@@ -41,13 +85,10 @@ getHandler = (action) ->
         return handleErr(err, req, res) if err
         res.type('html')
         res.end(html)
-        stashPerf(req, "render", new Date - start)
-        next()
-
+        utils.stashPerf(req, "render", new Date - start)
 
 handleErr = (err, req, res) ->
-  if (config && config.stashError)
-    config.stashError(req, err)
+  utils.stashError(req, err)
 
   if err.statusCode && err.statusCode is 401
     res.redirect('/login')
@@ -56,29 +97,6 @@ handleErr = (err, req, res) ->
       throw err
     else
       res.render('error_view', app: req.rendrApp, req: req)
-      next()
-
-getAuthenticate = (routeInfo) ->
-  (req, res, next) ->
-    start = new Date
-    if routeInfo.authenticated && !req.rendrApp.loggedIn()
-      res.redirect('/login')
-    else
-      stashPerf(req, "authenticate", new Date - start)
-      next()
-
-afterRender = () ->
-  (req, res, next) ->
-    if (config && config.afterRender)
-      config.afterRender(req, res)
-    # DO NOT CALL NEXT!  END FILTER CHAIN HERE
-
-# config
-# - stashError(req, err)
-# - stashPerf(req, name, runtime)
-exports.init = (conf) ->
-  config = conf
-
 
 # define routes
 exports.routes = () ->
@@ -87,6 +105,8 @@ exports.routes = () ->
     action = getAction(routeInfo)
     handler = getHandler(action)
     authenticate = getAuthenticate(routeInfo)
-    routeSpecs.push(['get', "/#{path}", authenticate, handler, afterRender()])
+    routeSpecs.push(['get', "/#{path}", bindAppToRequest(),
+                                        authenticate, 
+                                        handler])
 
   routeSpecs

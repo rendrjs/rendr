@@ -8,6 +8,7 @@ async = require('async')
 
 bindAppToRequest = () ->
   (req, res, next) ->
+    start = new Date
     App = require(env.paths.entryPath + "/app")
     req.rendrApp = new App
 
@@ -16,6 +17,7 @@ bindAppToRequest = () ->
       sessionData = req.session.data
 
     initApp req.rendrApp, sessionData, (err) ->
+      utils.stashPerf(req, "bindApp", new Date - start)
       return handleErr(err, req, res) if err
       next()
 

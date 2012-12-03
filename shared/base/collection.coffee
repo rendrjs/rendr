@@ -13,8 +13,6 @@ module.exports = class Base extends Backbone.Collection
     # Store a reference to the app instance.
     @app = @options.app
 
-    super
-
     # Store a reference to the params that were used to
     # query for these models.
     @params = @options.params || {}
@@ -25,6 +23,8 @@ module.exports = class Base extends Backbone.Collection
     if _.isObject(@options.meta)
       _.extend(@meta, @options.meta)
       delete @options.meta
+
+    super
 
   # Idempotent parse
   parse: (resp) ->

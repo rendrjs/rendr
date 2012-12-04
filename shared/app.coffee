@@ -15,6 +15,9 @@ module.exports = class App extends Backbone.Model
     @fetcher = fetcher
     @fetcher.app = @
 
+    if !global.isServer
+      @router = new ClientRouter(app: @)
+
   # To be overridden.
   loggedIn: ->
     false
@@ -29,7 +32,4 @@ module.exports = class App extends Backbone.Model
 
   # @client
   start: ->
-    @router = new ClientRouter(app: @)
-
-    Backbone.history.start
-      pushState: true
+    @router.start()

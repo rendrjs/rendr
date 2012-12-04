@@ -160,6 +160,7 @@ exports.hydrate = (summaries, options = {}) ->
     # Also support getting all models for a collection.
     else if summary.collection?
       collectionData = collectionStore.get(summary.collection, summary.params)
+      throw new Error("Collection of type \"#{summary.collection}\" not found for params: #{JSON.stringify(summary.params)}") unless collectionData?
       models = retrieveModelsForCollectionName(summary.collection, collectionData.ids)
       options =
         params: summary.params

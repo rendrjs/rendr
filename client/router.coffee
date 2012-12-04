@@ -110,6 +110,7 @@ module.exports = class Router extends Backbone.Router
   start: ->
     Backbone.history.start
       pushState: true
+      hashChange: false
 
   trackAction: (route) =>
     @previousFragment = @currentFragment

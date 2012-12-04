@@ -4,16 +4,6 @@ paths = env.paths
 routes = require(paths.entryPath + '/routes')
 utils = require('./utils')
 
-
-getAuthenticate = (routeInfo) ->
-  (req, res, next) ->
-    start = new Date
-    if routeInfo.authenticated && !req.rendrApp.loggedIn()
-      res.redirect('/login')
-    else
-      utils.stashPerf(req, "authenticate", new Date - start)
-      next()
-
 # given a name, eg "listings#show"
 # return function that matches that controller's action (eg the show method of the listings controller)
 getAction = (config) ->
@@ -66,7 +56,6 @@ exports.routes = () ->
   for own path, routeInfo of routes
     action = getAction(routeInfo)
     handler = getHandler(action)
-    authenticate = getAuthenticate(routeInfo)
-    routeSpecs.push(['get', "/#{path}", authenticate, handler])
+    routeSpecs.push(['get', "/#{path}", routeInfo.role, handler])
 
   routeSpecs

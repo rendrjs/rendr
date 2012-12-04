@@ -1,4 +1,5 @@
 BaseView = null
+modelUtils = null
 templateFinder = require('./template_finder')
 manifest = require(rendr.staticDir + '/public/manifest') if global.isServer
 
@@ -14,6 +15,9 @@ module.exports =
 
   view: (viewName, block) ->
     BaseView ||= require('./base/view')
+    modelUtils ||= require('./model_utils')
+
+    viewName = modelUtils.underscorize(viewName)
 
     options = block.hash || {}
 

@@ -3,47 +3,7 @@ env = require('../config/environments/env')
 paths = env.paths
 routes = require(paths.entryPath + '/routes')
 utils = require('./utils')
-async = require('async')
 
-
-bindAppToRequest = () ->
-  (req, res, next) ->
-    start = new Date
-    App = require(env.paths.entryPath + "/app")
-    req.rendrApp = new App
-
-    sessionData = {}
-    if (req.session && req.session.data)
-      sessionData = req.session.data
-
-    initApp req.rendrApp, sessionData, (err) ->
-      utils.stashPerf(req, "bindApp", new Date - start)
-      return handleErr(err, req, res) if err
-      next()
-
-initApp = (rendrApp, sessionData, callback) ->
-  return callback() if (!rendrApp)
-
-  # set session manager defaults (locale/currency)
-  locale = 'en'
-  sm = rendrApp.sessionManager
-  if (sm && sessionData)
-    sm.set(sessionData, silent: true)
-    locale = sm.get('locale')
-
-  props = utils.rendrProperties()
-  if (props) 
-    rendrApp.set props
-
-  batched =
-    phrases: (cb) -> utils.phrases(locale, cb)
-    currencies: (cb) -> utils.currencies(cb)
-    locales: (cb) -> utils.locales(cb)
-  async.parallel batched, (err, results) ->
-    return callback(err) if (err)
-    Polyglot.extend(results.phrases)
-    rendrApp.set(results)
-    return callback()
 
 getAuthenticate = (routeInfo) ->
   (req, res, next) ->
@@ -107,8 +67,6 @@ exports.routes = () ->
     action = getAction(routeInfo)
     handler = getHandler(action)
     authenticate = getAuthenticate(routeInfo)
-    routeSpecs.push(['get', "/#{path}", bindAppToRequest(),
-                                        authenticate, 
-                                        handler])
+    routeSpecs.push(['get', "/#{path}", authenticate, handler])
 
   routeSpecs

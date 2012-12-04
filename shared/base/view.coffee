@@ -129,8 +129,13 @@ module.exports = class BaseView extends Backbone.View
     fetcher.fetch fetchSpec, (err, results) =>
       @setLoading(false)
       return console.log "FETCH ERR: #{err}" if err
-      @parseOptions(results)
-      @render()
+
+      # Check @parentView as a way to see if view is still present on the page.
+      # It's possible that by the time the XHR returns, the user has navigated
+      # away to a new page.
+      if @parentView?
+        @parseOptions(results)
+        @render()
 
   # Anything to do before rendering on the client or server.
   # This is useful for i.e. accessing @model in the client after

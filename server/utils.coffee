@@ -16,27 +16,3 @@ exports.stashError = (req, err) ->
     config.stashError(req, err)
   else
     console.log("rendr.server.utils: missing stashError")
-
-exports.phrases = (locale, callback) ->
-  if (config && config.phrases)
-    config.phrases(locale, callback)
-  else
-    console.log("rendr.server.utils: missing phrases")
-
-exports.currencies = (callback) ->
-  if (config && config.currencies)
-    config.currencies(callback)
-  else
-    console.log("rendr.server.utils: missing currencies")
-
-exports.locales = (callback) ->
-  if (config && config.locales)
-    config.locales(callback)
-  else
-    console.log("rendr.server.utils: missing locales")
-
-exports.rendrProperties = () ->
-  properties = null
-  if (config && config.properties)
-    properties = config.properties
-  return properties

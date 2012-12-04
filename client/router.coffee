@@ -83,6 +83,13 @@ module.exports = class Router extends Backbone.Router
      memo
     , {})
 
+  matchingRoute: (path) ->
+    _.find Backbone.history.handlers, (handler) ->
+      handler.route.test(path)
+
+  matchesAnyRoute: (path) ->
+    @matchingRoute(path)?
+
   redirectTo: (path) ->
     @navigate path, true
 
@@ -99,6 +106,10 @@ module.exports = class Router extends Backbone.Router
 
   renderView: =>
     @appView.setCurrentView(@currentView)
+
+  start: ->
+    Backbone.history.start
+      pushState: true
 
   trackAction: (route) =>
     @previousFragment = @currentFragment

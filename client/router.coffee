@@ -78,10 +78,10 @@ module.exports = class Router extends Backbone.Router
 
   getParamsHash: (pattern, paramsArray) ->
     paramNames = _.map(pattern.match(extractParamNamesRe), (name) -> name.slice(1))
-    paramsHash = {}
-    for param, i in paramsArray
-      paramsHash[paramNames[i]] = paramsArray[i]
-    paramsHash
+    _.inject(paramNames, (memo, name, i) ->
+     memo[name] = paramsArray[i]
+     memo
+    , {})
 
   redirectTo: (path) ->
     @navigate path, true

@@ -142,15 +142,7 @@ exports.summarize = summarize = (modelOrCollection) ->
 
 exports.storeResults = storeResults = (results) ->
   for own name, modelOrCollection of results
-    if modelUtils.isModel(modelOrCollection)
-      # Store a single model.
-      modelOrCollection.store()
-    else
-      # Store all models for a collection.
-      modelOrCollection.each (model) -> model.store()
-
-      # Then store the model ids based on params.
-      collectionStore.set modelOrCollection
+    modelOrCollection.store()
 
 exports.hydrate = (summaries, options = {}) ->
   results = {}

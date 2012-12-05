@@ -7,31 +7,56 @@ modelUtils = require('../../../shared/model_utils')
 
 describe 'BaseModel', ->
 
+  beforeEach ->
+    fetcher.modelStore.clear()
+    class @MyModel extends BaseModel
+    modelUtils.addClassMapping(@MyModel.name, @MyModel)
+
+
   it "should update modelStore when values change", ->
     attrs =
       id: 9
       status: 'pending'
 
-    class MyModel extends BaseModel
-    modelUtils.addClassMapping(MyModel.name, MyModel)
+    model = new @MyModel(attrs)
 
-    model = new MyModel(attrs)
-
-    stored = fetcher.modelStore.get(MyModel.name, model.id)
+    stored = fetcher.modelStore.get(@MyModel.name, model.id)
     should.not.exist(stored)
 
-    fetcher.modelStore.set(MyModel.name, model)
-    stored = fetcher.modelStore.get(MyModel.name, model.id)
+    fetcher.modelStore.set(@MyModel.name, model)
+    stored = fetcher.modelStore.get(@MyModel.name, model.id)
     stored.should.eql attrs
 
     # Change an attribute, make sure the store gets updated.
     attrs.status = 'accepted'
     model.set(status: attrs.status)
-    stored = fetcher.modelStore.get(MyModel.name, model.id)
+    stored = fetcher.modelStore.get(@MyModel.name, model.id)
     stored.should.eql attrs
 
     # Add an attribute, make sure the store gets updated.
     attrs.name = 'Bobert'
     model.set(name: attrs.name)
-    stored = fetcher.modelStore.get(MyModel.name, model.id)
+    stored = fetcher.modelStore.get(@MyModel.name, model.id)
     stored.should.eql attrs
+
+  describe 'store', ->
+
+    it "should store the model", ->
+      attrs =
+        id: 938
+        type: 'foobiz'
+      model = new @MyModel(attrs)
+      model.store()
+      stored = fetcher.modelStore.get(@MyModel.name, model.id)
+      stored.should.eql attrs
+
+  describe 'fetchFromCache', ->
+
+    it "should fetch from the store", ->
+      attrs =
+        id: 42
+        type: 'rocknroll'
+      model = new @MyModel(attrs)
+      model.store()
+      storedModel = @MyModel.fetchFromCache(attrs.id)
+      storedModel.toJSON().should.eql attrs

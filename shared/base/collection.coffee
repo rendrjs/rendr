@@ -1,4 +1,5 @@
 syncer = require('../syncer')
+fetcher = null
 
 BaseModel = require('./model')
 
@@ -43,3 +44,11 @@ module.exports = class Base extends Backbone.Collection
   sync: syncer.getSync()
 
   getUrl: syncer.getUrl
+
+  # Instance method to store the collection and its models.
+  store: ->
+    @each (model) -> model.store()
+    getFetcher().collectionStore.set @
+
+getFetcher = ->
+  fetcher ?= require('../fetcher')

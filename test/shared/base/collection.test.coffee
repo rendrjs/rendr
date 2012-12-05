@@ -2,6 +2,8 @@ require('../../../shared/globals')
 should = require('should')
 
 BaseCollection = require('../../../shared/base/collection')
+fetcher = require('../../../shared/fetcher')
+modelUtils = require('../../../shared/model_utils')
 
 describe 'BaseCollection', ->
 
@@ -51,3 +53,29 @@ describe 'BaseCollection', ->
       collection.jsonKey = 'base_collection'
       collection.parse(jsonKeyResp)
       collection.meta.should.eql meta
+
+  describe "store", ->
+
+    beforeEach ->
+      fetcher.modelStore.clear()
+      fetcher.collectionStore.clear()
+      class @MyCollection extends BaseCollection
+      console.log @MyCollection.model
+
+    it "should store its models in the modelStore and params in collectionStore", ->
+      models = [{id: 1, foo: 'bar'}, {id: 2, foo: 'bot'}]
+      meta =
+        item1: 'value1'
+        item2: 'value2'
+
+      collection = new @MyCollection(models, {meta: meta})
+      collection.store()
+
+      models.forEach (modelAttrs) =>
+        storedModel = fetcher.modelStore.get collection.model.name, modelAttrs.id
+        storedModel.should.eql modelAttrs
+
+      storedCollection = fetcher.collectionStore.get @MyCollection.name, collection.params
+      storedCollection.ids.should.eql _.pluck(models, 'id')
+      storedCollection.meta.should.eql meta
+

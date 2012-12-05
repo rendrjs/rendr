@@ -60,7 +60,6 @@ describe 'BaseCollection', ->
       fetcher.modelStore.clear()
       fetcher.collectionStore.clear()
       class @MyCollection extends BaseCollection
-      console.log @MyCollection.model
 
     it "should store its models in the modelStore and params in collectionStore", ->
       models = [{id: 1, foo: 'bar'}, {id: 2, foo: 'bot'}]

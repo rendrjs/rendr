@@ -36,6 +36,14 @@ module.exports = class BaseView extends Backbone.View
   # Key for the template
   name: null
 
+  # Parent of the current view.
+  # We make sure to stick this on the prototype as a runtime optimization
+  # for V8. It's best not to add properties to the instance after initialization.
+  parentView: null
+
+  # Children of the current view.
+  childViews: null
+
   # Get data for template.  This also acts as a view-model.
   # Try to return proper data if model or collection is available.
   getTemplateData: ->

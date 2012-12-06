@@ -16,7 +16,8 @@ module.exports = class AppView extends BaseView
 
   setCurrentView: (view) ->
     @$content ||= $(@options.contentEl)
-    @$content.html(view.render().el)
+    @$content.html(view.el)
+    view.render()
 
   _bindInterceptClick: ->
     @$el.on 'click', 'a:not([data-pass-thru])', @_interceptClick

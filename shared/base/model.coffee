@@ -39,6 +39,8 @@ module.exports = class Base extends Backbone.Model
     else
       resp
 
+  checkFresh: syncer.checkFresh
+
   sync: syncer.getSync()
 
   getUrl: syncer.getUrl

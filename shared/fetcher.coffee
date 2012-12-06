@@ -38,14 +38,14 @@ modelUtils = require('./model_utils')
 ModelStore = require('./store/model_store')
 CollectionStore = require('./store/collection_store')
 
-modelStore = exports.modelStore = new ModelStore
-collectionStore = exports.collectionStore = new CollectionStore
-
 # Mixin Backbone.Events for events that work in client & server.
-_.extend exports, Backbone.Events
+fetcher = _.extend exports, Backbone.Events
+
+modelStore = fetcher.modelStore = new ModelStore
+collectionStore = fetcher.collectionStore = new CollectionStore
 
 # Returns an instance of Model or Collection.
-exports.getModelForSpec = getModelForSpec = (spec, attrsOrModels = {}, options = {}) ->
+fetcher.getModelForSpec = (spec, attrsOrModels = {}, options = {}) ->
   if spec.model?
     method = 'getModel'
     modelName = spec.model
@@ -65,9 +65,33 @@ exports.getModelForSpec = getModelForSpec = (spec, attrsOrModels = {}, options =
       _.defaults options, spec.params
 
   _.defaults options,
-    app: exports.app
+    app: fetcher.app
 
   modelUtils[method](modelName, attrsOrModels, options)
+
+# Used to hold timestamps of when 'checkFresh()' was called on a model/collection.
+# We use this to throttle it in 'shouldCheckFresh()'.
+fetcher.checkedFreshTimestamps = {}
+
+# Only once every five seconds. Smarter?
+fetcher.checkedFreshRate = 5000
+
+fetcher.shouldCheckFresh = (spec) ->
+  key = fetcher.checkedFreshKey(spec)
+  timestamp = fetcher.checkedFreshTimestamps[key]
+  return true if !timestamp
+  return true if new Date().getTime() - timestamp > fetcher.checkedFreshRate
+  false
+
+fetcher.didCheckFresh = (spec) ->
+  key = fetcher.checkedFreshKey(spec)
+  fetcher.checkedFreshTimestamps[key] = new Date().getTime()
+
+fetcher.checkedFreshKey = (spec) ->
+  meta =
+    name: spec.model || spec.collection
+    params: spec.params
+  JSON.stringify(meta)
 
 # map fetchSpecs to models and fetch data in parallel
 retrieve = (fetchSpecs, options, callback) ->
@@ -91,8 +115,16 @@ retrieve = (fetchSpecs, options, callback) ->
             modelOptions =
               meta: collectionData.meta
 
-        if modelData? && !isMissingKeys(modelData, spec.ensureKeys)
-          model = getModelForSpec(spec, modelData, modelOptions)
+        # If we found the model/collection in the store, then return that.
+        if modelData? && !fetcher.isMissingKeys(modelData, spec.ensureKeys)
+          model = fetcher.getModelForSpec(spec, modelData, modelOptions)
+
+          # If 'checkFresh' is set (and we're in the client), then before we
+          # return the cached object we fire off a fetch, compare the results,
+          # and if the data is different, we trigger a 'refresh' event.
+          if spec.checkFresh && !global.isServer && fetcher.shouldCheckFresh(spec)
+            model.checkFresh()
+            fetcher.didCheckFresh(spec)
           cb(null, model)
         else
           # Else, fetch anew.
@@ -100,7 +132,7 @@ retrieve = (fetchSpecs, options, callback) ->
 
   async.parallel batchedRequests, callback
 
-exports.isMissingKeys = isMissingKeys = (modelData, keys) ->
+fetcher.isMissingKeys = (modelData, keys) ->
   return false unless keys?
   keys = [keys] unless _.isArray(keys)
   for key in keys
@@ -108,7 +140,7 @@ exports.isMissingKeys = isMissingKeys = (modelData, keys) ->
   false
 
 fetchFromApi = (spec, callback) ->
-  model = getModelForSpec(spec)
+  model = fetcher.getModelForSpec(spec)
   model.fetch
     data: spec.params
     success: (model, body) ->
@@ -121,11 +153,11 @@ retrieveModelsForCollectionName = (collectionName, modelIds) ->
   modelName = modelUtils.getModelNameForCollectionName(collectionName)
   retrieveModels(modelName, modelIds)
 
-exports.retrieveModels = retrieveModels = (modelName, modelIds) ->
+retrieveModels = (modelName, modelIds) ->
   _.map modelIds, (id) ->
     modelStore.get(modelName, id)
 
-exports.summarize = summarize = (modelOrCollection) ->
+fetcher.summarize = (modelOrCollection) ->
   # Is it a Collection?
   summary = {}
   if modelUtils.isCollection(modelOrCollection)
@@ -140,11 +172,11 @@ exports.summarize = summarize = (modelOrCollection) ->
       id: modelOrCollection.id
   summary
 
-exports.storeResults = storeResults = (results) ->
+fetcher.storeResults = (results) ->
   for own name, modelOrCollection of results
     modelOrCollection.store()
 
-exports.hydrate = (summaries, options = {}) ->
+fetcher.hydrate = (summaries, options = {}) ->
   results = {}
   for own name, summary of summaries
     if summary.model?
@@ -162,9 +194,9 @@ exports.hydrate = (summaries, options = {}) ->
       results[name].app = options.app
   results
 
-exports.pendingFetches = 0
+fetcher.pendingFetches = 0
 
-exports.fetch = (fetchSpecs, options, callback) ->
+fetcher.fetch = (fetchSpecs, options, callback) ->
   # Support both (fetchSpecs, options, callback)
   # and (fetchSpecs, callback).
   if arguments.length is 2
@@ -180,14 +212,14 @@ exports.fetch = (fetchSpecs, options, callback) ->
     options.readFromCache ?= true
     options.writeToCache ?= true
 
-  exports.pendingFetches++
-  exports.trigger 'fetch:start', fetchSpecs
+  fetcher.pendingFetches++
+  fetcher.trigger 'fetch:start', fetchSpecs
   retrieve fetchSpecs, options, (err, results) ->
-    exports.pendingFetches--
-    exports.trigger 'fetch:end', fetchSpecs
+    fetcher.pendingFetches--
+    fetcher.trigger 'fetch:end', fetchSpecs
     return callback(err) if err
 
     if options.writeToCache
-      storeResults results
+      fetcher.storeResults results
 
     callback(null, results)

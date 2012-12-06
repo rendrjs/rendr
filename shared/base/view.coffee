@@ -6,11 +6,18 @@ noop = ->
 
 module.exports = class BaseView extends Backbone.View
 
+  # Whether or not to re-render this view when the model or collection
+  # emits a 'refresh' event. Used with 'model|collection.checkFresh()'.
+  renderOnRefresh: false
+
   constructor: (options) ->
     super
     @name ||= model_utils.underscorize(@constructor.name)
     @parseOptions(options)
     @postInitialize()
+
+    if (obj = @model || @collection) && @renderOnRefresh
+      obj.on 'refresh', @render, @
 
   postInitialize: noop
 
@@ -223,6 +230,8 @@ module.exports = class BaseView extends Backbone.View
     view.remove() for view in @childViews || []
     @childViews = null
     @parentView = null
+    if (obj = @model || @collection)
+      obj.off null, null, @
     super
 
   # Class methods

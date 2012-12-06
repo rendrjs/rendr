@@ -20,6 +20,13 @@ module.exports = class CollectionStore extends BaseClass
 
   # Returns an array of model ids.
   get: (collectionName, params = {}) ->
+    # Kind of jank-sauce. Always merge in the default
+    # params for the given collection.
+    Collection = modelUtils.getCollectionConstructor(collectionName)
+
+    params = _.clone(params)
+    params = _.defaults(params, Collection::defaultParams)
+
     key = getStoreKey(collectionName, params)
     super key
 

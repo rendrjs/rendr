@@ -73,8 +73,8 @@ fetcher.getModelForSpec = (spec, attrsOrModels = {}, options = {}) ->
 # We use this to throttle it in 'shouldCheckFresh()'.
 fetcher.checkedFreshTimestamps = {}
 
-# Only once every five seconds. Smarter?
-fetcher.checkedFreshRate = 5000
+# Only once every ten seconds. Smarter?
+fetcher.checkedFreshRate = 10000
 
 fetcher.shouldCheckFresh = (spec) ->
   key = fetcher.checkedFreshKey(spec)

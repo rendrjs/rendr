@@ -284,4 +284,43 @@ describe 'fetcher', ->
       summary.params.should.eql params
       summary.meta.should.eql meta
 
+  describe 'checkFresh', ->
+
+    describe 'didCheckFresh', ->
+
+      beforeEach ->
+        fetcher.checkedFreshTimestamps = {}
+        @spec =
+          model: 'foobutt'
+          params: {}
+
+      it "should store it properly", ->
+        fetcher.didCheckFresh(@spec)
+        key = fetcher.checkedFreshKey(@spec)
+
+        fetcher.checkedFreshTimestamps[key].should.be.ok
+
+    describe 'shouldCheckFresh', ->
+
+      beforeEach ->
+        fetcher.checkedFreshTimestamps = {}
+        @spec =
+          model: 'foobutt'
+          params: {}
+
+      it "should return true if timestamp doesn't exist", ->
+        fetcher.shouldCheckFresh(@spec).should.be.true
+
+      it "should return true if timestamp exists and is greater than 'checkedFreshRate' ago", ->
+        key = fetcher.checkedFreshKey(@spec)
+        now = new Date().getTime()
+        fetcher.checkedFreshTimestamps[key] = now - fetcher.checkedFreshRate - 1000
+        fetcher.shouldCheckFresh(@spec).should.be.true
+
+      it "should return false if timestamp exists and is less than 'checkedFreshRate' ago", ->
+        key = fetcher.checkedFreshKey(@spec)
+        now = new Date().getTime()
+        fetcher.checkedFreshTimestamps[key] = now - 1
+        fetcher.shouldCheckFresh(@spec).should.be.false
+
 

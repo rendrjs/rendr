@@ -2,10 +2,52 @@ require('../../../shared/globals')
 should = require('should')
 
 BaseCollection = require('../../../shared/base/collection')
+BaseModel = require('../../../shared/base/model')
 fetcher = require('../../../shared/fetcher')
 modelUtils = require('../../../shared/model_utils')
 
 describe 'BaseCollection', ->
+
+  describe 'parse', ->
+
+    beforeEach ->
+      class @MyCollection extends BaseCollection
+        jsonKey: 'my_collection'
+        model:
+          class MyModel extends BaseModel
+            jsonKey: 'my_model'
+
+      @collection = new @MyCollection
+
+      models = [
+        {id: 1, name: 'one'}
+        {id: 2, name: 'two'}
+      ]
+
+      modelsNested = [
+        {my_model: {id: 1, name: 'one'}}
+        {my_model: {id: 2, name: 'two'}}
+      ]
+
+      @denested = models
+      @nested =
+        my_collection: models
+
+      @denestedModelsNested = modelsNested
+      @nestedModelsNested =
+        my_collection: modelsNested
+
+    it "should not de-nest collection if not nested collection", ->
+      @collection.parse(@denested).should.eql @denested
+
+    it "should de-nest collection if nested collection", ->
+      @collection.parse(@nested).should.eql @denested
+
+    it "should de-nest models if nested models", ->
+      @collection.parse(@denestedModelsNested).should.eql @denested
+
+    it "should de-nest collection and models if nested collection and models", ->
+      @collection.parse(@nestedModelsNested).should.eql @denested
 
   describe 'fetch', ->
 
@@ -60,6 +102,7 @@ describe 'BaseCollection', ->
       fetcher.modelStore.clear()
       fetcher.collectionStore.clear()
       class @MyCollection extends BaseCollection
+      modelUtils.addClassMapping @MyCollection.name, @MyCollection
 
     it "should store its models in the modelStore and params in collectionStore", ->
       models = [{id: 1, foo: 'bar'}, {id: 2, foo: 'bot'}]

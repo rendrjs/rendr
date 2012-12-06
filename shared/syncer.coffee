@@ -1,4 +1,5 @@
 qs = require('qs') if global.isServer
+modelUtils = null
 
 methodMap =
   'create': 'POST'
@@ -86,6 +87,52 @@ exports.getUrl = (url = null, clientPrefix = false, params = {}) ->
   url ||= _.result(@, 'url')
   url = "/api#{url}" if clientPrefix
   interpolateParams(@, url, params)
+
+
+# This is used to fire off a 'fetch', compare the results to the data we have,
+# and then trigger a 'refresh' event if the data has changed.
+#
+# Happens only client-side.
+exports.checkFresh = ->
+  # Lame: have to lazy-require to prevent circular dependency.
+  modelUtils ||= require('./model_utils')
+
+  @app?.trigger 'checkFresh:start'
+
+  url = @getUrl(null, true)
+  $.getJSON url, @params, (resp) =>
+    # The second argument 'false' tells 'parse()' not to modify the instance.
+    data = @parse(resp, false)
+    differs = objectsDiffer(data, @toJSON())
+
+    @app?.trigger 'checkFresh:end', differs
+
+    if differs
+      if modelUtils.isModel(@)
+        @set(data, silent: true)
+      else
+        @reset(data, parse: true, silent: true)
+      # We manually store the updated data.
+      @store()
+      @trigger 'refresh'
+
+objectsDiffer = exports.objectsDiffer = (data1, data2) ->
+  changed = false
+
+  keys = _.unique _.keys(data1).concat(_.keys(data2))
+  for key in keys
+    value1 = data1[key]
+    value2 = data2[key]
+
+    # If attribute is an object recurse
+    if _.isObject(value1) and _.isObject(value2)
+      changed = objectsDiffer(value1, value2)
+
+    # Test for equality
+    else if !_.isEqual(value1, value2)
+      changed = true
+
+  changed
 
 extractParamNamesRe = /:(\w+)/g
 

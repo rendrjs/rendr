@@ -4,7 +4,7 @@ should = require('should')
 BaseCollection = require('../../../shared/base/collection')
 modelUtils = require('../../../shared/model_utils')
 
-modelUtils.addClassMapping 'base_collection', BaseCollection
+modelUtils.addClassMapping BaseCollection.name, BaseCollection
 
 describe 'CollectionStore', ->
 

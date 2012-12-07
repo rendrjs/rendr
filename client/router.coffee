@@ -69,7 +69,8 @@ module.exports = class Router extends Backbone.Router
   authenticationFilter: (handler, route) ->
     (params, callback) =>
       if route.role && route.role != 'guest' && !@app.loggedIn()
-        @redirectTo('/login')
+        fragment = encodeURIComponent(Backbone.history.fragment)
+        @redirectTo("/login?redirect=#{fragment}", replace: true)
       else
         handler.call(@, params, callback)
 
@@ -90,8 +91,10 @@ module.exports = class Router extends Backbone.Router
   matchesAnyRoute: (path) ->
     @matchingRoute(path)?
 
-  redirectTo: (path) ->
-    @navigate path, true
+  redirectTo: (path, options = {}) ->
+    _.defaults options,
+      trigger: true
+    @navigate path, options
 
   render: (err, view_key, data = {}) =>
     @currentView.remove() if @currentView

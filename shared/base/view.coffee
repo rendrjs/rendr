@@ -78,6 +78,7 @@ module.exports = class BaseView extends Backbone.View
   nonAttributeOptions: [
     'id'
     'className'
+    'tagName'
   ]
 
   # Get HTML attributes to add to el.

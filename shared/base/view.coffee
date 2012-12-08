@@ -76,6 +76,7 @@ module.exports = class BaseView extends Backbone.View
 
   # Any options not to create data-attributes for.
   nonAttributeOptions: [
+    'id'
     'className'
   ]
 

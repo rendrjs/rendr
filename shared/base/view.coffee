@@ -68,7 +68,7 @@ module.exports = class BaseView extends Backbone.View
     data
 
   getTemplateName: ->
-    @name
+    @options.template_name || @name
 
   # Get template function
   getTemplate: ->

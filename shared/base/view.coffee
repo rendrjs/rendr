@@ -74,6 +74,11 @@ module.exports = class BaseView extends Backbone.View
   getTemplate: ->
     templateFinder.getTemplate(@getTemplateName())
 
+  # Any options not to create data-attributes for.
+  nonAttributeOptions: [
+    'className'
+  ]
+
   # Get HTML attributes to add to el.
   getAttributes: ->
     attributes = {}
@@ -90,7 +95,7 @@ module.exports = class BaseView extends Backbone.View
         else if key is 'collection'
           key = 'collection_params'
           value = htmlEscape(JSON.stringify(value.params))
-        if !_.isObject(value)
+        if !_.isObject(value) && !_.include(@nonAttributeOptions, key)
           attributes["data-#{key}"] = value
 
     attributes

@@ -43,6 +43,7 @@ handleErr = (err, req, res) ->
   utils.stashError(req, err)
 
   if err.statusCode && err.statusCode is 401
+    res.status(err.statusCode)
     res.redirect('/login')
   else
     data =
@@ -52,6 +53,7 @@ handleErr = (err, req, res) ->
       data.locals =
         message: err.message
         stack: err.stack
+    res.status(err.statusCode || 500)
     res.render('error_view', data)
 
 # define routes

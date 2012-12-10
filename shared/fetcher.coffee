@@ -148,6 +148,7 @@ fetchFromApi = (spec, callback) ->
     error: (model, body, options) ->
       bodyOutput = if typeof body is 'string' then body.slice(0, 150) else JSON.stringify(body)
       err = new Error("ERROR fetching model '#{model.constructor.name}' with options '#{JSON.stringify(options)}'. Response: " + bodyOutput)
+      err.statusCode = body.statusCode
       callback(err)
 
 retrieveModelsForCollectionName = (collectionName, modelIds) ->

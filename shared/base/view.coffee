@@ -98,7 +98,7 @@ module.exports = class BaseView extends Backbone.View
           key = 'collection_params'
           value = htmlEscape(JSON.stringify(value.params))
         if !_.isObject(value) && !_.include(@nonAttributeOptions, key)
-          attributes["data-#{key}"] = value
+          attributes["data-#{key}"] = htmlEscape(value)
 
     attributes
 
@@ -267,7 +267,7 @@ if global.isServer
   BaseView::delegateEvents = noop
 
 htmlEscape = (str) ->
-  String(str)
+  str
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')

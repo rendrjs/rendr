@@ -267,7 +267,7 @@ if global.isServer
   BaseView::delegateEvents = noop
 
 htmlEscape = (str) ->
-  str
+  String(str)
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')

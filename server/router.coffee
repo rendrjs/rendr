@@ -44,10 +44,14 @@ handleErr = (err, req, res) ->
   if err.statusCode && err.statusCode is 401
     res.redirect('/login')
   else
-    if (env.name == 'development')
-      throw err
-    else
-      res.render('error_view', app: req.rendrApp, req: req)
+    data =
+      app: req.rendrApp
+      req: req
+    if env.name == 'development'
+      data.locals =
+        message: err.message
+        stack: err.stack
+    res.render('error_view', data)
 
 # define routes
 exports.routes = () ->

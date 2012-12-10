@@ -1,5 +1,6 @@
 qs = require('qs') if global.isServer
 modelUtils = null
+server = null
 
 methodMap =
   'create': 'POST'
@@ -33,8 +34,7 @@ serverSync = (method, model, options) ->
   else
     _.extend req.query, data
 
-  if !server?
-    server = require('../server/server') if global.isServer
+  server ?= require('../server/server')
 
   server.dataAdapter.makeRequest req, (err, response, body) ->
     if err

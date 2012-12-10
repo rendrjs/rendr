@@ -30,12 +30,13 @@ getHandler = (action) ->
       return handleErr(err, req, res) if err
 
       start = new Date
-      res.render template, locals: data, app: req.rendrApp, req: req, (err, html) ->
-        if (err)
-          console.log("RENDER ERROR", err)
+      viewData =
+        locals: data
+        app: req.rendrApp
+        req: req
+      res.render template, viewData, (err, html) ->
         return handleErr(err, req, res) if err
-        res.type('html')
-        res.end(html)
+        res.type('html').end(html)
         utils.stashPerf(req, "render", new Date - start)
 
 handleErr = (err, req, res) ->

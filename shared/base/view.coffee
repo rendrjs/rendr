@@ -96,9 +96,9 @@ module.exports = class BaseView extends Backbone.View
           value = value.id
         else if key is 'collection'
           key = 'collection_params'
-          value = htmlEscape(JSON.stringify(value.params))
+          value = _.escape(JSON.stringify(value.params))
         if !_.isObject(value) && !_.include(@nonAttributeOptions, key)
-          attributes["data-#{key}"] = htmlEscape(value)
+          attributes["data-#{key}"] = _.escape(value)
 
     attributes
 
@@ -252,7 +252,14 @@ module.exports = class BaseView extends Backbone.View
       $el = $(el)
       if !$el.data('view-attached')
         viewName = $el.data('view')
-        options = $el.data()
+        options = {}
+        for own key, value of $el.data()
+          parsed = _.unescape(value)
+          if parsed[0] is '{'
+            try
+              parsed = JSON.parse(parsed)
+            catch e
+          options[key] = parsed
         options.app = app
         ViewClass = BaseView.getView(viewName)
         view = new ViewClass(options)
@@ -265,12 +272,3 @@ module.exports = class BaseView extends Backbone.View
 if global.isServer
   BaseView::_ensureElement = noop
   BaseView::delegateEvents = noop
-
-htmlEscape = (str) ->
-  String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-

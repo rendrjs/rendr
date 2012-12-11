@@ -1,7 +1,6 @@
 BaseView = null
 modelUtils = null
 templateFinder = require('./template_finder')
-manifest = require(rendr.staticDir + '/public/manifest') if global.isServer
 
 # Temporary, to fix bug in Handlebars
 # SEE https://github.com/wycats/handlebars.js/issues/342
@@ -10,9 +9,6 @@ Handlebars.log ||= (obj) -> console.log obj
 Polyglot.registerHandlebars(Handlebars)
 
 module.exports =
-  asset_url: (path) ->
-    manifest[path]
-
   view: (viewName, block) ->
     BaseView ||= require('./base/view')
     modelUtils ||= require('./model_utils')

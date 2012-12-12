@@ -251,15 +251,15 @@ module.exports = class BaseView extends Backbone.View
     views = $('[data-view]', scope).map (i, el) =>
       $el = $(el)
       if !$el.data('view-attached')
-        viewName = $el.data('view')
-        options = {}
-        for own key, value of $el.data()
-          parsed = _.unescape(value)
-          if parsed[0] is '{'
+        options = $el.data()
+        viewName = options.view
+        for own key, value of options
+          if _.isString(value)
+            parsed = _.unescape(value)
             try
               parsed = JSON.parse(parsed)
             catch e
-          options[key] = parsed
+            options[key] = parsed
         options.app = app
         ViewClass = BaseView.getView(viewName)
         view = new ViewClass(options)

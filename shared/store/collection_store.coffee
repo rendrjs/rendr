@@ -34,4 +34,14 @@ module.exports = class CollectionStore extends BaseClass
    "_cs:#{key}"
 
 getStoreKey = (collectionName, params) ->
-  "#{collectionName.toLowerCase()}:#{JSON.stringify(params)}"
+  "#{collectionName.toLowerCase()}:#{JSON.stringify(sortParams(params))}"
+
+sortParams = (params) ->
+  sorted = {}
+  _.chain(params)
+    .keys()
+    .sort()
+    .forEach (key) ->
+      sorted[key] = params[key]
+
+  sorted

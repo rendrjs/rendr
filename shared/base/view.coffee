@@ -191,7 +191,7 @@ module.exports = class BaseView extends Backbone.View
         collection: @options.collection_name
         params: @options.collection_params
 
-    if _.isEmpty(fetchSummary)
+    if !_.isEmpty(fetchSummary)
       results = fetcher.hydrate(fetchSummary, {app: @app})
       @parseOptions(results)
 

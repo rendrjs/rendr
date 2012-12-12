@@ -10,6 +10,7 @@ describe 'CollectionStore', ->
 
   beforeEach ->
     @store = new CollectionStore
+    @store.clear()
 
   it "should set a collection and retrieve its ids and meta", ->
     models = [{
@@ -63,3 +64,27 @@ describe 'CollectionStore', ->
     results10.should.eql
       ids: collection10.pluck('id')
       meta: {}
+
+  it "should retrieve collections without regard to params order", ->
+    models = [{
+      foo: 'bar'
+      id: 1
+    },{
+      foo: 'bot'
+      id: 2
+    }]
+
+    params0 =
+      offset: 0
+      items_per_page: 20
+
+    params1 =
+      items_per_page: 20
+      offset: 0
+
+    collection = new BaseCollection(models, params: params0)
+    @store.set collection, params0
+
+    results = @store.get collection.constructor.name, params1
+    should.exist(results)
+    results.ids.should.eql collection.pluck('id')

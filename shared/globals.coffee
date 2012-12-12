@@ -12,6 +12,6 @@ if isServer
   global.Handlebars = require('handlebars')
   global.Polyglot = require('node-polyglot')
   global.rendr.entryPath = require('../config/environments/paths').entryPath;
-  global.rendr.staticDir = require('../config/environments/paths').staticDir;
+  global.rendr.manifestDir = require('../config/environments/paths').publicDir;
 else
   global.rendr.entryPath = ''

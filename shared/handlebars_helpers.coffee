@@ -10,9 +10,6 @@ Handlebars.log ||= (obj) -> console.log obj
 Polyglot.registerHandlebars(Handlebars)
 
 module.exports =
-  asset_url: (path) ->
-    manifest[path]
-
   view: (viewName, block) ->
     BaseView ||= require('./base/view')
     modelUtils ||= require('./model_utils')

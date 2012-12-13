@@ -40,7 +40,7 @@ serverSync = (method, model, options) ->
     if err
       body = {body} if typeof body is 'string'
       # Pass through the statusCode, so lower-level code can handle i.e. 401 properly.
-      body.statusCode = err.statusCode
+      body.status = err.status
       if options.error
         options.error(model, body)
       else

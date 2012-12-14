@@ -21,3 +21,6 @@ exports.config =
       enabled: true,
       sourcePath: paths.publicDir
       destinationPath: paths.staticDir
+
+  errorHandler:
+    dumpExceptions: false

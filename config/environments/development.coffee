@@ -1,10 +1,10 @@
-# 
+#
 # Config settings for NODE_ENV=development
 #
 paths = require('./paths')
 
 exports.config =
-  
+
   assetCompiler:
     enabled: true
     jsSrcPaths: [paths.rootDir + '/tmp/assetCompiler', paths.entryPath]
@@ -21,3 +21,6 @@ exports.config =
       enabled: false
       sourcePath: paths.publicDir
       destinationPath: paths.staticDir
+
+  errorHandler:
+    dumpExceptions: true

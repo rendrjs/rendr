@@ -6,6 +6,7 @@ async = require('async')
 Polyglot = require('node-polyglot')
 
 exports.dataAdapter = null
+exports.errorHandler = null
 
 # ===== VIEWS =====
 
@@ -42,6 +43,7 @@ exports.initLibs = (options, callback) ->
 
   utils.init(options)
   exports.dataAdapter = options.dataAdapter
+  router.errorHandler = options.errorHandler
   callback()
 
 exports.closeLibs = (callback) ->

@@ -39,21 +39,27 @@ getHandler = (action) ->
         res.type('html').end(html)
         utils.stashPerf(req, "render", new Date - start)
 
+##
+# Handle an error that happens while executing an action.
+# Could happen during the controller action, view rendering, etc.
+##
 handleErr = (err, req, res) ->
   utils.stashError(req, err)
 
-  if err.status && err.status is 401
-    res.redirect('/login')
+  handler = exports.errorHandler || defaultErrorHandler
+  handler(err, req, res)
+
+##
+# Define a default error handler.
+##
+defaultErrorHandler = (err, req, res) ->
+  if env.current.errorHandler?.dumpExceptions
+    text = "Error: #{err.message}\n"
+    text += "\nStack:\n #{err.stack}" if err.stack
   else
-    data =
-      app: req.rendrApp
-      req: req
-    if env.name == 'development'
-      data.locals =
-        message: err.message
-        stack: err.stack
-    res.status(err.status || 500)
-    res.render('error_view', data)
+    text = "500 Internal Server Error"
+  res.status(err.status || 500)
+  res.type('text').send(text)
 
 # define routes
 exports.routes = () ->

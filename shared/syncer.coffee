@@ -38,7 +38,7 @@ serverSync = (method, model, options) ->
 
   server.dataAdapter.makeRequest req, (err, response, body) ->
     if err
-      body = {body} if typeof body is 'string'
+      body = {body} if !_.isObject(body)
       # Pass through the statusCode, so lower-level code can handle i.e. 401 properly.
       body.status = err.status
       if options.error

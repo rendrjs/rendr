@@ -1,7 +1,6 @@
 BaseView = null
 modelUtils = null
 templateFinder = require('./template_finder')
-manifest = require(rendr.manifestDir + '/manifest') if global.isServer
 
 # Temporary, to fix bug in Handlebars
 # SEE https://github.com/wycats/handlebars.js/issues/342

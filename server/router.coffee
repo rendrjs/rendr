@@ -14,7 +14,7 @@ getController = (controllerName) ->
   require(paths.entryPath + "/controllers/#{controllerName}_controller")
 
 # this is the method that renders the request
-getHandler = (action) ->
+getHandler = (action, routeInfo) ->
   (req, res, next) ->
     context =
       app: req.rendrApp
@@ -36,8 +36,20 @@ getHandler = (action) ->
         req: req
       res.render template, viewData, (err, html) ->
         return handleErr(err, req, res) if err
+
+        # Set any headers based on route.
+        res.set(getHeadersForRoute(routeInfo))
+
         res.type('html').end(html)
         utils.stashPerf(req, "render", new Date - start)
+
+getHeadersForRoute = (routeInfo) ->
+  headers = {}
+
+  if routeInfo.maxAge?
+    headers['Cache-Control'] = "public, max-age=#{routeInfo.maxAge}"
+
+  headers
 
 ##
 # Handle an error that happens while executing an action.
@@ -66,7 +78,7 @@ exports.routes = () ->
   routeSpecs = []
   for own path, routeInfo of routes
     action = getAction(routeInfo)
-    handler = getHandler(action)
+    handler = getHandler(action, routeInfo)
     routeSpecs.push(['get', "/#{path}", routeInfo.role, handler])
 
   routeSpecs

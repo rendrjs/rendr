@@ -9,7 +9,6 @@ var dependencies = [
   'underscore',
   'backbone',
   'async',
-  'node-polyglot',
   'handlebars'
 ];
 

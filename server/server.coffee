@@ -3,7 +3,6 @@ utils = require('./utils')
 viewEngine = require('./view_engine')
 env = require('../config/environments/env')
 async = require('async')
-Polyglot = require('node-polyglot')
 
 exports.dataAdapter = null
 exports.errorHandler = null

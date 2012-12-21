@@ -6,8 +6,6 @@ templateFinder = require('./template_finder')
 # SEE https://github.com/wycats/handlebars.js/issues/342
 Handlebars.log ||= (obj) -> console.log obj
 
-Polyglot.registerHandlebars(Handlebars)
-
 module.exports =
   view: (viewName, block) ->
     BaseView ||= require('./base/view')

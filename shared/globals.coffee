@@ -10,7 +10,6 @@ if isServer
   global._ = require('underscore')
   global.Backbone = require('backbone')
   global.Handlebars = require('handlebars')
-  global.Polyglot = require('node-polyglot')
   global.rendr.entryPath = require('../config/environments/paths').entryPath;
   global.rendr.manifestDir = require('../config/environments/paths').publicDir;
 else

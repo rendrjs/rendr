@@ -37,6 +37,9 @@ module.exports =
       else
         options
 
+    data = _.clone(data)
+    data._app = @_app
+
     html = template(data)
     new Handlebars.SafeString(html)
 

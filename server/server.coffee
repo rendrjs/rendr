@@ -1,49 +1,58 @@
 router = require('./router')
-utils = require('./utils')
 viewEngine = require('./view_engine')
-env = require('../config/environments/env')
 async = require('async')
 
+# ===== SHARED =====
+
 exports.dataAdapter = null
-exports.errorHandler = null
+
+exports.initGlobals = () ->
+  global._ = require('underscore')
+  global.Backbone = require('backbone')
+  global.Handlebars = require('handlebars')
+  global.rendr = {} if (!global.rendr)
+  global.rendr.entryPath = config.paths.entryPath
+  global.rendr.manifestDir = config.paths.publicDir
+
+
+# ===== CONFIG =====
+
+config = null
+
+# - options
+#   - dataAdapter
+#   - errorHandler
+#   - stashError
+#   - stashPerf
+#   - paths
+#     - entryPath
+#     - publicDir
+exports.init = (conf, callback) ->
+  config = conf
+
+  # verify dataAdapter (apiProxy)
+  if (!config || !config.dataAdapter)
+    return callback("Missing dataAdapter")
+  exports.dataAdapter = config.dataAdapter
+
+  # verify paths
+  if (!config.paths || !config.paths.entryPath || !config.paths.publicDir)
+    return callback("Missing entryPath or publicDir")
+  exports.initGlobals()
+
+  # router
+  router.init(config, callback)
+
 
 # ===== VIEWS =====
 
 exports.viewConfig =
   engineName: 'coffee'
   engine: viewEngine.engine
-  viewDir: env.paths.viewDir
-  publicDir: env.paths.publicDir
-  apiPath:'/api'
 
 # ===== ROUTES =====
 
+# call init first!
 exports.routes = () ->
   router.routes()
 
-# ===== MIDDLEWARE =====
-
-initGlobals = () ->
-  (req, res, next) ->
-    # YUCK!
-    App = require(env.paths.entryPath + "/app")
-    next()
-
-exports.middleware = () ->
-  [ initGlobals() ]
-
-# ===== LIBRARIES =====
-
-# - options
-#   - logger
-#   - dataAdapter
-exports.initLibs = (options, callback) ->
-  options = {} if (!options)
-
-  utils.init(options)
-  exports.dataAdapter = options.dataAdapter
-  router.errorHandler = options.errorHandler
-  callback()
-
-exports.closeLibs = (callback) ->
-  callback()

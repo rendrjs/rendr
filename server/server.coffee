@@ -14,6 +14,10 @@ exports.initGlobals = () ->
   if (config && config.paths)
     global.rendr.entryPath = config.paths.entryPath
     global.rendr.manifestDir = config.paths.publicDir
+  else
+    # if we don't have entry path, guess
+    global.rendr.entryPath = process.env.PWD + '/app'
+    global.rendr.manifestDir = global.rendr.entryPath + '/../public'
 
 
 # ===== CONFIG =====

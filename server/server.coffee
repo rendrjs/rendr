@@ -11,8 +11,9 @@ exports.initGlobals = () ->
   global.Backbone = require('backbone')
   global.Handlebars = require('handlebars')
   global.rendr = {} if (!global.rendr)
-  global.rendr.entryPath = config.paths.entryPath
-  global.rendr.manifestDir = config.paths.publicDir
+  if (config && config.paths)
+    global.rendr.entryPath = config.paths.entryPath
+    global.rendr.manifestDir = config.paths.publicDir
 
 
 # ===== CONFIG =====

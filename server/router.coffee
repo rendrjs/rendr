@@ -14,11 +14,9 @@ config = null
 exports.init = (conf, callback) ->
   config = conf
   if (!config.paths || !config.paths.entryPath)
-    return callback("Missing entryPath")
-  if (!config.paths.routes)
-    config.paths.routes = config.paths.entryPath + '/routes'
-  if (!config.paths.controllerDir)
-    config.paths.controllerDir = config.paths.entryPath + '/controllers'
+    return callback(new Error("Missing entryPath"))
+  config.paths.routes ||= config.paths.entryPath + '/routes'
+  config.paths.controllerDir ||= config.paths.entryPath + '/controllers'
   callback()
 
 

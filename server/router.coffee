@@ -6,7 +6,7 @@ config = null
 #   - errorHandler: function to correctly handle error
 #   - paths
 #     - entryPath (required)
-#     - clientRouter (optional)
+#     - routes (optional)
 #     - controllerDir (optional)
 #   - stashPerf: optional function to store performance stats
 #   - stashError: optional function to notify server of error
@@ -15,8 +15,8 @@ exports.init = (conf, callback) ->
   config = conf
   if (!config.paths || !config.paths.entryPath)
     return callback("Missing entryPath")
-  if (!config.paths.clientRouter)
-    config.paths.clientRouter = config.paths.entryPath + '/routes'
+  if (!config.paths.routes)
+    config.paths.routes = config.paths.entryPath + '/routes'
   if (!config.paths.controllerDir)
     config.paths.controllerDir = config.paths.entryPath + '/controllers'
   callback()
@@ -31,7 +31,7 @@ stashPerf = (req, name, value) ->
 stashError = (req, err) ->
   if (config && config.stashError)
     config.stashError(req, err)
- 
+
 
 getController = (controllerName) ->
   require("#{config.paths.controllerDir}/#{controllerName}_controller")
@@ -89,7 +89,7 @@ handleErr = (err, req, res) ->
   stashError(req, err)
   if (config && config.errorHandler)
     config.errorHandler(err, req, res)
-  else 
+  else
     # default error handler
     if (config && config.dumpExceptions)
       text = "Error: #{err.message}\n"
@@ -102,9 +102,9 @@ handleErr = (err, req, res) ->
 
 # define routes
 exports.routes = () ->
-  clientRoutes = require(config.paths.clientRouter)
+  routes = require(config.paths.routes)
   routeSpecs = []
-  for own path, routeInfo of clientRoutes
+  for own path, routeInfo of routes
     action = getAction(routeInfo)
     handler = getHandler(action, routeInfo)
     routeSpecs.push(['get', "/#{path}", routeInfo.role, handler])

@@ -126,12 +126,15 @@ exports.match = (pathToMatch) ->
     for own path, routeInfo of routes
       # Add the route to the Express router, so we can use its matching logic
       # without attempting to duplicate it.
+      #
+      # Ensure leading slash
+      path = "/#{path}" unless path.slice(0, 1) is '/'
       expressRouter.route('get', path, [])
 
-  # Remove leading slash
-  pathToMatch = pathToMatch.slice(1) if pathToMatch.slice(0, 1) is '/'
+  # Ensure leading slash
+  pathToMatch = "/#{pathToMatch}" unless pathToMatch.slice(0, 1) is '/'
   matchedRoute = expressRouter.match('get', pathToMatch)
 
   return null unless matchedRoute?
-  routes[matchedRoute.path]
+  routes[matchedRoute.path.slice(1)]
 

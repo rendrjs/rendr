@@ -61,3 +61,4 @@ exports.viewConfig =
 exports.routes = () ->
   router.routes()
 
+exports.router = router

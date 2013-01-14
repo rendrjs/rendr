@@ -116,7 +116,9 @@ exports.routes = () ->
 # We hoist these variables because this router is a singleton at the moment.
 # Good reason to change it to become a class.
 expressRouter = null
-exports.match = (url) ->
+exports.match = (pathToMatch) ->
+  throw new Error('Cannot match full URL: "'+pathToMatch+'". Use pathname instead.') if ~pathToMatch.indexOf('://')
+
   routes = require(config.paths.routes)
   if !expressRouter?
     Router = require('express').Router
@@ -125,7 +127,10 @@ exports.match = (url) ->
       # Add the route to the Express router, so we can use its matching logic
       # without attempting to duplicate it.
       expressRouter.route('get', path, [])
-  matchedRoute = expressRouter.match('get', url)
+
+  # Remove leading slash
+  pathToMatch = pathToMatch.slice(1) if pathToMatch.slice(0, 1) is '/'
+  matchedRoute = expressRouter.match('get', pathToMatch)
 
   return null unless matchedRoute?
   routes[matchedRoute.path]

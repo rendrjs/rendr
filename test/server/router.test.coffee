@@ -13,8 +13,21 @@ describe "server/router", ->
           routes: "#{__dirname}/../fixtures/routes"
       router.init(config, done)
 
-    it "should return the route info for a matched path", ->
+    it "should return the route info for a matched path, no leading slash", ->
       routeInfo = router.match('users/1234')
+      routeInfo.should.eql
+        controller: 'users'
+        action: 'show'
+
+    it "should return the route info for a matched path, with leading slash", ->
+      routeInfo = router.match('/users/1234')
+      routeInfo.should.eql
+        controller: 'users'
+        action: 'show'
+
+    # Need to ship this; come back and fix.
+    it.skip "should return the route info for a matched full URL", ->
+      routeInfo = router.match('https://www.example.org/users/1234')
       routeInfo.should.eql
         controller: 'users'
         action: 'show'

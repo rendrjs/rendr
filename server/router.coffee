@@ -108,3 +108,25 @@ exports.routes = () ->
     routeSpecs.push(['get', "/#{path}", routeInfo.role, handler])
 
   routeSpecs
+
+# Return the route description based on a URL, according to the routes file.
+# This should match the way Express matches routes on the server, and our
+# ClientRouter matches routes on the client.
+#
+# We hoist these variables because this router is a singleton at the moment.
+# Good reason to change it to become a class.
+expressRouter = null
+exports.match = (url) ->
+  routes = require(config.paths.routes)
+  if !expressRouter?
+    Router = require('express').Router
+    expressRouter = new Router
+    for own path, routeInfo of routes
+      # Add the route to the Express router, so we can use its matching logic
+      # without attempting to duplicate it.
+      expressRouter.route('get', path, [])
+  matchedRoute = expressRouter.match('get', url)
+
+  return null unless matchedRoute?
+  routes[matchedRoute.path]
+

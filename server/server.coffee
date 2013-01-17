@@ -1,4 +1,4 @@
-router = require('./router')
+Router = require('./router')
 viewEngine = require('./view_engine')
 async = require('async')
 
@@ -32,6 +32,9 @@ config = null
 #   - paths
 #     - entryPath
 #     - publicDir
+
+exports.router = null
+
 exports.init = (conf, callback) ->
   config = conf
 
@@ -46,7 +49,7 @@ exports.init = (conf, callback) ->
   exports.initGlobals()
 
   # router
-  router.init(config, callback)
+  exports.router = new Router(config, callback)
 
 
 # ===== VIEWS =====
@@ -58,7 +61,5 @@ exports.viewConfig =
 # ===== ROUTES =====
 
 # call init first!
-exports.routes = () ->
-  router.routes()
-
-exports.router = router
+exports.routes = ->
+  exports.router.routes()

@@ -138,3 +138,6 @@ exports.match = (pathToMatch) ->
   return null unless matchedRoute?
   routes[matchedRoute.path.slice(1)]
 
+exports.route = (pattern, spec) ->
+
+

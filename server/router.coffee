@@ -17,9 +17,10 @@ module.exports = class Router
 
   initialize: (config, callback) ->
     @config = config || {}
+    @config.paths ||= {}
     callback ||= ->
 
-    if !config.paths || !config.paths.entryPath
+    if !config.paths.entryPath
       return callback(new Error("Missing entryPath"))
     config.paths.routes ||= config.paths.entryPath + '/routes'
     config.paths.controllerDir ||= config.paths.entryPath + '/controllers'

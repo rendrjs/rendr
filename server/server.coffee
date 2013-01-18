@@ -67,4 +67,4 @@ exports.viewConfig =
 
 # call init first!
 exports.routes = ->
-  exports.router.routes()
+  exports.router.buildRoutes()

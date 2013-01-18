@@ -12,7 +12,11 @@ module.exports = class Router
   ##
   config: null
 
+  # Internally stored route definitions.
+  _routes: null
+
   constructor: (config, callback) ->
+    @_routes = []
     @initialize(config, callback)
 
   initialize: (config, callback) ->
@@ -103,44 +107,70 @@ module.exports = class Router
     if @config.stashError?
       @config.stashError(req, err)
 
-  routes: ->
-    routes = require(@config.paths.routes)
-    routeSpecs = []
-    for own path, routeInfo of routes
-      action = @getAction(routeInfo)
-      handler = @getHandler(action, routeInfo)
-      routeSpecs.push(['get', "/#{path}", routeInfo.role, handler])
+  # Build route definitions based on the routes file.
+  buildRoutes: ->
+    routeBuilder = require(@config.paths.routes)
+    routeBuilder(@route)
+    @routes()
 
-    routeSpecs
+  # Returns current route definitions.
+  routes: ->
+    @_routes.slice()
+
+  # Method passed to routes file to build up routes definition.
+  # Adds a single route definition.
+  route: (pattern, definitions...) =>
+    definition = @parseDefinitions(definitions)
+    action = @getAction(definition)
+    handler = @getHandler(action, definition)
+    pattern = "/#{pattern}" unless pattern.slice(0, 1) is '/'
+    route = ['get', pattern, definition, handler]
+    @_routes.push(route)
+    route
+
+  parseDefinitions: (definitions) ->
+    definition = {}
+    for element in definitions
+      # Handle i.e. 'users#show'.
+      if _.isString(element)
+        parts = element.split('#')
+        _.extend definition,
+          controller: parts[0]
+          action: parts[1]
+      # Handle objects.
+      else
+        _.extend definition, element
+    definition
 
   # We create and reuse an instance of Express Router in '@match()'.
   _expressRouter: null
 
-  # Return the route description based on a URL, according to the routes file.
+  # Return the route definition based on a URL, according to the routes file.
   # This should match the way Express matches routes on the server, and our
   # ClientRouter matches routes on the client.
   match: (pathToMatch) ->
     throw new Error('Cannot match full URL: "'+pathToMatch+'". Use pathname instead.') if ~pathToMatch.indexOf('://')
 
-    routes = require(@config.paths.routes)
-    if !@_expressRouter?
-      Router = require('express').Router
-      @_expressRouter = new Router
-      for own path, routeInfo of routes
-        # Add the route to the Express router, so we can use its matching logic
-        # without attempting to duplicate it.
-        #
-        # Ensure leading slash
-        path = "/#{path}" unless path.slice(0, 1) is '/'
-        @_expressRouter.route('get', path, [])
+    routes = @routes()
+    routesByPath = {}
+
+    # NOTE: Potential here to cache this work. Must invalidate when additional
+    # routes are added.
+    Router = require('express').Router
+    @_expressRouter = new Router
+    for route in routes
+      # Add the route to the Express router, so we can use its matching logic
+      # without attempting to duplicate it.
+      #
+      # Ensure leading slash
+      method = route[0]
+      path = route[1]
+      @_expressRouter.route(method, path, [])
+      routesByPath[path] = route
 
     # Ensure leading slash
     pathToMatch = "/#{pathToMatch}" unless pathToMatch.slice(0, 1) is '/'
     matchedRoute = @_expressRouter.match('get', pathToMatch)
 
     return null unless matchedRoute?
-    routes[matchedRoute.path.slice(1)]
-
-
-  # Method passed to routes file to build up routes definition.
-  route: (pattern, spec) ->
+    routesByPath[matchedRoute.path]

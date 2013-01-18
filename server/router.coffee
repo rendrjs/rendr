@@ -36,6 +36,8 @@ module.exports = class Router
 
   # This is the method that renders the request.
   getHandler: (action, routeInfo) ->
+    router = @
+
     (req, res, next) ->
       context =
         app: req.rendrApp
@@ -46,23 +48,23 @@ module.exports = class Router
         params[routeKey.name] = req.route.params[routeKey.name]
 
       start = new Date
-      action.call context, params, (err, template, data) =>
-        @stashPerf(req, "data", new Date - start)
-        return @handleErr(err, req, res) if err
+      action.call context, params, (err, template, data) ->
+        router.stashPerf(req, "data", new Date - start)
+        return router.handleErr(err, req, res) if err
 
         start = new Date
         viewData =
           locals: data
           app: req.rendrApp
           req: req
-        res.render template, viewData, (err, html) =>
-          return @handleErr(err, req, res) if err
+        res.render template, viewData, (err, html) ->
+          return router.handleErr(err, req, res) if err
 
           # Set any headers based on route.
-          res.set(@getHeadersForRoute(routeInfo))
+          res.set(router.getHeadersForRoute(routeInfo))
 
           res.type('html').end(html)
-          @stashPerf(req, "render", new Date - start)
+          router.stashPerf(req, "render", new Date - start)
 
 
   ##

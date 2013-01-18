@@ -39,13 +39,13 @@ exports.init = (conf, callback) ->
   config = conf
 
   # verify dataAdapter (apiProxy)
-  if (!config || !config.dataAdapter)
-    return callback("Missing dataAdapter")
+  if !config || !config.dataAdapter
+    return callback(new Error("Missing dataAdapter"))
   exports.dataAdapter = config.dataAdapter
 
   # verify paths
-  if (!config.paths || !config.paths.entryPath || !config.paths.publicDir)
-    return callback("Missing entryPath or publicDir")
+  if !config.paths || !config.paths.entryPath || !config.paths.publicDir
+    return callback(new Error("Missing entryPath or publicDir"))
   exports.initGlobals()
 
   # router

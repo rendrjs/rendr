@@ -8,14 +8,27 @@ catch e
 extractParamNamesRe = /:(\w+)/g
 firstRender = true
 
-module.exports = class Router extends Backbone.Router
+module.exports = class Router
 
   currentFragment: null
   previousFragment: null
 
+  # Internally stored route definitions.
+  _routes: null
+
+  # Instance of Backbone.Router used to manage browser history.
+  _router: null
+
+  constructor: (options) ->
+    @_routes = []
+    @_router = new Backbone.Router
+    @initialize(options)
+
   initialize: (options) ->
     @app = options.app
-    @initRoutes()
+
+    @buildRoutes()
+
     @on 'action:start', @trackAction
     @app.on 'reload', @renderView
 
@@ -26,37 +39,72 @@ module.exports = class Router extends Backbone.Router
 
   postInitialize: ->
 
-  initRoutes: ->
-    routes = require(rendr.entryPath + '/routes')
+  buildRoutes: ->
+    routeBuilder = require(rendr.entryPath + '/routes')
 
-    # We have to iterate through the routes backwards,
-    # so Backbone.History matches in same order as Express.
-    patterns = _.keys(routes).reverse()
-    routeInfos = _.values(routes).reverse()
+    # Sadly, we have to call '@route()' in reverse order, so
+    # Express + Backbone handle it the same way.
+    capturedRoutes = []
+    captureRoutes = (args...) ->
+      capturedRoutes.push(args)
 
-    for pattern, i in patterns
-      route = routeInfos[i]
-      controller = route.controller
-      action = route.action
-      name = "#{controller}:#{action}"
-      @route pattern, name, @getHandler(pattern, route)
+    try
+      routeBuilder(captureRoutes)
+      for route in capturedRoutes.reverse()
+        @route.apply(@, route)
+    catch e
+      throw new Error("Error building routes: #{e.message}")
+    @routes()
 
-  getHandler: (pattern, route) ->
+  route: (pattern, definitions...) =>
+    definition = @parseDefinitions(definitions)
+    handler = @getHandler(pattern, definition)
+    pattern = "/#{pattern}" unless pattern.slice(0, 1) is '/'
+    route = [pattern, definition, handler]
+    @_routes.push(route)
+
+    # Add to Backbone.Router
+    name = "#{definition.controller}:#{definition.action}"
+    # Backbone.History wants no leading slash.
+    backbonePattern = pattern.slice(1)
+    @_router.route backbonePattern, name, handler
+
+    route
+
+  # Returns current route definitions.
+  routes: ->
+    @_routes.slice()
+
+  parseDefinitions: (definitions) ->
+    definition = {}
+    for element in definitions
+      # Handle i.e. 'users#show'.
+      if _.isString(element)
+        parts = element.split('#')
+        _.extend definition,
+          controller: parts[0]
+          action: parts[1]
+      # Handle objects.
+      else
+        _.extend definition, element
+    definition
+
+  getHandler: (pattern, definition) ->
     (paramsArray...) =>
-      @trigger 'action:start', route
+      @trigger 'action:start', definition
       if firstRender
         firstRender = false
         views = BaseView.attach(@app)
         @currentView = @getMainView(views)
-        @trigger 'action:end', route
+        @trigger 'action:end', definition
       else
         params = @getParamsHash(pattern, paramsArray)
-        handler = @getController(route.controller)[route.action]
-        throw new Error("Missing action \"#{route.action}\" for controller \"#{route.controller}\"") unless handler
-        handler = @authenticationFilter(handler, route)
+        action = @getAction(definition)
+        throw new Error("Missing action \"#{definition.action}\" for controller \"#{definition.controller}\"") unless action
+        handler = @authenticationFilter(action, definition)
         renderCallback = (args...) =>
           @render(args...)
-          @trigger 'action:end', route
+          @trigger 'action:end', definition
         handler.call(@, params, renderCallback)
 
   # Hmm, there's probably a better way to do this.
@@ -65,6 +113,10 @@ module.exports = class Router extends Backbone.Router
   # if the initial render is more complicated.
   getMainView: (views) ->
     views[0]
+
+  # Proxy to Backbone.Router.
+  navigate: (args...) ->
+    @_router.navigate.apply(@_router, args)
 
   authenticationFilter: (handler, route) ->
     (params, callback) =>
@@ -76,6 +128,10 @@ module.exports = class Router extends Backbone.Router
 
   getController: (controller) ->
     require("controllers/#{controller}_controller")
+
+  getAction: (definition) ->
+    controller = @getController(definition.controller)
+    controller[definition.action]
 
   getParamsHash: (pattern, paramsArray) ->
     paramNames = _.map(pattern.match(extractParamNamesRe), (name) -> name.slice(1))
@@ -124,3 +180,7 @@ module.exports = class Router extends Backbone.Router
     if not _.isFunction(View)
       throw new Error("View '#{key}' not found.")
     View
+
+# Mix in Backbone.Events.
+# TODO: Should this be EventEmitter instead?
+_.extend module.exports.prototype, Backbone.Events

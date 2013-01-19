@@ -124,7 +124,7 @@ module.exports = class Router
     action = @getAction(definition)
     handler = @getHandler(action, definition)
     pattern = "/#{pattern}" unless pattern.slice(0, 1) is '/'
-    route = ['get', pattern, definition, handler]
+    route = [pattern, definition, handler]
     @_routes.push(route)
     route
 
@@ -163,9 +163,8 @@ module.exports = class Router
       # without attempting to duplicate it.
       #
       # Ensure leading slash
-      method = route[0]
-      path = route[1]
-      @_expressRouter.route(method, path, [])
+      path = route[0]
+      @_expressRouter.route('get', path, [])
       routesByPath[path] = route
 
     # Ensure leading slash

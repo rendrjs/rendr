@@ -110,7 +110,10 @@ module.exports = class Router
   # Build route definitions based on the routes file.
   buildRoutes: ->
     routeBuilder = require(@config.paths.routes)
-    routeBuilder(@route)
+    try
+      routeBuilder(@route)
+    catch e
+      throw new Error("Error building routes: #{e.message}")
     @routes()
 
   # Returns current route definitions.

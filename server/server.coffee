@@ -62,9 +62,3 @@ exports.init = (conf, callback) ->
 exports.viewConfig =
   engineName: 'coffee'
   engine: viewEngine.engine
-
-# ===== ROUTES =====
-
-# call init first!
-exports.routes = ->
-  exports.router.buildRoutes()

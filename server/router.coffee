@@ -35,12 +35,12 @@ module.exports = class Router
 
   # Given an object with 'controller' and 'action' properties,
   # return the corresponding action function.
-  getAction: (spec) ->
-    controller = @getController(spec.controller)
-    controller[spec.action]
+  getAction: (definition) ->
+    controller = @getController(definition.controller)
+    controller[definition.action]
 
   # This is the method that renders the request.
-  getHandler: (action, routeInfo) ->
+  getHandler: (action, definition) ->
     router = @
 
     (req, res, next) ->
@@ -66,7 +66,7 @@ module.exports = class Router
           return router.handleErr(err, req, res) if err
 
           # Set any headers based on route.
-          res.set(router.getHeadersForRoute(routeInfo))
+          res.set(router.getHeadersForRoute(definition))
 
           res.type('html').end(html)
           router.stashPerf(req, "render", new Date - start)
@@ -91,10 +91,10 @@ module.exports = class Router
       res.type('text').send(text)
 
 
-  getHeadersForRoute: (routeInfo) ->
+  getHeadersForRoute: (definition) ->
     headers = {}
-    if routeInfo.maxAge?
-      headers['Cache-Control'] = "public, max-age=#{routeInfo.maxAge}"
+    if definition.maxAge?
+      headers['Cache-Control'] = "public, max-age=#{definition.maxAge}"
     headers
 
   # stash performance metrics, if handler available

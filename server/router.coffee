@@ -1,43 +1,6 @@
-module.exports = class Router
+BaseRouter = require('../shared/base/router')
 
-  ##
-  # Config
-  #   - errorHandler: function to correctly handle error
-  #   - paths
-  #     - entryPath (required)
-  #     - routes (optional)
-  #     - controllerDir (optional)
-  #   - stashPerf: optional function to store performance stats
-  #   - stashError: optional function to notify server of error
-  ##
-  config: null
-
-  # Internally stored route definitions.
-  _routes: null
-
-  constructor: (config, callback) ->
-    @_routes = []
-    @initialize(config, callback)
-
-  initialize: (config, callback) ->
-    @config = config || {}
-    @config.paths ||= {}
-    callback ||= ->
-
-    if !config.paths.entryPath
-      return callback(new Error("Missing entryPath"))
-    config.paths.routes ||= config.paths.entryPath + '/routes'
-    config.paths.controllerDir ||= config.paths.entryPath + '/controllers'
-    callback()
-
-  getController: (controllerName) ->
-   require("#{@config.paths.controllerDir}/#{controllerName}_controller")
-
-  # Given an object with 'controller' and 'action' properties,
-  # return the corresponding action function.
-  getAction: (definition) ->
-    controller = @getController(definition.controller)
-    controller[definition.action]
+module.exports = class ServerRouter extends BaseRouter
 
   # This is the method that renders the request.
   getHandler: (action, definition) ->
@@ -78,11 +41,11 @@ module.exports = class Router
   ##
   handleErr: (err, req, res) ->
     @stashError(req, err)
-    if @config.errorHandler
-      @config.errorHandler(err, req, res)
+    if @options.errorHandler
+      @options.errorHandler(err, req, res)
     else
       # default error handler
-      if @config.dumpExceptions
+      if @options.dumpExceptions
         text = "Error: #{err.message}\n"
         text += "\nStack:\n #{err.stack}" if err.stack
       else
@@ -99,26 +62,13 @@ module.exports = class Router
 
   # stash performance metrics, if handler available
   stashPerf: (req, name, value) ->
-    if @config.stashPerf?
-      @config.stashPerf(req, name, value)
+    if @options.stashPerf?
+      @options.stashPerf(req, name, value)
 
   # stash error, if handler available
   stashError: (req, err) ->
-    if @config.stashError?
-      @config.stashError(req, err)
-
-  # Build route definitions based on the routes file.
-  buildRoutes: ->
-    routeBuilder = require(@config.paths.routes)
-    try
-      routeBuilder(@route)
-    catch e
-      throw new Error("Error building routes: #{e.message}")
-    @routes()
-
-  # Returns current route definitions.
-  routes: ->
-    @_routes.slice()
+    if @options.stashError?
+      @options.stashError(req, err)
 
   # Method passed to routes file to build up routes definition.
   # Adds a single route definition.
@@ -130,20 +80,6 @@ module.exports = class Router
     route = [pattern, definition, handler]
     @_routes.push(route)
     route
-
-  parseDefinitions: (definitions) ->
-    definition = {}
-    for element in definitions
-      # Handle i.e. 'users#show'.
-      if _.isString(element)
-        parts = element.split('#')
-        _.extend definition,
-          controller: parts[0]
-          action: parts[1]
-      # Handle objects.
-      else
-        _.extend definition, element
-    definition
 
   # We create and reuse an instance of Express Router in '@match()'.
   _expressRouter: null

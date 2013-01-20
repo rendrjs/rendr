@@ -49,12 +49,13 @@ exports.init = (conf, callback) ->
   exports.initGlobals()
 
   # router
-  exports.router = new Router(config, (err) ->
-    # Have to do this or else `exports.router` doesn't get set before
-    # callback returns.
-    process.nextTick ->
-      callback(err)
-  )
+  try
+    exports.router = new Router(config)
+  catch err
+    return callback(err)
+
+  callback()
+
 
 
 # ===== VIEWS =====

@@ -1,3 +1,4 @@
+BaseRouter = require('../shared/base/router')
 BaseView = require('../shared/base/view')
 
 try
@@ -8,21 +9,21 @@ catch e
 extractParamNamesRe = /:(\w+)/g
 firstRender = true
 
-module.exports = class Router
+module.exports = class ClientRouter extends BaseRouter
 
   currentFragment: null
   previousFragment: null
 
-  # Internally stored route definitions.
-  _routes: null
-
   # Instance of Backbone.Router used to manage browser history.
   _router: null
 
+  # We need to reverse the routes in the client because
+  # Backbone.History matches in reverse.
+  reverseRoutes: true
+
   constructor: (options) ->
-    @_routes = []
     @_router = new Backbone.Router
-    @initialize(options)
+    super
 
   initialize: (options) ->
     @app = options.app
@@ -39,23 +40,6 @@ module.exports = class Router
 
   postInitialize: ->
 
-  buildRoutes: ->
-    routeBuilder = require(rendr.entryPath + '/routes')
-
-    # Sadly, we have to call '@route()' in reverse order, so
-    # Express + Backbone handle it the same way.
-    capturedRoutes = []
-    captureRoutes = (args...) ->
-      capturedRoutes.push(args)
-
-    try
-      routeBuilder(captureRoutes)
-      for route in capturedRoutes.reverse()
-        @route.apply(@, route)
-    catch e
-      throw new Error("Error building routes: #{e.message}")
-    @routes()
-
   route: (pattern, definitions...) =>
     definition = @parseDefinitions(definitions)
     handler = @getHandler(pattern, definition)
@@ -70,24 +54,6 @@ module.exports = class Router
     @_router.route backbonePattern, name, handler
 
     route
-
-  # Returns current route definitions.
-  routes: ->
-    @_routes.slice()
-
-  parseDefinitions: (definitions) ->
-    definition = {}
-    for element in definitions
-      # Handle i.e. 'users#show'.
-      if _.isString(element)
-        parts = element.split('#')
-        _.extend definition,
-          controller: parts[0]
-          action: parts[1]
-      # Handle objects.
-      else
-        _.extend definition, element
-    definition
 
   getHandler: (pattern, definition) ->
     (paramsArray...) =>
@@ -125,13 +91,6 @@ module.exports = class Router
         @redirectTo("/login?redirect=#{fragment}", replace: true)
       else
         handler.call(@, params, callback)
-
-  getController: (controller) ->
-    require("controllers/#{controller}_controller")
-
-  getAction: (definition) ->
-    controller = @getController(definition.controller)
-    controller[definition.action]
 
   getParamsHash: (pattern, paramsArray) ->
     paramNames = _.map(pattern.match(extractParamNamesRe), (name) -> name.slice(1))
@@ -180,7 +139,3 @@ module.exports = class Router
     if not _.isFunction(View)
       throw new Error("View '#{key}' not found.")
     View
-
-# Mix in Backbone.Events.
-# TODO: Should this be EventEmitter instead?
-_.extend module.exports.prototype, Backbone.Events

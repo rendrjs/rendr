@@ -75,7 +75,8 @@ module.exports = class BaseRouter
 
   # Returns current route definitions.
   routes: ->
-    @_routes.slice()
+    _.map @_routes.slice(), (route) ->
+      route.slice()
 
   # Method passed to routes file to build up routes definition.
   # Adds a single route definition.

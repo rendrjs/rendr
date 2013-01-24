@@ -50,9 +50,16 @@ describe "server/router", ->
 
     it "should return a copy of the routes, not a reference", ->
       @router.route("users/:id", "users#show")
-      @router.routes().push('foo')
+      routes = @router.routes()
+
+      # Modify the routes array
+      routes.push('foo')
       @router.routes().length.should.eql 1
 
+      # Also modify an individual route element
+      @router.routes()[0].length.should.eql 3
+      @router.routes()[0].shift()
+      @router.routes()[0].length.should.eql 3
 
   describe "buildRoutes", ->
 

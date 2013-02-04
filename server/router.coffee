@@ -1,6 +1,13 @@
 BaseRouter = require('../shared/base/router')
+sanitize = require('validator').sanitize
 
 module.exports = class ServerRouter extends BaseRouter
+
+  escapeParams: (params) ->
+    escaped = {}
+    for own key, value of params
+      escaped[key] = sanitize(value).xss()
+    escaped
 
   # This is the method that renders the request.
   getHandler: (action, definition) ->
@@ -14,6 +21,7 @@ module.exports = class ServerRouter extends BaseRouter
       params = req.query || {}
       req.route.keys.forEach (routeKey) ->
         params[routeKey.name] = req.route.params[routeKey.name]
+      params = router.escapeParams(params)
 
       start = new Date
       action.call context, params, (err, template, data) ->

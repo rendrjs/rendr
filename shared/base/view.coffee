@@ -113,7 +113,7 @@ module.exports = class BaseView extends Backbone.View
 
   # Get the HTML for the view, including the wrapper element.
   getHtml: ->
-    html = this.getInnerHtml()
+    html = @getInnerHtml()
     attributes = @getAttributes()
     attrString = _.reduce(attributes, (memo, value, key) ->
       memo += " #{key}=\"#{value}\""

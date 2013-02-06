@@ -59,10 +59,10 @@ module.exports = class ClientRouter extends BaseRouter
     (paramsArray...) =>
       @trigger 'action:start', definition, firstRender
       if firstRender
-        firstRender = false
         views = BaseView.attach(@app)
         @currentView = @getMainView(views)
-        @trigger 'action:end', definition
+        @trigger 'action:end', definition, firstRender
+        firstRender = false
       else
         params = @getParamsHash(pattern, paramsArray)
         action = @getAction(definition)

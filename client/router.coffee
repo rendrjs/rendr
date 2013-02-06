@@ -57,7 +57,7 @@ module.exports = class ClientRouter extends BaseRouter
 
   getHandler: (pattern, definition) ->
     (paramsArray...) =>
-      @trigger 'action:start', definition
+      @trigger 'action:start', definition, firstRender
       if firstRender
         firstRender = false
         views = BaseView.attach(@app)
@@ -70,7 +70,7 @@ module.exports = class ClientRouter extends BaseRouter
         handler = @authenticationFilter(action, definition)
         renderCallback = (args...) =>
           @render(args...)
-          @trigger 'action:end', definition
+          @trigger 'action:end', definition, firstRender
         handler.call(@, params, renderCallback)
 
   # Hmm, there's probably a better way to do this.

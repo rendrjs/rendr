@@ -19,6 +19,13 @@ utils.getCollectionConstructor = (path) ->
   path = utils.underscorize(path)
   classMap[path] || require(rendr.entryPath + "/collections/#{path}")
 
+utils.getConstructor = (type, path) ->
+  method = if type is 'model'
+    utils.getModelConstructor
+  else
+    utils.getCollectionConstructor
+  method(path)
+
 utils.isModel = (obj) ->
   obj instanceof BaseModel
 

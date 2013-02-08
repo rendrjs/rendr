@@ -27,7 +27,6 @@ config = null
 #   - dataAdapter
 #   - errorHandler
 #   - stashError
-#   - stashPerf
 #   - paths
 #     - entryPath
 #     - publicDir

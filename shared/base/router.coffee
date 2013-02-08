@@ -17,7 +17,6 @@ module.exports = class BaseRouter
   #     - entryPath (required)
   #     - routes (optional)
   #     - controllerDir (optional)
-  #   - stashPerf: optional function to store performance stats
   #   - stashError: optional function to notify server of error
   ##
   options: null

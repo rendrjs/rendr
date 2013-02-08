@@ -24,12 +24,9 @@ module.exports = class ServerRouter extends BaseRouter
         params[routeKey.name] = req.route.params[routeKey.name]
       params = router.escapeParams(params)
 
-      start = new Date
       action.call context, params, (err, template, locals) ->
-        router.stashPerf(req, "data", new Date - start)
         return router.handleErr(err, req, res) if err
 
-        start = new Date
         viewData = {locals, app, req}
         res.render template, viewData, (err, html) ->
           return router.handleErr(err, req, res) if err
@@ -38,7 +35,6 @@ module.exports = class ServerRouter extends BaseRouter
           res.set(router.getHeadersForRoute(definition))
 
           res.type('html').end(html)
-          router.stashPerf(req, "render", new Date - start)
 
 
   ##
@@ -65,11 +61,6 @@ module.exports = class ServerRouter extends BaseRouter
     if definition.maxAge?
       headers['Cache-Control'] = "public, max-age=#{definition.maxAge}"
     headers
-
-  # stash performance metrics, if handler available
-  stashPerf: (req, name, value) ->
-    if @options.stashPerf?
-      @options.stashPerf(req, name, value)
 
   # stash error, if handler available
   stashError: (req, err) ->

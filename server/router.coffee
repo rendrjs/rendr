@@ -14,8 +14,9 @@ module.exports = class ServerRouter extends BaseRouter
     router = @
 
     (req, res, next) ->
+      app = req.rendrApp
       context =
-        app: req.rendrApp
+        app: app
         redirectTo: (url) -> res.redirect(url)
 
       params = req.query || {}
@@ -24,15 +25,12 @@ module.exports = class ServerRouter extends BaseRouter
       params = router.escapeParams(params)
 
       start = new Date
-      action.call context, params, (err, template, data) ->
+      action.call context, params, (err, template, locals) ->
         router.stashPerf(req, "data", new Date - start)
         return router.handleErr(err, req, res) if err
 
         start = new Date
-        viewData =
-          locals: data
-          app: req.rendrApp
-          req: req
+        viewData = {locals, app, req}
         res.render template, viewData, (err, html) ->
           return router.handleErr(err, req, res) if err
 

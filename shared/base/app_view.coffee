@@ -26,6 +26,9 @@ module.exports = class AppView extends BaseView
     # We want the actual value of the attribute, rather than the
     # full URL, so we use jQuery instead of just e.currentTarget.href
     href = $(e.currentTarget).attr('href')
-    if href && href.slice(0, 1) == '/' && href.slice(0, 2) != '//'
-      e.preventDefault()
-      @app.router.navigate(href, true)
+    if href
+      hashParts = href.split('#')
+      isHashClick = hashParts.length > 1 && hashParts[0] == window.location.pathname
+      if !isHashClick && href.slice(0, 1) == '/' && href.slice(0, 2) != '//'
+        e.preventDefault()
+        @app.router.navigate(href, true)

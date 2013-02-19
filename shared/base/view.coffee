@@ -164,11 +164,13 @@ module.exports = class BaseView extends Backbone.View
   # @hydrate() is called, but before @getTemplateData() is called.
   _preRender: ->
     @preRender()
+    @trigger 'preRender'
 
   # Anything to do after rendering on the client.
   _postRender: ->
     @attachChildViews()
     @postRender()
+    @trigger 'postRender'
 
   # To be overridden by subclasses.
   preRender: noop
@@ -197,6 +199,7 @@ module.exports = class BaseView extends Backbone.View
 
   setLoading: (loading) ->
     @$el.toggleClass('loading', loading)
+    @trigger 'loading', loading
 
   # When HTML is already present (rendered by server),
   # this is what gets called to bind to the element.
@@ -225,6 +228,8 @@ module.exports = class BaseView extends Backbone.View
     if @options.lazy is true && !@options.collection? && !@options.model?
       @fetchLazy()
 
+    @trigger 'attach'
+
   # Happens client-side.
   # Find all of sub view DOM elements
   # Get the view key
@@ -240,6 +245,7 @@ module.exports = class BaseView extends Backbone.View
     if (obj = @model || @collection)
       obj.off null, null, @
     super
+    @trigger 'remove'
 
   # Class methods
   # -------------

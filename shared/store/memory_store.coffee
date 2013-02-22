@@ -1,5 +1,5 @@
 module.exports = class MemoryStore
-  cacheKey: ''
+  cacheVersion: ''
 
   constructor: ->
     @cache = {}

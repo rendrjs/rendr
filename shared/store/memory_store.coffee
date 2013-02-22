@@ -1,4 +1,5 @@
 module.exports = class MemoryStore
+  cacheKey: ''
 
   constructor: ->
     @cache = {}
@@ -42,5 +43,8 @@ module.exports = class MemoryStore
     else
       @_clearAll()
 
+  _versionKey: (key) ->
+    "#{key}:#{@cacheVersion}"
+
   _formatKey: (key) ->
-    key
+    @_versionKey(key)

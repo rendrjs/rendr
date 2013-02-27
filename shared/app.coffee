@@ -16,7 +16,7 @@ module.exports = class App extends Backbone.Model
     @fetcher.app = @
 
     if !global.isServer
-      @router = new ClientRouter(app: @)
+      new ClientRouter(app: @)
 
   # To be overridden.
   loggedIn: ->

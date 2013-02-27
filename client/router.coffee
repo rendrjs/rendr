@@ -28,6 +28,9 @@ module.exports = class ClientRouter extends BaseRouter
   initialize: (options) ->
     @app = options.app
 
+    # We do this here so that it's available in AppView initialization.
+    @app.router = @
+
     @buildRoutes()
 
     @on 'action:start', @trackAction

@@ -119,7 +119,6 @@ module.exports = class ClientRouter extends BaseRouter
 
     View = @getView(view_key)
     @currentView = new View data
-    $(window).scrollTop 0
     @renderView()
 
   renderView: =>

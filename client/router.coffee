@@ -112,8 +112,20 @@ module.exports = class ClientRouter extends BaseRouter
   redirectTo: (path, options = {}) ->
     _.defaults options,
       trigger: true
-    path = path.split('#')[0]
-    @navigate path, options
+    hashParts = path.split('#')
+    path = hashParts[0]
+
+    # But then trigger the hash afterwards.
+    if hashParts.length > 1
+      hashHandler = =>
+        window.location.hash = hashParts[1]
+        # There is no 'one' or 'once' in Backbone.Events.
+        @off 'action:end', hashHandler
+
+      @on 'action:end', hashHandler
+
+    # Ignore hash for routing.
+    @navigate(path, options)
 
   render: (err, view_key, data = {}) =>
     @currentView.remove() if @currentView

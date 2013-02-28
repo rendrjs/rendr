@@ -112,6 +112,7 @@ module.exports = class ClientRouter extends BaseRouter
   redirectTo: (path, options = {}) ->
     _.defaults options,
       trigger: true
+    path = path.split('#')[0]
     @navigate path, options
 
   render: (err, view_key, data = {}) =>

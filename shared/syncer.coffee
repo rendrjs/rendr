@@ -63,7 +63,7 @@ addApiParams = (method, model, params = {}) ->
   ret
 
 exports.getSync = ->
-  if isServer
+  if global.isServer
     serverSync
   else
     clientSync

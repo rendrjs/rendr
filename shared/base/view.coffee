@@ -1,5 +1,5 @@
 templateFinder = require('../template_finder')
-model_utils = require('../model_utils')
+modelUtils = require('../model_utils')
 fetcher = require('../fetcher')
 
 noop = ->
@@ -12,7 +12,7 @@ module.exports = class BaseView extends Backbone.View
 
   constructor: (options) ->
     super
-    @name ||= model_utils.underscorize(@constructor.name)
+    @name ||= modelUtils.underscorize(@constructor.name)
     @parseOptions(options)
     @postInitialize()
 
@@ -28,13 +28,13 @@ module.exports = class BaseView extends Backbone.View
 
     if @options.model?
       if !(@options.model instanceof Backbone.Model) && @options.model_name
-        @options.model = model_utils.getModel(@options.model_name, @options.model, {parse:true})
+        @options.model = modelUtils.getModel(@options.model_name, @options.model, {parse:true})
 
-      @options.model_name ||= model_utils.modelName(@options.model.constructor)
+      @options.model_name ||= modelUtils.modelName(@options.model.constructor)
       @options.model_id = @options.model.id
 
     if @options.collection?
-      @options.collection_name ||= model_utils.modelName(@options.collection.constructor)
+      @options.collection_name ||= modelUtils.modelName(@options.collection.constructor)
       @options.collection_params = @options.collection.params
 
     @model = @options.model

@@ -1,5 +1,7 @@
 BaseView = require('./view')
 
+hasPushState = window.pushState?
+
 module.exports = class AppView extends BaseView
   el: 'body'
 
@@ -31,7 +33,7 @@ module.exports = class AppView extends BaseView
       @app.router.redirectTo(href)
 
   shouldInterceptClick: (href, el) ->
-    return false unless href
+    return false unless href && hasPushState
     hashParts = href.split('#')
     isHashClick = hashParts.length > 1 && hashParts[0] == window.location.pathname
     !isHashClick && href.slice(0, 1) == '/' && href.slice(0, 2) != '//'

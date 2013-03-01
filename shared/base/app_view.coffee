@@ -1,6 +1,6 @@
 BaseView = require('./view')
 
-hasPushState = window?.pushState?
+hasPushState = window?.history.pushState?
 
 module.exports = class AppView extends BaseView
   el: 'body'

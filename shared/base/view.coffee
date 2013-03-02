@@ -12,7 +12,6 @@ module.exports = class BaseView extends Backbone.View
 
   constructor: (options) ->
     super
-    console?.log 'BaseView::constructor', @name
     @name ||= modelUtils.underscorize(@constructor.name)
     @parseOptions(options)
     @postInitialize()

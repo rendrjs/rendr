@@ -45,6 +45,7 @@ utils.addClassMapping = (key, modelConstructor) ->
 
 uppercaseRe = /([A-Z])/g
 utils.underscorize = (name) ->
+  return undefined unless name?
   name = name.replace(uppercaseRe, (char) -> "_" + char.toLowerCase())
   name = name.slice(1) if name[0] is '_'
   name

@@ -34,7 +34,8 @@ module.exports = class CollectionStore extends BaseClass
    super "_cs:#{key}"
 
 getStoreKey = (collectionName, params) ->
-  "#{collectionName.toLowerCase()}:#{JSON.stringify(sortParams(params))}"
+  underscored = modelUtils.underscorize(collectionName)
+  "#{underscored}:#{JSON.stringify(sortParams(params))}"
 
 sortParams = (params) ->
   sorted = {}

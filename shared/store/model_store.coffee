@@ -33,5 +33,6 @@ module.exports = class ModelStore extends BaseClass
   _formatKey: (key) ->
    super "_ms:#{key}"
 
-getModelStoreKey = (model, id) ->
-  "#{model.toLowerCase()}:#{id}"
+getModelStoreKey = (modelName, id) ->
+  underscored = modelUtils.underscorize(modelName)
+  "#{underscored}:#{id}"

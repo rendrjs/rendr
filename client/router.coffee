@@ -98,7 +98,7 @@ module.exports = class ClientRouter extends BaseRouter
   getParamsHash: (pattern, paramsArray) ->
     paramNames = _.map(pattern.match(extractParamNamesRe), (name) -> name.slice(1))
     _.inject(paramNames, (memo, name, i) ->
-     memo[name] = paramsArray[i]
+     memo[name] = decodeURIComponent(paramsArray[i])
      memo
     , {})
 

@@ -9,7 +9,7 @@ module.exports = class MemoryStore
 
     data = @_get(key)
     if data && data.expires && Date.now() > data.expires
-      console.log "MemoryStore: Expiring key \"#{key}\"."
+      console?.log "MemoryStore: Expiring key \"#{key}\"."
       @clear(key)
       data = undefined
     else if data && data.value

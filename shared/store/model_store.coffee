@@ -1,14 +1,7 @@
 MemoryStore = require('./memory_store')
-LocalStorageStore = require('./local_storage_store')
 modelUtils = require('../model_utils')
 
-# TODO: be less magical. Use composition instead of inheritance.
-BaseClass = if LocalStorageStore.canHaz()
-  LocalStorageStore
-else
-  MemoryStore
-
-module.exports = class ModelStore extends BaseClass
+module.exports = class ModelStore extends MemoryStore
 
   set: (modelName, model) ->
     key = getModelStoreKey(modelName, model.id)

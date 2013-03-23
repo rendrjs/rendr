@@ -1,4 +1,4 @@
-templateFinder = require('../template_finder')
+templateFinder = require('../templateFinder')
 modelUtils = require('../modelUtils')
 fetcher = require('../fetcher')
 

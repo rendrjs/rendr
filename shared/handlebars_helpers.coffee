@@ -1,6 +1,6 @@
 BaseView = null
 modelUtils = null
-templateFinder = require('./template_finder')
+templateFinder = require('./templateFinder')
 
 # Temporary, to fix bug in Handlebars
 # SEE https://github.com/wycats/handlebars.js/issues/342

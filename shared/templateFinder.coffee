@@ -1,9 +1,9 @@
 fs = require('fs') if global.isServer
-handlebars_helpers = require('./handlebars_helpers')
+handlebarsHelpers = require('./handlebarsHelpers')
 
 templates = null
 
-for own key, func of handlebars_helpers
+for own key, func of handlebarsHelpers
   Handlebars.registerHelper(key, func)
 
 exports.getTemplate = (template) ->

@@ -1,5 +1,5 @@
 MemoryStore = require('./memory_store')
-modelUtils = require('../model_utils')
+modelUtils = require('../modelUtils')
 
 module.exports = class ModelStore extends MemoryStore
 

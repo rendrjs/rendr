@@ -9,7 +9,7 @@ Handlebars.log ||= (obj) -> console.log obj
 module.exports =
   view: (viewName, block) ->
     BaseView ||= require('./base/view')
-    modelUtils ||= require('./model_utils')
+    modelUtils ||= require('./modelUtils')
 
     viewName = modelUtils.underscorize(viewName)
 

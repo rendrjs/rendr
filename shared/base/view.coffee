@@ -1,5 +1,5 @@
 templateFinder = require('../template_finder')
-modelUtils = require('../model_utils')
+modelUtils = require('../modelUtils')
 fetcher = require('../fetcher')
 
 noop = ->

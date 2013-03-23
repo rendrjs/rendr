@@ -2,7 +2,7 @@ require('../../shared/globals')
 fetcher = require('../../shared/fetcher')
 should = require('should')
 
-modelUtils = require('../../shared/model_utils')
+modelUtils = require('../../shared/modelUtils')
 BaseModel = require('../../shared/base/model')
 BaseCollection = require('../../shared/base/collection')
 

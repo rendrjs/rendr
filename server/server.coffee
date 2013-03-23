@@ -1,5 +1,5 @@
 Router = require('./router')
-viewEngine = require('./view_engine')
+viewEngine = require('./viewEngine')
 
 # ===== SHARED =====
 

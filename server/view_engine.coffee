@@ -48,7 +48,7 @@ getViewHtml = (viewPath, locals, app) ->
 
 getBootstrappedData = (locals) ->
   fetcher = require('../shared/fetcher')
-  modelUtils = require('../shared/model_utils')
+  modelUtils = require('../shared/modelUtils')
 
   bootstrappedData = {}
   for own name, modelOrCollection of locals

@@ -4,7 +4,7 @@ should = require('should')
 BaseCollection = require('../../../shared/base/collection')
 BaseModel = require('../../../shared/base/model')
 fetcher = require('../../../shared/fetcher')
-modelUtils = require('../../../shared/model_utils')
+modelUtils = require('../../../shared/modelUtils')
 
 describe 'BaseCollection', ->
 

@@ -2,7 +2,7 @@ require('../../../shared/globals')
 ModelStore = require('../../../shared/store/model_store')
 should = require('should')
 BaseModel = require('../../../shared/base/model')
-modelUtils = require('../../../shared/model_utils')
+modelUtils = require('../../../shared/modelUtils')
 
 modelUtils.addClassMapping 'base_model', BaseModel
 

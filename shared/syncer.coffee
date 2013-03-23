@@ -82,7 +82,7 @@ exports.getUrl = (url = null, clientPrefix = false, params = {}) ->
 # Happens only client-side.
 exports.checkFresh = ->
   # Lame: have to lazy-require to prevent circular dependency.
-  modelUtils ||= require('./model_utils')
+  modelUtils ||= require('./modelUtils')
 
   @app?.trigger 'checkFresh:start'
 

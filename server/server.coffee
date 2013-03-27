@@ -5,18 +5,16 @@ viewEngine = require('./viewEngine')
 
 exports.dataAdapter = null
 
-exports.initGlobals = () ->
+exports.initGlobals = ->
   global._ = require('underscore')
   global.Backbone = require('backbone')
   global.Handlebars = require('handlebars')
   global.rendr = {} if !global.rendr
-  if config && config.paths
+  if config && config.paths && config.paths.entryPath
     global.rendr.entryPath = config.paths.entryPath
-    global.rendr.manifestDir = config.paths.publicDir
   else
     # if we don't have entry path, guess
     global.rendr.entryPath = process.env.PWD + '/app'
-    global.rendr.manifestDir = global.rendr.entryPath + '/../public'
 
 
 # ===== CONFIG =====
@@ -29,7 +27,6 @@ config = null
 #   - stashError
 #   - paths
 #     - entryPath
-#     - publicDir
 
 exports.router = null
 
@@ -41,9 +38,6 @@ exports.init = (conf, callback) ->
     return callback(new Error("Missing dataAdapter"))
   exports.dataAdapter = config.dataAdapter
 
-  # verify paths
-  if !config.paths || !config.paths.entryPath || !config.paths.publicDir
-    return callback(new Error("Missing entryPath or publicDir"))
   exports.initGlobals()
 
   # router

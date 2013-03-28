@@ -12,7 +12,7 @@ module.exports = class BaseView extends Backbone.View
 
   constructor: (options) ->
     super
-    @name ||= modelUtils.underscorize(@constructor.name)
+    @name ||= modelUtils.underscorize(@constructor.identifier || @constructor.name)
     @parseOptions(options)
     @postInitialize()
 
@@ -108,7 +108,7 @@ module.exports = class BaseView extends Backbone.View
     data = @getTemplateData()
     data = @decorateTemplateData(data)
     template = @getTemplate()
-    throw new Error("#{@constructor.name}: template \"#{@getTemplateName()}\" not found.") unless template?
+    throw new Error("#{@name}: template \"#{@getTemplateName()}\" not found.") unless template?
     template(data)
 
   # Get the HTML for the view, including the wrapper element.

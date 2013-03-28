@@ -50,5 +50,20 @@ utils.underscorize = (name) ->
   name = name.slice(1) if name[0] is '_'
   name
 
+# The 'name' property is added to the constructor when using a named function,
+# and it cannot be changed.  I.e.:
+#
+#   function MyClass(){}
+#   MyClass.name
+#     -> "MyClass"
+#
+# We first look for the 'identifier' property of the constructor, which can be set via
+# Backbone-style class inheritance.
+#
+#   MyClass = Backbone.Model.extend({});
+#   MyClass.name
+#     -> ""
+#   MyClass.identifier = "MyClass"
+#
 utils.modelName = (modelOrCollectionClass) ->
-  utils.underscorize(modelOrCollectionClass.name)
+  utils.underscorize(modelOrCollectionClass.identifier || modelOrCollectionClass.name)

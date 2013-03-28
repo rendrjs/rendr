@@ -1,5 +1,6 @@
 syncer = require('../syncer')
 fetcher = null
+modelUtils = null
 
 module.exports = class Base extends Backbone.Model
 
@@ -15,7 +16,7 @@ module.exports = class Base extends Backbone.Model
     if !@app && @collection
       @app = @collection.app
 
-    @on 'change', @updateInModelStore
+    @on 'change', @store
 
   # Override 'add' to make sure models have '@app' attribute.
   add: (models, options) ->
@@ -24,13 +25,6 @@ module.exports = class Base extends Backbone.Model
     model.app = @app for model in models
 
     super models, options
-
-
-  # TODO: Should we keep a reference on the model to its modelStore?
-  # Or not, because there could be a one-to-many mapping?
-  # Or should it only exist in one?
-  updateInModelStore: =>
-    getFetcher().modelStore.set @constructor.name, @
 
   # Idempotent parse
   parse: (resp) ->
@@ -46,12 +40,17 @@ module.exports = class Base extends Backbone.Model
   getUrl: syncer.getUrl
 
   # Instance method to store in the modelStore.
-  store: ->
-    getFetcher().modelStore.set @constructor.name, @
+  store: =>
+    getFetcher().modelStore.set(getModelUtils().modelName(@constructor), @)
 
   # Class method to get a model instance from the modelStore.
   @fetchFromCache: (id) ->
-    getFetcher().modelStore.get(@name, id, true)
+    getFetcher().modelStore.get(getModelUtils().modelName(@), id, true)
 
+# Prevent circular dependency :-/.
 getFetcher = ->
   fetcher ?= require('../fetcher')
+
+# Prevent circular dependency :-/.
+getModelUtils = ->
+  modelUtils ?= require('../modelUtils')

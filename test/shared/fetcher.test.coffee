@@ -259,7 +259,7 @@ describe 'fetcher', ->
       model = new Listing(attrs)
       summary = fetcher.summarize(model)
 
-      summary.model.should.eql 'Listing'
+      summary.model.should.eql 'listing'
       summary.id.should.eql attrs.id
 
     it "should summarize a collection", ->
@@ -279,7 +279,7 @@ describe 'fetcher', ->
       collection = new Listings(models, {params, meta})
       summary = fetcher.summarize(collection)
 
-      summary.collection.should.eql 'Listings'
+      summary.collection.should.eql 'listings'
       summary.ids.should.eql [1,2]
       summary.params.should.eql params
       summary.meta.should.eql meta

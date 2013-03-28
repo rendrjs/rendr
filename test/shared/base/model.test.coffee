@@ -49,14 +49,3 @@ describe 'BaseModel', ->
       model.store()
       stored = fetcher.modelStore.get(@MyModel.name, model.id)
       stored.should.eql attrs
-
-  describe 'fetchFromCache', ->
-
-    it "should fetch from the store", ->
-      attrs =
-        id: 42
-        type: 'rocknroll'
-      model = new @MyModel(attrs)
-      model.store()
-      storedModel = @MyModel.fetchFromCache(attrs.id)
-      storedModel.toJSON().should.eql attrs

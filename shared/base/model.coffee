@@ -1,5 +1,4 @@
 syncer = require('../syncer')
-fetcher = null
 modelUtils = null
 
 module.exports = class Base extends Backbone.Model
@@ -41,15 +40,7 @@ module.exports = class Base extends Backbone.Model
 
   # Instance method to store in the modelStore.
   store: =>
-    getFetcher().modelStore.set(getModelUtils().modelName(@constructor), @)
-
-  # Class method to get a model instance from the modelStore.
-  @fetchFromCache: (id) ->
-    getFetcher().modelStore.get(getModelUtils().modelName(@), id, true)
-
-# Prevent circular dependency :-/.
-getFetcher = ->
-  fetcher ?= require('../fetcher')
+    @app.fetcher.modelStore.set(getModelUtils().modelName(@constructor), @)
 
 # Prevent circular dependency :-/.
 getModelUtils = ->

@@ -107,7 +107,8 @@ retrieve = (fetchSpecs, options, callback) ->
 
         # First, see if we have stored the model or collection.
         if spec.model?
-          modelData = modelStore.get(spec.model, spec.params.id)
+          idAttribute = modelUtils.modelIdAttribute(spec.model)
+          modelData = modelStore.get(spec.model, spec.params[idAttribute])
         else if spec.collection?
           collectionData = collectionStore.get(spec.collection, spec.params)
           if collectionData

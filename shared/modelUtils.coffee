@@ -67,3 +67,7 @@ utils.underscorize = (name) ->
 #
 utils.modelName = (modelOrCollectionClass) ->
   utils.underscorize(modelOrCollectionClass.identifier || modelOrCollectionClass.name)
+
+utils.modelIdAttribute = (modelName) ->
+  constructor = utils.getModelConstructor(modelName)
+  constructor.prototype.idAttribute

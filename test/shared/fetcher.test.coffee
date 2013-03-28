@@ -178,6 +178,24 @@ describe 'fetcher', ->
         done()
       fetcher.pendingFetches.should.eql 1
 
+    it "should be able to fetch models from cache with custom idAttribute", (done) ->
+      class User extends BaseModel
+        idAttribute: 'login'
+      userAttrs =
+        login: 'someperson'
+        name: 'Some Person'
+      someperson = new User(userAttrs)
+      modelUtils.addClassMapping 'user', User
+      fetcher.modelStore.set(someperson)
+      fetchSpec =
+        model: { model: 'user', params: { login: 'someperson' } }
+
+      fetcher.fetch fetchSpec, {readFromCache: true}, (err, results) ->
+        return done(err) if err
+        results.model.should.be.an.instanceOf(User)
+        results.model.toJSON().should.eql(userAttrs)
+        done()
+
     it "should be able to re-fetch if already exists but is missing key", (done) ->
       # First, fetch the collection, which has smaller versions of the models.
       fetchSpec =

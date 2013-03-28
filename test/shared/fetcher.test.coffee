@@ -118,7 +118,7 @@ describe 'fetcher', ->
 
     it "should inject the app instance", ->
       listing1 = new Listing(id: 1)
-      fetcher.modelStore.set 'Listing', listing1
+      fetcher.modelStore.set(listing1)
 
       summaries =
         model:

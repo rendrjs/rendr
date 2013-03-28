@@ -3,8 +3,10 @@ modelUtils = require('../modelUtils')
 
 module.exports = class ModelStore extends MemoryStore
 
-  set: (modelName, model) ->
+  set: (model) ->
     id = model.get(model.idAttribute)
+    modelName = modelUtils.modelName(model.constructor)
+    throw new Error('Undefined modelName for model') unless modelName?
     key = getModelStoreKey(modelName, id)
     # We want to merge the model attrs with whatever is already
     # present in the store.

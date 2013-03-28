@@ -4,7 +4,9 @@ should = require('should')
 BaseModel = require('../../../shared/base/model')
 modelUtils = require('../../../shared/modelUtils')
 
-modelUtils.addClassMapping 'base_model', BaseModel
+class MyModel extends BaseModel
+
+modelUtils.addClassMapping modelUtils.modelName(MyModel), MyModel
 
 describe 'ModelStore', ->
 
@@ -15,29 +17,29 @@ describe 'ModelStore', ->
     modelAttrs =
       foo: 'bar'
       id: 1
-    model = new BaseModel(modelAttrs)
-    @store.set 'base_model', model
-    result = @store.get('base_model', 1)
+    model = new MyModel(modelAttrs)
+    @store.set(model)
+    result = @store.get('my_model', 1)
     result.should.eql modelAttrs
 
   it "should support custom idAttribute", ->
     modelAttrs =
       foo: 'bar'
       login: 'homeslice'
-    class MyModel extends BaseModel
+    class MyCustomModel extends BaseModel
       idAttribute: 'login'
-    model = new MyModel(modelAttrs)
-    @store.set modelUtils.modelName(MyModel), model
-    result = @store.get(modelUtils.modelName(MyModel), modelAttrs.login)
+    model = new MyCustomModel(modelAttrs)
+    @store.set(model)
+    result = @store.get(modelUtils.modelName(MyCustomModel), modelAttrs.login)
     result.should.eql modelAttrs
 
   it "should support returning a model instance", ->
     modelAttrs =
       foo: 'bar'
       id: 1
-    model = new BaseModel(modelAttrs)
-    @store.set 'base_model', model
-    resultModel = @store.get('base_model', 1, true)
+    model = new MyModel(modelAttrs)
+    @store.set(model)
+    resultModel = @store.get('my_model', 1, true)
     resultModel.should.be.an.instanceOf BaseModel
     resultModel.toJSON().should.eql modelAttrs
 
@@ -50,11 +52,11 @@ describe 'ModelStore', ->
       id: 1
     finalModelAttrs = _.extend({}, firstModelAttrs, secondModelAttrs)
 
-    model = new BaseModel(firstModelAttrs)
-    @store.set 'base_model', model
+    model = new MyModel(firstModelAttrs)
+    @store.set(model)
 
-    model = new BaseModel(secondModelAttrs)
-    @store.set 'base_model', model
+    model = new MyModel(secondModelAttrs)
+    @store.set(model)
 
-    result = @store.get 'base_model', 1
+    result = @store.get 'my_model', 1
     result.should.eql finalModelAttrs

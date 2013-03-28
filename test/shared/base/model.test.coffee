@@ -23,7 +23,7 @@ describe 'BaseModel', ->
     stored = fetcher.modelStore.get(@MyModel.name, model.id)
     should.not.exist(stored)
 
-    fetcher.modelStore.set(@MyModel.name, model)
+    fetcher.modelStore.set(model)
     stored = fetcher.modelStore.get(@MyModel.name, model.id)
     stored.should.eql attrs
 

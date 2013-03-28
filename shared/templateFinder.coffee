@@ -6,9 +6,7 @@ templates = null
 for own key, func of handlebarsHelpers
   Handlebars.registerHelper(key, func)
 
-exports.getTemplate = (template) ->
+exports.getTemplate = (templateName) ->
   # Allow compiledTemplates to be created asynchronously.
-  templates ||= require(rendr.entryPath + '/templates/compiledTemplates')
-
-  filename = "#{template}.hbs"
-  templates[filename]
+  templates ||= require(rendr.entryPath + '/templates/compiledTemplates')(Handlebars)
+  templates[templateName]

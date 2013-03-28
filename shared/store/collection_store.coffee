@@ -5,7 +5,7 @@ module.exports = class CollectionStore extends MemoryStore
 
   set: (collection, params = null) ->
     params ||= collection.params
-    key = getStoreKey(collection.constructor.name, params)
+    key = getStoreKey(modelUtils.modelName(collection.constructor), params)
     data =
       ids: collection.pluck('id')
       meta: collection.meta

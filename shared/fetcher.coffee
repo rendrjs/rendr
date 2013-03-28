@@ -147,7 +147,7 @@ fetchFromApi = (spec, callback) ->
       callback(null, model)
     error: (model, body, options) ->
       bodyOutput = if typeof body is 'string' then body.slice(0, 150) else JSON.stringify(body)
-      err = new Error("ERROR fetching model '#{model.constructor.name}' with options '#{JSON.stringify(options)}'. Response: " + bodyOutput)
+      err = new Error("ERROR fetching model '#{modelUtils.modelName(model.constructor)}' with options '#{JSON.stringify(options)}'. Response: " + bodyOutput)
       err.status = body.status
       callback(err)
 
@@ -164,13 +164,13 @@ fetcher.summarize = (modelOrCollection) ->
   summary = {}
   if modelUtils.isCollection(modelOrCollection)
     summary =
-      collection: modelOrCollection.constructor.name
+      collection: modelUtils.modelName(modelOrCollection.constructor)
       ids: modelOrCollection.pluck('id')
       params: modelOrCollection.params
       meta: modelOrCollection.meta
   else if modelUtils.isModel(modelOrCollection)
     summary =
-      model: modelOrCollection.constructor.name
+      model: modelUtils.modelName(modelOrCollection.constructor)
       id: modelOrCollection.id
   summary
 

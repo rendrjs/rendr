@@ -20,6 +20,17 @@ describe 'ModelStore', ->
     result = @store.get('base_model', 1)
     result.should.eql modelAttrs
 
+  it "should support custom idAttribute", ->
+    modelAttrs =
+      foo: 'bar'
+      login: 'homeslice'
+    class MyModel extends BaseModel
+      idAttribute: 'login'
+    model = new MyModel(modelAttrs)
+    @store.set modelUtils.modelName(MyModel), model
+    result = @store.get(modelUtils.modelName(MyModel), modelAttrs.login)
+    result.should.eql modelAttrs
+
   it "should support returning a model instance", ->
     modelAttrs =
       foo: 'bar'

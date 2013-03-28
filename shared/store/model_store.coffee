@@ -4,10 +4,11 @@ modelUtils = require('../modelUtils')
 module.exports = class ModelStore extends MemoryStore
 
   set: (modelName, model) ->
-    key = getModelStoreKey(modelName, model.id)
+    id = model.get(model.idAttribute)
+    key = getModelStoreKey(modelName, id)
     # We want to merge the model attrs with whatever is already
     # present in the store.
-    existingAttrs = @get(modelName, model.id) || {}
+    existingAttrs = @get(modelName, id) || {}
     newAttrs = _.extend {}, existingAttrs, model.toJSON()
 
     super key, newAttrs, null

@@ -2,6 +2,7 @@ require('../../../shared/globals')
 CollectionStore = require('../../../shared/store/collection_store')
 should = require('should')
 BaseCollection = require('../../../shared/base/collection')
+BaseModel = require('../../../shared/base/model')
 modelUtils = require('../../../shared/modelUtils')
 
 modelUtils.addClassMapping BaseCollection.name, BaseCollection
@@ -30,6 +31,31 @@ describe 'CollectionStore', ->
     results.should.eql
       ids: collection.pluck('id')
       meta: meta
+
+  it "should support custom idAttribute for models", ->
+    models = [{
+      foo: 'bar'
+      login: 1
+    },{
+      foo: 'bot'
+      login: 2
+    }]
+    meta =
+      location: 'san francisco'
+    params =
+      items_per_page: 10
+
+    class MyModel extends BaseModel
+      idAttribute: 'login'
+    class MyCollection extends BaseCollection
+      model: MyModel
+
+    collection = new MyCollection(models, meta: meta, params: params)
+    @store.set collection, params
+    results = @store.get collection.constructor.name, params
+    results.should.eql
+      ids: collection.pluck('login')
+      meta: meta    
 
   it "should treat different params as different collections", ->
     models0 = [{

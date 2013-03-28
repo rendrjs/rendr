@@ -262,6 +262,20 @@ describe 'fetcher', ->
       summary.model.should.eql 'listing'
       summary.id.should.eql attrs.id
 
+    it "should support custom idAttribute", ->
+      attrs =
+        login: 'joeschmo'
+        blahblah: 'boomtown'
+
+      class CustomListing extends Listing
+        idAttribute: 'login'
+
+      model = new CustomListing(attrs)
+      summary = fetcher.summarize(model)
+
+      summary.model.should.eql 'custom_listing'
+      summary.id.should.eql attrs.login
+
     it "should summarize a collection", ->
       models = [{
         id: 1

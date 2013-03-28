@@ -163,15 +163,17 @@ fetcher.summarize = (modelOrCollection) ->
   # Is it a Collection?
   summary = {}
   if modelUtils.isCollection(modelOrCollection)
+    idAttribute = modelOrCollection.model.prototype.idAttribute
     summary =
       collection: modelUtils.modelName(modelOrCollection.constructor)
-      ids: modelOrCollection.pluck('id')
+      ids: modelOrCollection.pluck(idAttribute)
       params: modelOrCollection.params
       meta: modelOrCollection.meta
   else if modelUtils.isModel(modelOrCollection)
+    idAttribute = modelOrCollection.idAttribute
     summary =
       model: modelUtils.modelName(modelOrCollection.constructor)
-      id: modelOrCollection.id
+      id: modelOrCollection.get(idAttribute)
   summary
 
 fetcher.storeResults = (results) ->

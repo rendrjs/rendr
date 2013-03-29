@@ -43,7 +43,7 @@ module.exports = class BaseRouter
     @options.paths.controllerDir ||= @options.paths.entryPath + '/controllers'
 
   getController: (controllerName) ->
-    controllerDir = @options.paths.controllerDir || 'controllers'
+    controllerDir = @options.paths.controllerDir
     require("#{controllerDir}/#{controllerName}_controller")
 
   # Given an object with 'controller' and 'action' properties,

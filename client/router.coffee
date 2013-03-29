@@ -8,6 +8,7 @@ catch e
 
 extractParamNamesRe = /:(\w+)/g
 firstRender = true
+noop = ->
 
 module.exports = class ClientRouter extends BaseRouter
 
@@ -41,7 +42,7 @@ module.exports = class ClientRouter extends BaseRouter
 
     @postInitialize()
 
-  postInitialize: ->
+  postInitialize: noop
 
   route: (pattern, definitions...) =>
     definition = @parseDefinitions(definitions)

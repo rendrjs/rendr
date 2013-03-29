@@ -6,6 +6,8 @@ require('./globals')
 fetcher = require('./fetcher')
 ClientRouter = require(rendr.entryPath + "/router")
 
+noop = ->
+
 module.exports = class App extends Backbone.Model
   defaults:
     loading: false
@@ -17,6 +19,10 @@ module.exports = class App extends Backbone.Model
 
     if !global.isServer
       new ClientRouter(app: @)
+
+    @postInitialize()
+
+  postInitialize: noop
 
   # To be overridden.
   loggedIn: ->

@@ -2,6 +2,8 @@ BaseView = require('./view')
 
 hasPushState = window?.history.pushState?
 
+noop = ->
+
 module.exports = class AppView extends BaseView
   el: 'body'
 
@@ -12,9 +14,14 @@ module.exports = class AppView extends BaseView
       contentEl: '#content'
 
     @_bindInterceptClick()
+    @postInitialize()
+
+  postInitialize: noop
 
   getTemplate: ->
     -> ''
+
+  render: ->
 
   setCurrentView: (view) ->
     @$content ||= $(@options.contentEl)

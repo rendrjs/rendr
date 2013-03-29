@@ -1,7 +1,12 @@
 if window?
   window.isServer = false
   window.global = window
-  global.rendr = {entryPath:''}
+  global.rendr =
+    entryPath: ''
 else
   global.isServer = true
-  require('../server/server').initGlobals()
+  global._ = require('underscore')
+  global.Backbone = require('backbone')
+  global.Handlebars = require('handlebars')
+  global.rendr =
+    entryPath: process.env.PWD + '/app'

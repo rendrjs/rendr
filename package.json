@@ -18,7 +18,7 @@
     "handlebars": "1.0.7",
     "async":"0.1.22",
     "qs": "0.5.1",
-    "express": "3.0.6",
+    "express": "~3.0.6",
     "validator": "0.4.21"
   },
   "devDependencies": {
@@ -31,7 +31,9 @@
     "Backbone",
     "view",
     "web",
-    "framework"
+    "framework",
+    "rendr",
+    "render"
   ],
   "author": "Spike Brehm <ocelot@gmail.com>",
   "license": "BSD"

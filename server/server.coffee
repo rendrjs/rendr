@@ -1,5 +1,4 @@
 Router = require('./router')
-viewEngine = require('./viewEngine')
 
 # ===== SHARED =====
 
@@ -47,11 +46,3 @@ exports.init = (conf, callback) ->
     return callback(err)
 
   callback()
-
-
-
-# ===== VIEWS =====
-
-exports.viewConfig =
-  engineName: 'coffee'
-  engine: viewEngine.engine

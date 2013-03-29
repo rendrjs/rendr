@@ -3,7 +3,7 @@ fs = require('fs')
 _ = require('underscore')
 
 
-exports.engine = (viewPath, data, callback) ->
+module.exports = (viewPath, data, callback) ->
   data.locals ||= {}
 
   layoutData = _.extend {}, data,

@@ -64,10 +64,19 @@ Rather than owning your entire Express app, Rendr simply provides some useful mi
 
 Asset bundling and serving are outside of Rendr's scope. However, does it have some specific requirements for JavaScript packaging to support modules that are accessible in the CommonJS style on both the client and server. The [example app](https://github.com/airbnb/rendr-app-template) uses [Stitch](https://github.com/sstephenson/stitch) for this, though you could also do this with other tools, such as [Browserify](https://github.com/substack/node-browserify). 
 
+## TODO
+
+While we do have it powering a few apps in production here at Airbnb, Rendr is still a prototype. It's a [spike](http://scaledagileframework.com/spikes/); a functional proof-of-concept of a shared client-server architecture based on Backbone. Thus, it carries over a number of design quirks specific to its original use case, and it's not yet very generalized and modular.
+
+Some of the more glaring things to do:
+
+* Support Browserify and streamline module packaging.
+* Support templating solutions other than Handlebars.
+* Pull out routing code into separate module and share it between client and server, to prevent bugs arising from using `Backbone.history` to process routes in the client, and Express to process routes on the server.
 
 ## Contributing
 
-Submit a pull request.
+We'd love to see what the community can come up with! There are no doubt a number of developers who are tackling this same problem, and we can learn from each other. If you have a bug fix or feature proposal, submit a pull request with a clear description of the change, plus tests.
 
 ## License
 

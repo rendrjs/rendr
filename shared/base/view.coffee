@@ -169,8 +169,21 @@ module.exports = class BaseView extends Backbone.View
   # Anything to do after rendering on the client.
   _postRender: ->
     @attachChildViews()
+    @_bindUIElements()
     @postRender()
     @trigger 'postRender'
+
+  _bindUIElements: ->
+    if !@ui 
+      return
+
+    if !@uiBindings
+      @uiBindings = _.result(@, "ui");
+
+    @ui = {}
+    _.each _.keys(@uiBindings), (key) =>
+      selector = @uiBindings[key]
+      @ui[key] = @$(selector)
 
   # To be overridden by subclasses.
   preRender: noop

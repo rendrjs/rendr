@@ -10,7 +10,7 @@ module.exports = class ServerRouter extends BaseRouter
     escaped
 
   # This is the method that renders the request.
-  getHandler: (action, route) ->
+  getHandler: (action, pattern, route) ->
     router = @
 
     (req, res, next) ->
@@ -67,17 +67,6 @@ module.exports = class ServerRouter extends BaseRouter
   stashError: (req, err) ->
     if @options.stashError?
       @options.stashError(req, err)
-
-  # Method passed to routes file to build up routes definition.
-  # Adds a single route definition.
-  route: (pattern, definitions...) =>
-    definition = @parseDefinitions(definitions)
-    action = @getAction(definition)
-    handler = @getHandler(action, definition)
-    pattern = "/#{pattern}" unless pattern.slice(0, 1) is '/'
-    route = [pattern, definition, handler]
-    @_routes.push(route)
-    route
 
   # We create and reuse an instance of Express Router in '@match()'.
   _expressRouter: null

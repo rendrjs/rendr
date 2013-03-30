@@ -2,7 +2,7 @@ BaseRouter = require('../shared/base/router')
 BaseView = require('../shared/base/view')
 
 try
-  AppView = require(rendr.entryPath + '/views/app_view')
+  AppView = require(rendr.entryPath + 'app/views/app_view')
 catch e
   AppView = require('../shared/base/app_view')
 

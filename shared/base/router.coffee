@@ -39,8 +39,8 @@ module.exports = class BaseRouter
     @options.paths.entryPath ||= rendr?.entryPath
     if !@options.paths.entryPath?
       throw new Error("Missing entryPath")
-    @options.paths.routes ||= @options.paths.entryPath + '/routes'
-    @options.paths.controllerDir ||= @options.paths.entryPath + '/controllers'
+    @options.paths.routes ||= @options.paths.entryPath + '/app/routes'
+    @options.paths.controllerDir ||= @options.paths.entryPath + '/app/controllers'
 
   getController: (controllerName) ->
     controllerDir = @options.paths.controllerDir

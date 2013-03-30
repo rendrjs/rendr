@@ -27,7 +27,7 @@ layoutTemplate = null
 # Cache layout template function.
 getLayoutTemplate = (callback) ->
   return callback(null, layoutTemplate) if layoutTemplate
-  layoutPath = "#{rendr.entryPath}/templates/__layout.hbs"
+  layoutPath = "#{rendr.entryPath}/app/templates/__layout.hbs"
   fs.readFile layoutPath, 'utf8', (err, str) ->
     return callback (err) if (err)
     layoutTemplate = Handlebars.compile(str)

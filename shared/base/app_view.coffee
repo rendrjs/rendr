@@ -18,9 +18,6 @@ module.exports = class AppView extends BaseView
 
   postInitialize: noop
 
-  getTemplate: ->
-    -> ''
-
   render: ->
 
   setCurrentView: (view) ->

@@ -13,11 +13,11 @@ utils.getCollection = (path, models = [], options = {}) ->
 
 utils.getModelConstructor = (path) ->
   path = utils.underscorize(path)
-  classMap[path] || require(rendr.entryPath + "/models/#{path}")
+  classMap[path] || require(rendr.entryPath + "/app/models/#{path}")
 
 utils.getCollectionConstructor = (path) ->
   path = utils.underscorize(path)
-  classMap[path] || require(rendr.entryPath + "/collections/#{path}")
+  classMap[path] || require(rendr.entryPath + "/app/collections/#{path}")
 
 utils.getConstructor = (type, path) ->
   method = if type is 'model'

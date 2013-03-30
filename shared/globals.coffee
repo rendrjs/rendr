@@ -9,4 +9,4 @@ else
   global.Backbone = require('backbone')
   global.Handlebars = require('handlebars')
   global.rendr =
-    entryPath: process.env.PWD + '/app'
+    entryPath: process.env.PWD

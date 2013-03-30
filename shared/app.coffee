@@ -4,7 +4,7 @@
 require('./globals')
 
 fetcher = require('./fetcher')
-ClientRouter = require(rendr.entryPath + "/router")
+ClientRouter = require(rendr.entryPath + "/app/router")
 
 noop = ->
 

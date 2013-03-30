@@ -8,5 +8,5 @@ for own key, func of handlebarsHelpers
 
 exports.getTemplate = (templateName) ->
   # Allow compiledTemplates to be created asynchronously.
-  templates ||= require(rendr.entryPath + '/templates/compiledTemplates')(Handlebars)
+  templates ||= require(rendr.entryPath + '/app/templates/compiledTemplates')(Handlebars)
   templates[templateName]

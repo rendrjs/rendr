@@ -10,12 +10,13 @@ module.exports = class ServerRouter extends BaseRouter
     escaped
 
   # This is the method that renders the request.
-  getHandler: (action, definition) ->
+  getHandler: (action, route) ->
     router = @
 
     (req, res, next) ->
       app = req.rendrApp
       context =
+        currentRoute: route
         app: app
         redirectTo: (url) -> res.redirect(url)
 
@@ -32,7 +33,7 @@ module.exports = class ServerRouter extends BaseRouter
           return router.handleErr(err, req, res) if err
 
           # Set any headers based on route.
-          res.set(router.getHeadersForRoute(definition))
+          res.set(router.getHeadersForRoute(route))
 
           res.type('html').end(html)
 

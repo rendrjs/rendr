@@ -48,9 +48,9 @@ module.exports = class BaseRouter
 
   # Given an object with 'controller' and 'action' properties,
   # return the corresponding action function.
-  getAction: (definition) ->
-    controller = @getController(definition.controller)
-    controller[definition.action]
+  getAction: (route) ->
+    controller = @getController(route.controller)
+    controller[route.action]
 
 
  # Build route definitions based on the routes file.
@@ -72,7 +72,7 @@ module.exports = class BaseRouter
     @routes()
 
 
-  # Returns current route definitions.
+  # Returns a copy of current route definitions.
   routes: ->
     _.map @_routes.slice(), (route) ->
       route.slice()
@@ -89,18 +89,18 @@ module.exports = class BaseRouter
     route
 
   parseDefinitions: (definitions) ->
-    definition = {}
+    route = {}
     for element in definitions
       # Handle i.e. 'users#show'.
       if _.isString(element)
         parts = element.split('#')
-        _.extend definition,
+        _.extend route,
           controller: parts[0]
           action: parts[1]
       # Handle objects.
       else
-        _.extend definition, element
-    definition
+        _.extend route, element
+    route
 
 
   ##

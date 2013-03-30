@@ -15,6 +15,10 @@ module.exports = class ClientRouter extends BaseRouter
   currentFragment: null
   previousFragment: null
 
+  # In a controller action, can access the current route
+  # definition with `this.currentRoute`.
+  currentRoute: null
+
   # Instance of Backbone.Router used to manage browser history.
   _router: null
 
@@ -59,23 +63,23 @@ module.exports = class ClientRouter extends BaseRouter
 
     route
 
-  getHandler: (pattern, definition) ->
+  getHandler: (pattern, route) ->
     (paramsArray...) =>
-      @trigger 'action:start', definition, firstRender
+      @trigger 'action:start', route, firstRender
+      @currentRoute = route
       if firstRender
         views = BaseView.attach(@app)
         @currentView = @getMainView(views)
-        @trigger 'action:end', definition, firstRender
+        @trigger 'action:end', route, firstRender
         firstRender = false
       else
         params = @getParamsHash(pattern, paramsArray)
-        action = @getAction(definition)
-        throw new Error("Missing action \"#{definition.action}\" for controller \"#{definition.controller}\"") unless action
-        handler = @authenticationFilter(action, definition)
+        action = @getAction(route)
+        throw new Error("Missing action \"#{route.action}\" for controller \"#{route.controller}\"") unless action
         renderCallback = (args...) =>
           @render(args...)
-          @trigger 'action:end', definition, firstRender
-        handler.call(@, params, renderCallback)
+          @trigger 'action:end', route, firstRender
+        action.call(@, params, renderCallback)
 
   # Hmm, there's probably a better way to do this.
   # By default, expect that there's only a single, main
@@ -87,14 +91,6 @@ module.exports = class ClientRouter extends BaseRouter
   # Proxy to Backbone.Router.
   navigate: (args...) ->
     @_router.navigate.apply(@_router, args)
-
-  authenticationFilter: (handler, route) ->
-    (params, callback) =>
-      if route.role && route.role != 'guest' && !@app.loggedIn()
-        fragment = encodeURIComponent(Backbone.history.fragment)
-        @redirectTo("/login?redirect=#{fragment}", replace: true)
-      else
-        handler.call(@, params, callback)
 
   getParamsHash: (pattern, paramsArray) ->
     paramNames = _.map(pattern.match(extractParamNamesRe), (name) -> name.slice(1))

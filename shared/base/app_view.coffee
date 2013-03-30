@@ -13,6 +13,9 @@ module.exports = class AppView extends BaseView
     _.defaults @options,
       contentEl: '#content'
 
+    # Grab the element that contains the main view.
+    @$content = $(@options.contentEl)
+
     @_bindInterceptClick()
     @postInitialize()
 
@@ -21,7 +24,6 @@ module.exports = class AppView extends BaseView
   render: ->
 
   setCurrentView: (view) ->
-    @$content ||= $(@options.contentEl)
     @$content.html(view.el)
     view.render()
 

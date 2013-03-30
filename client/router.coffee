@@ -79,7 +79,9 @@ module.exports = class ClientRouter extends BaseRouter
   # view in the layout. Can be overridden by applications
   # if the initial render is more complicated.
   getMainView: (views) ->
-    views[0]
+    $content = @appView.$content
+    _.find views, (view) ->
+      view.$el.parent().is($content)
 
   # Proxy to Backbone.Router.
   navigate: (args...) ->

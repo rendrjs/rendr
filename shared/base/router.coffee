@@ -52,7 +52,6 @@ module.exports = class BaseRouter
     controller = @getController(route.controller)
     controller[route.action]
 
-
  # Build route definitions based on the routes file.
   buildRoutes: ->
     routeBuilder = require(@options.paths.routes)
@@ -77,16 +76,17 @@ module.exports = class BaseRouter
     _.map @_routes.slice(), (route) ->
       route.slice()
 
-  # Method passed to routes file to build up routes definition.
+    # Method passed to routes file to build up routes definition.
   # Adds a single route definition.
   route: (pattern, definitions...) =>
-    definition = @parseDefinitions(definitions)
-    action = @getAction(definition)
-    handler = @getHandler(action, definition)
+    route = @parseDefinitions(definitions)
+    action = @getAction(route)
     pattern = "/#{pattern}" unless pattern.slice(0, 1) is '/'
-    route = [pattern, definition, handler]
-    @_routes.push(route)
-    route
+    handler = @getHandler(action, pattern, route)
+    routeObj = [pattern, route, handler]
+    @_routes.push(routeObj)
+    @trigger 'route:add', routeObj
+    routeObj
 
   parseDefinitions: (definitions) ->
     route = {}

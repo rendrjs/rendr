@@ -36,6 +36,7 @@ module.exports = class ClientRouter extends BaseRouter
     # We do this here so that it's available in AppView initialization.
     @app.router = @
 
+    @on 'route:add', @addBackboneRoute
     @buildRoutes()
 
     @on 'action:start', @trackAction
@@ -48,22 +49,15 @@ module.exports = class ClientRouter extends BaseRouter
 
   postInitialize: noop
 
-  route: (pattern, definitions...) =>
-    definition = @parseDefinitions(definitions)
-    handler = @getHandler(pattern, definition)
-    pattern = "/#{pattern}" unless pattern.slice(0, 1) is '/'
-    route = [pattern, definition, handler]
-    @_routes.push(route)
-
-    # Add to Backbone.Router
-    name = "#{definition.controller}:#{definition.action}"
+  # Piggyback on adding new route definition events
+  # to also add to Backbone.Router.
+  addBackboneRoute: (routeObj) =>
+    [pattern, route, handler] = routeObj
+    name = "#{route.controller}:#{route.action}"
     # Backbone.History wants no leading slash.
-    backbonePattern = pattern.slice(1)
-    @_router.route backbonePattern, name, handler
+    @_router.route pattern.slice(1), name, handler
 
-    route
-
-  getHandler: (pattern, route) ->
+  getHandler: (action, pattern, route) ->
     (paramsArray...) =>
       @trigger 'action:start', route, firstRender
       @currentRoute = route
@@ -74,7 +68,6 @@ module.exports = class ClientRouter extends BaseRouter
         firstRender = false
       else
         params = @getParamsHash(pattern, paramsArray)
-        action = @getAction(route)
         throw new Error("Missing action \"#{route.action}\" for controller \"#{route.controller}\"") unless action
         renderCallback = (args...) =>
           @render(args...)

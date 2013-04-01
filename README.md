@@ -15,11 +15,17 @@ Our hypothesis is that there has to be a better way to build rich web apps today
 
 ## The Goals
 
-Rendr is intended to be a building block along the way to this envisionsed future of web apps that can be run on either side of the wire according to the needs of your application. 
+Rendr is intended to be a building block along the way to this envisionsed future of web apps that can be run on either side of the wire according to the needs of your application.
 
 Some specific design goals:
 
-* Write Models, Views, Controllers agnostic to environment* Minimize `if (server) {...} else {…}`* Talk to RESTful API* Library, not a framework* Hide complexity in library* No server-side DOM* Simple Express middleware
+* Write Models, Views, Controllers agnostic to environment
+* Minimize `if (server) {...} else {…}`
+* Talk to RESTful API
+* Library, not a framework
+* Hide complexity in library
+* No server-side DOM
+* Simple Express middleware
 
 ## What's Included
 
@@ -62,7 +68,7 @@ Rather than owning your entire Express app, Rendr simply provides some useful mi
 
 ### Asset pipeline
 
-Asset bundling and serving are outside of Rendr's scope. However, does it have some specific requirements for JavaScript packaging to support modules that are accessible in the CommonJS style on both the client and server. The [example app](https://github.com/airbnb/rendr-app-template) uses [Stitch](https://github.com/sstephenson/stitch) for this, though you could also do this with other tools, such as [Browserify](https://github.com/substack/node-browserify). 
+Asset bundling and serving are outside of Rendr's scope. However, does it have some specific requirements for JavaScript packaging to support modules that are accessible in the CommonJS style on both the client and server. The [example app](https://github.com/airbnb/rendr-app-template) uses [Stitch](https://github.com/sstephenson/stitch) for this, though you could also do this with other tools, such as [Browserify](https://github.com/substack/node-browserify).
 
 ## TODO
 

@@ -7,6 +7,7 @@ catch e
   AppView = require('../shared/base/app_view')
 
 extractParamNamesRe = /:(\w+)/g
+plusRe = /\+/g
 firstRender = true
 noop = ->
 
@@ -67,7 +68,7 @@ module.exports = class ClientRouter extends BaseRouter
         @trigger 'action:end', route, firstRender
         firstRender = false
       else
-        params = @getParamsHash(pattern, paramsArray)
+        params = @getParamsHash(pattern, paramsArray, window.location.search)
         throw new Error("Missing action \"#{route.action}\" for controller \"#{route.controller}\"") unless action
         renderCallback = (args...) =>
           @render(args...)
@@ -87,12 +88,18 @@ module.exports = class ClientRouter extends BaseRouter
   navigate: (args...) ->
     @_router.navigate.apply(@_router, args)
 
-  getParamsHash: (pattern, paramsArray) ->
+  getParamsHash: (pattern, paramsArray, search) ->
     paramNames = _.map(pattern.match(extractParamNamesRe), (name) -> name.slice(1))
-    _.inject(paramNames, (memo, name, i) ->
+    params = _.inject(paramNames, (memo, name, i) ->
       memo[name] = decodeURIComponent(paramsArray[i])
       memo
     , {})
+    query = _.inject(search.slice(1).split('&'), (memo, queryPart) ->
+      parts = queryPart.split('=')
+      memo[parts[0]] = decodeURIComponent(parts[1].replace(plusRe, ' '))
+      memo
+    , {})
+    _.extend(query, params)
 
   matchingRoute: (path) ->
     _.find Backbone.history.handlers, (handler) ->

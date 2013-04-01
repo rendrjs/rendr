@@ -1,7 +1,7 @@
 {
   "name": "rendr",
-  "version": "0.0.2",
-  "description": "A small web framework that lets you use Node and Backbone to render on both sides.",
+  "version": "0.1.0",
+  "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
     "test": "mocha --ui bdd --reporter spec --ignore-leaks $(find ./test -name *.test.*) --timeout 6000 --require coffee-script",
@@ -24,17 +24,15 @@
   "devDependencies": {
     "mocha": "*",
     "should": "*",
-    "sinon": "1.4.2",
-    "expect.js": "0.1.2"
+    "sinon": "1.4.2"
   },
   "keywords": [
     "Backbone",
     "view",
     "web",
-    "framework",
     "rendr",
     "render"
   ],
   "author": "Spike Brehm <ocelot@gmail.com>",
-  "license": "BSD"
+  "license": "MIT"
 }

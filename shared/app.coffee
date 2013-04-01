@@ -24,6 +24,10 @@ module.exports = class App extends Backbone.Model
 
   postInitialize: noop
 
+  # @shared
+  fetch: (spec, callback) ->
+    @fetcher.fetch(spec, callback)
+
   # @client
   bootstrapData: (modelMap) ->
     results = {}

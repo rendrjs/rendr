@@ -24,10 +24,6 @@ module.exports = class App extends Backbone.Model
 
   postInitialize: noop
 
-  # To be overridden.
-  loggedIn: ->
-    false
-
   # @client
   bootstrapData: (modelMap) ->
     results = {}

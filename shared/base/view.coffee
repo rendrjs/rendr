@@ -12,7 +12,7 @@ module.exports = class BaseView extends Backbone.View
 
   constructor: (options) ->
     super
-    @name ||= modelUtils.underscorize(@constructor.identifier || @constructor.name)
+    @name ||= modelUtils.underscorize(@constructor.id || @constructor.name)
     @parseOptions(options)
     @postInitialize()
 

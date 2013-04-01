@@ -57,16 +57,16 @@ utils.underscorize = (name) ->
 #   MyClass.name
 #     -> "MyClass"
 #
-# We first look for the 'identifier' property of the constructor, which can be set via
-# Backbone-style class inheritance.
+# We first look for the 'id' property of the constructor, which is compatible
+#  with standard Backbone-style class inheritance.
 #
-#   MyClass = Backbone.Model.extend({});
+#   var MyClass = Backbone.Model.extend({});
 #   MyClass.name
 #     -> ""
-#   MyClass.identifier = "MyClass"
+#   MyClass.id = "MyClass"
 #
 utils.modelName = (modelOrCollectionClass) ->
-  utils.underscorize(modelOrCollectionClass.identifier || modelOrCollectionClass.name)
+  utils.underscorize(modelOrCollectionClass.id || modelOrCollectionClass.name)
 
 utils.modelIdAttribute = (modelName) ->
   constructor = utils.getModelConstructor(modelName)

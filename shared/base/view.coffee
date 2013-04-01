@@ -58,6 +58,8 @@ module.exports = class BaseView extends Backbone.View
       @model.toJSON()
     else if @collection
       models: @collection.toJSON()
+      meta: @collection.meta
+      params: @collection.params
     else
       _.clone @options
 

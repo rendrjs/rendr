@@ -96,7 +96,8 @@ module.exports = class ClientRouter extends BaseRouter
     , {})
     query = _.inject(search.slice(1).split('&'), (memo, queryPart) ->
       parts = queryPart.split('=')
-      memo[parts[0]] = decodeURIComponent(parts[1].replace(plusRe, ' '))
+      if parts.length > 1
+        memo[parts[0]] = decodeURIComponent(parts[1].replace(plusRe, ' '))
       memo
     , {})
     _.extend(query, params)

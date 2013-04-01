@@ -19,7 +19,7 @@ Rendr is intended to be a building block along the way to this envisionsed futur
 
 Some specific design goals:
 
-* Write Models, Views, Controllers agnostic to environment
+* Write application logic agnostic to environment
 * Minimize `if (server) {...} else {…}`
 * Talk to RESTful API
 * Library, not a framework
@@ -59,6 +59,11 @@ Inherits from `BaseRouter`.
 
 Inherits from `BaseRouter`.
 
+### Express middleware
+
+There are a few middleware functions included. Use some or all of these, or use your own.
+
+### `initApp`
 
 ## What's Not Included
 

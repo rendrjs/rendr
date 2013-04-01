@@ -37,6 +37,43 @@ Rendr does not attempt to be a fully-fledged, batteries-included application fra
 
 Inherits from `Backbone.View`.
 
+Public methods:
+
+##### `view.postInitialize()`
+*Environment: shared.*
+
+This is where you put any initialization logic. We've hijacked the default `view.initialize()` to do Rendr-specific initailization stuff.
+
+##### `view.preRender()`
+*Environment: shared.*
+
+##### `view.render()`
+*Environment: client.*
+
+You should never have override `view.render()` unless you're doing something really custom. Instead, you should be able to do anything you need using `view.postRender()`, 
+
+##### `view.postRender()`
+*Environment: client.*
+
+##### `view.getTemplate()`
+*Environment: shared.*
+
+##### `view.getTemplateName()`
+*Environment: shared.*
+
+##### `view.getTemplateData()`
+*Environment: shared.*
+
+##### `view.getInnerHtml()`
+*Environment: shared.*
+
+##### `view.getHtml()`
+*Environment: shared.*
+
+##### `view.getAttributes()`
+*Environment: shared.*
+
+
 #### `BaseModel`
 
 Inherits from `Backbone.Model`.

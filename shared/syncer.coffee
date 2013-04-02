@@ -11,9 +11,9 @@ methodMap =
 clientSync = (method, model, options) ->
   data = _.clone options.data
   options.url = @getUrl(options.url, true, data)
-  Backbone.emulateJSON = true
   data = addApiParams(method, model, data)
   options.data = data
+  options.emulateJSON = true
   Backbone.sync(method, model, options)
 
 serverSync = (method, model, options) ->

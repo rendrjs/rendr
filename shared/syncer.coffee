@@ -57,7 +57,7 @@ addApiParams = (method, model, params = {}) ->
   # attributes if we don't pass any in explicitly.
   # This gets screwed up because we append the locale
   # and currency, so let's replicate that behavior.
-  if model and _.isEqual(params, {}) and (method is 'create' or method is 'udpate')
+  if model and _.isEqual(params, {}) and (method is 'create' or method is 'update')
     _.extend ret, model.toJSON()
 
   ret

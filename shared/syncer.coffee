@@ -11,9 +11,9 @@ methodMap =
 clientSync = (method, model, options) ->
   data = _.clone options.data
   options.url = @getUrl(options.url, true, data)
-  Backbone.emulateJSON = true
   data = addApiParams(method, model, data)
   options.data = data
+  options.emulateJSON = true
   Backbone.sync(method, model, options)
 
 serverSync = (method, model, options) ->
@@ -57,7 +57,7 @@ addApiParams = (method, model, params = {}) ->
   # attributes if we don't pass any in explicitly.
   # This gets screwed up because we append the locale
   # and currency, so let's replicate that behavior.
-  if model and _.isEqual(params, {}) and (method is 'create' or method is 'udpate')
+  if model and _.isEqual(params, {}) and (method is 'create' or method is 'update')
     _.extend ret, model.toJSON()
 
   ret

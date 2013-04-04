@@ -11,18 +11,21 @@ module.exports = class BaseView extends Backbone.View
   renderOnRefresh: false
 
   constructor: (options) ->
-    super
     @name ||= modelUtils.underscorize(@constructor.id || @constructor.name)
     @parseOptions(options)
-    @postInitialize()
 
     if (obj = @model || @collection) && @renderOnRefresh
       obj.on 'refresh', @render, @
 
+    super
+
+  initialize: ->
+    @postInitialize()
+    
   postInitialize: noop
 
   parseOptions: (options = {}) ->
-    _.extend @options, options
+    @options = _.extend {}, @options, options
 
     @app = @options.app
 

@@ -14,11 +14,13 @@ module.exports = class BaseView extends Backbone.View
     super
     @name ||= modelUtils.underscorize(@constructor.id || @constructor.name)
     @parseOptions(options)
-    @postInitialize()
 
     if (obj = @model || @collection) && @renderOnRefresh
       obj.on 'refresh', @render, @
 
+  initialize: ->
+    @postInitialize()
+    
   postInitialize: noop
 
   parseOptions: (options = {}) ->

@@ -8,7 +8,6 @@ module.exports = class AppView extends BaseView
   el: 'body'
 
   initialize: ->
-    super
     @app = @options.app
     _.defaults @options,
       contentEl: '#content'
@@ -18,8 +17,6 @@ module.exports = class AppView extends BaseView
 
     @_bindInterceptClick()
     @postInitialize()
-
-  postInitialize: noop
 
   render: ->
 

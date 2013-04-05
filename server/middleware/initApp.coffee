@@ -11,6 +11,9 @@ module.exports = (appAttributes = {}) ->
     # and server into the app.
     app = new App(appAttributes)
 
+    # Hold on to a copy of the original request, so we can pull headers, etc
+    app.req = req
+
     # Stash on the request so can be accessed elsewhere.
     req.rendrApp = app
     next()

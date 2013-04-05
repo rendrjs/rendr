@@ -21,7 +21,7 @@ serverSync = (method, model, options) ->
   options.url = @getUrl(options.url, false, data)
   verb = methodMap[method]
   urlParts = options.url.split('?')
-  req =
+  api =
     method: verb
     path: urlParts[0]
     rendrApp: model.app
@@ -30,13 +30,12 @@ serverSync = (method, model, options) ->
   # Put the data as form data if POST or PUT,
   # otherwise query string.
   if verb is 'POST' or verb is 'PUT'
-    req.json = data
+    api.json = data
   else
-    _.extend req.query, data
+    _.extend api.query, data
 
   server ?= require('../server/server')
-
-  server.dataAdapter.makeRequest req, (err, response, body) ->
+  server.dataAdapter.makeRequest @app.req, api, (err, response, body) ->
     if err
       body = {body} if !_.isObject(body)
       # Pass through the statusCode, so lower-level code can handle i.e. 401 properly.

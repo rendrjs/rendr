@@ -24,13 +24,13 @@ serverSync = (method, model, options) ->
   api =
     method: verb
     path: urlParts[0]
-    rendrApp: model.app
     query: qs.parse(urlParts[1]) || {}
+    body: {}
 
   # Put the data as form data if POST or PUT,
   # otherwise query string.
   if verb is 'POST' or verb is 'PUT'
-    api.json = data
+    api.body = data
   else
     _.extend api.query, data
 

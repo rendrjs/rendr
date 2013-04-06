@@ -18,7 +18,6 @@ describe 'BaseView', ->
     topView = new @MyTopView()
     topView.childViews = []
 
-    console.log(topView.getChildViewsByName())
     topView.getChildViewsByName().should.be.empty
     topView.getChildViewsByName('foo').should.be.empty
 
@@ -29,8 +28,6 @@ describe 'BaseView', ->
     topView.getChildViewsByName('foo').should.be.empty
 
     childViews = topView.getChildViewsByName('bottom')
-
-    console.error(childViews);
 
     childViews.should.have.length(1)
 

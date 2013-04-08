@@ -3,10 +3,13 @@ should = require('should')
 
 BaseCollection = require('../../../shared/base/collection')
 BaseModel = require('../../../shared/base/model')
-fetcher = require('../../../shared/fetcher')
 modelUtils = require('../../../shared/modelUtils')
+App = require('../../../shared/app')
 
 describe 'BaseCollection', ->
+
+  beforeEach ->
+    @app = new App
 
   describe 'parse', ->
 
@@ -17,7 +20,7 @@ describe 'BaseCollection', ->
           class MyModel extends BaseModel
             jsonKey: 'my_model'
 
-      @collection = new @MyCollection
+      @collection = new @MyCollection([], {@app})
 
       models = [
         {id: 1, name: 'one'}
@@ -99,8 +102,8 @@ describe 'BaseCollection', ->
   describe "store", ->
 
     beforeEach ->
-      fetcher.modelStore.clear()
-      fetcher.collectionStore.clear()
+      @app.fetcher.modelStore.clear()
+      @app.fetcher.collectionStore.clear()
       class @MyCollection extends BaseCollection
       modelUtils.addClassMapping @MyCollection.name, @MyCollection
 
@@ -110,14 +113,14 @@ describe 'BaseCollection', ->
         item1: 'value1'
         item2: 'value2'
 
-      collection = new @MyCollection(models, {meta: meta})
+      collection = new @MyCollection(models, {meta: meta, app: @app})
       collection.store()
 
       models.forEach (modelAttrs) =>
-        storedModel = fetcher.modelStore.get collection.model.name, modelAttrs.id
+        storedModel = @app.fetcher.modelStore.get collection.model.name, modelAttrs.id
         storedModel.should.eql modelAttrs
 
-      storedCollection = fetcher.collectionStore.get @MyCollection.name, collection.params
+      storedCollection = @app.fetcher.collectionStore.get @MyCollection.name, collection.params
       storedCollection.ids.should.eql _.pluck(models, 'id')
       storedCollection.meta.should.eql meta
 

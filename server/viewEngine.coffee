@@ -6,11 +6,13 @@ _ = require('underscore')
 module.exports = (viewPath, data, callback) ->
   data.locals ||= {}
 
+  app = data.app
+
   layoutData = _.extend {}, data,
-    body: getViewHtml(viewPath, data.locals, data.app)
-    appData: data.app.toJSON()
-    bootstrappedData: getBootstrappedData(data.locals)
-    _app: data.app
+    body: getViewHtml(viewPath, data.locals, app)
+    appData: app.toJSON()
+    bootstrappedData: getBootstrappedData(data.locals, app)
+    _app: app
 
   renderWithLayout(layoutData, callback)
 
@@ -46,15 +48,14 @@ getViewHtml = (viewPath, locals, app) ->
   view.getHtml()
 
 
-getBootstrappedData = (locals) ->
-  fetcher = require('../shared/fetcher')
+getBootstrappedData = (locals, app) ->
   modelUtils = require('../shared/modelUtils')
 
   bootstrappedData = {}
   for own name, modelOrCollection of locals
     if modelUtils.isModel(modelOrCollection) or modelUtils.isCollection(modelOrCollection)
       bootstrappedData[name] =
-        summary: fetcher.summarize(modelOrCollection)
+        summary: app.fetcher.summarize(modelOrCollection)
         data: modelOrCollection.toJSON()
 
   bootstrappedData

@@ -1,3 +1,8 @@
+# 0.2.1
+## 2013-04-07
+* Fixed bug where models within collection wouldn't have `this.app` set after view hydration.
+* Converted `fetcher` object to `Fetcher` class. Prefer to access it via `app.fetcher`.
+
 # 0.2.0
 ## 2013-04-05
 * Breaking change: Passing real `req` as first argument to `dataAdapter.makeRequest`.

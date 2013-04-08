@@ -1,10 +1,11 @@
 require('../../shared/globals')
-fetcher = require('../../shared/fetcher')
 should = require('should')
 
 modelUtils = require('../../shared/modelUtils')
 BaseModel = require('../../shared/base/model')
 BaseCollection = require('../../shared/base/collection')
+App = require('../../shared/app')
+fetcher = null
 
 listingResponses =
   basic:
@@ -59,6 +60,10 @@ modelUtils.addClassMapping 'Listings', Listings
 
 describe 'fetcher', ->
 
+  beforeEach ->
+    @app = new App
+    fetcher = @app.fetcher
+
   describe 'hydrate', ->
 
     beforeEach ->
@@ -68,7 +73,7 @@ describe 'fetcher', ->
     it "should be able store and hydrate a model", ->
       rawListing = {id: 9, name: 'Sunny'}
       results =
-        listing: new Listing(rawListing)
+        listing: new Listing(rawListing, {@app})
       fetchSummary =
         listing: { model: 'listing', id: 9 }
       fetcher.storeResults results
@@ -82,7 +87,7 @@ describe 'fetcher', ->
       params =
         items_per_page: 99
       results =
-        listings: new Listings(rawListings, params: params)
+        listings: new Listings(rawListings, {params, @app})
       fetchSummary =
         listings: { collection: 'listings', ids: _.pluck(rawListings, 'id'), params: params }
       fetcher.storeResults results
@@ -101,8 +106,8 @@ describe 'fetcher', ->
       rawListing = {id: 9, name: 'Sunny'}
       rawListings = [{id: 1, name: 'Sunny'}, {id: 3, name: 'Cloudy'}, {id: 99, name: 'Tall'}]
       results =
-        listing: new Listing(rawListing)
-        listings: new Listings(rawListings)
+        listing: new Listing(rawListing, {@app})
+        listings: new Listings(rawListings, {@app})
       fetchSummary =
         listing: { model: 'listing', id: 9 }
         listings: { collection: 'listings', ids: [1,3,99] }

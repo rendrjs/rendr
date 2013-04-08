@@ -31,6 +31,13 @@ module.exports = class Base extends Backbone.Collection
 
     super
 
+  # Make sure that `model.app` is set for all operations like
+  # `this.add()`, `this.reset()`, `this.set()`, `this.push()`, etc.
+  _prepareModel: ->
+    model = super
+    model.app = @app
+    model
+
   # Idempotent parse
   parse: (resp, modifyInstance = true) ->
     parsed = if @jsonKey && (jsonResp = resp[@jsonKey])

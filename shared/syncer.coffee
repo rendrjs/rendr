@@ -41,7 +41,8 @@ serverSync = (method, model, options) ->
       # Pass through the statusCode, so lower-level code can handle i.e. 401 properly.
       body.status = err.status
       if options.error
-        options.error(model, body)
+        # This `error` has signature of $.ajax, not Backbone.sync.
+        options.error(body)
       else
         throw err
     else

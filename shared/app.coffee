@@ -3,7 +3,7 @@
 
 require('./globals')
 
-fetcher = require('./fetcher')
+Fetcher = require('./fetcher')
 ClientRouter = require(rendr.entryPath + "/app/router") unless global.isServer
 
 noop = ->
@@ -14,8 +14,7 @@ module.exports = class App extends Backbone.Model
 
   # @shared
   initialize: ->
-    @fetcher = fetcher
-    @fetcher.app = @
+    @fetcher = new Fetcher(app: @)
 
     if !global.isServer
       new ClientRouter(app: @)

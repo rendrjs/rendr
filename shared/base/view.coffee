@@ -242,10 +242,16 @@ module.exports = class BaseView extends Backbone.View
   # Call @getView()
   # Attach childView
   attachChildViews: ->
+    # Remove all child views in case we are re-rendering through
+    # manual .render() or 'refresh' being triggered on the view.
+    @removeChildViews()
     @childViews = BaseView.attach(@app, @)
 
-  remove: ->
+  removeChildViews: ->
     view.remove() for view in @childViews || []
+
+  remove: ->
+    @removeChildViews()
     @childViews = null
     @parentView = null
     if (obj = @model || @collection)

@@ -181,6 +181,13 @@ fetcher.storeResults = (results) ->
   for own name, modelOrCollection of results
     modelOrCollection.store()
 
+fetcher.bootstrapData = (modelMap) ->
+  results = {}
+  for own name, map of modelMap
+    modelOrCollection = fetcher.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'))
+    results[name] = modelOrCollection
+  fetcher.storeResults(results)
+
 fetcher.hydrate = (summaries, options = {}) ->
   results = {}
   for own name, summary of summaries

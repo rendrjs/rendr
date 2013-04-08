@@ -191,10 +191,10 @@ fetcher.hydrate = (summaries, options = {}) ->
       collectionData = collectionStore.get(summary.collection, summary.params)
       throw new Error("Collection of type \"#{summary.collection}\" not found for params: #{JSON.stringify(summary.params)}") unless collectionData?
       models = retrieveModelsForCollectionName(summary.collection, collectionData.ids)
-      options =
+      collectionOptions =
         params: summary.params
         meta: collectionData.meta
-      results[name] = modelUtils.getCollection(summary.collection, models, options)
+      results[name] = modelUtils.getCollection(summary.collection, models, collectionOptions)
     if results[name]? and options.app?
       results[name].app = options.app
   results

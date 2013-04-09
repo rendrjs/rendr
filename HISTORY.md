@@ -1,3 +1,7 @@
+# 0.2.2
+## 2013-04-08
+* Fixed bug where status code of CRUD errors were not properly passed down from `syncer`.
+
 # 0.2.1
 ## 2013-04-07
 * Fixed bug where models within collection wouldn't have `this.app` set after view hydration.

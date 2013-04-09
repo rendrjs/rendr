@@ -1,4 +1,3 @@
-fs = require('fs') if global.isServer
 handlebarsHelpers = require('./handlebarsHelpers')
 
 templates = null

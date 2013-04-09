@@ -28,4 +28,7 @@ module.exports = class LocalStorageStore extends MemoryStore
     @_keys = {}
 
   @canHaz = ->
-    window?.localStorage?
+    try
+      window?.localStorage?
+    catch e
+      return false

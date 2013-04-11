@@ -52,10 +52,11 @@ describe 'CollectionStore', ->
 
     collection = new MyCollection(models, meta: meta, params: params)
     @store.set collection, params
+    modelUtils.addClassMapping collection.constructor.name, MyCollection
     results = @store.get collection.constructor.name, params
     results.should.eql
       ids: collection.pluck('login')
-      meta: meta    
+      meta: meta
 
   it "should treat different params as different collections", ->
     models0 = [{

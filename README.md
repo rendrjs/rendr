@@ -7,6 +7,7 @@ Check out the [blog post](http://nerds.airbnb.com/weve-launched-our-first-nodejs
 
 To see how to use Rendr to build a simple web app, check out [airbnb/rendr-app-template](https://github.com/airbnb/rendr-app-template).
 
+Build status: [![travis-ci status](https://secure.travis-ci.org/airbnb/rendr.png)](http://travis-ci.org/#!/airbnb/rendr/builds)
 
 ## The Premise
 

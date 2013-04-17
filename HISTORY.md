@@ -1,3 +1,8 @@
+# 0.2.3
+## 2013-04-17
+* Allow passing `{pushState: false}` to `ClientRouter::redirectTo()` to do a
+  full-page redirect.
+
 # 0.2.2
 ## 2013-04-08
 * Fixed bug where status code of CRUD errors were not properly passed down from `syncer`.

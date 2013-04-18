@@ -1,3 +1,7 @@
+# 0.2.4
+## 2013-04-17
+* Removing bundled jQuery. App should provide its own.
+
 # 0.2.3
 ## 2013-04-17
 * Allow passing `{pushState: false}` to `ClientRouter::redirectTo()` to do a

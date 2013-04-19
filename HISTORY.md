@@ -1,3 +1,11 @@
+# 0.3.2
+## 2013-04-19
+* Ensuring that `ModelStore` passes `app` to models when instantiating them.
+
+# 0.3.1
+## 2013-04-18
+* Added `apiProxy` middleware, pulled from `rendr-app-template`.
+
 # 0.3.0
 ## 2013-04-18
 * Breaking change: Renamed `dataAdapter.makeRequest` to `dataAdapter.request`.

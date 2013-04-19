@@ -41,8 +41,8 @@ module.exports = class Fetcher
 
   constructor: (@options) ->
     @app = @options.app
-    @modelStore = new ModelStore
-    @collectionStore = new CollectionStore
+    @modelStore = new ModelStore({@app})
+    @collectionStore = new CollectionStore({@app})
 
 
   # Returns an instance of Model or Collection.

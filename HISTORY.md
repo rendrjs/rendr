@@ -1,3 +1,7 @@
+# 0.3.0
+## 2013-04-18
+* Breaking change: Renamed `dataAdapter.makeRequest` to `dataAdapter.request`.
+
 # 0.2.4
 ## 2013-04-17
 * Removing bundled jQuery. App should provide its own.

@@ -12,7 +12,7 @@
     "url": "git://github.com/spikebrehm/rendr.git"
   },
   "dependencies": {
-    "coffee-script": "*",
+    "coffee-script": "1.6.2",
     "underscore": "1.4.4",
     "backbone": "1.0.0",
     "handlebars": "1.0.7",

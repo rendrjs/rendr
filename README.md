@@ -20,7 +20,7 @@ Rendr is intended to be a building block along the way to this envisionsed futur
 Some specific design goals:
 
 * Write application logic agnostic to environment
-* Minimize `if (server) {...} else {…}`
+* Minimize `if (server) {...} else {...}`
 * Talk to RESTful API
 * Library, not a framework
 * Hide complexity in library

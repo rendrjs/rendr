@@ -20,7 +20,7 @@ module.exports = class ModelStore extends MemoryStore
     modelData = super key
     if modelData
       if returnModelInstance
-        modelUtils.getModel(modelName, modelData)
+        modelUtils.getModel(modelName, modelData, {@app})
       else
         modelData
     else

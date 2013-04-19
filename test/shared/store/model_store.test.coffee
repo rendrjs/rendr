@@ -5,13 +5,15 @@ BaseModel = require('../../../shared/base/model')
 modelUtils = require('../../../shared/modelUtils')
 
 class MyModel extends BaseModel
+class App
 
 modelUtils.addClassMapping modelUtils.modelName(MyModel), MyModel
 
 describe 'ModelStore', ->
 
   beforeEach ->
-    @store = new ModelStore
+    @app = new App
+    @store = new ModelStore({@app})
 
   it "should get and set the values for a model", ->
     modelAttrs =
@@ -42,6 +44,7 @@ describe 'ModelStore', ->
     resultModel = @store.get('my_model', 1, true)
     resultModel.should.be.an.instanceOf BaseModel
     resultModel.toJSON().should.eql modelAttrs
+    resultModel.app.should.eql @app
 
   it "should merge model attrs when setting", ->
     firstModelAttrs =

@@ -1,7 +1,8 @@
 module.exports = class MemoryStore
   cacheVersion: ''
 
-  constructor: ->
+  constructor: (@options = {}) ->
+    @app = @options.app
     @cache = {}
 
   get: (key) ->

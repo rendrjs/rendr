@@ -35,7 +35,7 @@ serverSync = (method, model, options) ->
     _.extend api.query, data
 
   server ?= require('../server/server')
-  server.dataAdapter.makeRequest @app.req, api, (err, response, body) ->
+  server.dataAdapter.request @app.req, api, (err, response, body) ->
     if err
       body = {body} if !_.isObject(body)
       # Pass through the statusCode, so lower-level code can handle i.e. 401 properly.

@@ -16,14 +16,6 @@ module.exports = class Base extends Backbone.Model
 
     @on 'change', @store
 
-  # Override 'add' to make sure models have '@app' attribute.
-  add: (models, options) ->
-    models = [models] unless _.isArray(models)
-
-    model.app = @app for model in models
-
-    super models, options
-
   # Idempotent parse
   parse: (resp) ->
     if @jsonKey

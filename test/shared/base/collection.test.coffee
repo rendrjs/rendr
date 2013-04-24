@@ -124,3 +124,19 @@ describe 'BaseCollection', ->
       storedCollection.ids.should.eql _.pluck(models, 'id')
       storedCollection.meta.should.eql meta
 
+  describe "_parseModel", ->
+
+    it "should set the model's app property during add, reset", ->
+      class MyCollection extends BaseCollection
+      models = [{id: 1, foo: 'bar'}, {id: 2, foo: 'bot'}]
+
+      collection = new MyCollection(models, {@app})
+      collection.each (model) =>
+        model.app.should.eql @app
+
+      collection.reset(models)
+      collection.each (model) =>
+        model.app.should.eql @app
+
+      collection.add({id: 3, foo: 'bit'})
+      collection.last().app.should.eql @app

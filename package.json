@@ -1,6 +1,6 @@
 {
   "name": "rendr",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "coffee-script": "1.6.2",
     "underscore": "1.4.4",
     "backbone": "1.0.0",
-    "handlebars": "1.0.7",
+    "handlebars": "1.0.10",
     "async":"0.1.22",
     "qs": "0.5.1",
     "express": "~3.0.6",

@@ -11,10 +11,12 @@ noop = ->
 module.exports = class App extends Backbone.Model
   defaults:
     loading: false
+    templateAdapter: 'rendr-handlebars'
 
   # @shared
   initialize: ->
     @fetcher = new Fetcher(app: @)
+    {@templateFinder, @layoutFinder} = require(@get('templateAdapter'))
 
     if !global.isServer
       new ClientRouter(app: @)

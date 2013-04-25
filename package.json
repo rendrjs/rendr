@@ -15,11 +15,11 @@
     "coffee-script": "1.6.2",
     "underscore": "1.4.4",
     "backbone": "1.0.0",
-    "handlebars": "1.0.7",
     "async":"0.1.22",
     "qs": "0.5.1",
     "express": "~3.0.6",
-    "validator": "0.4.21"
+    "validator": "0.4.21",
+    "rendr-handlebars": "https://github.com/hurrymaplelad/rendr-handlebars"
   },
   "devDependencies": {
     "mocha": "*",

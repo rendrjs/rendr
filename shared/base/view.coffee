@@ -1,4 +1,3 @@
-templateFinder = require('../templateFinder')
 modelUtils = require('../modelUtils')
 
 noop = ->
@@ -78,7 +77,7 @@ module.exports = class BaseView extends Backbone.View
 
   # Get template function
   getTemplate: ->
-    templateFinder.getTemplate(@getTemplateName())
+    @app.templateFinder.getTemplate(@getTemplateName())
 
   # Any options not to create data-attributes for.
   nonAttributeOptions: [

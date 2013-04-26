@@ -1,4 +1,3 @@
-require('../../../shared/globals')
 should = require('should')
 
 BaseModel = require('../../../shared/base/model')

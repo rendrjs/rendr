@@ -4,7 +4,7 @@
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --ui bdd --reporter spec --ignore-leaks $(find ./test -name *.test.*) --timeout 6000 --require coffee-script",
+    "test": "mocha --ui bdd --reporter spec  ./test --recursive --compilers coffee:coffee-script",
     "postinstall": "node ./scripts/postinstall.js"
   },
   "repository": {
@@ -15,7 +15,7 @@
     "coffee-script": "1.6.2",
     "underscore": "1.4.4",
     "backbone": "1.0.0",
-    "handlebars": "1.0.10",
+    "handlebars": "git://github.com/spikebrehm/handlebars.js.git#0687c7016c62122ab160a8683817a931b03354ad",
     "async":"0.1.22",
     "qs": "0.5.1",
     "express": "~3.0.6",

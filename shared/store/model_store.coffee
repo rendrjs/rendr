@@ -1,3 +1,4 @@
+_ = require('underscore')
 MemoryStore = require('./memory_store')
 modelUtils = require('../modelUtils')
 

@@ -1,6 +1,7 @@
 path = require('path')
 fs = require('fs')
 _ = require('underscore')
+Handlebars = require('handlebars')
 
 
 module.exports = (viewPath, data, callback) ->

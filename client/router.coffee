@@ -1,3 +1,5 @@
+_ = require('underscore')
+Backbone = require('backbone')
 BaseRouter = require('../shared/base/router')
 BaseView = require('../shared/base/view')
 

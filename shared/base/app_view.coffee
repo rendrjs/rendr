@@ -1,3 +1,4 @@
+_ = require('underscore')
 BaseView = require('./view')
 
 hasPushState = window?.history.pushState?

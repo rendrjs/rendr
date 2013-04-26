@@ -1,3 +1,4 @@
+Handlebars = require('handlebars')
 handlebarsHelpers = require('./handlebarsHelpers')
 
 templates = null

@@ -1,4 +1,5 @@
 syncer = require('../../shared/syncer')
+_ = require('underscore')
 Backbone = require('backbone')
 should = require('should')
 

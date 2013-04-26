@@ -5,8 +5,5 @@ if window?
     entryPath: ''
 else
   global.isServer = true
-  global._ = require('underscore')
-  global.Backbone = require('backbone')
-  global.Handlebars = require('handlebars')
   global.rendr =
     entryPath: process.cwd()

@@ -1,6 +1,5 @@
-isServer = !window?
-_ = if isServer then require('underscore') else window._
-Backbone = if isServer then require('backbone') else window.Backbone
+_ = require('underscore')
+Backbone = require('backbone')
 
 ##
 # Base router class shared betwen ClientRouter and ServerRouter.
@@ -36,9 +35,7 @@ module.exports = class BaseRouter
   _initOptions: (options) ->
     @options = options || {}
     @options.paths ||= {}
-    @options.paths.entryPath ||= rendr?.entryPath
-    if !@options.paths.entryPath?
-      throw new Error("Missing entryPath")
+    @options.paths.entryPath ||= rendr.entryPath
     @options.paths.routes ||= @options.paths.entryPath + '/app/routes'
     @options.paths.controllerDir ||= @options.paths.entryPath + '/app/controllers'
 

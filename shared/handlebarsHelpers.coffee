@@ -1,6 +1,9 @@
 BaseView = null
 modelUtils = null
 templateFinder = require('./templateFinder')
+Handlebars = require('handlebars')
+_ = require('underscore')
+
 
 # Temporary, to fix bug in Handlebars
 # SEE https://github.com/wycats/handlebars.js/issues/342

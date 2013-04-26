@@ -3,6 +3,7 @@
 
 require('./globals')
 
+Backbone = require('backbone')
 Fetcher = require('./fetcher')
 ClientRouter = require(rendr.entryPath + "/app/router") unless global.isServer
 

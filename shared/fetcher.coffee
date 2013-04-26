@@ -31,7 +31,9 @@
 #      reviews: {collection: 'Reviews', ids: [1,3,5,8]}
 #   }
 
-async = if global.isServer then require('async') else window.async
+async = require('async')
+Backbone = require('backbone')
+_ = require('underscore')
 
 modelUtils = require('./modelUtils')
 ModelStore = require('./store/model_store')

@@ -1,4 +1,3 @@
-require('../../../shared/globals')
 CollectionStore = require('../../../shared/store/collection_store')
 should = require('should')
 BaseCollection = require('../../../shared/base/collection')

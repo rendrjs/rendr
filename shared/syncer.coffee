@@ -1,4 +1,6 @@
 qs = require('qs') if global.isServer
+_ = require('underscore')
+Backbone = require('backbone')
 modelUtils = null
 server = null
 

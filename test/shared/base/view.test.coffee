@@ -1,4 +1,3 @@
-require('../../../shared/globals')
 should = require('should')
 
 BaseView = require('../../../shared/base/view')

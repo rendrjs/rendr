@@ -1,4 +1,4 @@
-require('../../../shared/globals')
+_ = require('underscore')
 ModelStore = require('../../../shared/store/model_store')
 should = require('should')
 BaseModel = require('../../../shared/base/model')

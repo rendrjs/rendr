@@ -1,3 +1,5 @@
+_ = require('underscore')
+Backbone = require('backbone')
 templateFinder = require('../templateFinder')
 modelUtils = require('../modelUtils')
 

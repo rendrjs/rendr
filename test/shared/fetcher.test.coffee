@@ -1,4 +1,4 @@
-require('../../shared/globals')
+_ = require('underscore')
 should = require('should')
 
 modelUtils = require('../../shared/modelUtils')

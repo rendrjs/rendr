@@ -1,3 +1,4 @@
+Backbone = require('backbone')
 syncer = require('../syncer')
 
 module.exports = class Base extends Backbone.Model

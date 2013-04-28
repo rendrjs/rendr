@@ -1,23 +1,22 @@
-var Backbone, Base, BaseModel, syncer, _,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+var Backbone, BaseModel, syncer, _, Super;
 
 _ = require('underscore');
 Backbone = require('backbone');
 syncer = require('../syncer');
 BaseModel = require('./model');
 
-module.exports = Base = (function(_super) {
-  __extends(Base, _super);
+Super = Backbone.Collection;
 
-  Base.prototype.model = BaseModel;
+module.exports = Super.extend({
+
+  model: BaseModel,
 
   /*
   * Provide the ability to set default params for every 'fetch' call.
   */
-  Base.prototype.defaultParams = null;
+  defaultParams: null,
 
-  function Base(models, options) {
+  initialize: function(models, options) {
     /*
     * Capture the options as instance variable.
     */
@@ -45,24 +44,24 @@ module.exports = Base = (function(_super) {
       delete this.options.meta;
     }
 
-    Base.__super__.constructor.apply(this, arguments);
-  }
+    Super.prototype.initialize.apply(this, arguments);
+  },
 
   /*
   * Make sure that `model.app` is set for all operations like
   * `this.add()`, `this.reset()`, `this.set()`, `this.push()`, etc.
   */
-  Base.prototype._prepareModel = function() {
+  _prepareModel: function() {
     var model;
-    model = Base.__super__._prepareModel.apply(this, arguments);
+    model = Super.prototype._prepareModel.apply(this, arguments);
     model.app = this.app;
     return model;
-  };
+  },
 
   /*
   * Idempotent parse
   */
-  Base.prototype.parse = function(resp, modifyInstance) {
+  parse: function(resp, modifyInstance) {
     var jsonResp, meta, parsed;
 
     if (modifyInstance == null) {
@@ -78,9 +77,9 @@ module.exports = Base = (function(_super) {
       parsed = resp;
     }
     return this.parseModels(parsed);
-  };
+  },
 
-  Base.prototype.parseModels = function(resp) {
+  parseModels: function(resp) {
     var jsonKey, jsonKeyResp;
 
     resp = _.clone(resp);
@@ -92,36 +91,33 @@ module.exports = Base = (function(_super) {
       }
     });
     return resp;
-  };
+  },
 
-  Base.prototype.fetch = function(options) {
+  fetch: function(options) {
     options = options || {};
 
     // Each time new models are fetched, store the params used.
     options.data = options.data || {};
     _.defaults(options.data, this.defaultParams || {});
     this.params = options.data;
-    return Base.__super__.fetch.apply(this, arguments);
-  };
+    Super.prototype.fetch.apply(this, arguments);
+  },
 
-  Base.prototype.lastCheckedFresh = null;
+  lastCheckedFresh: null,
 
-  Base.prototype.checkFresh = syncer.checkFresh;
+  checkFresh: syncer.checkFresh,
 
-  Base.prototype.sync = syncer.getSync();
+  sync: syncer.getSync(),
 
-  Base.prototype.getUrl = syncer.getUrl;
+  getUrl: syncer.getUrl,
 
   /*
   * Instance method to store the collection and its models.
   */
-  Base.prototype.store = function() {
+  store: function() {
     this.each(function(model) {
       model.store();
     });
     this.app.fetcher.collectionStore.set(this);
-  };
-
-  return Base;
-
-})(Backbone.Collection);
+  }
+});

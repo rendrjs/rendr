@@ -1,8 +1,6 @@
 /*global rendr*/
 
-var Backbone, BaseView, modelUtils, templateFinder, _,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+var Backbone, BaseView, modelUtils, templateFinder, _;
 
 _ = require('underscore');
 Backbone = require('backbone');
@@ -11,31 +9,29 @@ modelUtils = require('../modelUtils');
 
 function noop() {}
 
-module.exports = BaseView = (function(_super) {
-  __extends(BaseView, _super);
-
-  /*
-  * Whether or not to re-render this view when the model or collection
-  * emits a 'refresh' event. Used with 'model|collection.checkFresh()'.
-  */
-  BaseView.prototype.renderOnRefresh = false;
-
-  function BaseView(options) {
-    this.render = _.bind(this.render, this);
+module.exports = BaseView = Backbone.View.extend({
+  initialize: function(options) {
     var obj;
 
-    BaseView.__super__.constructor.apply(this, arguments);
     this.name = this.name || modelUtils.underscorize(this.constructor.id || this.constructor.name);
     this.parseOptions(options);
     this.postInitialize();
     if ((obj = this.model || this.collection) && this.renderOnRefresh) {
       obj.on('refresh', this.render, this);
     }
-  }
 
-  BaseView.prototype.postInitialize = noop;
+    this.render = _.bind(this.render, this);
+  },
 
-  BaseView.prototype.parseOptions = function(options) {
+  /*
+   * Whether or not to re-render this view when the model or collection
+   * emits a 'refresh' event. Used with 'model|collection.checkFresh()'.
+   */
+  renderOnRefresh: false,
+
+  postInitialize: noop,
+
+  parseOptions: function(options) {
     var _base1;
 
     options = options || {};
@@ -56,38 +52,38 @@ module.exports = BaseView = (function(_super) {
     }
     this.model = this.options.model;
     this.collection = this.options.collection;
-  };
+  },
 
   /*
   * Key for the template
   */
-  BaseView.prototype.name = null;
+  name: null,
 
   /*
   * Parent of the current view.
   * We make sure to stick this on the prototype as a runtime optimization
   * for V8. It's best not to add properties to the instance after initialization.
   */
-  BaseView.prototype.parentView = null;
+  parentView: null,
 
   /*
   * Children of the current view.
   */
-  BaseView.prototype.childViews = null;
+  childViews: null,
 
   /*
   * Gets array of child views by their name
   * Empty array is returned when no match is found
   */
-  BaseView.prototype.getChildViewsByName = function(name) {
+  getChildViewsByName: function(name) {
     return _.where(this.childViews, {name: name});
-  };
+  },
 
   /*
   * Get data for template.  This also acts as a view-model.
   * Try to return proper data if model or collection is available.
   */
-  BaseView.prototype.getTemplateData = function() {
+  getTemplateData: function() {
     if (this.model) {
       return this.model.toJSON();
     } else if (this.collection) {
@@ -99,13 +95,13 @@ module.exports = BaseView = (function(_super) {
     } else {
       return _.clone(this.options);
     }
-  };
+  },
 
   /*
   * Add special properties `_app` and `_model` or `_collection` to pass to
   * the templates.
   */
-  BaseView.prototype.decorateTemplateData = function(data) {
+  decorateTemplateData: function(data) {
     if (this.app) {
       data._app = this.app;
     }
@@ -116,28 +112,28 @@ module.exports = BaseView = (function(_super) {
       data._collection = this.collection;
     }
     return data;
-  };
+  },
 
-  BaseView.prototype.getTemplateName = function() {
+  getTemplateName: function() {
     return this.options.template_name || this.name;
-  };
+  },
 
   /*
   * Get template function
   */
-  BaseView.prototype.getTemplate = function() {
+  getTemplate: function() {
     return templateFinder.getTemplate(this.getTemplateName());
-  };
+  },
 
   /*
   * Any options not to create data-attributes for.
   */
-  BaseView.prototype.nonAttributeOptions = ['id', 'className', 'tagName'];
+  nonAttributeOptions: ['id', 'className', 'tagName'],
 
   /*
   * Get HTML attributes to add to el.
   */
-  BaseView.prototype.getAttributes = function() {
+  getAttributes: function() {
     var attributes = {};
 
     if (this.id) {
@@ -169,12 +165,12 @@ module.exports = BaseView = (function(_super) {
     });
 
     return attributes;
-  };
+  },
 
   /*
   * Turn template into HTML, minus the wrapper element.
   */
-  BaseView.prototype.getInnerHtml = function() {
+  getInnerHtml: function() {
     var data, template;
 
     this._preRender();
@@ -185,12 +181,12 @@ module.exports = BaseView = (function(_super) {
       throw new Error(this.name + ": template \"" + this.getTemplateName() + "\" not found.");
     }
     return template(data);
-  };
+  },
 
   /*
   * Get the HTML for the view, including the wrapper element.
   */
-  BaseView.prototype.getHtml = function() {
+  getHtml: function() {
     var attrString, attributes, html;
 
     html = this.getInnerHtml();
@@ -199,9 +195,9 @@ module.exports = BaseView = (function(_super) {
       return memo += " " + key + "=\"" + value + "\"";
     }, '');
     return "<" + this.tagName + attrString + ">" + html + "</" + this.tagName + ">";
-  };
+  },
 
-  BaseView.prototype.render = function() {
+  render: function() {
     var html;
 
     html = this.getInnerHtml();
@@ -214,13 +210,13 @@ module.exports = BaseView = (function(_super) {
     this.$el.attr(this.getAttributes());
     this._postRender();
     return this;
-  };
+  },
 
   /*
   * If rendered on the client missing its data,
   * fetch it based on the parameters passed in.
   */
-  BaseView.prototype.fetchLazy = function() {
+  fetchLazy: function() {
     var fetchSpec, params,
       _this = this;
 
@@ -259,43 +255,43 @@ module.exports = BaseView = (function(_super) {
         }
       }
     });
-  };
+  },
 
   /*
   * Anything to do before rendering on the client or server.
   * This is useful for i.e. accessing @model in the client after
   * @hydrate() is called, but before @getTemplateData() is called.
   */
-  BaseView.prototype._preRender = function() {
+  _preRender: function() {
     this.preRender();
     this.trigger('preRender');
-  };
+  },
 
   /*
   * Anything to do after rendering on the client, such initializing jQuery
   * plugins like sliders, slideshows, etc.
   */
-  BaseView.prototype._postRender = function() {
+  _postRender: function() {
     this.attachChildViews();
     this.postRender();
     this.trigger('postRender');
-  };
+  },
 
   /*
   * To be overridden by subclasses.
   */
-  BaseView.prototype.preRender = noop;
+  preRender: noop,
 
   /*
   * To be overridden by subclasses.
   */
-  BaseView.prototype.postRender = noop;
+  postRender: noop,
 
   /*
   * Hydrate this view with the data it needs, if being attached
   * to pre-exisitng DOM.
   */
-  BaseView.prototype.hydrate = function() {
+  hydrate: function() {
     var fetchSummary, results;
 
     fetchSummary = {};
@@ -317,18 +313,18 @@ module.exports = BaseView = (function(_super) {
       });
       this.parseOptions(results);
     }
-  };
+  },
 
-  BaseView.prototype.setLoading = function(loading) {
+  setLoading: function(loading) {
     this.$el.toggleClass('loading', loading);
     this.trigger('loading', loading);
-  };
+  },
 
   /*
   * When HTML is already present (rendered by server),
   * this is what gets called to bind to the element.
   */
-  BaseView.prototype.attach = function(element, parentView) {
+  attach: function(element, parentView) {
     var $el;
 
     $el = $(element);
@@ -366,7 +362,7 @@ module.exports = BaseView = (function(_super) {
       this.fetchLazy();
     }
     this.trigger('attach');
-  };
+  },
 
   /*
   * Happens client-side.
@@ -375,20 +371,20 @@ module.exports = BaseView = (function(_super) {
   * Call this.getView()
   * Attach childView
   */
-  BaseView.prototype.attachChildViews = function() {
+  attachChildViews: function() {
     // Remove all child views in case we are re-rendering through
     // manual .render() or 'refresh' being triggered on the view.
     this.removeChildViews();
     this.childViews = BaseView.attach(this.app, this);
-  };
+  },
 
-  BaseView.prototype.removeChildViews = function() {
+  removeChildViews: function() {
     _.each(this.childViews || [], function(view) {
       view.remove();
     });
-  };
+  },
 
-  BaseView.prototype.remove = function() {
+  remove: function() {
     var obj;
 
     this.removeChildViews();
@@ -399,49 +395,46 @@ module.exports = BaseView = (function(_super) {
     }
     BaseView.__super__.remove.apply(this, arguments);
     this.trigger('remove');
-  };
+  }
+});
 
-  /*
-  * Class methods
-  * -------------
-  */
+/*
+* Class methods
+* -------------
+*/
 
-  BaseView.getView = function(viewName) {
-    return require(rendr.entryPath + ("/app/views/" + viewName));
-  };
+BaseView.getView = function(viewName) {
+  return require(rendr.entryPath + ("/app/views/" + viewName));
+};
 
-  BaseView.attach = function(app, parentView) {
-    var scope, views;
-    scope = parentView != null ? parentView.$el : null;
-    views = $('[data-view]', scope).map(function(i, el) {
-      var $el, ViewClass, options, parsed, view, viewName;
+BaseView.attach = function(app, parentView) {
+  var scope, views;
+  scope = parentView != null ? parentView.$el : null;
+  views = $('[data-view]', scope).map(function(i, el) {
+    var $el, ViewClass, options, parsed, view, viewName;
 
-      $el = $(el);
-      if (!$el.data('view-attached')) {
-        options = $el.data();
-        viewName = options.view;
-        _.each(options, function(value, key) {
-          if (_.isString(value)) {
-            parsed = _.unescape(value);
-            try {
-              parsed = JSON.parse(parsed);
-            } catch (err) {}
-            options[key] = parsed;
-          }
-        });
-        options.app = app;
-        ViewClass = BaseView.getView(viewName);
-        view = new ViewClass(options);
-        view.attach($el, parentView);
-        return view;
-      }
-    });
-    return _.compact(views);
-  };
-
-  return BaseView;
-
-})(Backbone.View);
+    $el = $(el);
+    if (!$el.data('view-attached')) {
+      options = $el.data();
+      viewName = options.view;
+      _.each(options, function(value, key) {
+        if (_.isString(value)) {
+          parsed = _.unescape(value);
+          try {
+            parsed = JSON.parse(parsed);
+          } catch (err) {}
+          options[key] = parsed;
+        }
+      });
+      options.app = app;
+      ViewClass = BaseView.getView(viewName);
+      view = new ViewClass(options);
+      view.attach($el, parentView);
+      return view;
+    }
+  });
+  return _.compact(views);
+};
 
 /*
 * Noops on the server, because they do DOM stuff.

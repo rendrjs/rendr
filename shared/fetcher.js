@@ -265,11 +265,12 @@ Fetcher.prototype.storeResults = function(results) {
 };
 
 Fetcher.prototype.bootstrapData = function(modelMap) {
-  var modelOrCollection, results;
+  var modelOrCollection, results,
+      _this = this;
 
   results = {};
   _.each(modelMap, function(map, name) {
-    modelOrCollection = this.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'));
+    modelOrCollection = _this.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'));
     results[name] = modelOrCollection;
   });
   this.storeResults(results);

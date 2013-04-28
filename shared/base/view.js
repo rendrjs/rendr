@@ -32,8 +32,6 @@ module.exports = BaseView = Backbone.View.extend({
   postInitialize: noop,
 
   parseOptions: function(options) {
-    var _base1;
-
     options = options || {};
     _.extend(this.options, options);
     this.app = this.options.app;

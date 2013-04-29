@@ -1,7 +1,6 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, path, _,
-  __hasProp = {}.hasOwnProperty;
+var Handlebars, fs, layoutTemplate, path, _;
 
 path = require('path');
 fs = require('fs');
@@ -11,7 +10,7 @@ Handlebars = require('handlebars');
 module.exports = function(viewPath, data, callback) {
   var app, layoutData;
 
-  data.locals || (data.locals = {});
+  data.locals = data.locals || {};
   app = data.app;
   layoutData = _.extend({}, data, {
     body: getViewHtml(viewPath, data.locals, app),
@@ -60,7 +59,7 @@ function getViewHtml(viewPath, locals, app) {
 
   // Pass in the app.
   locals.app = app;
-  name = path.basename(viewPath).replace('.coffee', '');
+  name = path.basename(viewPath);
   View = BaseView.getView(name);
   view = new View(locals);
   return view.getHtml();

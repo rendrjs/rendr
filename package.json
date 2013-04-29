@@ -1,10 +1,10 @@
 {
   "name": "rendr",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --ui bdd --reporter spec  ./test --recursive --compilers coffee:coffee-script",
+    "test": "mocha --ui bdd --reporter spec  ./test --recursive",
     "postinstall": "node ./scripts/postinstall.js"
   },
   "repository": {
@@ -12,7 +12,6 @@
     "url": "git://github.com/spikebrehm/rendr.git"
   },
   "dependencies": {
-    "coffee-script": "1.6.2",
     "underscore": "1.4.4",
     "backbone": "1.0.0",
     "handlebars": "git://github.com/spikebrehm/handlebars.js.git#0687c7016c62122ab160a8683817a931b03354ad",

@@ -100,7 +100,7 @@ module.exports = Super.extend({
     options.data = options.data || {};
     _.defaults(options.data, this.defaultParams || {});
     this.params = options.data;
-    Super.prototype.fetch.apply(this, arguments);
+    return Super.prototype.fetch.apply(this, arguments);
   },
 
   lastCheckedFresh: null,

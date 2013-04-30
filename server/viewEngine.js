@@ -7,7 +7,12 @@ fs = require('fs');
 _ = require('underscore');
 Handlebars = require('handlebars');
 
-module.exports = function(viewPath, data, callback) {
+module.exports = viewEngine;
+
+// Expose this, i.e. for registering view helpers.
+exports.Handlebars = Handlebars;
+
+function viewEngine(viewPath, data, callback) {
   var app, layoutData;
 
   data.locals = data.locals || {};
@@ -19,7 +24,7 @@ module.exports = function(viewPath, data, callback) {
     _app: app
   });
   renderWithLayout(layoutData, callback);
-};
+}
 
 /*
 * render with a layout

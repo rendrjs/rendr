@@ -32,24 +32,36 @@ module.exports = BaseView = Backbone.View.extend({
   postInitialize: noop,
 
   parseOptions: function(options) {
-    options = options || {};
-    _.extend(this.options, options);
-    this.app = this.options.app;
-    if (this.options.model != null) {
-      if (!(this.options.model instanceof Backbone.Model) && this.options.model_name) {
-        this.options.model = modelUtils.getModel(this.options.model_name, this.options.model, {
+    /*
+     * Populate `this.options` and alias as `options`.
+     */
+    options = _.extend(this.options, options || {});
+
+    if (options.app != null) {
+      this.app = this.options.app;
+    }
+
+    if (options.parentView != null) {
+      this.parentView = options.parentView;
+    }
+
+    if (options.model != null) {
+      if (!(options.model instanceof Backbone.Model) && options.model_name) {
+        options.model = modelUtils.getModel(options.model_name, options.model, {
           parse: true
         });
       }
-      this.options.model_name = this.options.model_name || modelUtils.modelName(this.options.model.constructor);
-      this.options.model_id = this.options.model.id;
+      options.model_name = options.model_name || modelUtils.modelName(options.model.constructor);
+      options.model_id = options.model.id;
     }
-    if (this.options.collection != null) {
-      this.options.collection_name = this.options.collection_name || modelUtils.modelName(this.options.collection.constructor);
-      this.options.collection_params = this.options.collection.params;
+
+    if (options.collection != null) {
+      options.collection_name = options.collection_name || modelUtils.modelName(options.collection.constructor);
+      options.collection_params = options.collection.params;
     }
-    this.model = this.options.model;
-    this.collection = this.options.collection;
+
+    this.model = options.model;
+    this.collection = options.collection;
   },
 
   /*
@@ -109,6 +121,7 @@ module.exports = BaseView = Backbone.View.extend({
     if (this.collection) {
       data._collection = this.collection;
     }
+    data._view = this;
     return data;
   },
 

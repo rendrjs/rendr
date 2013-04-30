@@ -21,6 +21,9 @@ module.exports = {
       options.app = app;
     }
 
+    // Pass through a reference to the parent view.
+    options.parentView = this._view;
+
     // get the Backbone.View based on viewName
     ViewClass = BaseView.getView(viewName);
     view = new ViewClass(options);

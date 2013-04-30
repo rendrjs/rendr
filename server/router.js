@@ -21,6 +21,16 @@ ServerRouter.prototype.escapeParams = function(params) {
   return escaped;
 };
 
+ServerRouter.prototype.getParams = function(req) {
+  var params = _.clone(req.query || {});
+
+  req.route.keys.forEach(function(routeKey) {
+    params[routeKey.name] = req.route.params[routeKey.name];
+  });
+  params = this.escapeParams(params);
+  return params;
+};
+
 /*
 * This is the method that renders the request. It returns an Express
 * middleware function.
@@ -29,7 +39,17 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
   var router = this;
 
   return function(req, res, next) {
-    var app, context, params;
+    var app, context, params, redirect;
+
+    params = router.getParams(req);
+    redirect = router.getRedirect(route, params);
+    /*
+     * If `redirect` is present, then do a redirect and return.
+     */
+    if (redirect != null) {
+      res.redirect(route.status || 302, redirect);
+      return;
+    }
 
     app = req.rendrApp;
     context = {
@@ -39,11 +59,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
         res.redirect(url);
       }
     };
-    params = req.query || {};
-    req.route.keys.forEach(function(routeKey) {
-      params[routeKey.name] = req.route.params[routeKey.name];
-    });
-    params = router.escapeParams(params);
+
     action.call(context, params, function(err, template, locals) {
       var viewData;
 

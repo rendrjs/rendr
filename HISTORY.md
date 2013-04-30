@@ -1,3 +1,7 @@
+# 0.4.1
+## 2013-04-29
+* Allow accessing `this.parentView` in `BaseView` during rendering.
+
 # 0.4.0
 ## 2013-04-29
 * Converted all CoffeeScript files to JavaScript.

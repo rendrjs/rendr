@@ -164,7 +164,7 @@ module.exports = BaseView = Backbone.View.extend({
       if (value != null) {
         if (key === 'model') {
           key = 'model_id';
-          value = value.id;
+          value = value.id.toString();
         } else if (key === 'collection') {
           key = 'collection_params';
           value = _.escape(JSON.stringify(value.params));

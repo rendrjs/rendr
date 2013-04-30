@@ -1,7 +1,11 @@
-var Router, config, should;
+/*global describe, it, beforeEach */
+
+var Router, config, should, express, _;
 
 should = require('should');
 Router = require('../../server/router');
+express = require('express');
+_ = require('underscore');
 
 config = {
   paths: {
@@ -219,4 +223,80 @@ describe("server/router", function() {
       ]);
     });
   });
+
+  describe("getParams", function() {
+    beforeEach(function() {
+      this.req = express.request;
+
+      resetProperties(this.req, {
+        query: {},
+        route: {keys: [], params: {}}
+      });
+      this.router.getParams(this.req).should.eql({});
+    });
+
+    it("should return basic query params", function() {
+      this.req.__defineGetter__('query', function() {
+        return {foo: 'bar', bam: 'baz'};
+      });
+      this.router.getParams(this.req).should.eql({foo: 'bar', bam: 'baz'});
+    });
+
+    it("should support route params", function() {
+      this.req.__defineGetter__('route', function() {
+        return {
+          keys: [{name: 'id'}, {name: 'login'}],
+          params: {
+            id: 'id-value',
+            login: 'login-value'
+          }
+        };
+      });
+      this.router.getParams(this.req).should.eql({
+        id: 'id-value',
+        login: 'login-value'
+      });
+    });
+
+    it("should support both together", function() {
+      this.req.__defineGetter__('query', function() {
+        return {foo: 'bar', bam: 'baz'};
+      });
+
+      this.req.__defineGetter__('route', function() {
+        return {
+          keys: [{name: 'id'}, {name: 'login'}],
+          params: {
+            id: 'id-value',
+            login: 'login-value'
+          }
+        };
+      });
+
+      this.router.getParams(this.req).should.eql({
+        foo: 'bar',
+        bam: 'baz',
+        id: 'id-value',
+        login: 'login-value'
+      });
+    });
+
+    it("should XSS sanitize params", function() {
+      this.req.__defineGetter__('query', function() {
+        return {foo: '<script>alert("foo")</script>'};
+      });
+
+      this.router.getParams(this.req).should.eql({
+        foo: '[removed]alert&#40;"foo"&#41;[removed]'
+      });
+    });
+  });
 });
+
+function resetProperties(obj, properties) {
+  _.each(properties, function(value, key) {
+    obj.__defineGetter__(key, function() {
+      return value;
+    });
+  });
+}

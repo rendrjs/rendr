@@ -99,22 +99,32 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
 
   // This returns a function which is called by Backbone.history.
   return function() {
-    var params, paramsArray, views;
+    var params, paramsArray, views, redirect;
 
-    paramsArray = _.toArray(arguments);
     router.trigger('action:start', route, firstRender);
     router.currentRoute = route;
+
     if (firstRender) {
       views = BaseView.attach(router.app);
       router.currentView = router.getMainView(views);
       router.trigger('action:end', route, firstRender);
       firstRender = false;
     } else {
+      paramsArray = _.toArray(arguments);
       params = router.getParamsHash(pattern, paramsArray, window.location.search);
-      if (!action) {
-        throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
+
+      redirect = router.getRedirect(route, params);
+      /*
+       * If `redirect` is present, then do a redirect and return.
+       */
+      if (redirect != null) {
+        router.redirectTo(redirect);
+      } else {
+        if (!action) {
+          throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
+        }
+        action.call(router, params, renderCallback);
       }
-      action.call(router, params, renderCallback);
     }
   };
 };
@@ -175,7 +185,8 @@ ClientRouter.prototype.redirectTo = function(path, options) {
   }
   _.defaults(options, {
     trigger: true,
-    pushState: true
+    pushState: true,
+    replace: true
   });
 
   if (options.pushState === false) {

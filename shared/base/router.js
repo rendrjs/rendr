@@ -50,9 +50,14 @@ BaseRouter.prototype._initOptions = function(options) {
 };
 
 BaseRouter.prototype.getController = function(controllerName) {
-  var controllerDir;
+  var controllerDir, controller;
   controllerDir = this.options.paths.controllerDir;
-  return require(controllerDir + "/" + controllerName + "_controller");
+  try {
+    controller = require(controllerDir + "/" + controllerName + "_controller");
+  } catch (e) {
+    controller = undefined;
+  }
+  return controller;
 };
 
 /*
@@ -60,7 +65,27 @@ BaseRouter.prototype.getController = function(controllerName) {
 * return the corresponding action function.
 */
 BaseRouter.prototype.getAction = function(route) {
-  return this.getController(route.controller)[route.action];
+  var controller, action;
+  controller = this.getController(route.controller);
+  if (controller) {
+    action = controller[route.action];
+  } else {
+    action = undefined;
+  }
+  return action;
+};
+
+BaseRouter.prototype.getRedirect = function(route, params) {
+  var redirect = route.redirect;
+  if (redirect != null) {
+    /*
+     * Support function and string.
+     */
+    if (typeof redirect === 'function') {
+      redirect = redirect(params);
+    }
+  }
+  return redirect;
 };
 
 /*

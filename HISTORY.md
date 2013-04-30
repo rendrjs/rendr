@@ -1,3 +1,7 @@
+# 0.4.3
+## 2013-04-30
+* Support `redirect` option in routes file.
+
 # 0.4.1
 ## 2013-04-29
 * Allow accessing `this.parentView` in `BaseView` during rendering.

@@ -7,7 +7,7 @@ fs = require('fs');
 _ = require('underscore');
 Handlebars = require('handlebars');
 
-module.exports = viewEngine;
+module.exports = exports = viewEngine;
 
 // Expose this, i.e. for registering view helpers.
 exports.Handlebars = Handlebars;

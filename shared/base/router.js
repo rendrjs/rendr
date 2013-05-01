@@ -119,7 +119,7 @@ BaseRouter.prototype.buildRoutes = function() {
 * Returns a copy of current route definitions.
 */
 BaseRouter.prototype.routes = function() {
-  return _.map(this._routes.slice(), function(route) {
+  return this._routes.slice().map(function(route) {
     return route.slice();
   });
 };

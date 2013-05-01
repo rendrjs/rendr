@@ -128,6 +128,10 @@ describe("server/router", function() {
       this.router.routes()[0].shift();
       this.router.routes()[0].length.should.eql(3);
     });
+
+    it("should not throw error without routes", function() {
+      this.router.routes().length.should.eql(0);
+    });
   });
 
   describe("buildRoutes", function() {

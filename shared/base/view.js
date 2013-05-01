@@ -164,6 +164,8 @@ module.exports = BaseView = Backbone.View.extend({
       if (value != null) {
         if (key === 'model') {
           key = 'model_id';
+          // Cast the `id` attribute to string to ensure it's included in attributes.
+          // On the server, it can be i.e. an `ObjectId` from Mongoose.
           value = value.id.toString();
         } else if (key === 'collection') {
           key = 'collection_params';

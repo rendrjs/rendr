@@ -153,11 +153,11 @@ ClientRouter.prototype.getParamsHash = function(pattern, paramsArray, search) {
   paramNames = pattern.match(extractParamNamesRe).map(function(name) {
     return name.slice(1);
   });
-  params = _.inject(paramNames, function(memo, name, i) {
+  params = paramNames.reduce(function(memo, name, i) {
     memo[name] = decodeURIComponent(paramsArray[i]);
     return memo;
   }, {});
-  query = _.inject(search.slice(1).split('&'), function(memo, queryPart) {
+  query = search.slice(1).split('&').reduce(function(memo, queryPart) {
     var parts = queryPart.split('=');
     if (parts.length > 1) {
       memo[parts[0]] = decodeURIComponent(parts[1].replace(plusRe, ' '));

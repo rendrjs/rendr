@@ -13,7 +13,7 @@ module.exports = BaseRouter;
 * Base router class shared betwen ClientRouter and ServerRouter.
 */
 function BaseRouter(options) {
-  this.route = _.bind(this.route, this);
+  this.route = this.route.bind(this);
   this._routes = [];
   this._initOptions(options);
   this.initialize(options);

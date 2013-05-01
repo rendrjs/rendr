@@ -20,7 +20,7 @@ module.exports = BaseView = Backbone.View.extend({
       obj.on('refresh', this.render, this);
     }
 
-    this.render = _.bind(this.render, this);
+    this.render = this.render.bind(this);
   },
 
   /*

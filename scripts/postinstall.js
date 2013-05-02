@@ -1,10 +1,8 @@
 // We have to make sure some client-side dependencies
 // actually exist in node_modules.
 
-var _ = require('underscore'),
-    exec = require('child_process').exec;
+var spawn = require('child_process').spawn;
 
-// TODO: Don't duplicate; pull from assetCompiler.
 var dependencies = [
   'underscore',
   'backbone',
@@ -13,10 +11,17 @@ var dependencies = [
 ];
 
 var root = __dirname + '/..',
-    cmd;
+    pkg = require('../package.json'),
+    version,
+    pkgVersion,
+    process;
 
-_.each(dependencies, function(dep) {
-  cmd = 'npm install ' + dep;
-  console.log('POSTINSTALL: ' + cmd);
-  exec('cd ' + root + '; ' + cmd);
+dependencies.forEach(function(dep) {
+  version = pkg.dependencies[dep];
+  pkgVersion = dep + '@' + version;
+  console.log('POSTINSTALL: npm install ' + pkgVersion);
+  process = spawn('npm', ['install', pkgVersion], {cwd: root});
+  process.stdout.on('data', function(data) {
+    console.log(data.toString());
+  });
 });

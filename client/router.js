@@ -118,7 +118,7 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
        * If `redirect` is present, then do a redirect and return.
        */
       if (redirect != null) {
-        router.redirectTo(redirect);
+        router.redirectTo(redirect, {replace: true});
       } else {
         if (!action) {
           throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
@@ -186,7 +186,7 @@ ClientRouter.prototype.redirectTo = function(path, options) {
   _.defaults(options, {
     trigger: true,
     pushState: true,
-    replace: true
+    replace: false
   });
 
   if (options.pushState === false) {

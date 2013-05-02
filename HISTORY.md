@@ -1,3 +1,23 @@
+# 0.4.3
+## 2013-04-30
+* Support `redirect` option in routes file.
+
+# 0.4.1
+## 2013-04-29
+* Allow accessing `this.parentView` in `BaseView` during rendering.
+
+# 0.4.0
+## 2013-04-29
+* Converted all CoffeeScript files to JavaScript.
+
+# 0.3.4
+## 2013-04-25
+* No more globals for Backbone, _, Handlebars.
+
+# 0.3.3
+## 2013-04-25
+* Updating to handlebars@0.1.10 to get bundled runtime file.
+
 # 0.3.2
 ## 2013-04-19
 * Ensuring that `ModelStore` passes `app` to models when instantiating them.

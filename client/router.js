@@ -1,8 +1,7 @@
 /*global rendr*/
 
-var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, inherit;
+var AppView, Backbone, BaseRouter, BaseView, extractParamNamesRe, firstRender, plusRe, _;
 
-inherit = require('inherit-component');
 _ = require('underscore');
 Backbone = require('backbone');
 BaseRouter = require('../shared/base/router');
@@ -29,7 +28,10 @@ function ClientRouter(options) {
   BaseRouter.apply(this, arguments);
 }
 
-inherit(ClientRouter, BaseRouter);
+ClientRouter.prototype = Object.create(
+  BaseRouter.prototype,
+  {constructor: {value: ClientRouter}}
+);
 
 ClientRouter.prototype.currentFragment = null;
 

@@ -1,6 +1,7 @@
-var BaseView, should;
+var BaseView, should, sinon;
 
 should = require('should');
+sinon = require('sinon');
 BaseView = require('../../../shared/base/view');
 
 describe('BaseView', function() {
@@ -30,5 +31,24 @@ describe('BaseView', function() {
     topView.childViews.push(anotherBottomView);
     childViews = topView.getChildViewsByName('my_bottom_view');
     childViews.should.have.length(2);
+  });
+
+  describe('getTemplate', function() {
+    beforeEach(function() {
+      this.app = {
+        templateFinder: {
+          getTemplate: sinon.spy()
+        }
+      };
+
+      this.topView = new this.MyTopView({
+        app: this.app
+      });
+    });
+
+    it("should delegate to the app's templateFinder", function() {
+        this.topView.getTemplate();
+        this.app.templateFinder.getTemplate.called.should.be.true
+    });
   });
 });

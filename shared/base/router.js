@@ -106,7 +106,7 @@ BaseRouter.prototype.buildRoutes = function() {
     if (this.reverseRoutes) {
       routes = routes.reverse();
     }
-    _.each(routes, function(route) {
+    routes.forEach(function(route) {
       _this.route.apply(_this, route);
     });
   } catch (e) {
@@ -148,7 +148,7 @@ BaseRouter.prototype.parseDefinitions = function(definitions) {
   var route;
 
   route = {};
-  _.each(definitions, function(element) {
+  definitions.forEach(function(element) {
     var parts;
 
     /*

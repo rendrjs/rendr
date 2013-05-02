@@ -390,7 +390,7 @@ module.exports = BaseView = Backbone.View.extend({
   },
 
   removeChildViews: function() {
-    _.each(this.childViews || [], function(view) {
+    (this.childViews || []).forEach(function(view) {
       view.remove();
     });
   },

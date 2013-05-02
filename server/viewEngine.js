@@ -1,14 +1,11 @@
 /*global rendr*/
 
-var Handlebars, layoutTemplate, layoutFinder, path, _;
+var layoutTemplate, layoutFinder, path, _;
 
 path = require('path');
 _ = require('underscore');
 
 module.exports = exports = viewEngine;
-
-// Expose this, i.e. for registering view helpers.
-exports.Handlebars = Handlebars;
 
 function viewEngine(viewPath, data, callback) {
   var app, layoutData;

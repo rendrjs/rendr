@@ -452,7 +452,7 @@ BaseView.attach = function(app, parentView) {
 /*
 * Noops on the server, because they do DOM stuff.
 */
-if (global.isServer) {
+if (typeof window === 'undefined') {
   BaseView.prototype._ensureElement = noop;
   BaseView.prototype.delegateEvents = noop;
 }

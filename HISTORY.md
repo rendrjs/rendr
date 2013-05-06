@@ -1,3 +1,10 @@
+# 0.4.4
+## 2013-05-06
+* In BaseView::getAttributes(), call toString() on model.id, for better support of Mongoose.
+* In BaseView::getAttributes(), support custom this.model.idAttribute.
+* Remove reference to `global.isServer` in BaseView; easier to standalone test.
+* Default `replace: false` in ClientRouter::redirectTo().
+
 # 0.4.3
 ## 2013-04-30
 * Support `redirect` option in routes file.

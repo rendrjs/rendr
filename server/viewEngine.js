@@ -30,6 +30,7 @@ function viewEngine(viewPath, data, callback) {
 * render with a layout
 */
 function renderWithLayout(locals, callback) {
+  _.extend(locals, locals.locals);
   getLayoutTemplate(function(err, templateFn) {
     if (err) return callback(err);
     var html = templateFn(locals);

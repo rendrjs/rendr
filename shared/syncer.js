@@ -114,7 +114,7 @@ syncer.getUrl = function getUrl(url, clientPrefix, params) {
   }
   params = params || {};
   url = url || _.result(this, 'url');
-  if (clientPrefix) {
+  if (clientPrefix && !~url.indexOf('://')) {
     url = "/api" + url;
   }
   return syncer.interpolateParams(this, url, params);

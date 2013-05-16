@@ -40,8 +40,8 @@ function getApiHost(path, apiHostsMap) {
       url = url.substring(0, url.indexOf('?')) || url,
       r = routeToRegExp(url);
 
-      if(url == path || r.exec(path)){
-        apiHost = host;
+      if (r.exec(path)){
+        return (apiHost = host);
       }
 
     });

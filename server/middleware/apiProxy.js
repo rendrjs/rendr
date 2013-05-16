@@ -1,6 +1,7 @@
-var server, utils, _;
+var server, utils, Backbone, _;
 
 _ = require('underscore');
+Backbone = require('backbone');
 utils = require('../utils');
 server = require('../server');
 
@@ -38,38 +39,10 @@ function getApiHost(path, apiHostsMap) {
   _.each( apiHostsMap, function(urls, host) {
     _.each(urls, function(url) {
       url = url.substring(0, url.indexOf('?')) || url,
-      r = routeToRegExp(url);
-
-      if (r.exec(path)){
-        return (apiHost = host);
-      }
-
+      r = Backbone.Router.prototype._routeToRegExp(url);
+      if (r.exec(path)){ return (apiHost = host); }
     });
   });
 
   return apiHost;
-}
-
-// Duping some of BB's routing logic here to ensure we have a good match
-function routeToRegExp( route ) {
-  var optionalParam = /\((.*?)\)/g,
-      namedParam    = /(\(\?)?:\w+/g,
-      splatParam    = /\*\w+/g,
-      escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
-
-  route = route.replace(escapeRegExp, '\\$&')
-               .replace(optionalParam, '(?:$1)?')
-               .replace(namedParam, function(match, optional){
-                 return optional ? match : '([^\/]+)';
-               })
-               .replace(splatParam, '(.*?)');
-
-  return new RegExp('^' + route + '$');
-}
-
-function extractParameters ( route, fragment ) {
-  var params = route.exec(fragment).slice(1);
-  return _.map(params, function(param) {
-    return param ? decodeURIComponent(param) : null;
-  });
 }

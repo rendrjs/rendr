@@ -11,7 +11,7 @@ var dependencies = [
   'underscore@' + pkg.dependencies.underscore,
   'backbone@' + pkg.dependencies.backbone,
   'async@' + pkg.dependencies.async,
-  'handlebars@' + pkg.dependencies.handlebars];
+  'git://github.com/spikebrehm/handlebars.js.git#0687c7016c62122ab160a8683817a931b03354ad'];
 
 npm.load({
   'cwd': root

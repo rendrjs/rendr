@@ -14,12 +14,13 @@
   "dependencies": {
     "underscore": "1.4.4",
     "backbone": "1.0.0",
-    "handlebars": "git://github.com/spikebrehm/handlebars.js.git#0687c7016c62122ab160a8683817a931b03354ad",
+    "handlebars": "~1.0.10",
     "async":"0.1.22",
     "qs": "0.5.1",
     "express": "~3.0.6",
     "validator": "0.4.21",
-    "inherit-component": "0.0.2"
+    "inherit-component": "0.0.2",
+    "npm": "*"
   },
   "devDependencies": {
     "mocha": "*",

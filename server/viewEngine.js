@@ -1,22 +1,18 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, path, _;
+var layoutTemplate, layoutFinder, path, _;
 
 path = require('path');
-fs = require('fs');
 _ = require('underscore');
-Handlebars = require('handlebars');
 
 module.exports = exports = viewEngine;
-
-// Expose this, i.e. for registering view helpers.
-exports.Handlebars = Handlebars;
 
 function viewEngine(viewPath, data, callback) {
   var app, layoutData;
 
   data.locals = data.locals || {};
   app = data.app;
+  layoutFinder = app.layoutFinder;
   layoutData = _.extend({}, data, {
     body: getViewHtml(viewPath, data.locals, app),
     appData: app.toJSON(),
@@ -48,11 +44,10 @@ function getLayoutTemplate(callback) {
   if (layoutTemplate) {
     return callback(null, layoutTemplate);
   }
-  layoutPath = rendr.entryPath + "/app/templates/__layout.hbs";
-  fs.readFile(layoutPath, 'utf8', function(err, str) {
+  layoutFinder.getTemplate('__layout', function(err, template) {
     if (err) return callback(err);
-    layoutTemplate = Handlebars.compile(str);
-    callback(null, layoutTemplate);
+    layoutTemplate = template;
+    callback(err, layoutTemplate);
   });
 }
 

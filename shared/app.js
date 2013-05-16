@@ -18,13 +18,18 @@ function noop() {}
 module.exports = Backbone.Model.extend({
 
   defaults: {
-    loading: false
+    loading: false,
+    templateAdapter: 'rendr-handlebars'
   },
 
   /*
   * @shared
   */
   initialize: function() {
+    var templateAdapter;
+    templateAdapter = require(this.get('templateAdapter'));
+    this.templateFinder = templateAdapter.templateFinder;
+    this.layoutFinder = templateAdapter.layoutFinder;
     this.fetcher = new Fetcher({
       app: this
     });

@@ -8,30 +8,36 @@ var root = __dirname + '/..',
   pkg = require('../package.json');
 
 var dependencies = [
-  'underscore@' + pkg.dependencies.underscore,
-  'backbone@' + pkg.dependencies.backbone,
-  'async@' + pkg.dependencies.async,
-  'git://github.com/spikebrehm/handlebars.js.git#0687c7016c62122ab160a8683817a931b03354ad'];
+  'underscore',
+  'backbone',
+  'async',
+  'handlebars'
+];
+
+var packages = dependencies.map(function(dep) {
+  var pkgDep = pkg.dependencies[dep];
+
+  if (~pkgDep.indexOf('://')) {
+    // If it has a protocol, assume it's a link to a repo.
+    return pkgDep;
+  } else {
+    return dep + '@' + pkgDep;
+  }
+});
 
 npm.load({
   'cwd': root
-}, function(er) {
-  if (er) {
-    handleError(er);
-    return;
-  } 
-  npm.commands.install(dependencies, function(er, data) {
-    if (er) {
-      handleError(er);
-      return;
-    } 
-    console.log(data);
-  })
+}, function(err) {
+  if (err) return handleError(err);
+  npm.commands.install(packages, function(err, data) {
+    if (err) return handleError(err);
+    console.log("NPM POSTINALL: %s", message);
+  });
   npm.on("log", function(message) {
-    console.log(message);
-  })
+    console.log("NPM POSTINALL: %s", message);
+  });
 });
 
-function handleError(er) {
-  console.error(er.stack || er.message);
+function handleError(err) {
+  console.error(err.stack || err.message);
 }

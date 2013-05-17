@@ -1,6 +1,7 @@
-var utils, _, fs;
+var utils, _, fs, Backbone;
 
 _ = require('underscore');
+Backbone = require('backbone');
 fs = require('fs');
 
 utils = module.exports = {};
@@ -18,6 +19,7 @@ utils.isErrorStatus = function(statusCode, options) {
   }
 };
 
+// http://stackoverflow.com/q/5827612/
 utils.walk = function(dir, callback) {
   var results = [];
 
@@ -31,7 +33,7 @@ utils.walk = function(dir, callback) {
       file = dir + '/' + file;
       fs.stat(file, function(err, stat) {
         if (stat && stat.isDirectory()) {
-          walk(file, function(err, res) {
+          utils.walk(file, function(err, res) {
             results = results.concat(res);
             if (!--pending) { callback(null, results); }
           });
@@ -42,4 +44,20 @@ utils.walk = function(dir, callback) {
       });
     });
   });
+};
+
+utils.getApiHost = function(path, apiHostsMap) {
+  var extractParamNamesRe = /:(\w+)/g,
+      apiHost = null,
+      r;
+
+  _.each( apiHostsMap, function(urls, host) {
+    _.each(urls, function(url) {
+      url = url.substring(0, url.indexOf('?')) || url,
+      r = Backbone.Router.prototype._routeToRegExp(url);
+      if (r.exec(path)){ return (apiHost = host); }
+    });
+  });
+
+  return apiHost;
 };

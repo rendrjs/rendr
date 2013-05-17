@@ -1,9 +1,9 @@
-var server, utils, Backbone, _;
+var server, utils, _, getApiHost;
 
 _ = require('underscore');
-Backbone = require('backbone');
 utils = require('../utils');
 server = require('../server');
+getApiHost = require('../utils').getApiHost;
 
 /*
  * Middleware handler for intercepting API routes.
@@ -31,18 +31,3 @@ module.exports = function(apiHostsMap) {
     });
   };
 };
-
-function getApiHost(path, apiHostsMap) {
-  var extractParamNamesRe = /:(\w+)/g,
-      apiHost = null;
-
-  _.each( apiHostsMap, function(urls, host) {
-    _.each(urls, function(url) {
-      url = url.substring(0, url.indexOf('?')) || url,
-      r = Backbone.Router.prototype._routeToRegExp(url);
-      if (r.exec(path)){ return (apiHost = host); }
-    });
-  });
-
-  return apiHost;
-}

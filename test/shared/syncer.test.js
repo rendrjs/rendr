@@ -143,4 +143,16 @@ describe('syncer', function() {
       syncer.getUrl('https://www.example.com/api/foo', true, {}).should.eql('https://www.example.com/api/foo');
     });
   });
+
+  describe('getApiHost', function() {
+    it("should return the correct apiHost", function () {
+      this.model = new Backbone.Model({
+        apiHost: 'foo'
+      });
+
+      syncer.getApiHost.call(this.model.attributes).should.eql('foo');
+      syncer.getApiHost('bar').should.eql('bar');
+    });
+  });
+  
 });

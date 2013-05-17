@@ -1,21 +1,8 @@
 var _ = require('underscore'),
-    utils = require('rendr/server/utils'),
-    should = require('should'),
-    path = require('path');
+    utils = require('./../../server/utils'),
+    should = require('should');
 
 describe('utils', function() {
-
-  describe('walk', function() {
-    it('should return an array of a given directory\'s filenames', function(done) {
-      var nodeNames = [],
-          walkableDir = path.resolve(process.env.PWD+'/../fixtures/walkableDir');
-
-      utils.walk(walkableDir, function(err, names) {
-        names.should.be.an.instanceOf(Array).with.lengthOf(6);
-        done(err);
-      });
-    });
-  });
 
   describe('getApiHost', function() {
     beforeEach(function() {

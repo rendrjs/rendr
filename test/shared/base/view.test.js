@@ -31,4 +31,37 @@ describe('BaseView', function() {
     childViews = topView.getChildViewsByName('my_bottom_view');
     childViews.should.have.length(2);
   });
+
+  describe('getViewNamePermutations', function() {
+    it('should return multiple view/template directory options', function() {
+        var conditionsIndex = 'conditions_index_view';
+            conditionsViewOpts = [
+                'conditions_index_view',
+                'conditions/index',
+                'conditions/index_view'
+            ],
+            coolFeatureIndex = 'my_cool_feature_index_view',
+            coolFeatureViewOpts = [
+                'my_cool_feature_index_view',
+                'my_cool_feature/index',
+                'my_cool_feature/index_view',
+                'my/cool/feature/index',
+                'my/cool/feature/index_view'
+            ];
+
+        BaseView.getViewNamePermutations(conditionsIndex).should.eql(conditionsViewOpts);
+        BaseView.getViewNamePermutations(coolFeatureIndex).should.eql(coolFeatureViewOpts);
+    });
+  });
+
+  describe('safeGet', function() {
+    it('should return the correct value', function() {
+        BaseView.safeGet('some_view_name', function(v){ return v;}).should.eql('some_view_name');
+        BaseView.safeGet('some_view_name', function(v){ return v;}, 'PRE_').should.eql('PRE_some_view_name');
+    });
+    it('shoud fail silently', function() {
+        should.not.exist( BaseView.safeGet('a_string', function(v) { return v.join(); }) );
+    });
+  });
+
 });

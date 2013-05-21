@@ -133,7 +133,22 @@ module.exports = BaseView = Backbone.View.extend({
   * Get template function
   */
   getTemplate: function() {
-    return templateFinder.getTemplate(this.getTemplateName());
+    var template,
+        viewNamePermutations = BaseView.getViewNamePermutations(this.name);
+
+    function _getTemplate (viewName) {
+      var retVal;
+      try{ retVal = templateFinder.getTemplate(viewName); }
+      catch (e){ /* die with a wimper, not a bang */ }
+      return retVal;
+    }
+
+    for (var i = 0, len = viewNamePermutations.length; i < len; i++) {
+      template = _getTemplate(viewNamePermutations[i]);
+      if (template) return template;
+    }
+
+    return template;
   },
 
   /*
@@ -423,7 +438,41 @@ module.exports = BaseView = Backbone.View.extend({
 */
 
 BaseView.getView = function(viewName) {
-  return require(rendr.entryPath + "/app/views/" + viewName);
+  var view,
+      viewNamePermutations = BaseView.getViewNamePermutations(viewName);
+
+  function _getView (viewName) {
+    var retVal;
+    try{ retVal = require(rendr.entryPath + "/app/views/" + viewName); }
+    catch (e){ /* die with a wimper, not a bang */ }
+    return retVal;
+  }
+
+  for (var i = 0, len = viewNamePermutations.length; i < len; i++) {
+    view = _getView(viewNamePermutations[i]);
+    if (view) return view;
+  }
+
+  return view;
+};
+
+BaseView.getViewNamePermutations = function(viewName) {
+  var retArr = [viewName],  // start w/ underscorized viewName
+      nameArr = viewName.split(/\_/),
+      permutation,
+      reducers = [
+        function(memo, seg, list) { var split = (list == nameArr.length-2) ? '/' :'_'; return (seg == 'view') ? memo : memo + split + seg; },
+        function(memo, seg, list) { var split = (list == nameArr.length-2) ? '/' :'_'; return memo + split + seg; },
+        function(memo, seg){ return (seg == 'view') ? memo : memo + '/' + seg; },
+        function(memo, seg){ var split = (seg == 'view') ? '_' : '/'; return memo + split + seg; }
+      ];
+
+  _.each(reducers, function(reducer) {
+    permutation = _.reduce(nameArr, reducer);
+    if (_.indexOf(retArr, permutation) == -1) retArr.push( permutation );
+  });
+
+  return retArr;
 };
 
 BaseView.attach = function(app, parentView) {

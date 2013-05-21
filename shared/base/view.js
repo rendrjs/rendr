@@ -133,23 +133,10 @@ module.exports = BaseView = Backbone.View.extend({
   * Get template function
   */
   getTemplate: function() {
-    var template,
-        viewNamePermutations = BaseView.getViewNamePermutations(this.name);
-
-    function _getTemplate (viewName) {
-      var retVal;
-      try{ retVal = templateFinder.getTemplate(viewName); }
-      catch (e){ /* die with a wimper, not a bang */ }
-      return retVal;
-    }
-
-    for (var i = 0, len = viewNamePermutations.length; i < len; i++) {
-      template = _getTemplate(viewNamePermutations[i]);
-      if (template) return template;
-    }
-
-    return template;
+    var viewNamePermutations = BaseView.getViewNamePermutations(this.name);
+    return BaseView.getFromOptions(viewNamePermutations, templateFinder.getTemplate);
   },
+
 
   /*
   * Any options not to create data-attributes for.
@@ -438,22 +425,27 @@ module.exports = BaseView = Backbone.View.extend({
 */
 
 BaseView.getView = function(viewName) {
-  var view,
-      viewNamePermutations = BaseView.getViewNamePermutations(viewName);
+  var viewNamePermutations = BaseView.getViewNamePermutations(viewName);
+  return  BaseView.getFromOptions(viewNamePermutations, require, rendr.entryPath + "/app/views/");
+};
 
-  function _getView (viewName) {
-    var retVal;
-    try{ retVal = require(rendr.entryPath + "/app/views/" + viewName); }
-    catch (e){ /* die with a wimper, not a bang */ }
-    return retVal;
-  }
+BaseView.safeGet = function(viewName, fn, transform) {
+  var retVal;
+  transform = transform || '';
+  try{ retVal = fn(transform + viewName); }
+  catch (e){ /* die with a wimper, not a bang */ }
+  return retVal;
+};
+
+BaseView.getFromOptions = function(viewNamePermutations, fn, transform) {
+  var item;
 
   for (var i = 0, len = viewNamePermutations.length; i < len; i++) {
-    view = _getView(viewNamePermutations[i]);
-    if (view) return view;
+    item = BaseView.safeGet(viewNamePermutations[i], fn, transform);
+    if (item) return item;
   }
 
-  return view;
+  return item;
 };
 
 BaseView.getViewNamePermutations = function(viewName) {

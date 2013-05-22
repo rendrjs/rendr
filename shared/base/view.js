@@ -158,7 +158,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     // Add `data-view` attribute with view key.
     // For now, view key is same as template.
-    attributes['data-view'] = this.name;
+    attributes['data-view'] = this.getTemplateName();
 
     // Add model & collection meta data from options,
     // as well as any non-object option values.
@@ -437,24 +437,44 @@ BaseView.safeGet = function(viewName, fn, transform) {
   return retVal;
 };
 
+/*
+ * given the following View id, getFromOptions will match view/template filenames in the following order
+ * relative to their parent directory.
+ *
+ * View id 'FooIndexView'
+ * 1. conditions_index_view
+ * 2. conditions/index
+ * 3. conditions/index_view
+ *
+ * View id 'FooShow'
+ * 1. foo_show
+ * 2. foo/show
+ *
+ * View id 'MyCoolFeatureIndexView'
+ * 1. my_cool_feature_index_view
+ * 2. my_cool_feature/index
+ * 3. my_cool_feature/index_view
+ * 4. my/cool/feature/index
+ * 5. my/cool/feature/index_view
+ */
 BaseView.getFromOptions = function(viewNamePermutations, fn, transform) {
   var item;
 
-  for (var i = 0, len = viewNamePermutations.length; i < len; i++) {
-    item = BaseView.safeGet(viewNamePermutations[i], fn, transform);
+  _.find(viewNamePermutations, function(viewName) {
+    item = BaseView.safeGet(viewName, fn, transform);
     if (item) return item;
-  }
+  });
 
   return item;
 };
 
 BaseView.getViewNamePermutations = function(viewName) {
-  var retArr = [viewName],  // start w/ underscorized viewName
+  var retArr = [viewName], // start w/ underscorized viewName
       nameArr = viewName.split(/\_/),
       permutation,
       reducers = [
-        function(memo, seg, list) { var split = (list == nameArr.length-2) ? '/' :'_'; return (seg == 'view') ? memo : memo + split + seg; },
-        function(memo, seg, list) { var split = (list == nameArr.length-2) ? '/' :'_'; return memo + split + seg; },
+        function(memo, seg, idx) { var split = (idx == nameArr.length-2) ? '/' :'_'; return (seg == 'view') ? memo : memo + split + seg; },
+        function(memo, seg, idx) { var split = (idx == nameArr.length-2) ? '/' :'_'; return memo + split + seg; },
         function(memo, seg){ return (seg == 'view') ? memo : memo + '/' + seg; },
         function(memo, seg){ var split = (seg == 'view') ? '_' : '/'; return memo + split + seg; }
       ];

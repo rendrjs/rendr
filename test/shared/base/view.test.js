@@ -40,6 +40,11 @@ describe('BaseView', function() {
                 'conditions/index',
                 'conditions/index_view'
             ],
+            fooShow = 'foo_show',
+            fooShowViewOpts = [
+                'foo_show',
+                'foo/show'
+            ],
             coolFeatureIndex = 'my_cool_feature_index_view',
             coolFeatureViewOpts = [
                 'my_cool_feature_index_view',
@@ -50,6 +55,7 @@ describe('BaseView', function() {
             ];
 
         BaseView.getViewNamePermutations(conditionsIndex).should.eql(conditionsViewOpts);
+        BaseView.getViewNamePermutations(fooShow).should.eql(fooShowViewOpts);
         BaseView.getViewNamePermutations(coolFeatureIndex).should.eql(coolFeatureViewOpts);
     });
   });

@@ -133,7 +133,7 @@ module.exports = BaseView = Backbone.View.extend({
   * Get template function
   */
   getTemplate: function() {
-    var viewNamePermutations = BaseView.getViewNamePermutations(this.name);
+    var viewNamePermutations = BaseView.getViewNamePermutations(this.getTemplateName());
     return BaseView.getFromOptions(viewNamePermutations, templateFinder.getTemplate);
   },
 

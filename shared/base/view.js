@@ -424,6 +424,11 @@ module.exports = BaseView = Backbone.View.extend({
 * -------------
 */
 
+BaseView.getViewName = function(viewPath, viewDir) {
+  viewDir = viewDir || 'app/views/';
+  return viewPath.substring( viewPath.indexOf(viewDir) + viewDir.length, viewPath.length);
+};
+
 BaseView.getView = function(viewName) {
   var viewNamePermutations = BaseView.getViewNamePermutations(viewName);
   return  BaseView.getFromOptions(viewNamePermutations, require, rendr.entryPath + "/app/views/");

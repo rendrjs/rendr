@@ -57,15 +57,14 @@ function getLayoutTemplate(callback) {
 }
 
 function getViewHtml(viewPath, locals, app) {
-  var BaseView, View, name, view, viewDirs;
+  var BaseView, View, name, view;
 
   BaseView = require('../shared/base/view');
   locals = _.clone(locals);
 
   // Pass in the app.
   locals.app = app;
-  viewDirs = 'app/views/';
-  name = viewPath.substring(viewPath.indexOf(viewDirs)+viewDirs.length, viewPath.length);
+  name = BaseView.getViewName(viewPath);
   View = BaseView.getView(name);
   view = new View(locals);
   return view.getHtml();

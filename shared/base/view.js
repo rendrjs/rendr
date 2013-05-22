@@ -158,7 +158,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     // Add `data-view` attribute with view key.
     // For now, view key is same as template.
-    attributes['data-view'] = this.getTemplateName();
+    attributes['data-view'] = this.name;
 
     // Add model & collection meta data from options,
     // as well as any non-object option values.

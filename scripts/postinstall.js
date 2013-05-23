@@ -29,7 +29,7 @@ npm.load({
   'cwd': root
 }, function(err) {
   if (err) return handleError(err);
-  npm.commands.install(packages, function(err, data) {
+  npm.commands.install(packages, function(err, message) {
     if (err) return handleError(err);
     console.log("NPM POSTINALL: %s", message);
   });

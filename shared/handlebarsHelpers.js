@@ -12,21 +12,24 @@ var oldEach = Handlebars.helpers.each;
 
 module.exports = {
   view: function(viewName, block) {
-    var ViewClass, html, options, view;
+    var ViewClass, html, options, view, data;
 
     BaseView = BaseView || require('./base/view');
     modelUtils = modelUtils || require('./modelUtils');
     viewName = modelUtils.underscorize(viewName);
     options = block.hash || {};
+    data = block.data || {};
 
     // Pass through a reference to the app.
-    if (this._app) {
-      options.app = this._app;
+    var app = this._app || data._app;
+    if (app) {
+      options.app = app;
     }
 
     // Pass through a reference to the parent view.
-    if (this._view) {
-      options.parentView = this._view;
+    parentView = this._view || data._view
+    if (parentView) {
+      options.parentView = parentView;
     }
 
     // get the Backbone.View based on viewName
@@ -55,13 +58,14 @@ module.exports = {
   },
 
   /**
-   * Extend `each` to pass through important context. By default, `each` calls
-   * `options.fn` without a calling context.
+   * Extend `each` to pass through important context.
    */
   each: function(context, options) {
-    var callingContext = getOptionsFromContext(this);
+    options.data = Handlebars.createFrame(options.data || {});
+
     // Make sure `this._app`, `this._view`, etc are available.
-    options.fn = options.fn.bind(callingContext);
+    _.extend(options.data, getOptionsFromContext(this));
+
     // Call the original helper with new context.
     return oldEach.call(this, context, options);
   }

@@ -8,6 +8,8 @@ _ = require('underscore');
 BaseView = null;
 modelUtils = null;
 
+var oldEach = Handlebars.helpers.each;
+
 module.exports = {
   view: function(viewName, block) {
     var ViewClass, html, options, view;
@@ -61,7 +63,7 @@ module.exports = {
     // Make sure `this._app`, `this._view`, etc are available.
     options.fn = options.fn.bind(callingContext);
     // Call the original helper with new context.
-    Handlebars.helpers.each.call(this, context, options);
+    return oldEach.call(this, context, options);
   }
 };
 

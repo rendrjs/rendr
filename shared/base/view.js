@@ -210,7 +210,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     html = this.getInnerHtml();
     attributes = this.getAttributes();
-    attrString = attributes.reduce(function(memo, value, key) {
+    attrString = _.inject(attributes, function(memo, value, key) {
       return memo += " " + key + "=\"" + value + "\"";
     }, '');
     return "<" + this.tagName + attrString + ">" + html + "</" + this.tagName + ">";

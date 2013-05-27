@@ -42,8 +42,6 @@ module.exports = Super.extend({
 
   getUrl: syncer.getUrl,
 
-  getApiHost: syncer.getApiHost,
-
   /*
   * Instance method to store in the modelStore.
   */

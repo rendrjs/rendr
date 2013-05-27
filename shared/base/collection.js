@@ -111,8 +111,6 @@ module.exports = Super.extend({
 
   getUrl: syncer.getUrl,
 
-  getApiHost: syncer.getApiHost,
-
   /*
   * Instance method to store the collection and its models.
   */

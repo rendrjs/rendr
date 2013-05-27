@@ -143,4 +143,15 @@ describe('syncer', function() {
       syncer.getUrl('https://www.example.com/api/foo', true, {}).should.eql('https://www.example.com/api/foo');
     });
   });
+
+  describe('formatClientUrl', function() {
+    it("should support default api", function() {
+      syncer.formatClientUrl('/path/to/resource').should.eql('/api/-/path/to/resource');
+    });
+
+    it("should support specifying an api", function() {
+      syncer.formatClientUrl('/path/to/resource', 'api-name').should.eql('/api/api-name/-/path/to/resource');
+    });
+  });
+
 });

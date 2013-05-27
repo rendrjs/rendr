@@ -153,7 +153,7 @@ ClientRouter.prototype.navigate = function() {
 ClientRouter.prototype.getParamsHash = function(pattern, paramsArray, search) {
   var paramNames, params, query;
 
-  paramNames = pattern.match(extractParamNamesRe).map(function(name) {
+  paramNames = (pattern.match(extractParamNamesRe) || []).map(function(name) {
     return name.slice(1);
   });
   params = paramNames.reduce(function(memo, name, i) {

@@ -135,6 +135,10 @@ Rather than owning your entire Express app, Rendr simply provides some useful mi
 
 Asset bundling and serving are outside of Rendr's scope. However, does it have some specific requirements for JavaScript packaging to support modules that are accessible in the CommonJS style on both the client and server. The [example app](https://github.com/airbnb/rendr-app-template) uses [Stitch](https://github.com/sstephenson/stitch) for this, though you could also do this with other tools, such as [Browserify](https://github.com/substack/node-browserify).
 
+## Notes
+
+Rendr uses the native ECMAScript 5 methods `Array.prototype.map`, `Function.prototype.bind`, etc. If you plan to support older browsers, such as IE<=8, you should include the lovely [es5-shim](https://github.com/kriskowal/es5-shim) library as a dependency for your client-side code.
+
 ## TODO
 
 While we do have it powering a few apps in production here at Airbnb, Rendr is still a prototype. It's a [spike](http://scaledagileframework.com/spikes/); a functional proof-of-concept of a shared client-server architecture based on Backbone. Thus, it carries over a number of design quirks specific to its original use case, and it's not yet very generalized and modular.

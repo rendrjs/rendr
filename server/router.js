@@ -152,7 +152,7 @@ ServerRouter.prototype.match = function(pathToMatch) {
   */
   Router = require('express').Router;
   this._expressRouter = new Router();
-  _.each(routes, function(route) {
+  routes.forEach(function(route) {
     // Add the route to the Express router, so we can use its matching logic
     // without attempting to duplicate it.
     path = route[0];

@@ -20,7 +20,7 @@ module.exports = BaseView = Backbone.View.extend({
       obj.on('refresh', this.render, this);
     }
 
-    this.render = _.bind(this.render, this);
+    this.render = this.render.bind(this);
   },
 
   /*
@@ -210,7 +210,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     html = this.getInnerHtml();
     attributes = this.getAttributes();
-    attrString = _.reduce(attributes, function(memo, value, key) {
+    attrString = attributes.reduce(function(memo, value, key) {
       return memo += " " + key + "=\"" + value + "\"";
     }, '');
     return "<" + this.tagName + attrString + ">" + html + "</" + this.tagName + ">";
@@ -398,7 +398,7 @@ module.exports = BaseView = Backbone.View.extend({
   },
 
   removeChildViews: function() {
-    _.each(this.childViews || [], function(view) {
+    (this.childViews || []).forEach(function(view) {
       view.remove();
     });
   },

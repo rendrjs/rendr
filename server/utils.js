@@ -19,33 +19,6 @@ utils.isErrorStatus = function(statusCode, options) {
   }
 };
 
-// http://stackoverflow.com/q/5827612/
-utils.walk = function(dir, callback) {
-  var results = [];
-
-  fs.readdir(dir, function(err, list) {
-    if (err) return callback(err);
-
-    var pending = list.length;
-    if (!pending) return callback(null, results);
-
-    list.forEach(function(file) {
-      file = dir + '/' + file;
-      fs.stat(file, function(err, stat) {
-        if (stat && stat.isDirectory()) {
-          utils.walk(file, function(err, res) {
-            results = results.concat(res);
-            if (!--pending) { callback(null, results); }
-          });
-        } else {
-          results.push(file);
-          if (!--pending) { callback(null, results); }
-        }
-      });
-    });
-  });
-};
-
 utils.getApiHost = function(path, apiHostsMap) {
   var extractParamNamesRe = /:(\w+)/g,
       apiHost = null,

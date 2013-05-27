@@ -40,10 +40,12 @@ function serverSync(method, model, options) {
   options.url = this.getUrl(options.url, false, data);
   verb = methodMap[method];
   urlParts = options.url.split('?');
+
   api = {
     method: verb,
     path: urlParts[0],
     query: qs.parse(urlParts[1]) || {},
+    api: _.result(this, 'api'),
     body: {}
   };
 
@@ -115,9 +117,18 @@ syncer.getUrl = function getUrl(url, clientPrefix, params) {
   params = params || {};
   url = url || _.result(this, 'url');
   if (clientPrefix && !~url.indexOf('://')) {
-    url = "/api" + url;
+    url = syncer.formatClientUrl(url, _.result(this, 'api'));
   }
   return syncer.interpolateParams(this, url, params);
+};
+
+syncer.formatClientUrl = function(url, api) {
+  var prefix = '/api';
+  if (api) {
+    prefix += '/' + api;
+  }
+  prefix += '/-';
+  return prefix + url;
 };
 
 /*

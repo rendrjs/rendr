@@ -484,9 +484,9 @@ BaseView.getViewNamePermutations = function(viewName) {
         function(memo, seg){ var split = (seg == 'view') ? '_' : '/'; return memo + split + seg; }
       ];
 
-  _.each(reducers, function(reducer) {
-    permutation = _.reduce(nameArr, reducer);
-    if (_.indexOf(retArr, permutation) == -1) retArr.push( permutation );
+  reducers.forEach(function(reducer) {
+    permutation = nameArr.reduce(reducer);
+    if (retArr.indexOf(permutation) == -1) retArr.push( permutation );
   });
 
   return retArr;

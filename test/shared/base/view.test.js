@@ -65,7 +65,7 @@ describe('BaseView', function() {
         BaseView.safeGet('some_view_name', function(v){ return v;}).should.eql('some_view_name');
         BaseView.safeGet('some_view_name', function(v){ return v;}, 'PRE_').should.eql('PRE_some_view_name');
     });
-    it('shoud fail silently', function() {
+    it('should fail silently', function() {
         should.not.exist( BaseView.safeGet('a_string', function(v) { return v.join(); }) );
     });
   });

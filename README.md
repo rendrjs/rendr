@@ -137,7 +137,7 @@ Asset bundling and serving are outside of Rendr's scope. However, does it have s
 
 ## Notes
 
-Rendr uses the native ECMAScript 5 methods `Array.prototype.map`, `Function.prototype.bind`, etc. If you plan to support older browsers, such as IE<=8, you should include the lovely [es5-shim](https://github.com/kriskowal/es5-shim) library as a dependency for your client-side code.
+Rendr uses the native ECMAScript 5 methods `Array.prototype.map`, `Function.prototype.bind`, `Object.create`, etc. If you plan to support older browsers, such as IE<=8, you should include the lovely [es5-shim](https://github.com/kriskowal/es5-shim) (and es5-sham) libraries as client-side dependencies.
 
 ## TODO
 

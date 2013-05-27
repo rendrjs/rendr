@@ -1,6 +1,5 @@
-var BaseRouter, ServerRouter, sanitize, _, inherit;
+var BaseRouter, ServerRouter, sanitize, _;
 
-inherit = require('inherit-component');
 _ = require('underscore');
 BaseRouter = require('../shared/base/router');
 sanitize = require('validator').sanitize;
@@ -11,7 +10,11 @@ function ServerRouter() {
   BaseRouter.apply(this, arguments);
 }
 
-inherit(ServerRouter, BaseRouter);
+/**
+ * Set up inheritance.
+ */
+ServerRouter.prototype = Object.create(BaseRouter.prototype);
+ServerRouter.prototype.constructor = ServerRouter;
 
 ServerRouter.prototype.escapeParams = function(params) {
   var escaped = {};

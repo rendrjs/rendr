@@ -19,7 +19,6 @@
     "qs": "0.5.1",
     "express": "~3.0.6",
     "validator": "0.4.21",
-    "inherit-component": "0.0.2",
     "npm": "*"
   },
   "devDependencies": {

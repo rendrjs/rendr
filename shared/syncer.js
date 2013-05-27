@@ -34,19 +34,18 @@ function clientSync(method, model, options) {
 }
 
 function serverSync(method, model, options) {
-  var api, apiHost, data, urlParts, verb;
+  var api, data, urlParts, verb;
 
   data = _.clone(options.data);
   options.url = this.getUrl(options.url, false, data);
   verb = methodMap[method];
   urlParts = options.url.split('?');
-  apiHost = this.getApiHost(options.apiHost);
 
   api = {
     method: verb,
     path: urlParts[0],
     query: qs.parse(urlParts[1]) || {},
-    apiHost: apiHost,
+    api: _.result(this, 'api'),
     body: {}
   };
 
@@ -118,13 +117,18 @@ syncer.getUrl = function getUrl(url, clientPrefix, params) {
   params = params || {};
   url = url || _.result(this, 'url');
   if (clientPrefix && !~url.indexOf('://')) {
-    url = "/api" + url;
+    url = syncer.formatClientUrl(url, _.result(this, 'api'));
   }
   return syncer.interpolateParams(this, url, params);
 };
 
-syncer.getApiHost = function getApiHost(apiHost) {
-  return apiHost || _.result(this, 'apiHost');
+syncer.formatClientUrl = function(url, api) {
+  var prefix = '/api';
+  if (api) {
+    prefix += '/' + api;
+  }
+  prefix += '/-';
+  return prefix + url;
 };
 
 /*

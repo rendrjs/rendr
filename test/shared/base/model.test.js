@@ -64,4 +64,52 @@ describe('BaseModel', function() {
       stored.should.eql(attrs);
     });
   });
+
+  describe('getUrl', function() {
+    it('should support string URL', function() {
+      var Model = this.MyModel.extend({
+        url: '/path/to/model/:id'
+      });
+      var model = new Model({id: 33}, {app: this.app});
+      model.getUrl().should.eql('/path/to/model/33');
+    });
+
+    it('should support function URL', function() {
+      var Model = this.MyModel.extend({
+        url: function() {
+          return '/path/to/model/:id';
+        }
+      });
+      var model = new Model({id: 33}, {app: this.app});
+      model.getUrl(null).should.eql('/path/to/model/33');
+    });
+
+    it('should support client-side URL', function() {
+      var Model = this.MyModel.extend({
+        url: '/path/to/model/:id'
+      });
+      var model = new Model({id: 33}, {app: this.app});
+      model.getUrl(null, true).should.eql('/api/-/path/to/model/33');
+    });
+
+    it('should support specifying an API as string', function() {
+      var Model = this.MyModel.extend({
+        url: '/path/to/model/:id',
+        api: 'api-name'
+      });
+      var model = new Model({id: 33}, {app: this.app});
+      model.getUrl(null, true).should.eql('/api/api-name/-/path/to/model/33');
+    });
+
+    it('should support specifying an API as function', function() {
+      var Model = this.MyModel.extend({
+        url: '/path/to/model/:id',
+        api: function() {
+          return 'api-name';
+        }
+      });
+      var model = new Model({id: 33}, {app: this.app});
+      model.getUrl(null, true).should.eql('/api/api-name/-/path/to/model/33');
+    });
+  });
 });

@@ -144,15 +144,14 @@ describe('syncer', function() {
     });
   });
 
-  describe('getApiHost', function() {
-    it("should return the correct apiHost", function () {
-      this.model = new Backbone.Model({
-        apiHost: 'foo'
-      });
+  describe('formatClientUrl', function() {
+    it("should support default api", function() {
+      syncer.formatClientUrl('/path/to/resource').should.eql('/api/-/path/to/resource');
+    });
 
-      syncer.getApiHost.call(this.model.attributes).should.eql('foo');
-      syncer.getApiHost('bar').should.eql('bar');
+    it("should support specifying an api", function() {
+      syncer.formatClientUrl('/path/to/resource', 'api-name').should.eql('/api/api-name/-/path/to/resource');
     });
   });
-  
+
 });

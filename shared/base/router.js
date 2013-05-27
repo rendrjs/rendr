@@ -13,7 +13,7 @@ module.exports = BaseRouter;
 * Base router class shared betwen ClientRouter and ServerRouter.
 */
 function BaseRouter(options) {
-  this.route = _.bind(this.route, this);
+  this.route = this.route.bind(this);
   this._routes = [];
   this._initOptions(options);
   this.initialize(options);
@@ -106,7 +106,7 @@ BaseRouter.prototype.buildRoutes = function() {
     if (this.reverseRoutes) {
       routes = routes.reverse();
     }
-    _.each(routes, function(route) {
+    routes.forEach(function(route) {
       _this.route.apply(_this, route);
     });
   } catch (e) {
@@ -119,7 +119,7 @@ BaseRouter.prototype.buildRoutes = function() {
 * Returns a copy of current route definitions.
 */
 BaseRouter.prototype.routes = function() {
-  return _.map(this._routes.slice(), function(route) {
+  return this._routes.slice().map(function(route) {
     return route.slice();
   });
 };
@@ -148,7 +148,7 @@ BaseRouter.prototype.parseDefinitions = function(definitions) {
   var route;
 
   route = {};
-  _.each(definitions, function(element) {
+  definitions.forEach(function(element) {
     var parts;
 
     /*

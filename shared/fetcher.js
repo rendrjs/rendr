@@ -231,7 +231,7 @@ Fetcher.prototype.retrieveModelsForCollectionName = function(collectionName, mod
 
 Fetcher.prototype.retrieveModels = function(modelName, modelIds) {
   var _this = this;
-  return _.map(modelIds, function(id) {
+  return modelIds.map(function(id) {
     return _this.modelStore.get(modelName, id);
   });
 };

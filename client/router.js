@@ -1,8 +1,7 @@
 /*global rendr*/
 
-var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, inherit;
+var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _;
 
-inherit = require('inherit-component');
 _ = require('underscore');
 Backbone = require('backbone');
 BaseRouter = require('../shared/base/router');
@@ -29,7 +28,11 @@ function ClientRouter(options) {
   BaseRouter.apply(this, arguments);
 }
 
-inherit(ClientRouter, BaseRouter);
+/**
+ * Set up inheritance.
+ */
+ClientRouter.prototype = Object.create(BaseRouter.prototype);
+ClientRouter.prototype.constructor = ClientRouter;
 
 ClientRouter.prototype.currentFragment = null;
 
@@ -58,9 +61,9 @@ ClientRouter.prototype.initialize = function(options) {
   // We do this here so that it's available in AppView initialization.
   this.app.router = this;
 
-  this.on('route:add', _.bind(this.addBackboneRoute, this));
-  this.on('action:start', _.bind(this.trackAction, this));
-  this.app.on('reload', _.bind(this.renderView, this));
+  this.on('route:add', this.addBackboneRoute.bind(this));
+  this.on('action:start', this.trackAction.bind(this));
+  this.app.on('reload', this.renderView.bind(this));
 
   this.appView = new AppView({
     app: this.app
@@ -150,14 +153,14 @@ ClientRouter.prototype.navigate = function() {
 ClientRouter.prototype.getParamsHash = function(pattern, paramsArray, search) {
   var paramNames, params, query;
 
-  paramNames = _.map(pattern.match(extractParamNamesRe), function(name) {
+  paramNames = (pattern.match(extractParamNamesRe) || []).map(function(name) {
     return name.slice(1);
   });
-  params = _.inject(paramNames, function(memo, name, i) {
+  params = paramNames.reduce(function(memo, name, i) {
     memo[name] = decodeURIComponent(paramsArray[i]);
     return memo;
   }, {});
-  query = _.inject(search.slice(1).split('&'), function(memo, queryPart) {
+  query = search.slice(1).split('&').reduce(function(memo, queryPart) {
     var parts = queryPart.split('=');
     if (parts.length > 1) {
       memo[parts[0]] = decodeURIComponent(parts[1].replace(plusRe, ' '));

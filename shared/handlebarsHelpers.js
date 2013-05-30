@@ -8,21 +8,29 @@ _ = require('underscore');
 BaseView = null;
 modelUtils = null;
 
+var oldEach = Handlebars.helpers.each;
+
 module.exports = {
   view: function(viewName, block) {
-    var ViewClass, app, html, options, view;
+    var ViewClass, html, options, view, data;
 
     BaseView = BaseView || require('./base/view');
     modelUtils = modelUtils || require('./modelUtils');
     viewName = modelUtils.underscorize(viewName);
     options = block.hash || {};
-    app = this._app;
-    if (app != null) {
+    data = block.data || {};
+
+    // Pass through a reference to the app.
+    var app = this._app || data._app;
+    if (app) {
       options.app = app;
     }
 
     // Pass through a reference to the parent view.
-    options.parentView = this._view;
+    parentView = this._view || data._view
+    if (parentView) {
+      options.parentView = parentView;
+    }
 
     // get the Backbone.View based on viewName
     ViewClass = BaseView.getView(viewName);
@@ -47,5 +55,43 @@ module.exports = {
 
   json: function(object) {
     return new Handlebars.SafeString(JSON.stringify(object) || 'null');
+  },
+
+  /**
+   * Extend `each` to pass through important context.
+   */
+  each: function(context, options) {
+    options.data = Handlebars.createFrame(options.data || {});
+
+    // Make sure `this._app`, `this._view`, etc are available.
+    _.extend(options.data, getOptionsFromContext(this));
+
+    // Call the original helper with new context.
+    return oldEach.call(this, context, options);
   }
 };
+
+/**
+ * Grab important underscored properties from the current context.
+ * These properties come from BaseView::decorateTemplateData().
+ */
+function getOptionsFromContext(obj) {
+  var options, keys, value;
+
+  keys = [
+    '_app',
+    '_view',
+    '_model',
+    '_collection'
+  ];
+
+  options = keys.reduce(function(memo, key) {
+    value = obj[key];
+    if (value) {
+      memo[key] = value;
+    }
+    return memo;
+  }, {});
+
+  return options;
+}

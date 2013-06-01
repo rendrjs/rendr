@@ -170,6 +170,17 @@ BaseRouter.prototype.parseDefinitions = function(definitions) {
   return route;
 };
 
+/**
+ * Support omitting view path; default it to ":controller/:action".
+ */
+BaseRouter.prototype.defaultHandlerParams = function(viewPath, locals, route) {
+  if (typeof viewPath !== 'string') {
+    locals = viewPath;
+    viewPath = route.controller + '/' + route.action;
+  }
+  return [viewPath, locals];
+};
+
 /*
 * Methods to be extended by subclasses.
 * -------------------------------------

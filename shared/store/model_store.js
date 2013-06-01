@@ -1,6 +1,5 @@
-var MemoryStore, Super, modelUtils, _, inherit;
+var MemoryStore, Super, modelUtils, _;
 
-inherit = require('inherit-component');
 _ = require('underscore');
 Super = MemoryStore = require('./memory_store');
 modelUtils = require('../modelUtils');
@@ -11,7 +10,11 @@ function ModelStore() {
   Super.apply(this, arguments);
 }
 
-inherit(ModelStore, Super);
+/**
+ * Set up inheritance.
+ */
+ModelStore.prototype = Object.create(Super.prototype);
+ModelStore.prototype.constructor = ModelStore;
 
 ModelStore.prototype.set = function(model) {
   var existingAttrs, id, key, modelName, newAttrs;

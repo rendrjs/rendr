@@ -1,6 +1,6 @@
 {
   "name": "rendr",
-  "version": "0.4.4-rc.1",
+  "version": "0.4.6-rc.1",
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
@@ -18,8 +18,8 @@
     "qs": "0.5.1",
     "express": "~3.0.6",
     "validator": "0.4.21",
-    "inherit-component": "0.0.2",
-    "rendr-handlebars": "git://github.com/hurrymaplelad/rendr-handlebars"
+    "rendr-handlebars": "git://github.com/airbnb/rendr-handlebars",
+    "npm": "*"
   },
   "devDependencies": {
     "mocha": "*",

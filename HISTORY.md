@@ -1,3 +1,22 @@
+# 0.4.5
+## 2013-05-27
+* Use ES5 native methods instead of Underscore methods: `Array.prototype.map`,
+  `Function.prototype.bind`, `Object.create`, etc.  NOTE: For IE<=8 compatibility,
+  include `es5-shim` and `es5-sham` from [kriskowal/es5-shim](https://github.com/kriskowal/es5-shim)
+  as client-side dependencies in your app.
+* Windows-compatible `postinstall` script.
+* Customize Handlebars `each` helper to pass through `_app`, `_view`, etc. into
+  the child context, allowing cleaner `{{#each}} {{view "my_view"}} {{/each}}` semantics.
+* Allow passing absolute URLs for models and collections, which will bypass the API proxy
+  in the client-side.
+
+# 0.4.4
+## 2013-05-06
+* In BaseView::getAttributes(), call toString() on model.id, for better support of Mongoose.
+* In BaseView::getAttributes(), support custom this.model.idAttribute.
+* Remove reference to `global.isServer` in BaseView; easier to standalone test.
+* Default `replace: false` in ClientRouter::redirectTo().
+
 # 0.4.3
 ## 2013-04-30
 * Support `redirect` option in routes file.

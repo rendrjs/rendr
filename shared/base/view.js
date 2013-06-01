@@ -19,7 +19,7 @@ module.exports = BaseView = Backbone.View.extend({
       obj.on('refresh', this.render, this);
     }
 
-    this.render = _.bind(this.render, this);
+    this.render = this.render.bind(this);
   },
 
   /*
@@ -163,9 +163,15 @@ module.exports = BaseView = Backbone.View.extend({
       if (value != null) {
         if (key === 'model') {
           key = 'model_id';
+          var id = value[value.idAttribute];
+          if (id == null) {
+            // Bail if there's no ID; someone's using `this.model` in a
+            // non-standard way, and that's okay.
+            return;
+          }
           // Cast the `id` attribute to string to ensure it's included in attributes.
           // On the server, it can be i.e. an `ObjectId` from Mongoose.
-          value = value.id.toString();
+          value = id.toString();
         } else if (key === 'collection') {
           key = 'collection_params';
           value = _.escape(JSON.stringify(value.params));
@@ -203,7 +209,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     html = this.getInnerHtml();
     attributes = this.getAttributes();
-    attrString = _.reduce(attributes, function(memo, value, key) {
+    attrString = _.inject(attributes, function(memo, value, key) {
       return memo += " " + key + "=\"" + value + "\"";
     }, '');
     return "<" + this.tagName + attrString + ">" + html + "</" + this.tagName + ">";
@@ -391,7 +397,7 @@ module.exports = BaseView = Backbone.View.extend({
   },
 
   removeChildViews: function() {
-    _.each(this.childViews || [], function(view) {
+    (this.childViews || []).forEach(function(view) {
       view.remove();
     });
   },
@@ -451,7 +457,7 @@ BaseView.attach = function(app, parentView) {
 /*
 * Noops on the server, because they do DOM stuff.
 */
-if (global.isServer) {
+if (typeof window === 'undefined') {
   BaseView.prototype._ensureElement = noop;
   BaseView.prototype.delegateEvents = noop;
 }

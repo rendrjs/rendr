@@ -231,7 +231,7 @@ Fetcher.prototype.retrieveModelsForCollectionName = function(collectionName, mod
 
 Fetcher.prototype.retrieveModels = function(modelName, modelIds) {
   var _this = this;
-  return _.map(modelIds, function(id) {
+  return modelIds.map(function(id) {
     return _this.modelStore.get(modelName, id);
   });
 };
@@ -340,7 +340,7 @@ Fetcher.prototype.fetch = function(fetchSpecs, options, callback) {
   this.trigger('fetch:start', fetchSpecs);
   this._retrieve(fetchSpecs, options, function(err, results) {
     _this.pendingFetches--;
-    _this.trigger('fetch:end', fetchSpecs);
+    _this.trigger('fetch:end', fetchSpecs, err, results);
     if (err) return callback(err);
     if (options.writeToCache) {
       _this.storeResults(results);

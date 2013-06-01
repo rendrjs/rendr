@@ -18,6 +18,7 @@
     "qs": "0.5.1",
     "express": "~3.0.6",
     "validator": "0.4.21",
+    "rendr-handlebars": "git://github.com/airbnb/rendr-handlebars",
     "npm": "*"
   },
   "devDependencies": {

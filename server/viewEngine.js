@@ -1,6 +1,6 @@
 /*global rendr*/
 
-var layoutTemplate, layoutFinder, path, _;
+var layoutTemplate, path, _;
 
 path = require('path');
 _ = require('underscore');
@@ -12,21 +12,20 @@ function viewEngine(viewPath, data, callback) {
 
   data.locals = data.locals || {};
   app = data.app;
-  layoutFinder = app.layoutFinder;
   layoutData = _.extend({}, data, {
     body: getViewHtml(viewPath, data.locals, app),
     appData: app.toJSON(),
     bootstrappedData: getBootstrappedData(data.locals, app),
     _app: app
   });
-  renderWithLayout(layoutData, callback);
+  renderWithLayout(layoutData, app, callback);
 }
 
 /*
 * render with a layout
 */
-function renderWithLayout(locals, callback) {
-  getLayoutTemplate(function(err, templateFn) {
+function renderWithLayout(locals, app, callback) {
+  getLayoutTemplate(app, function(err, templateFn) {
     if (err) return callback(err);
     var html = templateFn(locals);
     callback(null, html);
@@ -38,13 +37,13 @@ layoutTemplate = null;
 /*
 * Cache layout template function.
 */
-function getLayoutTemplate(callback) {
+function getLayoutTemplate(app, callback) {
   var layoutPath;
 
   if (layoutTemplate) {
     return callback(null, layoutTemplate);
   }
-  layoutFinder.getTemplate('__layout', function(err, template) {
+  app.templateAdapter.getLayout('__layout', function(err, template) {
     if (err) return callback(err);
     layoutTemplate = template;
     callback(err, layoutTemplate);

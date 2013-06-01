@@ -63,21 +63,20 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
       }
     };
 
-    action.call(context, params, function(err, template, locals) {
-      var viewData;
+    action.call(context, params, function(err, viewPath, locals) {
+      if (err) return router.handleErr(err, req, res);
 
-      if (err) {
-        return router.handleErr(err, req, res);
-      }
-      viewData = {
-        locals: locals,
+      var defaults = router.defaultHandlerParams(viewPath, locals, route);
+      viewPath = defaults[0], locals = defaults[1];
+
+      var viewData = {
+        locals: locals || {},
         app: app,
         req: req
       };
-      res.render(template, viewData, function(err, html) {
-        if (err) {
-          return router.handleErr(err, req, res);
-        }
+
+      res.render(viewPath, viewData, function(err, html) {
+        if (err) return router.handleErr(err, req, res);
         res.set(router.getHeadersForRoute(route));
         res.type('html').end(html);
       });

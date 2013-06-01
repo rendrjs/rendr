@@ -133,8 +133,10 @@ module.exports = BaseView = Backbone.View.extend({
   * Get template function
   */
   getTemplate: function() {
-    return templateFinder.getTemplate(this.getTemplateName());
+    var viewNamePermutations = BaseView.getViewNamePermutations(this.getTemplateName());
+    return BaseView.getFromOptions(viewNamePermutations, templateFinder.getTemplate);
   },
+
 
   /*
   * Any options not to create data-attributes for.
@@ -422,8 +424,72 @@ module.exports = BaseView = Backbone.View.extend({
 * -------------
 */
 
+BaseView.getViewName = function(viewPath, viewDir) {
+  viewDir = viewDir || 'app/views/';
+  return viewPath.substring( viewPath.indexOf(viewDir) + viewDir.length, viewPath.length);
+};
+
 BaseView.getView = function(viewName) {
-  return require(rendr.entryPath + "/app/views/" + viewName);
+  var viewNamePermutations = BaseView.getViewNamePermutations(viewName);
+  return  BaseView.getFromOptions(viewNamePermutations, require, rendr.entryPath + "/app/views/");
+};
+
+BaseView.safeGet = function(viewName, fn, transform) {
+  var retVal;
+  transform = transform || '';
+  try{ retVal = fn(transform + viewName); }
+  catch (e){ /* die with a wimper, not a bang */ }
+  return retVal;
+};
+
+/*
+ * given the following View id, getFromOptions will match view/template filenames in the following order
+ * relative to their parent directory.
+ *
+ * View id 'FooIndexView'
+ * 1. conditions_index_view
+ * 2. conditions/index
+ * 3. conditions/index_view
+ *
+ * View id 'FooShow'
+ * 1. foo_show
+ * 2. foo/show
+ *
+ * View id 'MyCoolFeatureIndexView'
+ * 1. my_cool_feature_index_view
+ * 2. my_cool_feature/index
+ * 3. my_cool_feature/index_view
+ * 4. my/cool/feature/index
+ * 5. my/cool/feature/index_view
+ */
+BaseView.getFromOptions = function(viewNamePermutations, fn, transform) {
+  var item;
+
+  _.find(viewNamePermutations, function(viewName) {
+    item = BaseView.safeGet(viewName, fn, transform);
+    if (item) return item;
+  });
+
+  return item;
+};
+
+BaseView.getViewNamePermutations = function(viewName) {
+  var retArr = [viewName], // start w/ underscorized viewName
+      nameArr = viewName.split(/\_/),
+      permutation,
+      reducers = [
+        function(memo, seg, idx) { var split = (idx == nameArr.length-2) ? '/' :'_'; return (seg == 'view') ? memo : memo + split + seg; },
+        function(memo, seg, idx) { var split = (idx == nameArr.length-2) ? '/' :'_'; return memo + split + seg; },
+        function(memo, seg){ return (seg == 'view') ? memo : memo + '/' + seg; },
+        function(memo, seg){ var split = (seg == 'view') ? '_' : '/'; return memo + split + seg; }
+      ];
+
+  reducers.forEach(function(reducer) {
+    permutation = nameArr.reduce(reducer);
+    if (retArr.indexOf(permutation) == -1) retArr.push( permutation );
+  });
+
+  return retArr;
 };
 
 BaseView.attach = function(app, parentView) {

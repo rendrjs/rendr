@@ -10,21 +10,21 @@ describe('viewEngine', function() {
   var app;
 
   beforeEach(function() {
-    
+
     function layoutTemplate (locals) {
       return '<body>'+locals.body+'</body>';
     }
-    
+
     function View () {
       return {
         getHtml: sinon.stub().returns('contents')
       };
     }
-    
+
     sinon.stub(BaseView, 'getView').returns(View);
     app = {
-      layoutFinder: {
-        getTemplate: sinon.stub().yields(null, layoutTemplate)
+      templateAdapter: {
+        getLayout: sinon.stub().yields(null, layoutTemplate)
       },
       toJSON: sinon.stub()
     };
@@ -34,9 +34,9 @@ describe('viewEngine', function() {
     BaseView.getView.restore();
   });
 
-  it("should lookup the layout template via the app's layoutFinder", function(done) {
+  it("should lookup the layout template via the app's templateAdapter", function(done) {
     viewEngine('name', {app: app}, function () {
-      app.layoutFinder.getTemplate.called.should.be.true;
+      app.templateAdapter.getLayout.called.should.be.true;
       done();
     });
   });

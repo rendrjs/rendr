@@ -36,7 +36,7 @@ describe('BaseView', function() {
   describe('getTemplate', function() {
     beforeEach(function() {
       this.app = {
-        templateFinder: {
+        templateAdapter: {
           getTemplate: sinon.spy()
         }
       };
@@ -46,9 +46,9 @@ describe('BaseView', function() {
       });
     });
 
-    it("should delegate to the app's templateFinder", function() {
+    it("should delegate to the app's templateAdapter", function() {
         this.topView.getTemplate();
-        this.app.templateFinder.getTemplate.called.should.be.true
+        this.app.templateAdapter.getTemplate.called.should.be.true
     });
   });
 });

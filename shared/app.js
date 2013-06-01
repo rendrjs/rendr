@@ -26,10 +26,7 @@ module.exports = Backbone.Model.extend({
   * @shared
   */
   initialize: function() {
-    var templateAdapter;
-    templateAdapter = require(this.get('templateAdapter'));
-    this.templateFinder = templateAdapter.templateFinder;
-    this.layoutFinder = templateAdapter.layoutFinder;
+    this.templateAdapter = require(this.get('templateAdapter'));
     this.fetcher = new Fetcher({
       app: this
     });

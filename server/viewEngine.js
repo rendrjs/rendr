@@ -64,7 +64,7 @@ function getViewHtml(viewPath, locals, app) {
 
   // Pass in the app.
   locals.app = app;
-  name = path.basename(viewPath);
+  name = BaseView.getViewName(viewPath);
   View = BaseView.getView(name);
   view = new View(locals);
   return view.getHtml();

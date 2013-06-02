@@ -1,8 +1,7 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, path, _;
+var Handlebars, fs, layoutTemplate, _;
 
-path = require('path');
 fs = require('fs');
 _ = require('underscore');
 Handlebars = require('handlebars');
@@ -57,14 +56,15 @@ function getLayoutTemplate(callback) {
 }
 
 function getViewHtml(viewPath, locals, app) {
-  var BaseView, View, name, view;
+  var BaseView, View, name, view, basePath;
 
+  basePath = 'app/views';
   BaseView = require('../shared/base/view');
   locals = _.clone(locals);
 
   // Pass in the app.
   locals.app = app;
-  name = path.basename(viewPath);
+  name = viewPath.substr(viewPath.indexOf(basePath) + basePath.length + 1);
   View = BaseView.getView(name);
   view = new View(locals);
   return view.getHtml();

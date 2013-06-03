@@ -61,9 +61,9 @@ ClientRouter.prototype.initialize = function(options) {
   // We do this here so that it's available in AppView initialization.
   this.app.router = this;
 
-  this.on('route:add', this.addBackboneRoute.bind(this));
-  this.on('action:start', this.trackAction.bind(this));
-  this.app.on('reload', this.renderView.bind(this));
+  this.on('route:add', this.addBackboneRoute, this);
+  this.on('action:start', this.trackAction, this);
+  this.app.on('reload', this.renderView, this);
 
   this.appView = new AppView({
     app: this.app

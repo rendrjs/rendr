@@ -133,16 +133,15 @@ Fetcher.prototype.checkedFreshKey = function(spec) {
 * map fetchSpecs to models and fetch data in parallel
 */
 Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
-  var batchedRequests,
+  var batchedRequests = {},
     _this = this;
 
-  batchedRequests = {};
   _.each(fetchSpecs, function(spec, name) {
     batchedRequests[name] = function(cb) {
       var collectionData, idAttribute, model, modelData, modelOptions;
 
       if (!options.readFromCache) {
-        _this.fetchFromApi(spec, cb);
+        this.fetchFromApi(spec, cb);
       } else {
         modelData = null;
         modelOptions = {};
@@ -150,11 +149,11 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
         // First, see if we have stored the model or collection.
         if (spec.model != null) {
           idAttribute = modelUtils.modelIdAttribute(spec.model);
-          modelData = _this.modelStore.get(spec.model, spec.params[idAttribute]);
+          modelData = this.modelStore.get(spec.model, spec.params[idAttribute]);
         } else if (spec.collection != null) {
-          collectionData = _this.collectionStore.get(spec.collection, spec.params);
+          collectionData = this.collectionStore.get(spec.collection, spec.params);
           if (collectionData) {
-            modelData = _this.retrieveModelsForCollectionName(spec.collection, collectionData.ids);
+            modelData = this.retrieveModelsForCollectionName(spec.collection, collectionData.ids);
             modelOptions = {
               meta: collectionData.meta
             };
@@ -162,27 +161,34 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
         }
 
         // If we found the model/collection in the store, then return that.
-        if (modelData != null && !_this.isMissingKeys(modelData, spec.ensureKeys)) {
-          model = _this.getModelForSpec(spec, modelData, modelOptions);
+        if (!this.needsFetch(modelData, spec)) {
+          model = this.getModelForSpec(spec, modelData, modelOptions);
 
           // If 'checkFresh' is set (and we're in the client), then before we
           // return the cached object we fire off a fetch, compare the results,
           // and if the data is different, we trigger a 'refresh' event.
-          if (spec.checkFresh && !global.isServer && _this.shouldCheckFresh(spec)) {
+          if (spec.checkFresh && !global.isServer && this.shouldCheckFresh(spec)) {
             model.checkFresh();
-            _this.didCheckFresh(spec);
+            this.didCheckFresh(spec);
           }
           cb(null, model);
         } else {
           /* Else, fetch anew.
           */
 
-          _this.fetchFromApi(spec, cb);
+          this.fetchFromApi(spec, cb);
         }
       }
-    };
-  });
+    }.bind(this);
+  }, this);
   async.parallel(batchedRequests, callback);
+};
+
+Fetcher.prototype.needsFetch = function(modelData, spec) {
+  if (modelData == null) return true;
+  if (this.isMissingKeys(modelData, spec.ensureKeys)) return true;
+  if (typeof spec.needsFetch === 'function' && spec.needsFetch(modelData)) return true;
+  return false;
 };
 
 Fetcher.prototype.isMissingKeys = function(modelData, keys) {

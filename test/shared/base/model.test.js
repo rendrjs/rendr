@@ -100,6 +100,14 @@ describe('BaseModel', function() {
       model.getUrl().should.eql('https://api.example.com/path/to/model/33');
     });
 
+    it('should support absolute URI with port', function() {
+      var Model = this.MyModel.extend({
+        url: 'https://api.example.com:3000/path/to/model/:id'
+      });
+      var model = new Model({id: 33}, {app: this.app});
+      model.getUrl().should.eql('https://api.example.com:3000/path/to/model/33');
+    });
+
     it('should support specifying an API as string', function() {
       var Model = this.MyModel.extend({
         url: '/path/to/model/:id',

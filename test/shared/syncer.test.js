@@ -142,6 +142,10 @@ describe('syncer', function() {
       // HTTPS
       syncer.getUrl('https://www.example.com/api/foo', true, {}).should.eql('https://www.example.com/api/foo');
     });
+
+    it("should support absolute URI with port", function() {
+      syncer.getUrl('http://www.example.com:8080/api/foo').should.eql('http://www.example.com:8080/api/foo');
+    });
   });
 
   describe('formatClientUrl', function() {

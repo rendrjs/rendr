@@ -12,7 +12,7 @@ modelUtils = null;
 server = null;
 
 // Pull out params in path, like '/users/:id'.
-extractParamNamesRe = /:(\w+)/g;
+extractParamNamesRe = /:([a-zA-Z_-]+)/g;
 
 methodMap = {
   'create': 'POST',

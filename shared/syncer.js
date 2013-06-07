@@ -152,7 +152,7 @@ syncer.checkFresh = function checkFresh() {
 
     // The second argument 'false' tells 'parse()' not to modify the instance.
     data = _this.parse(resp, false);
-    differs = objectsDiffer(data, _this.toJSON());
+    differs = syncer.objectsDiffer(data, _this.toJSON());
     _this.trigger('checkFresh:end', differs);
     if (differs) {
       if (modelUtils.isModel(_this)) {

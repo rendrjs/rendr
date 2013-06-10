@@ -24,9 +24,9 @@ module.exports = Super.extend({
     Super.prototype.initialize.apply(this, arguments);
   },
 
-  /*
-  * Idempotent parse
-  */
+  /**
+   * Idempotent parse
+   */
   parse: function(resp) {
     if (this.jsonKey) {
       return resp[this.jsonKey] || resp;
@@ -41,9 +41,9 @@ module.exports = Super.extend({
 
   getUrl: syncer.getUrl,
 
-  /*
-  * Instance method to store in the modelStore.
-  */
+  /**
+   * Instance method to store in the modelStore.
+   */
   store: function() {
     this.app.fetcher.modelStore.set(this);
   }

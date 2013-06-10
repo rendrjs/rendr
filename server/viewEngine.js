@@ -25,9 +25,9 @@ function viewEngine(viewPath, data, callback) {
   renderWithLayout(layoutData, callback);
 }
 
-/*
-* render with a layout
-*/
+/**
+ * render with a layout
+ */
 function renderWithLayout(locals, callback) {
   getLayoutTemplate(function(err, templateFn) {
     if (err) return callback(err);
@@ -38,9 +38,9 @@ function renderWithLayout(locals, callback) {
 
 layoutTemplate = null;
 
-/*
-* Cache layout template function.
-*/
+/**
+ * Cache layout template function.
+ */
 function getLayoutTemplate(callback) {
   var layoutPath;
 

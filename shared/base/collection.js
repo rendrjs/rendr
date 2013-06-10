@@ -11,33 +11,33 @@ module.exports = Super.extend({
 
   model: BaseModel,
 
-  /*
-  * Provide the ability to set default params for every 'fetch' call.
-  */
+  /**
+   * Provide the ability to set default params for every 'fetch' call.
+   */
   defaultParams: null,
 
   initialize: function(models, options) {
-    /*
-    * Capture the options as instance variable.
-    */
+    /**
+     * Capture the options as instance variable.
+     */
     this.options = options || {};
 
-    /*
-    * Store a reference to the app instance.
-    */
+    /**
+     * Store a reference to the app instance.
+     */
     this.app = this.options.app;
 
-    /*
-    * Store a reference to the params that were used to
-    * query for these models.
-    */
+    /**
+     * Store a reference to the params that were used to
+     * query for these models.
+     */
     this.params = this.options.params || {};
     _.defaults(this.params, this.defaultParams || {});
 
-    /*
-    * Add 'meta' property to store the parts of the response
-    * that aren't part of the jsonKey.
-    */
+    /**
+     * Add 'meta' property to store the parts of the response
+     * that aren't part of the jsonKey.
+     */
     this.meta = {};
     if (_.isObject(this.options.meta)) {
       _.extend(this.meta, this.options.meta);
@@ -47,10 +47,10 @@ module.exports = Super.extend({
     Super.prototype.initialize.apply(this, arguments);
   },
 
-  /*
-  * Make sure that `model.app` is set for all operations like
-  * `this.add()`, `this.reset()`, `this.set()`, `this.push()`, etc.
-  */
+  /**
+   * Make sure that `model.app` is set for all operations like
+   * `this.add()`, `this.reset()`, `this.set()`, `this.push()`, etc.
+   */
   _prepareModel: function() {
     var model;
     model = Super.prototype._prepareModel.apply(this, arguments);
@@ -58,9 +58,9 @@ module.exports = Super.extend({
     return model;
   },
 
-  /*
-  * Idempotent parse
-  */
+  /**
+   * Idempotent parse
+   */
   parse: function(resp, modifyInstance) {
     var jsonResp, meta, parsed;
 
@@ -111,9 +111,9 @@ module.exports = Super.extend({
 
   getUrl: syncer.getUrl,
 
-  /*
-  * Instance method to store the collection and its models.
-  */
+  /**
+   * Instance method to store the collection and its models.
+   */
   store: function() {
     this.each(function(model) {
       model.store();

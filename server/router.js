@@ -34,10 +34,10 @@ ServerRouter.prototype.getParams = function(req) {
   return params;
 };
 
-/*
-* This is the method that renders the request. It returns an Express
-* middleware function.
-*/
+/**
+ * This is the method that renders the request. It returns an Express
+ * middleware function.
+ */
 ServerRouter.prototype.getHandler = function(action, pattern, route) {
   var router = this;
 
@@ -46,7 +46,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
 
     params = router.getParams(req);
     redirect = router.getRedirect(route, params);
-    /*
+    /**
      * If `redirect` is present, then do a redirect and return.
      */
     if (redirect != null) {
@@ -84,10 +84,10 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
   };
 };
 
-/*
-* Handle an error that happens while executing an action.
-* Could happen during the controller action, view rendering, etc.
-*/
+/**
+ * Handle an error that happens while executing an action.
+ * Could happen during the controller action, view rendering, etc.
+ */
 ServerRouter.prototype.handleErr = function(err, req, res) {
   var text;
 
@@ -116,27 +116,25 @@ ServerRouter.prototype.getHeadersForRoute = function(definition) {
   return headers;
 };
 
-/*
-* stash error, if handler available
-*/
+/**
+ * stash error, if handler available
+ */
 ServerRouter.prototype.stashError = function(req, err) {
   if (this.options.stashError != null) {
     this.options.stashError(req, err);
   }
 };
 
-/*
-* We create and reuse an instance of Express Router in 'this.match()'.
-*/
+/**
+ * We create and reuse an instance of Express Router in 'this.match()'.
+ */
 ServerRouter.prototype._expressRouter = null;
 
-/*
-* Return the route definition based on a URL, according to the routes file.
-* This should match the way Express matches routes on the server, and our
-* ClientRouter matches routes on the client.
-*/
-
-
+/**
+ * Return the route definition based on a URL, according to the routes file.
+ * This should match the way Express matches routes on the server, and our
+ * ClientRouter matches routes on the client.
+ */
 ServerRouter.prototype.match = function(pathToMatch) {
   var Router, matchedRoute, path, routes, routesByPath,
       _this = this;
@@ -148,10 +146,10 @@ ServerRouter.prototype.match = function(pathToMatch) {
   routes = this.routes();
   routesByPath = {};
 
-  /*
-  * NOTE: Potential here to cache this work. Must invalidate when additional
-  * routes are added.
-  */
+  /**
+   * NOTE: Potential here to cache this work. Must invalidate when additional
+   * routes are added.
+   */
   Router = require('express').Router;
   this._expressRouter = new Router();
   routes.forEach(function(route) {

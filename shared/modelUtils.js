@@ -56,10 +56,10 @@ utils.getModelNameForCollectionName = function(collectionName) {
 
 classMap = {};
 
-/*
-* Use this to specify class constructors based on
-* model/collection name. Useful i.e. for testing.
-*/
+/**
+ * Use this to specify class constructors based on
+ * model/collection name. Useful i.e. for testing.
+ */
 utils.addClassMapping = function(key, modelConstructor) {
   classMap[utils.underscorize(key)] = modelConstructor;
 };
@@ -79,23 +79,23 @@ utils.underscorize = function(name) {
   return name;
 };
 
-/*
-* The 'name' property is added to the constructor when using a named function,
-* and it cannot be changed.  I.e.:
-*
-*   function MyClass(){}
-*   MyClass.name
-*     -> "MyClass"
-*
-* We first look for the 'id' property of the constructor, which is compatible
-*  with standard Backbone-style class inheritance.
-*
-*   var MyClass = Backbone.Model.extend({});
-*   MyClass.name
-*     -> ""
-*   MyClass.id = "MyClass"
-*
-*/
+/**
+ * The 'name' property is added to the constructor when using a named function,
+ * and it cannot be changed.  I.e.:
+ *
+ *   function MyClass(){}
+ *   MyClass.name
+ *     -> "MyClass"
+ *
+ * We first look for the 'id' property of the constructor, which is compatible
+ *  with standard Backbone-style class inheritance.
+ *
+ *   var MyClass = Backbone.Model.extend({});
+ *   MyClass.name
+ *     -> ""
+ *   MyClass.id = "MyClass"
+ *
+ */
 utils.modelName = function(modelOrCollectionClass) {
   return utils.underscorize(modelOrCollectionClass.id || modelOrCollectionClass.name);
 };

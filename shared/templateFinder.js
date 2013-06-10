@@ -13,8 +13,9 @@ for (var key in handlebarsHelpers) {
 templates = null;
 
 exports.getTemplate = function(templateName) {
-  /* Allow compiledTemplates to be created asynchronously.
-  */
+  /**
+   * Allow compiledTemplates to be created asynchronously.
+   */
   templates = templates || require(rendr.entryPath + '/app/templates/compiledTemplates')(Handlebars);
   return templates[templateName];
 };

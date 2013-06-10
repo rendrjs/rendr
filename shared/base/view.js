@@ -23,7 +23,7 @@ module.exports = BaseView = Backbone.View.extend({
     this.render = this.render.bind(this);
   },
 
-  /*
+  /**
    * Whether or not to re-render this view when the model or collection
    * emits a 'refresh' event. Used with 'model|collection.checkFresh()'.
    */
@@ -32,7 +32,7 @@ module.exports = BaseView = Backbone.View.extend({
   postInitialize: noop,
 
   parseOptions: function(options) {
-    /*
+    /**
      * Populate `this.options` and alias as `options`.
      */
     options = _.extend(this.options, options || {});
@@ -64,35 +64,35 @@ module.exports = BaseView = Backbone.View.extend({
     this.collection = options.collection;
   },
 
-  /*
-  * Key for the template
-  */
+  /**
+   * Key for the template
+   */
   name: null,
 
-  /*
-  * Parent of the current view.
-  * We make sure to stick this on the prototype as a runtime optimization
-  * for V8. It's best not to add properties to the instance after initialization.
-  */
+  /**
+   * Parent of the current view.
+   * We make sure to stick this on the prototype as a runtime optimization
+   * for V8. It's best not to add properties to the instance after initialization.
+   */
   parentView: null,
 
-  /*
-  * Children of the current view.
-  */
+  /**
+   * Children of the current view.
+   */
   childViews: null,
 
-  /*
-  * Gets array of child views by their name
-  * Empty array is returned when no match is found
-  */
+  /**
+   * Gets array of child views by their name
+   * Empty array is returned when no match is found
+   */
   getChildViewsByName: function(name) {
     return _.where(this.childViews, {name: name});
   },
 
-  /*
-  * Get data for template.  This also acts as a view-model.
-  * Try to return proper data if model or collection is available.
-  */
+  /**
+   * Get data for template.  This also acts as a view-model.
+   * Try to return proper data if model or collection is available.
+   */
   getTemplateData: function() {
     if (this.model) {
       return this.model.toJSON();
@@ -107,10 +107,10 @@ module.exports = BaseView = Backbone.View.extend({
     }
   },
 
-  /*
-  * Add special properties `_app` and `_model` or `_collection` to pass to
-  * the templates.
-  */
+  /**
+   * Add special properties `_app` and `_model` or `_collection` to pass to
+   * the templates.
+   */
   decorateTemplateData: function(data) {
     if (this.app) {
       data._app = this.app;
@@ -129,21 +129,21 @@ module.exports = BaseView = Backbone.View.extend({
     return this.options.template_name || this.name;
   },
 
-  /*
-  * Get template function
-  */
+  /**
+   * Get template function
+   */
   getTemplate: function() {
     return templateFinder.getTemplate(this.getTemplateName());
   },
 
-  /*
-  * Any options not to create data-attributes for.
-  */
+  /**
+   * Any options not to create data-attributes for.
+   */
   nonAttributeOptions: ['id', 'className', 'tagName'],
 
-  /*
-  * Get HTML attributes to add to el.
-  */
+  /**
+   * Get HTML attributes to add to el.
+   */
   getAttributes: function() {
     var attributes = {};
 
@@ -186,9 +186,9 @@ module.exports = BaseView = Backbone.View.extend({
     return attributes;
   },
 
-  /*
-  * Turn template into HTML, minus the wrapper element.
-  */
+  /**
+   * Turn template into HTML, minus the wrapper element.
+   */
   getInnerHtml: function() {
     var data, template;
 
@@ -202,9 +202,9 @@ module.exports = BaseView = Backbone.View.extend({
     return template(data);
   },
 
-  /*
-  * Get the HTML for the view, including the wrapper element.
-  */
+  /**
+   * Get the HTML for the view, including the wrapper element.
+   */
   getHtml: function() {
     var attrString, attributes, html;
 
@@ -231,10 +231,10 @@ module.exports = BaseView = Backbone.View.extend({
     return this;
   },
 
-  /*
-  * If rendered on the client missing its data,
-  * fetch it based on the parameters passed in.
-  */
+  /**
+   * If rendered on the client missing its data,
+   * fetch it based on the parameters passed in.
+   */
   fetchLazy: function() {
     var fetchSpec, params,
       _this = this;
@@ -276,40 +276,40 @@ module.exports = BaseView = Backbone.View.extend({
     });
   },
 
-  /*
-  * Anything to do before rendering on the client or server.
-  * This is useful for i.e. accessing @model in the client after
-  * @hydrate() is called, but before @getTemplateData() is called.
-  */
+  /**
+   * Anything to do before rendering on the client or server.
+   * This is useful for i.e. accessing @model in the client after
+   * @hydrate() is called, but before @getTemplateData() is called.
+   */
   _preRender: function() {
     this.preRender();
     this.trigger('preRender');
   },
 
-  /*
-  * Anything to do after rendering on the client, such initializing jQuery
-  * plugins like sliders, slideshows, etc.
-  */
+  /**
+   * Anything to do after rendering on the client, such initializing jQuery
+   * plugins like sliders, slideshows, etc.
+   */
   _postRender: function() {
     this.attachChildViews();
     this.postRender();
     this.trigger('postRender');
   },
 
-  /*
-  * To be overridden by subclasses.
-  */
+  /**
+   * To be overridden by subclasses.
+   */
   preRender: noop,
 
-  /*
-  * To be overridden by subclasses.
-  */
+  /**
+   * To be overridden by subclasses.
+   */
   postRender: noop,
 
-  /*
-  * Hydrate this view with the data it needs, if being attached
-  * to pre-exisitng DOM.
-  */
+  /**
+   * Hydrate this view with the data it needs, if being attached
+   * to pre-exisitng DOM.
+   */
   hydrate: function() {
     var fetchSummary, results;
 
@@ -339,10 +339,10 @@ module.exports = BaseView = Backbone.View.extend({
     this.trigger('loading', loading);
   },
 
-  /*
-  * When HTML is already present (rendered by server),
-  * this is what gets called to bind to the element.
-  */
+  /**
+   * When HTML is already present (rendered by server),
+   * this is what gets called to bind to the element.
+   */
   attach: function(element, parentView) {
     var $el;
 
@@ -350,46 +350,46 @@ module.exports = BaseView = Backbone.View.extend({
     $el.data('view-attached', true);
     this.setElement($el);
 
-    /*
-    * Store a reference to the parent view.
-    */
+    /**
+     * Store a reference to the parent view.
+     */
     this.parentView = parentView;
 
-    /*
-    * Hydrate looks if there is a model or collection associated
-    * with this view, and tries to load it from memory.
-    */
+    /**
+     * Hydrate looks if there is a model or collection associated
+     * with this view, and tries to load it from memory.
+     */
     this.hydrate();
 
-    /*
-    * Call preRender() so we can access things setup by @hydrate()
-    * (like @model) in i.e. @getTemplateData().
-    */
+    /**
+     * Call preRender() so we can access things setup by @hydrate()
+     * (like @model) in i.e. @getTemplateData().
+     */
     this._preRender();
 
-    /*
-    * We have to call postRender() so client-only things happen,
-    * i.e. initialize slideshows, etc.
-    */
+    /**
+     * We have to call postRender() so client-only things happen,
+     * i.e. initialize slideshows, etc.
+     */
     this._postRender();
 
-    /*
-    * If the view says it should try to be lazy loaded, and it doesn't
-    * have a model or collection, then do so.
-    */
+    /**
+     * If the view says it should try to be lazy loaded, and it doesn't
+     * have a model or collection, then do so.
+     */
     if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
       this.fetchLazy();
     }
     this.trigger('attach');
   },
 
-  /*
-  * Happens client-side.
-  * Find all of sub view DOM elements
-  * Get the view key
-  * Call this.getView()
-  * Attach childView
-  */
+  /**
+   * Happens client-side.
+   * Find all of sub view DOM elements
+   * Get the view key
+   * Call this.getView()
+   * Attach childView
+   */
   attachChildViews: function() {
     // Remove all child views in case we are re-rendering through
     // manual .render() or 'refresh' being triggered on the view.
@@ -417,10 +417,10 @@ module.exports = BaseView = Backbone.View.extend({
   }
 });
 
-/*
-* Class methods
-* -------------
-*/
+/**
+ * Class methods
+ * -------------
+ */
 
 BaseView.getView = function(viewName) {
   return require(rendr.entryPath + "/app/views/" + viewName);
@@ -455,9 +455,9 @@ BaseView.attach = function(app, parentView) {
   return _.compact(views);
 };
 
-/*
-* Noops on the server, because they do DOM stuff.
-*/
+/**
+ * Noops on the server, because they do DOM stuff.
+ */
 if (typeof window === 'undefined') {
   BaseView.prototype._ensureElement = noop;
   BaseView.prototype.delegateEvents = noop;

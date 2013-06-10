@@ -1,8 +1,10 @@
 /*global rendr*/
-/*
-* This is the app instance that is shared between client and server.
-* The client also subclasses it for client-specific stuff.
-*/
+
+/**
+ * This is the app instance that is shared between client and server.
+ * The client also subclasses it for client-specific stuff.
+ */
+
 var Backbone, ClientRouter, Fetcher;
 
 require('./globals');
@@ -21,9 +23,9 @@ module.exports = Backbone.Model.extend({
     loading: false
   },
 
-  /*
-  * @shared
-  */
+  /**
+   * @shared
+   */
   initialize: function() {
     this.fetcher = new Fetcher({
       app: this
@@ -38,23 +40,23 @@ module.exports = Backbone.Model.extend({
 
   postInitialize: noop,
 
-  /*
-  * @shared
-  */
+  /**
+   * @shared
+   */
   fetch: function() {
     this.fetcher.fetch.apply(this.fetcher, arguments);
   },
 
-  /*
-  * @client
-  */
+  /**
+   * @client
+   */
   bootstrapData: function(modelMap) {
     this.fetcher.bootstrapData(modelMap);
   },
 
-  /*
-  * @client
-  */
+  /**
+   * @client
+   */
   start: function() {
     this.router.start();
   }

@@ -9,9 +9,9 @@ function noop() {}
 
 module.exports = BaseRouter;
 
-/*
-* Base router class shared betwen ClientRouter and ServerRouter.
-*/
+/**
+ * Base router class shared betwen ClientRouter and ServerRouter.
+ */
 function BaseRouter(options) {
   this.route = this.route.bind(this);
   this._routes = [];
@@ -19,20 +19,20 @@ function BaseRouter(options) {
   this.initialize(options);
 }
 
-/*
-* Config
-*   - errorHandler: function to correctly handle error
-*   - paths
-*     - entryPath (required)
-*     - routes (optional)
-*     - controllerDir (optional)
-*   - stashError: optional function to notify server of error
-*/
+/**
+ * Config
+ *   - errorHandler: function to correctly handle error
+ *   - paths
+ *     - entryPath (required)
+ *     - routes (optional)
+ *     - controllerDir (optional)
+ *   - stashError: optional function to notify server of error
+ */
 BaseRouter.prototype.options = null;
 
-/*
-* Internally stored route definitions.
-*/
+/**
+ * Internally stored route definitions.
+ */
 BaseRouter.prototype._routes = null;
 
 BaseRouter.prototype.reverseRoutes = false;
@@ -60,10 +60,10 @@ BaseRouter.prototype.getController = function(controllerName) {
   return controller;
 };
 
-/*
-* Given an object with 'controller' and 'action' properties,
-* return the corresponding action function.
-*/
+/**
+ * Given an object with 'controller' and 'action' properties,
+ * return the corresponding action function.
+ */
 BaseRouter.prototype.getAction = function(route) {
   var controller, action;
   controller = this.getController(route.controller);
@@ -78,7 +78,7 @@ BaseRouter.prototype.getAction = function(route) {
 BaseRouter.prototype.getRedirect = function(route, params) {
   var redirect = route.redirect;
   if (redirect != null) {
-    /*
+    /**
      * Support function and string.
      */
     if (typeof redirect === 'function') {
@@ -88,9 +88,9 @@ BaseRouter.prototype.getRedirect = function(route, params) {
   return redirect;
 };
 
-/*
-* Build route definitions based on the routes file.
-*/
+/**
+ * Build route definitions based on the routes file.
+ */
 BaseRouter.prototype.buildRoutes = function() {
   var routeBuilder, routes, _this = this;
 
@@ -115,19 +115,19 @@ BaseRouter.prototype.buildRoutes = function() {
   return this.routes();
 };
 
-/*
-* Returns a copy of current route definitions.
-*/
+/**
+ * Returns a copy of current route definitions.
+ */
 BaseRouter.prototype.routes = function() {
   return this._routes.slice().map(function(route) {
     return route.slice();
   });
 };
 
-/*
-* Method passed to routes file to build up routes definition.
-* Adds a single route definition.
-*/
+/**
+ * Method passed to routes file to build up routes definition.
+ * Adds a single route definition.
+ */
 BaseRouter.prototype.route = function(pattern) {
   var action, definitions, handler, route, routeObj;
 
@@ -151,9 +151,9 @@ BaseRouter.prototype.parseDefinitions = function(definitions) {
   definitions.forEach(function(element) {
     var parts;
 
-    /*
-    * Handle i.e. 'users#show'.
-    */
+    /**
+     * Handle i.e. 'users#show'.
+     */
     if (_.isString(element)) {
       parts = element.split('#');
       _.extend(route, {
@@ -161,9 +161,9 @@ BaseRouter.prototype.parseDefinitions = function(definitions) {
         action: parts[1]
       });
     } else {
-      /*
-      * Handle objects ,i.e. {controller: 'users', action: 'show'}.
-      */
+      /**
+       * Handle objects ,i.e. {controller: 'users', action: 'show'}.
+       */
       _.extend(route, element);
     }
   });
@@ -181,18 +181,17 @@ BaseRouter.prototype.defaultHandlerParams = function(viewPath, locals, route) {
   return [viewPath, locals];
 };
 
-/*
-* Methods to be extended by subclasses.
-* -------------------------------------
-*/
+/**
+ * Methods to be extended by subclasses.
+ * -------------------------------------
+ */
 
-
-/*
-* This is the method that renders the request.
-*/
+/**
+ * This is the method that renders the request.
+ */
 BaseRouter.prototype.getHandler = noop;
 
-/*
-* Mix in Backbone.Events.
-*/
+/**
+ * Mix in Backbone.Events.
+ */
 _.extend(BaseRouter.prototype, Backbone.Events);

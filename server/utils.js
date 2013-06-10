@@ -1,8 +1,6 @@
-var utils, _;
+var _ = require('underscore');
 
-_ = require('underscore');
-
-utils = module.exports = {};
+var utils = module.exports = {};
 
 utils.isErrorStatus = function(statusCode, options) {
   options = options || {};

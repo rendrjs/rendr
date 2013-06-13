@@ -1,10 +1,11 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, _;
+var Handlebars, fs, layoutTemplate, _, path;
 
 fs = require('fs');
 _ = require('underscore');
 Handlebars = require('handlebars');
+path = require('path');
 
 module.exports = exports = viewEngine;
 
@@ -58,7 +59,7 @@ function getLayoutTemplate(callback) {
 function getViewHtml(viewPath, locals, app) {
   var BaseView, View, name, view, basePath;
 
-  basePath = 'app/views';
+  basePath = path.join('app', 'views');
   BaseView = require('../shared/base/view');
   locals = _.clone(locals);
 

@@ -1,11 +1,18 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, _, path;
+var Handlebars, fs, layoutTemplate, _, fileImporter, globalPassIn, style;
 
 fs = require('fs');
 _ = require('underscore');
+fileImporter = require('render-css-file');
 Handlebars = require('handlebars');
-path = require('path');
+
+//declare global template elements
+style = fileImporter('oocss.css','public/css');
+style += fileImporter('style.css','public/css');
+
+globalPassIn = {  style: style
+                      };
 
 module.exports = exports = viewEngine;
 
@@ -13,23 +20,23 @@ module.exports = exports = viewEngine;
 exports.Handlebars = Handlebars;
 
 function viewEngine(viewPath, data, callback) {
-  var app, layoutData;  
+  var app, layoutData;
+
   data.locals = data.locals || {};
-  
   app = data.app;
   layoutData = _.extend({}, data, {
     body: getViewHtml(viewPath, data.locals, app),
     appData: app.toJSON(),
-    globals: globalPassIn,
+    globalPassIn: globalPassIn,
     bootstrappedData: getBootstrappedData(data.locals, app),
     _app: app
   });
   renderWithLayout(layoutData, callback);
 }
 
-/**
- * render with a layout
- */
+/*
+* render with a layout
+*/
 function renderWithLayout(locals, callback) {
   getLayoutTemplate(function(err, templateFn) {
     if (err) return callback(err);
@@ -40,9 +47,9 @@ function renderWithLayout(locals, callback) {
 
 layoutTemplate = null;
 
-/**
- * Cache layout template function.
- */
+/*
+* Cache layout template function.
+*/
 function getLayoutTemplate(callback) {
   var layoutPath;
 
@@ -60,7 +67,7 @@ function getLayoutTemplate(callback) {
 function getViewHtml(viewPath, locals, app) {
   var BaseView, View, name, view, basePath;
 
-  basePath = path.join('app', 'views');
+  basePath = 'app/views';
   BaseView = require('../shared/base/view');
   locals = _.clone(locals);
 

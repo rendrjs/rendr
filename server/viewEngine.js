@@ -1,18 +1,13 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, _, fileImporter, globalPassIn, style;
+var Handlebars, fs, layoutTemplate, _, fileImporter, globalPassIn, fileImporter, globalPassIn;
 
 fs = require('fs');
 _ = require('underscore');
-fileImporter = require('render-css-file');
 Handlebars = require('handlebars');
+fileImporter = require('rendr-importer');
 
-//declare global template elements
-style = fileImporter('oocss.css','public/css');
-style += fileImporter('style.css','public/css');
-
-globalPassIn = {  style: style
-                      };
+globalPassIn = fileImporter.storedContent;
 
 module.exports = exports = viewEngine;
 

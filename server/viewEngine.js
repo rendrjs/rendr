@@ -1,6 +1,6 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, _, fileImporter, globalPassIn, fileImporter, globalPassIn;
+var Handlebars, fs, layoutTemplate, _, fileImporter, globalPassIn, fileImporter;
 
 fs = require('fs');
 _ = require('underscore');

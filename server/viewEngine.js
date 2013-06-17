@@ -13,13 +13,14 @@ module.exports = exports = viewEngine;
 exports.Handlebars = Handlebars;
 
 function viewEngine(viewPath, data, callback) {
-  var app, layoutData;
-
+  var app, layoutData;  
   data.locals = data.locals || {};
+  
   app = data.app;
   layoutData = _.extend({}, data, {
     body: getViewHtml(viewPath, data.locals, app),
     appData: app.toJSON(),
+    globals: globalPassIn,
     bootstrappedData: getBootstrappedData(data.locals, app),
     _app: app
   });

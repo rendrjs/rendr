@@ -33,11 +33,10 @@ and returns an identifying object:
   }
 */
 
-var Backbone, CollectionStore, ModelStore, async, modelUtils, _;
+var Backbone, CollectionStore, ModelStore, modelUtils, _;
 
 _ = require('underscore');
 Backbone = require('backbone');
-async = require('async');
 
 modelUtils = require('./modelUtils');
 ModelStore = require('./store/model_store');
@@ -55,6 +54,34 @@ function Fetcher(options) {
     app: this.app
   });
 }
+
+function parallel(tasks, callback) {
+  var results   = {},
+      completed = 0,
+      length;
+
+  if (_.isEmpty(tasks)) {
+    return callback(null, results);
+  }
+
+  length = _.keys(tasks).length;
+  _.each(tasks, function(task, key) {
+    task(function(err) {
+      var args = Array.prototype.slice.call(arguments, 1);
+      if (args.length <= 1) {
+        args = args[0];
+      }
+      results[key] = args;
+
+      if (err) {
+        callback(err, results);
+        callback = function() { };
+      } else if (++completed >= length) {
+        callback(null, results);
+      }
+    });
+  });
+};
 
 /**
  * Returns an instance of Model or Collection.
@@ -185,7 +212,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
       }
     }.bind(this);
   }, this);
-  async.parallel(batchedRequests, callback);
+  parallel(batchedRequests, callback);
 };
 
 Fetcher.prototype.needsFetch = function(modelData, spec) {

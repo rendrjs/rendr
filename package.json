@@ -15,7 +15,6 @@
     "underscore": "1.4.4",
     "backbone": "1.0.0",
     "handlebars": "git://github.com/spikebrehm/handlebars.js.git#0687c7016c62122ab160a8683817a931b03354ad",
-    "async":"0.1.22",
     "qs": "0.5.1",
     "express": "~3.0.6",
     "validator": "0.4.21",

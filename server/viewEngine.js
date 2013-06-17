@@ -1,11 +1,13 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, _, path;
+var Handlebars, fs, layoutTemplate, _, fileImporter, globalPassIn, fileImporter;
 
 fs = require('fs');
 _ = require('underscore');
 Handlebars = require('handlebars');
-path = require('path');
+fileImporter = require('rendr-importer');
+
+globalPassIn = fileImporter.storedContent;
 
 module.exports = exports = viewEngine;
 
@@ -20,15 +22,16 @@ function viewEngine(viewPath, data, callback) {
   layoutData = _.extend({}, data, {
     body: getViewHtml(viewPath, data.locals, app),
     appData: app.toJSON(),
+    globalPassIn: globalPassIn,
     bootstrappedData: getBootstrappedData(data.locals, app),
     _app: app
   });
   renderWithLayout(layoutData, callback);
 }
 
-/**
- * render with a layout
- */
+/*
+* render with a layout
+*/
 function renderWithLayout(locals, callback) {
   getLayoutTemplate(function(err, templateFn) {
     if (err) return callback(err);
@@ -39,9 +42,9 @@ function renderWithLayout(locals, callback) {
 
 layoutTemplate = null;
 
-/**
- * Cache layout template function.
- */
+/*
+* Cache layout template function.
+*/
 function getLayoutTemplate(callback) {
   var layoutPath;
 
@@ -59,7 +62,7 @@ function getLayoutTemplate(callback) {
 function getViewHtml(viewPath, locals, app) {
   var BaseView, View, name, view, basePath;
 
-  basePath = path.join('app', 'views');
+  basePath = 'app/views';
   BaseView = require('../shared/base/view');
   locals = _.clone(locals);
 

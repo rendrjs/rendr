@@ -109,6 +109,18 @@ Inherits from `Backbone.Collection`.
 
 Inherits from `Backbone.Model`.
 
+### `BaseAppView`
+
+Inherits for `BaseView`. You can change your main content container from this view by changing the `contentEl` key in the `options` object when extending `BaseAppView`
+
+```javascript
+var AppView = BaseAppView.extend({
+  options : {
+    contentEl : "#mainContent"
+  }
+})
+```
+
 ### `BaseRouter`
 
 ### `ClientRouter`

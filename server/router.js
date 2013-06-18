@@ -1,12 +1,17 @@
-var BaseRouter, ServerRouter, sanitize, _;
+var BaseRouter, ServerRouter, ExpressRouter, sanitize, _;
 
 _ = require('underscore');
 BaseRouter = require('../shared/base/router');
+ExpressRouter = require('express').Router;
 sanitize = require('validator').sanitize;
 
 module.exports = ServerRouter;
 
 function ServerRouter() {
+  this._expressRouter = new ExpressRouter();
+  this.routesByPath = {};
+  this.on('route:add', this.addExpressRoute, this);
+
   BaseRouter.apply(this, arguments);
 }
 
@@ -84,6 +89,13 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
   };
 };
 
+ServerRouter.prototype.addExpressRoute = function(routeObj) {
+  var path = routeObj[0];
+
+  this.routesByPath[path] = routeObj;
+  this._expressRouter.route('get', path, []);
+};
+
 /**
  * Handle an error that happens while executing an action.
  * Could happen during the controller action, view rendering, etc.
@@ -126,47 +138,22 @@ ServerRouter.prototype.stashError = function(req, err) {
 };
 
 /**
- * We create and reuse an instance of Express Router in 'this.match()'.
- */
-ServerRouter.prototype._expressRouter = null;
-
-/**
  * Return the route definition based on a URL, according to the routes file.
  * This should match the way Express matches routes on the server, and our
  * ClientRouter matches routes on the client.
  */
 ServerRouter.prototype.match = function(pathToMatch) {
-  var Router, matchedRoute, path, routes, routesByPath,
-      _this = this;
+  var matchedRoute;
 
   if (~pathToMatch.indexOf('://')) {
     throw new Error('Cannot match full URL: "' + pathToMatch + '". Use pathname instead.');
   }
 
-  routes = this.routes();
-  routesByPath = {};
-
-  /**
-   * NOTE: Potential here to cache this work. Must invalidate when additional
-   * routes are added.
-   */
-  Router = require('express').Router;
-  this._expressRouter = new Router();
-  routes.forEach(function(route) {
-    // Add the route to the Express router, so we can use its matching logic
-    // without attempting to duplicate it.
-    path = route[0];
-    _this._expressRouter.route('get', path, []);
-    routesByPath[path] = route;
-  });
-
   // Ensure leading slash
-  if (pathToMatch.slice(0, 1) !== '/') {
-    pathToMatch = "/" + pathToMatch;
+  if (pathToMatch[0] !== '/') {
+    pathToMatch = '/' + pathToMatch;
   }
+
   matchedRoute = this._expressRouter.match('get', pathToMatch);
-  if (matchedRoute == null) {
-    return null;
-  }
-  return routesByPath[matchedRoute.path];
+  return matchedRoute ? this.routesByPath[matchedRoute.path] : null;
 };

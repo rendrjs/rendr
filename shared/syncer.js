@@ -27,7 +27,6 @@ function clientSync(method, model, options) {
   var data;
   data = _.clone(options.data);
   options.url = this.getUrl(options.url, true, data);
-  data = addApiParams(method, model, data);
   options.data = data;
   options.emulateJSON = true;
   return Backbone.sync(method, model, options);
@@ -37,6 +36,7 @@ function serverSync(method, model, options) {
   var api, data, urlParts, verb;
 
   data = _.clone(options.data);
+  data = addApiParams(method, model, data);
   options.url = this.getUrl(options.url, false, data);
   verb = methodMap[method];
   urlParts = options.url.split('?');

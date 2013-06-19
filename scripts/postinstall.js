@@ -10,7 +10,6 @@ var root = __dirname + '/..',
 var dependencies = [
   'underscore',
   'backbone',
-  'async',
   'handlebars'
 ];
 

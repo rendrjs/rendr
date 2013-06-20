@@ -38,6 +38,12 @@ module.exports = {
 
     // create the outerHTML using className, tagName
     html = view.getHtml();
+
+    // remove view as its parentView will re-create it from data-view attributes present in html
+    if (typeof window !== 'undefined') {
+        view.remove();
+    }
+
     return new Handlebars.SafeString(html);
   },
 

@@ -32,6 +32,9 @@ module.exports = {
       options.parentView = parentView;
     }
 
+    // Tell view not to call postInitialize
+    options.preventPostInitialize = true;
+
     // get the Backbone.View based on viewName
     ViewClass = BaseView.getView(viewName);
     view = new ViewClass(options);
@@ -40,8 +43,8 @@ module.exports = {
     html = view.getHtml();
 
     // remove view as its parentView will re-create it from data-view attributes present in html
-    if (typeof window !== 'undefined') {
-        view.remove();
+    if (!global.isServer) {
+      view.remove();
     }
 
     return new Handlebars.SafeString(html);

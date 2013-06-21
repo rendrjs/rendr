@@ -34,8 +34,8 @@ module.exports = Backbone.Model.extend({
       new ClientRouter({
         app: this
       });
+      this.postInitialize();
     }
-    this.postInitialize();
   },
 
   postInitialize: noop,

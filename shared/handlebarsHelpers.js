@@ -32,12 +32,26 @@ module.exports = {
       options.parentView = parentView;
     }
 
-    // get the Backbone.View based on viewName
-    ViewClass = BaseView.getView(viewName);
-    view = new ViewClass(options);
+    // Try to get view stored in app cache
+    if(app){
+      view = app.fetcher.viewStore.get(viewName);
+    }
+
+    if(!view){
+      // get the Backbone.View based on viewName
+      ViewClass = BaseView.getView(viewName);
+      view = new ViewClass(options);
+      if(app){
+        app.fetcher.viewStore.set(view);
+      }
+    } else {
+    // re-initialize view with new options
+      view.initialize(options);
+    }
 
     // create the outerHTML using className, tagName
     html = view.getHtml();
+
     return new Handlebars.SafeString(html);
   },
 

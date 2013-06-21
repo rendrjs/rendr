@@ -60,6 +60,10 @@ module.exports = BaseView = Backbone.View.extend({
       options.collection_params = options.collection.params;
     }
 
+    if(options.preventPostInitialize){
+      this.postInitialize = noop;
+    }
+
     this.model = options.model;
     this.collection = options.collection;
   },
@@ -446,8 +450,11 @@ BaseView.attach = function(app, parentView) {
         }
       });
       options.app = app;
-      ViewClass = BaseView.getView(viewName);
-      view = new ViewClass(options);
+      view = app.fetcher.viewStore.get(viewName);
+      if(!view){
+        ViewClass = BaseView.getView(viewName);
+        view = new ViewClass(options);
+      }
       view.attach($el, parentView);
       return view;
     }

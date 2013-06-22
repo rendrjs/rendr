@@ -156,6 +156,11 @@ describe('syncer', function() {
     it("should support specifying an api", function() {
       syncer.formatClientUrl('/path/to/resource', 'api-name').should.eql('/api/api-name/-/path/to/resource');
     });
+
+    it("should support providing a url base", function() {
+      syncer.setClientUrlBase('http://rendr.local');
+      syncer.formatClientUrl('/path/to/resource').should.eql('http://rendr.local/api/-/path/to/resource');
+    });
   });
 
 });

@@ -1,4 +1,4 @@
-var Backbone, extractParamNamesRe, methodMap, modelUtils, qs, server, _, syncer;
+var Backbone, extractParamNamesRe, methodMap, modelUtils, qs, server, _, syncer, clientUrlBase;
 
 if (global.isServer) {
   qs = require('qs');
@@ -125,8 +125,12 @@ syncer.getUrl = function getUrl(url, clientPrefix, params) {
   return syncer.interpolateParams(this, url, params);
 };
 
+syncer.setClientUrlBase = function(base) {
+   clientUrlBase = base;
+};
+
 syncer.formatClientUrl = function(url, api) {
-  var prefix = '/api';
+  var prefix = (clientUrlBase || '') + '/api';
   if (api) {
     prefix += '/' + api;
   }

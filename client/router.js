@@ -107,7 +107,9 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
       router.currentView = router.getMainView(views);
       router.trigger('action:end', route, firstRender);
       firstRender = false;
-    } else {
+    } 
+
+    if (!firstRender || router.renderOnFirstRoute) {
       paramsArray = _.toArray(arguments);
       params = router.getParamsHash(pattern, paramsArray, window.location.search);
 

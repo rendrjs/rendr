@@ -61,9 +61,9 @@ ClientRouter.prototype.initialize = function(options) {
   // We do this here so that it's available in AppView initialization.
   this.app.router = this;
 
-  this.on('route:add', this.addBackboneRoute.bind(this));
-  this.on('action:start', this.trackAction.bind(this));
-  this.app.on('reload', this.renderView.bind(this));
+  this.on('route:add', this.addBackboneRoute, this);
+  this.on('action:start', this.trackAction, this);
+  this.app.on('reload', this.renderView, this);
 
   this.appView = new AppView({
     app: this.app
@@ -95,11 +95,6 @@ ClientRouter.prototype.addBackboneRoute = function(routeObj) {
 ClientRouter.prototype.getHandler = function(action, pattern, route) {
   var router = this;
 
-  function renderCallback() {
-    router.render.apply(router, arguments);
-    router.trigger('action:end', route, firstRender);
-  }
-
   // This returns a function which is called by Backbone.history.
   return function() {
     var params, paramsArray, views, redirect;
@@ -126,7 +121,7 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
         if (!action) {
           throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
         }
-        action.call(router, params, renderCallback);
+        action.call(router, params, router.getRenderCallback(route));
       }
     }
   };
@@ -212,20 +207,27 @@ ClientRouter.prototype.redirectTo = function(path, options) {
   }
 };
 
-ClientRouter.prototype.render = function(err, viewKey, data) {
-  var View;
+ClientRouter.prototype.getRenderCallback = function(route) {
+  return function(err, viewPath, locals) {
+    var View;
 
-  data = data || {};
+    if (this.currentView) {
+      this.currentView.remove();
+    }
 
-  if (this.currentView) {
-    this.currentView.remove();
-  }
+    var defaults = this.defaultHandlerParams(viewPath, locals, route);
+    viewPath = defaults[0], locals = defaults[1];
 
-  // Inject the app.
-  data.app = this.app;
-  View = this.getView(viewKey);
-  this.currentView = new View(data);
-  this.renderView();
+    locals = locals || {};
+
+    // Inject the app.
+    locals.app = this.app;
+    View = this.getView(viewPath);
+    this.currentView = new View(locals);
+    this.renderView();
+
+    this.trigger('action:end', route, firstRender);
+  }.bind(this);
 };
 
 ClientRouter.prototype.renderView = function() {

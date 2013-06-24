@@ -50,12 +50,12 @@ This is where you put any initialization logic. We've hijacked the default `view
 #### `view.render()`
 *Environment: client.*
 
-You should never have override `view.render()` unless you're doing something really custom. Instead, you should be able to do anything you need using `view.postRender()`, 
+You should never have to override `view.render()` unless you're doing something really custom. Instead, you should be able to do anything you need using `view.postRender()`,
 
 #### `view.postRender()`
 *Environment: client.*
 
-Here is where you'd put any initializion code that needs to access the DOM. This is a good place for jQuery plugins, sliders, etc.
+Here is where you'd put any initialization code that needs to access the DOM. This is a good place for jQuery plugins, sliders, etc.
 
 #### `view.getTemplateData()`
 *Environment: shared.*
@@ -109,6 +109,18 @@ Inherits from `Backbone.Collection`.
 
 Inherits from `Backbone.Model`.
 
+### `BaseAppView`
+
+Inherits for `BaseView`. You can change your main content container from this view by changing the `contentEl` key in the `options` object when extending `BaseAppView`
+
+```javascript
+var AppView = BaseAppView.extend({
+  options : {
+    contentEl : "#mainContent"
+  }
+})
+```
+
 ### `BaseRouter`
 
 ### `ClientRouter`
@@ -133,7 +145,7 @@ Rather than owning your entire Express app, Rendr simply provides some useful mi
 
 ### Asset pipeline
 
-Asset bundling and serving are outside of Rendr's scope. However, does it have some specific requirements for JavaScript packaging to support modules that are accessible in the CommonJS style on both the client and server. The [example app](https://github.com/airbnb/rendr-app-template) uses [Stitch](https://github.com/sstephenson/stitch) for this, though you could also do this with other tools, such as [Browserify](https://github.com/substack/node-browserify).
+Asset bundling and serving are outside of Rendr's scope. However, it does have some specific requirements for JavaScript packaging to support modules that are accessible in the CommonJS style on both the client and server. The [example app](https://github.com/airbnb/rendr-app-template) uses [Stitch](https://github.com/sstephenson/stitch) for this, though you could also do this with other tools, such as [Browserify](https://github.com/substack/node-browserify).
 
 ## Notes
 
@@ -152,6 +164,8 @@ Some of the more glaring things to do:
 ## Contributing
 
 We'd love to see what the community can come up with! There are no doubt a number of developers who are tackling this same problem, and we can learn from each other. If you have a bug fix or feature proposal, submit a pull request with a clear description of the change, plus tests.
+
+Rendr was originally developed by [@braitz](https://github.com/braitz) and [@spikebrehm](https://github.com/spikebrehm), and now has a healthy list of [contributors](https://github.com/airbnb/rendr/graphs/contributors).
 
 ## License
 

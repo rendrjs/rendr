@@ -4,13 +4,13 @@ require('../shared/globals');
 Router = require('./router');
 
 /*
-* config keys:
-*   - dataAdapter
-*   - errorHandler
-*   - stashError
-*   - paths
-*     - entryPath
-*/
+ * config keys:
+ *   - dataAdapter
+ *   - errorHandler
+ *   - stashError
+ *   - paths
+ *     - entryPath
+ */
 config = null;
 
 exports.dataAdapter = null;

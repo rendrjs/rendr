@@ -1,12 +1,17 @@
-var BaseRouter, ServerRouter, sanitize, _;
+var BaseRouter, ServerRouter, ExpressRouter, sanitize, _;
 
 _ = require('underscore');
 BaseRouter = require('../shared/base/router');
+ExpressRouter = require('express').Router;
 sanitize = require('validator').sanitize;
 
 module.exports = ServerRouter;
 
 function ServerRouter() {
+  this._expressRouter = new ExpressRouter();
+  this.routesByPath = {};
+  this.on('route:add', this.addExpressRoute, this);
+
   BaseRouter.apply(this, arguments);
 }
 
@@ -34,10 +39,10 @@ ServerRouter.prototype.getParams = function(req) {
   return params;
 };
 
-/*
-* This is the method that renders the request. It returns an Express
-* middleware function.
-*/
+/**
+ * This is the method that renders the request. It returns an Express
+ * middleware function.
+ */
 ServerRouter.prototype.getHandler = function(action, pattern, route) {
   var router = this;
 
@@ -46,7 +51,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
 
     params = router.getParams(req);
     redirect = router.getRedirect(route, params);
-    /*
+    /**
      * If `redirect` is present, then do a redirect and return.
      */
     if (redirect != null) {
@@ -63,21 +68,20 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
       }
     };
 
-    action.call(context, params, function(err, template, locals) {
-      var viewData;
+    action.call(context, params, function(err, viewPath, locals) {
+      if (err) return router.handleErr(err, req, res);
 
-      if (err) {
-        return router.handleErr(err, req, res);
-      }
-      viewData = {
-        locals: locals,
+      var defaults = router.defaultHandlerParams(viewPath, locals, route);
+      viewPath = defaults[0], locals = defaults[1];
+
+      var viewData = {
+        locals: locals || {},
         app: app,
         req: req
       };
-      res.render(template, viewData, function(err, html) {
-        if (err) {
-          return router.handleErr(err, req, res);
-        }
+
+      res.render(viewPath, viewData, function(err, html) {
+        if (err) return router.handleErr(err, req, res);
         res.set(router.getHeadersForRoute(route));
         res.type('html').end(html);
       });
@@ -85,10 +89,17 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
   };
 };
 
-/*
-* Handle an error that happens while executing an action.
-* Could happen during the controller action, view rendering, etc.
-*/
+ServerRouter.prototype.addExpressRoute = function(routeObj) {
+  var path = routeObj[0];
+
+  this.routesByPath[path] = routeObj;
+  this._expressRouter.route('get', path, []);
+};
+
+/**
+ * Handle an error that happens while executing an action.
+ * Could happen during the controller action, view rendering, etc.
+ */
 ServerRouter.prototype.handleErr = function(err, req, res) {
   var text;
 
@@ -117,59 +128,32 @@ ServerRouter.prototype.getHeadersForRoute = function(definition) {
   return headers;
 };
 
-/*
-* stash error, if handler available
-*/
+/**
+ * stash error, if handler available
+ */
 ServerRouter.prototype.stashError = function(req, err) {
   if (this.options.stashError != null) {
     this.options.stashError(req, err);
   }
 };
 
-/*
-* We create and reuse an instance of Express Router in 'this.match()'.
-*/
-ServerRouter.prototype._expressRouter = null;
-
-/*
-* Return the route definition based on a URL, according to the routes file.
-* This should match the way Express matches routes on the server, and our
-* ClientRouter matches routes on the client.
-*/
-
-
+/**
+ * Return the route definition based on a URL, according to the routes file.
+ * This should match the way Express matches routes on the server, and our
+ * ClientRouter matches routes on the client.
+ */
 ServerRouter.prototype.match = function(pathToMatch) {
-  var Router, matchedRoute, path, routes, routesByPath,
-      _this = this;
+  var matchedRoute;
 
   if (~pathToMatch.indexOf('://')) {
     throw new Error('Cannot match full URL: "' + pathToMatch + '". Use pathname instead.');
   }
 
-  routes = this.routes();
-  routesByPath = {};
-
-  /*
-  * NOTE: Potential here to cache this work. Must invalidate when additional
-  * routes are added.
-  */
-  Router = require('express').Router;
-  this._expressRouter = new Router();
-  routes.forEach(function(route) {
-    // Add the route to the Express router, so we can use its matching logic
-    // without attempting to duplicate it.
-    path = route[0];
-    _this._expressRouter.route('get', path, []);
-    routesByPath[path] = route;
-  });
-
   // Ensure leading slash
-  if (pathToMatch.slice(0, 1) !== '/') {
-    pathToMatch = "/" + pathToMatch;
+  if (pathToMatch[0] !== '/') {
+    pathToMatch = '/' + pathToMatch;
   }
+
   matchedRoute = this._expressRouter.match('get', pathToMatch);
-  if (matchedRoute == null) {
-    return null;
-  }
-  return routesByPath[matchedRoute.path];
+  return matchedRoute ? this.routesByPath[matchedRoute.path] : null;
 };

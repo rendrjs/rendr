@@ -56,9 +56,9 @@ function Fetcher(options) {
   });
 }
 
-/*
-* Returns an instance of Model or Collection.
-*/
+/**
+ * Returns an instance of Model or Collection.
+ */
 Fetcher.prototype.getModelForSpec = function(spec, attrsOrModels, options) {
   var method, modelName;
   attrsOrModels = attrsOrModels || {};
@@ -71,9 +71,11 @@ Fetcher.prototype.getModelForSpec = function(spec, attrsOrModels, options) {
     modelName = spec.collection;
   }
 
-  // We have to initialize the model with its ID for now
-  // so that the model can interpolate its url '/listings/:id'
-  // to i.e. '/listings/42'. See 'syncer' module.
+  /**
+   * We have to initialize the model with its ID for now
+   * so that the model can interpolate its url '/listings/:id'
+   * to i.e. '/listings/42'. See 'syncer' module.
+   */
   if (spec.params != null) {
     if (spec.model != null) {
       // If it's a model, merge the given params with the model attributes.
@@ -89,15 +91,15 @@ Fetcher.prototype.getModelForSpec = function(spec, attrsOrModels, options) {
   return modelUtils[method](modelName, attrsOrModels, options);
 };
 
-/*
-* Used to hold timestamps of when 'checkFresh()' was called on a model/collection.
-* We use this to throttle it in 'shouldCheckFresh()'.
-*/
+/**
+ * Used to hold timestamps of when 'checkFresh()' was called on a model/collection.
+ * We use this to throttle it in 'shouldCheckFresh()'.
+ */
 Fetcher.prototype.checkedFreshTimestamps = {};
 
-/*
-* Only once every ten seconds. Smarter?
-*/
+/**
+ * Only once every ten seconds. Smarter?
+ */
 Fetcher.prototype.checkedFreshRate = 10000;
 
 Fetcher.prototype.shouldCheckFresh = function(spec) {
@@ -129,20 +131,19 @@ Fetcher.prototype.checkedFreshKey = function(spec) {
   return JSON.stringify(meta);
 };
 
-/*
-* map fetchSpecs to models and fetch data in parallel
-*/
+/**
+ * map fetchSpecs to models and fetch data in parallel
+ */
 Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
-  var batchedRequests,
+  var batchedRequests = {},
     _this = this;
 
-  batchedRequests = {};
   _.each(fetchSpecs, function(spec, name) {
     batchedRequests[name] = function(cb) {
       var collectionData, idAttribute, model, modelData, modelOptions;
 
       if (!options.readFromCache) {
-        _this.fetchFromApi(spec, cb);
+        this.fetchFromApi(spec, cb);
       } else {
         modelData = null;
         modelOptions = {};
@@ -150,11 +151,11 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
         // First, see if we have stored the model or collection.
         if (spec.model != null) {
           idAttribute = modelUtils.modelIdAttribute(spec.model);
-          modelData = _this.modelStore.get(spec.model, spec.params[idAttribute]);
+          modelData = this.modelStore.get(spec.model, spec.params[idAttribute]);
         } else if (spec.collection != null) {
-          collectionData = _this.collectionStore.get(spec.collection, spec.params);
+          collectionData = this.collectionStore.get(spec.collection, spec.params);
           if (collectionData) {
-            modelData = _this.retrieveModelsForCollectionName(spec.collection, collectionData.ids);
+            modelData = this.retrieveModelsForCollectionName(spec.collection, collectionData.ids);
             modelOptions = {
               meta: collectionData.meta
             };
@@ -162,27 +163,36 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
         }
 
         // If we found the model/collection in the store, then return that.
-        if (modelData != null && !_this.isMissingKeys(modelData, spec.ensureKeys)) {
-          model = _this.getModelForSpec(spec, modelData, modelOptions);
+        if (!this.needsFetch(modelData, spec)) {
+          model = this.getModelForSpec(spec, modelData, modelOptions);
 
-          // If 'checkFresh' is set (and we're in the client), then before we
-          // return the cached object we fire off a fetch, compare the results,
-          // and if the data is different, we trigger a 'refresh' event.
-          if (spec.checkFresh && !global.isServer && _this.shouldCheckFresh(spec)) {
+          /**
+           * If 'checkFresh' is set (and we're in the client), then before we
+           * return the cached object we fire off a fetch, compare the results,
+           * and if the data is different, we trigger a 'refresh' event.
+           */
+          if (spec.checkFresh && !global.isServer && this.shouldCheckFresh(spec)) {
             model.checkFresh();
-            _this.didCheckFresh(spec);
+            this.didCheckFresh(spec);
           }
           cb(null, model);
         } else {
-          /* Else, fetch anew.
-          */
-
-          _this.fetchFromApi(spec, cb);
+          /**
+           * Else, fetch anew.
+           */
+          this.fetchFromApi(spec, cb);
         }
       }
-    };
-  });
+    }.bind(this);
+  }, this);
   async.parallel(batchedRequests, callback);
+};
+
+Fetcher.prototype.needsFetch = function(modelData, spec) {
+  if (modelData == null) return true;
+  if (this.isMissingKeys(modelData, spec.ensureKeys)) return true;
+  if (typeof spec.needsFetch === 'function' && spec.needsFetch(modelData)) return true;
+  return false;
 };
 
 Fetcher.prototype.isMissingKeys = function(modelData, keys) {
@@ -310,8 +320,10 @@ Fetcher.prototype.pendingFetches = 0;
 Fetcher.prototype.fetch = function(fetchSpecs, options, callback) {
   var _this = this;
 
-  // Support both (fetchSpecs, options, callback)
-  // and (fetchSpecs, callback).
+  /**
+   * Support both (fetchSpecs, options, callback)
+   * and (fetchSpecs, callback).
+   */
   if (arguments.length === 2) {
     callback = options;
     options = {};

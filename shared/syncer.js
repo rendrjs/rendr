@@ -12,7 +12,7 @@ modelUtils = null;
 server = null;
 
 // Pull out params in path, like '/users/:id'.
-extractParamNamesRe = /:(\w+)/g;
+extractParamNamesRe = /:([a-zA-Z_-]+)/g;
 
 methodMap = {
   'create': 'POST',
@@ -49,9 +49,10 @@ function serverSync(method, model, options) {
     body: {}
   };
 
-  // Put the data as form data if POST or PUT,
-  // otherwise query string.
-
+  /**
+   * Put the data as form data if POST or PUT,
+   * otherwise query string.
+   */
   if (verb === 'POST' || verb === 'PUT') {
     api.body = data;
   } else {
@@ -88,10 +89,12 @@ function addApiParams(method, model, params) {
   params = params || {};
   ret = _.clone(params);
 
-  // So, by default Backbone sends all of the model's
-  // attributes if we don't pass any in explicitly.
-  // This gets screwed up because we append the locale
-  // and currency, so let's replicate that behavior.
+  /**
+   * So, by default Backbone sends all of the model's
+   * attributes if we don't pass any in explicitly.
+   * This gets screwed up because we append the locale
+   * and currency, so let's replicate that behavior.
+   */
   if (model && _.isEqual(params, {}) && (method === 'create' || method === 'update')) {
     _.extend(ret, model.toJSON());
   }
@@ -106,10 +109,10 @@ syncer.getSync = function getSync() {
   }
 };
 
-/*
-* 'model' is either a model or collection that
-* has a 'url' property, which can be a string or function.
-*/
+/**
+ * 'model' is either a model or collection that
+ * has a 'url' property, which can be a string or function.
+ */
 syncer.getUrl = function getUrl(url, clientPrefix, params) {
   if (clientPrefix == null) {
     clientPrefix = false;
@@ -131,12 +134,12 @@ syncer.formatClientUrl = function(url, api) {
   return prefix + url;
 };
 
-/*
-* This is used to fire off a 'fetch', compare the results to the data we have,
-* and then trigger a 'refresh' event if the data has changed.
-*
-* Happens only client-side.
-*/
+/**
+ * This is used to fire off a 'fetch', compare the results to the data we have,
+ * and then trigger a 'refresh' event if the data has changed.
+ *
+ * Happens only client-side.
+ */
 syncer.checkFresh = function checkFresh() {
   var url,
     _this = this;
@@ -152,7 +155,7 @@ syncer.checkFresh = function checkFresh() {
 
     // The second argument 'false' tells 'parse()' not to modify the instance.
     data = _this.parse(resp, false);
-    differs = objectsDiffer(data, _this.toJSON());
+    differs = syncer.objectsDiffer(data, _this.toJSON());
     _this.trigger('checkFresh:end', differs);
     if (differs) {
       if (modelUtils.isModel(_this)) {
@@ -172,7 +175,7 @@ syncer.checkFresh = function checkFresh() {
   });
 };
 
-/*
+/**
  * Deeply-compare two objects to see if they differ.
  */
 syncer.objectsDiffer = function objectsDiffer(data1, data2) {
@@ -196,10 +199,10 @@ syncer.objectsDiffer = function objectsDiffer(data1, data2) {
   return changed;
 };
 
-/*
-* This maps i.e. '/listings/:id' to '/listings/3' if
-* the model you supply has model.get('id') == 3.
-*/
+/**
+ * This maps i.e. '/listings/:id' to '/listings/3' if
+ * the model you supply has model.get('id') == 3.
+ */
 syncer.interpolateParams = function interpolateParams(model, url, params) {
   var matches;
 
@@ -221,8 +224,10 @@ syncer.interpolateParams = function interpolateParams(model, url, params) {
       }
       url = url.replace(param, value);
 
-      // Delete the param from params hash, so we don't get urls like:
-      // /v1/threads/1234?id=1234...
+      /**
+       * Delete the param from params hash, so we don't get urls like:
+       * /v1/threads/1234?id=1234...
+       */
       delete params[property];
     });
   }

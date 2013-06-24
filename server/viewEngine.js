@@ -22,8 +22,8 @@ function viewEngine(viewPath, data, callback) {
 }
 
 /*
-* render with a layout
-*/
+ * render with a layout
+ */
 function renderWithLayout(locals, app, callback) {
   getLayoutTemplate(app, function(err, templateFn) {
     if (err) return callback(err);
@@ -35,8 +35,8 @@ function renderWithLayout(locals, app, callback) {
 layoutTemplate = null;
 
 /*
-* Cache layout template function.
-*/
+ * Cache layout template function.
+ */
 function getLayoutTemplate(app, callback) {
   var layoutPath;
 
@@ -51,14 +51,15 @@ function getLayoutTemplate(app, callback) {
 }
 
 function getViewHtml(viewPath, locals, app) {
-  var BaseView, View, name, view;
+  var BaseView, View, name, view, basePath;
 
+  basePath = path.join('app', 'views');
   BaseView = require('../shared/base/view');
   locals = _.clone(locals);
 
   // Pass in the app.
   locals.app = app;
-  name = path.basename(viewPath);
+  name = viewPath.substr(viewPath.indexOf(basePath) + basePath.length + 1);
   View = BaseView.getView(name);
   view = new View(locals);
   return view.getHtml();

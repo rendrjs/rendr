@@ -15,9 +15,9 @@ module.exports = BaseView.extend({
       contentEl: '#content'
     });
 
-    /*
-    * Grab the element that contains the main view.
-    */
+    /**
+     * Grab the element that contains the main view.
+     */
     this.$content = $(this.options.contentEl);
     this._bindInterceptClick();
   },
@@ -34,13 +34,11 @@ module.exports = BaseView.extend({
   },
 
   _interceptClick: function(e) {
-    /*
-    * We want the actual value of the attribute, rather than the
-    * full URL, so we use jQuery instead of just e.currentTarget.href
-    */
-    var href;
-
-    href = $(e.currentTarget).attr('href');
+    /**
+     * We want the actual value of the attribute, rather than the
+     * full URL, so we use jQuery instead of just e.currentTarget.href
+     */
+    var href = $(e.currentTarget).attr('href');
     if (this.shouldInterceptClick(href, e.currentTarget)) {
       e.preventDefault();
       this.app.router.redirectTo(href);

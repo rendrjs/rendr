@@ -1,3 +1,9 @@
+# 0.4.6
+## 2013-06-01
+* Support specifying multiple API hosts for models & controllers (thanks @technicolorenvy!).
+* Support subdirectories for views & templates, and allow omitting view path in controllers,
+  in which case view path defaults to ":controller/:action" (thanks @technicolorenvy!).
+
 # 0.4.5
 ## 2013-05-27
 * Use ES5 native methods instead of Underscore methods: `Array.prototype.map`,

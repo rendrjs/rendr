@@ -109,7 +109,7 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
       firstRender = false;
     } 
 
-    if (!firstRender || router.renderOnFirstRoute) {
+    if (!firstRender || router.options.renderOnFirstRoute) {
       paramsArray = _.toArray(arguments);
       params = router.getParamsHash(pattern, paramsArray, window.location.search);
 

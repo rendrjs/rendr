@@ -34,7 +34,7 @@ module.exports = Backbone.Model.extend({
     if (!global.isServer) {
       new ClientRouter({
         app: this,
-        renderOnFirstRoute: this.options.renderOnFirstRoute)
+        renderOnFirstRoute: this.options.renderOnFirstRoute
       });
     }
     this.postInitialize();

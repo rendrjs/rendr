@@ -27,13 +27,14 @@ module.exports = Backbone.Model.extend({
    * @shared
    */
   initialize: function(attributes, options) {
+    this.options = options || {};
     this.fetcher = new Fetcher({
       app: this
     });
     if (!global.isServer) {
       new ClientRouter({
         app: this,
-        renderOnFirstRoute: !!(options && options.renderOnFirstRoute)
+        renderOnFirstRoute: this.options.renderOnFirstRoute)
       });
     }
     this.postInitialize();

@@ -1,3 +1,15 @@
+# 0.4.7
+## 2013-06-27
+* Fix for allowing port in absolute model URL.
+* Style tweaks for comments, binding to a context in `this.on`-type events.
+* Added `Fetcher.prototype.needsFetch` method, for custom model caching logic
+  in controllers.
+* Fix for `syncer.checkFresh` (thanks @eleventigers).
+* Fix for view path on Windows (thanks @vincejl).
+* README updates (thanks @jacoblwe20).
+* Performance improvment by caching Express router in `ServerRouter` instead of
+  rebuilding it between requests (@jlogsdon).
+
 # 0.4.6
 ## 2013-06-01
 * Support specifying multiple API hosts for models & controllers (thanks @technicolorenvy!).

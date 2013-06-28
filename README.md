@@ -6,6 +6,8 @@ Check out the [blog post](http://nerds.airbnb.com/weve-launched-our-first-nodejs
 
 To see how to use Rendr to build a simple web app, check out [airbnb/rendr-app-template](https://github.com/airbnb/rendr-app-template).
 
+There is a [grunt-init](https://github.com/gruntjs/grunt-init) template to generate a blank Rendr project found at [andrewrjones/grunt-init-rendr](https://github.com/andrewrjones/grunt-init-rendr). Add it and start building awesome apps with Rendr!
+
 Build status: [![travis-ci status](https://secure.travis-ci.org/airbnb/rendr.png)](http://travis-ci.org/#!/airbnb/rendr/builds)
 
 ## The Premise

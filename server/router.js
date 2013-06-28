@@ -55,7 +55,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
      * If `redirect` is present, then do a redirect and return.
      */
     if (redirect != null) {
-      res.redirect(route.status || 302, redirect);
+      res.redirect(route.status || 301, redirect);
       return;
     }
 

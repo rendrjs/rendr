@@ -1,36 +1,36 @@
 require('../shared/globals');
 
-var Router = require('./router')
+var _ = require('underscore')
+  , Router = require('./router')
   , ViewEngine = require('./viewEngine');
 
-exports.dataAdapter = null;
+module.exports = Server;
 
-exports.viewEngine = null;
+function Server(expressApp, options) {
+  this.options = options || {};
+  _.defaults(this.options, this.defaultOptions);
 
-exports.router = null;
+  this.initialize();
+}
 
-/*
- * Options keys:
- *   - dataAdapter
- *   - errorHandler
- *   - viewEngine
- *   - stashError
- *   - paths
- *     - entryPath
- */
-exports.init = function(options, callback) {
+Server.prototype.defaultOptions = {
+  dataAdapter: null,
+  viewEngine: null,
+  router: null,
+  errorHandler: null,
+  stashError: null,
+  paths: {}
+};
+
+Server.prototype.initialize = function() {
   // verify dataAdapter
-  if (!options.dataAdapter) {
-    return callback(new Error("Missing dataAdapter"));
+  if (!this.options.dataAdapter) {
+    throw new Error("Missing dataAdapter");
   }
-  exports.dataAdapter = options.dataAdapter;
 
-  exports.viewEngine = options.viewEngine || new ViewEngine();
+  this.dataAdapter = this.options.dataAdapter;
 
-  try {
-    exports.router = new Router(options);
-  } catch (err) {
-    return callback(err);
-  }
-  callback();
+  this.viewEngine = this.options.viewEngine || new ViewEngine();
+
+  this.router = new Router(this.options);
 };

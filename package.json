@@ -1,6 +1,6 @@
 {
   "name": "rendr",
-  "version": "0.4.7-rc.3",
+  "version": "0.4.8-alpha.02",
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
@@ -14,11 +14,11 @@
   "dependencies": {
     "underscore": "1.4.4",
     "backbone": "1.0.0",
-    "handlebars": "git://github.com/spikebrehm/handlebars.js.git#0687c7016c62122ab160a8683817a931b03354ad",
     "async":"0.1.22",
     "qs": "0.5.1",
     "express": "~3.0.6",
     "validator": "0.4.21",
+    "rendr-handlebars": "0.0.2",
     "npm": "*"
   },
   "devDependencies": {

@@ -20,7 +20,8 @@ function noop() {}
 module.exports = Backbone.Model.extend({
 
   defaults: {
-    loading: false
+    loading: false,
+    templateAdapter: 'rendr-handlebars'
   },
 
   /**
@@ -28,6 +29,7 @@ module.exports = Backbone.Model.extend({
    */
   initialize: function(attributes, options) {
     this.options = options || {};
+    this.templateAdapter = require(this.get('templateAdapter'));
     this.fetcher = new Fetcher({
       app: this
     });

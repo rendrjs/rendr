@@ -1,62 +1,62 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, _, path;
+var path = require('path')
+  , _ = require('underscore')
+  , layoutTemplate;
 
-fs = require('fs');
-_ = require('underscore');
-Handlebars = require('handlebars');
-path = require('path');
+module.exports = exports = ViewEngine;
 
-module.exports = exports = viewEngine;
+function ViewEngine(options) {
+  this.options = options || {};
 
-// Expose this, i.e. for registering view helpers.
-exports.Handlebars = Handlebars;
+  /**
+   * Ensure `render` is bound to this instance, because it can be passed around.
+   */
+  this.render = this.render.bind(this);
+}
 
-function viewEngine(viewPath, data, callback) {
+ViewEngine.prototype.render = function render(viewPath, data, callback) {
   var app, layoutData;
 
   data.locals = data.locals || {};
   app = data.app;
   layoutData = _.extend({}, data, {
-    body: getViewHtml(viewPath, data.locals, app),
+    body: this.getViewHtml(viewPath, data.locals, app),
     appData: app.toJSON(),
-    bootstrappedData: getBootstrappedData(data.locals, app),
+    bootstrappedData: this.getBootstrappedData(data.locals, app),
     _app: app
   });
-  renderWithLayout(layoutData, callback);
-}
+  this.renderWithLayout(layoutData, app, callback);
+};
 
 /**
- * render with a layout
+ * Render with a layout.
  */
-function renderWithLayout(locals, callback) {
-  getLayoutTemplate(function(err, templateFn) {
+ViewEngine.prototype.renderWithLayout = function renderWithLayout(locals, app, callback) {
+  this.getLayoutTemplate(app, function(err, templateFn) {
     if (err) return callback(err);
     var html = templateFn(locals);
     callback(null, html);
   });
-}
-
-layoutTemplate = null;
+};
 
 /**
  * Cache layout template function.
  */
-function getLayoutTemplate(callback) {
+ViewEngine.prototype.getLayoutTemplate = function getLayoutTemplate(app, callback) {
   var layoutPath;
 
   if (layoutTemplate) {
     return callback(null, layoutTemplate);
   }
-  layoutPath = rendr.entryPath + "/app/templates/__layout.hbs";
-  fs.readFile(layoutPath, 'utf8', function(err, str) {
+  app.templateAdapter.getLayout('__layout', function(err, template) {
     if (err) return callback(err);
-    layoutTemplate = Handlebars.compile(str);
-    callback(null, layoutTemplate);
+    layoutTemplate = template;
+    callback(err, layoutTemplate);
   });
-}
+};
 
-function getViewHtml(viewPath, locals, app) {
+ViewEngine.prototype.getViewHtml = function getViewHtml(viewPath, locals, app) {
   var BaseView, View, name, view, basePath;
 
   basePath = path.join('app', 'views');
@@ -69,13 +69,12 @@ function getViewHtml(viewPath, locals, app) {
   View = BaseView.getView(name);
   view = new View(locals);
   return view.getHtml();
-}
+};
 
-function getBootstrappedData(locals, app) {
-  var bootstrappedData, modelUtils;
+ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, app) {
+  var modelUtils = require('../shared/modelUtils')
+    , bootstrappedData = {};
 
-  modelUtils = require('../shared/modelUtils');
-  bootstrappedData = {};
   _.each(locals, function(modelOrCollection, name) {
     if (modelUtils.isModel(modelOrCollection) || modelUtils.isCollection(modelOrCollection)) {
       bootstrappedData[name] = {
@@ -85,4 +84,4 @@ function getBootstrappedData(locals, app) {
     }
   });
   return bootstrappedData;
-}
+};

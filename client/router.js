@@ -106,7 +106,6 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
       views = BaseView.attach(router.app);
       router.currentView = router.getMainView(views);
       router.trigger('action:end', route, firstRender);
-      firstRender = false;
     } 
 
     if (!firstRender || router.options.renderOnFirstRoute) {
@@ -126,6 +125,8 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
         action.call(router, params, router.getRenderCallback(route));
       }
     }
+
+    if (firstRender) firstRender = false;
   };
 };
 

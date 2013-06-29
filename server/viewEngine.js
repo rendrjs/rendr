@@ -1,16 +1,11 @@
 /*global rendr*/
 
-var Handlebars, fs, layoutTemplate, _, path;
+var layoutTemplate, path, _;
 
-fs = require('fs');
-_ = require('underscore');
-Handlebars = require('handlebars');
 path = require('path');
+_ = require('underscore');
 
 module.exports = exports = viewEngine;
-
-// Expose this, i.e. for registering view helpers.
-exports.Handlebars = Handlebars;
 
 function viewEngine(viewPath, data, callback) {
   var app, layoutData;
@@ -23,14 +18,14 @@ function viewEngine(viewPath, data, callback) {
     bootstrappedData: getBootstrappedData(data.locals, app),
     _app: app
   });
-  renderWithLayout(layoutData, callback);
+  renderWithLayout(layoutData, app, callback);
 }
 
 /**
  * render with a layout
  */
-function renderWithLayout(locals, callback) {
-  getLayoutTemplate(function(err, templateFn) {
+function renderWithLayout(locals, app, callback) {
+  getLayoutTemplate(app, function(err, templateFn) {
     if (err) return callback(err);
     var html = templateFn(locals);
     callback(null, html);
@@ -42,17 +37,16 @@ layoutTemplate = null;
 /**
  * Cache layout template function.
  */
-function getLayoutTemplate(callback) {
+function getLayoutTemplate(app, callback) {
   var layoutPath;
 
   if (layoutTemplate) {
     return callback(null, layoutTemplate);
   }
-  layoutPath = rendr.entryPath + "/app/templates/__layout.hbs";
-  fs.readFile(layoutPath, 'utf8', function(err, str) {
+  app.templateAdapter.getLayout('__layout', function(err, template) {
     if (err) return callback(err);
-    layoutTemplate = Handlebars.compile(str);
-    callback(null, layoutTemplate);
+    layoutTemplate = template;
+    callback(err, layoutTemplate);
   });
 }
 

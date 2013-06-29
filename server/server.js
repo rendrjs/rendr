@@ -1,33 +1,34 @@
-var Router, config;
-
 require('../shared/globals');
-Router = require('./router');
+
+var Router = require('./router')
+  , ViewEngine = require('./viewEngine');
+
+exports.dataAdapter = null;
+
+exports.viewEngine = null;
+
+exports.router = null;
 
 /*
- * config keys:
+ * Options keys:
  *   - dataAdapter
  *   - errorHandler
+ *   - viewEngine
  *   - stashError
  *   - paths
  *     - entryPath
  */
-config = null;
-
-exports.dataAdapter = null;
-
-exports.router = null;
-
-exports.init = function(conf, callback) {
-  config = conf || {};
-
+exports.init = function(options, callback) {
   // verify dataAdapter
-  if (!config.dataAdapter) {
+  if (!options.dataAdapter) {
     return callback(new Error("Missing dataAdapter"));
   }
-  exports.dataAdapter = config.dataAdapter;
+  exports.dataAdapter = options.dataAdapter;
+
+  exports.viewEngine = options.viewEngine || new ViewEngine();
 
   try {
-    exports.router = new Router(config);
+    exports.router = new Router(options);
   } catch (err) {
     return callback(err);
   }

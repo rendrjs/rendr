@@ -1,43 +1,49 @@
 /*global rendr*/
 
-var layoutTemplate, path, _;
+var path = require('path')
+  , _ = require('underscore')
+  , layoutTemplate;
 
-path = require('path');
-_ = require('underscore');
+module.exports = exports = ViewEngine;
 
-module.exports = exports = viewEngine;
+function ViewEngine(options) {
+  this.options = options || {};
 
-function viewEngine(viewPath, data, callback) {
+  /**
+   * Ensure `render` is bound to this instance, because it can be passed around.
+   */
+  this.render = this.render.bind(this);
+}
+
+ViewEngine.prototype.render = function render(viewPath, data, callback) {
   var app, layoutData;
 
   data.locals = data.locals || {};
   app = data.app;
   layoutData = _.extend({}, data, {
-    body: getViewHtml(viewPath, data.locals, app),
+    body: this.getViewHtml(viewPath, data.locals, app),
     appData: app.toJSON(),
-    bootstrappedData: getBootstrappedData(data.locals, app),
+    bootstrappedData: this.getBootstrappedData(data.locals, app),
     _app: app
   });
-  renderWithLayout(layoutData, app, callback);
-}
+  this.renderWithLayout(layoutData, app, callback);
+};
 
 /**
- * render with a layout
+ * Render with a layout.
  */
-function renderWithLayout(locals, app, callback) {
-  getLayoutTemplate(app, function(err, templateFn) {
+ViewEngine.prototype.renderWithLayout = function renderWithLayout(locals, app, callback) {
+  this.getLayoutTemplate(app, function(err, templateFn) {
     if (err) return callback(err);
     var html = templateFn(locals);
     callback(null, html);
   });
-}
-
-layoutTemplate = null;
+};
 
 /**
  * Cache layout template function.
  */
-function getLayoutTemplate(app, callback) {
+ViewEngine.prototype.getLayoutTemplate = function getLayoutTemplate(app, callback) {
   var layoutPath;
 
   if (layoutTemplate) {
@@ -48,9 +54,9 @@ function getLayoutTemplate(app, callback) {
     layoutTemplate = template;
     callback(err, layoutTemplate);
   });
-}
+};
 
-function getViewHtml(viewPath, locals, app) {
+ViewEngine.prototype.getViewHtml = function getViewHtml(viewPath, locals, app) {
   var BaseView, View, name, view, basePath;
 
   basePath = path.join('app', 'views');
@@ -63,13 +69,12 @@ function getViewHtml(viewPath, locals, app) {
   View = BaseView.getView(name);
   view = new View(locals);
   return view.getHtml();
-}
+};
 
-function getBootstrappedData(locals, app) {
-  var bootstrappedData, modelUtils;
+ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, app) {
+  var modelUtils = require('../shared/modelUtils')
+    , bootstrappedData = {};
 
-  modelUtils = require('../shared/modelUtils');
-  bootstrappedData = {};
   _.each(locals, function(modelOrCollection, name) {
     if (modelUtils.isModel(modelOrCollection) || modelUtils.isCollection(modelOrCollection)) {
       bootstrappedData[name] = {
@@ -79,4 +84,4 @@ function getBootstrappedData(locals, app) {
     }
   });
   return bootstrappedData;
-}
+};

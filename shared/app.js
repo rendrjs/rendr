@@ -27,14 +27,16 @@ module.exports = Backbone.Model.extend({
   /**
    * @shared
    */
-  initialize: function() {
+  initialize: function(attributes, options) {
+    this.options = options || {};
     this.templateAdapter = require(this.get('templateAdapter'));
     this.fetcher = new Fetcher({
       app: this
     });
     if (!global.isServer) {
       new ClientRouter({
-        app: this
+        app: this,
+        renderOnFirstRoute: this.options.renderOnFirstRoute
       });
     }
     this.postInitialize();

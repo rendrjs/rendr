@@ -101,23 +101,11 @@ ServerRouter.prototype.addExpressRoute = function(routeObj) {
  * Could happen during the controller action, view rendering, etc.
  */
 ServerRouter.prototype.handleErr = function(err, req, res) {
-  var text;
-
   this.stashError(req, err);
-  if (this.options.errorHandler) {
-    this.options.errorHandler(err, req, res);
-  } else {
-    if (this.options.dumpExceptions) {
-      text = "Error: " + err.message + "\n";
-      if (err.stack) {
-        text += "\nStack:\n " + err.stack;
-      }
-    } else {
-      text = "500 Internal Server Error";
-    }
-    res.status(err.status || 500);
-    res.type('text').send(text);
-  }
+
+  var errorHandler = this.options.errorHandler;
+
+  errorHandler(err, req, res);
 };
 
 ServerRouter.prototype.getHeadersForRoute = function(definition) {

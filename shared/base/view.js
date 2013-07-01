@@ -1,10 +1,9 @@
 /*global rendr*/
 
-var Backbone, BaseView, modelUtils, templateFinder, _;
+var Backbone, BaseView, modelUtils, _;
 
 _ = require('underscore');
 Backbone = require('backbone');
-templateFinder = require('../templateFinder');
 modelUtils = require('../modelUtils');
 
 function noop() {}
@@ -137,7 +136,7 @@ module.exports = BaseView = Backbone.View.extend({
    * Get template function
    */
   getTemplate: function() {
-    return templateFinder.getTemplate(this.getTemplateName());
+    return this.app.templateAdapter.getTemplate(this.getTemplateName());
   },
 
   /**

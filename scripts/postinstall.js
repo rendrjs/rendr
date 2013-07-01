@@ -10,8 +10,7 @@ var root = __dirname + '/..',
 var dependencies = [
   'underscore',
   'backbone',
-  'async',
-  'handlebars'
+  'async'
 ];
 
 var packages = dependencies.map(function(dep) {

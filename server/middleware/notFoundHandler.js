@@ -1,7 +1,7 @@
 /**
  * Handle a 404.
  */
-module.exports = function() {
+module.exports = function notFoundHandler() {
   return function notFoundHandler(req, res, next) {
     res.status(404);
 

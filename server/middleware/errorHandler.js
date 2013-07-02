@@ -1,10 +1,10 @@
 /**
  * Default error handler.
  */
-module.exports = function(options) {
+module.exports = function errorHandler(options) {
   options = options || {};
 
-  return function(err, req, res, next) {
+  return function errorHandler(err, req, res, next) {
     var text;
 
     if (options.dumpExceptions) {

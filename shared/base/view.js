@@ -415,6 +415,7 @@ module.exports = BaseView = Backbone.View.extend({
     if (obj = this.model || this.collection) {
       obj.off(null, null, this);
     }
+    this.app.off(null, null, this);
     BaseView.__super__.remove.apply(this, arguments);
     this.trigger('remove');
   }

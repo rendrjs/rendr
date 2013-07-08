@@ -19,6 +19,7 @@ Server.prototype.defaultOptions = {
   viewEngine: null,
   router: null,
   errorHandler: null,
+  dumpExceptions: false,
   notFoundHandler: null,
   stashError: null,
   apiPath: '/api',

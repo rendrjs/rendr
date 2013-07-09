@@ -6,7 +6,7 @@ module.exports = class ServerRouter extends BaseRouter
   escapeParams: (params) ->
     escaped = {}
     for own key, value of params
-      escaped[key] = sanitize(value).xss()
+      escaped[sanitize(key).xss()] = sanitize(value).xss()
     escaped
 
   # This is the method that renders the request.

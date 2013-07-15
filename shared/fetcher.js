@@ -103,10 +103,8 @@ Fetcher.prototype.checkedFreshTimestamps = {};
 Fetcher.prototype.checkedFreshRate = 10000;
 
 Fetcher.prototype.shouldCheckFresh = function(spec) {
-  var key, timestamp;
-
-  key = this.checkedFreshKey(spec);
-  timestamp = this.checkedFreshTimestamps[key];
+  var key = this.checkedFreshKey(spec)
+    , timestamp = this.checkedFreshTimestamps[key];
   if (!timestamp) {
     return true;
   }
@@ -117,8 +115,7 @@ Fetcher.prototype.shouldCheckFresh = function(spec) {
 };
 
 Fetcher.prototype.didCheckFresh = function(spec) {
-  var key;
-  key = this.checkedFreshKey(spec);
+  var key = this.checkedFreshKey(spec);
   this.checkedFreshTimestamps[key] = new Date().getTime();
 };
 
@@ -135,8 +132,7 @@ Fetcher.prototype.checkedFreshKey = function(spec) {
  * map fetchSpecs to models and fetch data in parallel
  */
 Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
-  var batchedRequests = {},
-    _this = this;
+  var batchedRequests = {};
 
   _.each(fetchSpecs, function(spec, name) {
     batchedRequests[name] = function(cb) {
@@ -214,9 +210,7 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
 };
 
 Fetcher.prototype.fetchFromApi = function(spec, callback) {
-  var model;
-
-  model = this.getModelForSpec(spec);
+  var model = this.getModelForSpec(spec);
   model.fetch({
     data: spec.params,
     success: function(model, body) {
@@ -234,22 +228,20 @@ Fetcher.prototype.fetchFromApi = function(spec, callback) {
 };
 
 Fetcher.prototype.retrieveModelsForCollectionName = function(collectionName, modelIds) {
-  var modelName;
-  modelName = modelUtils.getModelNameForCollectionName(collectionName);
+  var modelName = modelUtils.getModelNameForCollectionName(collectionName);
   return this.retrieveModels(modelName, modelIds);
 };
 
 Fetcher.prototype.retrieveModels = function(modelName, modelIds) {
-  var _this = this;
   return modelIds.map(function(id) {
-    return _this.modelStore.get(modelName, id);
-  });
+    return this.modelStore.get(modelName, id);
+  }, this);
 };
 
 Fetcher.prototype.summarize = function(modelOrCollection) {
-  var idAttribute, summary;
+  var summary = {}
+    , idAttribute;
 
-  summary = {};
   if (modelUtils.isCollection(modelOrCollection)) {
     idAttribute = modelOrCollection.model.prototype.idAttribute;
     summary = {
@@ -275,43 +267,42 @@ Fetcher.prototype.storeResults = function(results) {
 };
 
 Fetcher.prototype.bootstrapData = function(modelMap) {
-  var modelOrCollection, results,
-      _this = this;
+  var results = {}
+    , modelOrCollection;
 
-  results = {};
   _.each(modelMap, function(map, name) {
-    modelOrCollection = _this.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'));
+    modelOrCollection = this.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'));
     results[name] = modelOrCollection;
-  });
+  }, this);
   this.storeResults(results);
 };
 
 Fetcher.prototype.hydrate = function(summaries, options) {
-  var collectionData, collectionOptions, models, results,
-      _this = this;
+  var collectionData, collectionOptions, models, results;
 
   options = options || {};
   results = {};
   _.each(summaries, function(summary, name) {
     if (summary.model != null) {
-      results[name] = _this.modelStore.get(summary.model, summary.id, true);
+      results[name] = this.modelStore.get(summary.model, summary.id, true);
     } else if (summary.collection != null) {
       // Also support getting all models for a collection.
-      collectionData = _this.collectionStore.get(summary.collection, summary.params);
+      collectionData = this.collectionStore.get(summary.collection, summary.params);
       if (collectionData == null) {
         throw new Error("Collection of type \"" + summary.collection + "\" not found for params: " + JSON.stringify(summary.params));
       }
-      models = _this.retrieveModelsForCollectionName(summary.collection, collectionData.ids);
+      models = this.retrieveModelsForCollectionName(summary.collection, collectionData.ids);
       collectionOptions = {
         params: summary.params,
-        meta: collectionData.meta
+        meta: collectionData.meta,
+        app: options.app
       };
       results[name] = modelUtils.getCollection(summary.collection, models, collectionOptions);
     }
     if ((results[name] != null) && (options.app != null)) {
       results[name].app = options.app;
     }
-  });
+  }, this);
   return results;
 };
 

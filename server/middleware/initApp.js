@@ -21,6 +21,9 @@ module.exports = function(appAttributes) {
     // Hold on to a copy of the original request, so we can pull headers, etc.
     app.req = req;
 
+    // call post initialize after we have req
+    app.postInitialize();
+
     // Stash on the request so can be accessed elsewhere.
     req.rendrApp = app;
 

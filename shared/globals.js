@@ -6,7 +6,5 @@ if (typeof window !== "undefined" && window !== null) {
   };
 } else {
   global.isServer = true;
-  global.rendr = {
-    entryPath: process.cwd()
-  };
+  global.rendr = require('../index');
 }

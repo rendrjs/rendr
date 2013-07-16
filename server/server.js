@@ -17,6 +17,7 @@ function Server(expressApp, options) {
 
 Server.prototype.defaultOptions = {
   dataAdapter: null,
+  dataAdapterConfig: null,
   viewEngine: null,
   router: null,
   errorHandler: null,
@@ -28,7 +29,7 @@ Server.prototype.defaultOptions = {
 };
 
 Server.prototype.initialize = function(expressApp) {
-  this.dataAdapter = this.options.dataAdapter || new RestAdapter(options.dataAdapterConfig);;
+  this.dataAdapter = this.options.dataAdapter || new RestAdapter(this.options.dataAdapterConfig);;
 
   this.viewEngine = this.options.viewEngine || new ViewEngine();
 

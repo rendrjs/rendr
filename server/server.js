@@ -1,6 +1,7 @@
 require('../shared/globals');
 
 var Router = require('./router')
+  , RestAdapter = require('./data_adapter/rest_adapter')
   , ViewEngine = require('./viewEngine');
 
 exports.dataAdapter = null;
@@ -19,11 +20,7 @@ exports.router = null;
  *     - entryPath
  */
 exports.init = function(options, callback) {
-  // verify dataAdapter
-  if (!options.dataAdapter) {
-    return callback(new Error("Missing dataAdapter"));
-  }
-  exports.dataAdapter = options.dataAdapter;
+  exports.dataAdapter = options.dataAdapter || new RestAdapter(options.dataAdapterConfig);
 
   exports.viewEngine = options.viewEngine || new ViewEngine();
 

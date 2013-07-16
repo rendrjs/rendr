@@ -2,6 +2,7 @@ require('../shared/globals');
 
 var _ = require('underscore')
   , Router = require('./router')
+  , RestAdapter = require('./data_adapter/rest_adapter')
   , ViewEngine = require('./viewEngine')
   , middleware = require('./middleware');
 
@@ -27,12 +28,7 @@ Server.prototype.defaultOptions = {
 };
 
 Server.prototype.initialize = function(expressApp) {
-  // verify dataAdapter
-  if (!this.options.dataAdapter) {
-    throw new Error("Missing dataAdapter");
-  }
-
-  this.dataAdapter = this.options.dataAdapter;
+  this.dataAdapter = this.options.dataAdapter || new RestAdapter(options.dataAdapterConfig);;
 
   this.viewEngine = this.options.viewEngine || new ViewEngine();
 

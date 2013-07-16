@@ -24,7 +24,7 @@ ServerRouter.prototype.constructor = ServerRouter;
 ServerRouter.prototype.escapeParams = function(params) {
   var escaped = {};
   _.each(params, function(value, key) {
-    escaped[key] = sanitize(value).xss();
+    escaped[sanitize(key).xss()] = sanitize(value).xss();
   });
   return escaped;
 };

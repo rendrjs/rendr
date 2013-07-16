@@ -2,7 +2,6 @@ var server, utils, _;
 
 _ = require('underscore');
 utils = require('../utils');
-server = require('../server');
 
 /**
  * The separator used in the path. Incoming paths can look like:
@@ -25,7 +24,7 @@ function apiProxy(apiHostsMap) {
     api.path = apiProxy.getApiPath(req.path);
     api.api = apiProxy.getApiName(req.path);
 
-    server.dataAdapter.request(req, api, {
+    rendr.server.dataAdapter.request(req, api, {
       convertErrorCode: false
     }, function(err, response, body) {
       var status;

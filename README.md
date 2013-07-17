@@ -6,12 +6,13 @@ Check out the [blog post](http://nerds.airbnb.com/weve-launched-our-first-nodejs
 
 To see how to use Rendr to build a simple web app, check out [airbnb/rendr-app-template](https://github.com/airbnb/rendr-app-template).
 
+<a href="https://runnable.com/rendr" target="_blank"><img src="https://runnable.com/external/styles/assets/runnablebtn.png" style="width:67px;height:25px;"></a>
+
 Build status: [![travis-ci status](https://secure.travis-ci.org/airbnb/rendr.png)](http://travis-ci.org/#!/airbnb/rendr/builds)
 
 ## The Premise
 
 Our hypothesis is that there has to be a better way to build rich web apps today. In the last few years, we've seen more of the application moved to the client-side, with JavaScript representations of views, templates, and models. This can result in interactive, native-style apps, but it also poses challenges. SEO, performance, and maintainability become issues with splitting up your app into two distinct codebases, often in different languages.
-
 
 ## The Goals
 

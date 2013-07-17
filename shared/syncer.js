@@ -27,7 +27,6 @@ function clientSync(method, model, options) {
   var data;
   data = _.clone(options.data);
   options.url = this.getUrl(options.url, true, data);
-  data = addApiParams(method, model, data);
   options.data = data;
   options.emulateJSON = true;
   return Backbone.sync(method, model, options);

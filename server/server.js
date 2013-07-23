@@ -8,11 +8,11 @@ var _ = require('underscore')
 
 module.exports = Server;
 
-function Server(expressApp, options) {
+function Server(options) {
   this.options = options || {};
   _.defaults(this.options, this.defaultOptions);
 
-  this.initialize(expressApp);
+  this.initialize();
 }
 
 Server.prototype.defaultOptions = {
@@ -28,7 +28,7 @@ Server.prototype.defaultOptions = {
   paths: {}
 };
 
-Server.prototype.initialize = function(expressApp) {
+Server.prototype.initialize = function() {
   this.dataAdapter = this.options.dataAdapter || new RestAdapter(this.options.dataAdapterConfig);;
 
   this.viewEngine = this.options.viewEngine || new ViewEngine();
@@ -37,39 +37,29 @@ Server.prototype.initialize = function(expressApp) {
     middleware.errorHandler(this.options);
 
   this.router = new Router(this.options);
-
-  /**
-   * Set up default middleware stack.
-   */
-  this.stack = [
-    middleware.initApp(this.options.appData)
-  ];
-
-  this.initExpress(expressApp);
 };
 
 /**
- * Middleware stack
-
- * This is used in front of every Rendr action and every API request which
- * is proxied through `apiProxy`.
- *
- * We provide a default. Apps can append middleware functions,
- * like `server.stack.push(middlewareFn)`, or swap it out
- * entirely, like `server.stack = [middlewareFn]`.
- */
-Server.prototype.stack = null;
-
-/**
  * Attach Rendr's routes to the Express app.
+ *
+ * The second argument is the middleware stack to use in front of every Rendr action and
+ * every API request which is proxied through `apiProxy`. We provide a default.
  */
-Server.prototype.initExpress = function(expressApp) {
+Server.prototype.attachRoutes = function(expressApp, stack) {
+
+  /**
+   * The default stack is very simple; we just initialize the Rendr app.
+   */
+  stack = stack || [
+    middleware.initApp(this.options.appData)
+  ];
+
   /**
    * First, we'll add the routes for everything defined in our routes file,
    * plus the handler for our API proxy endpoint.
    */
-  this.buildRendrRoutes(expressApp);
-  this.buildApiRoutes(expressApp);
+  this.buildRendrRoutes(expressApp, stack);
+  this.buildApiRoutes(expressApp, stack);
 
   /**
    * Add the 404 handler after all other routes. Make sure not to show a 404
@@ -84,14 +74,14 @@ Server.prototype.initExpress = function(expressApp) {
    * Tell Express to use our ViewEngine to handle .js, .coffee files.
    * This can always be overridden in your app.
    */
-  expressApp.set('views', process.cwd() + '/app/views');
+  expressApp.set('views', rendr.entryPath + '/app/views');
   expressApp.set('view engine', 'js');
   expressApp.engine('js',     this.viewEngine.render);
   expressApp.engine('coffee', this.viewEngine.render);
 };
 
-Server.prototype.buildApiRoutes = function(expressApp) {
-  var fnChain = this.stack.concat(middleware.apiProxy())
+Server.prototype.buildApiRoutes = function(expressApp, stack) {
+  var fnChain = stack.concat(middleware.apiProxy())
     , apiPath = this.options.apiPath;
 
   fnChain.forEach(function(fn) {
@@ -99,7 +89,7 @@ Server.prototype.buildApiRoutes = function(expressApp) {
   });
 };
 
-Server.prototype.buildRendrRoutes = function(expressApp) {
+Server.prototype.buildRendrRoutes = function(expressApp, stack) {
   var routes, path, definition, fnChain;
 
   routes = this.router.buildRoutes();
@@ -108,7 +98,7 @@ Server.prototype.buildRendrRoutes = function(expressApp) {
     definition = args.shift();
 
     // Additional arguments are more handlers.
-    fnChain = this.stack.concat(args);
+    fnChain = stack.concat(args);
 
     // Have to add error handler AFTER all other handlers.
     fnChain.push(this.errorHandler);

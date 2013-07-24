@@ -27,16 +27,42 @@ module.exports = Backbone.Model.extend({
   /**
    * @shared
    */
-  initialize: function() {
+  initialize: function(attributes, options) {
+    this.options = options || {};
+
+    /**
+     * On the server-side, you can access the Express request, `req`.
+     */
+    if (this.options.req) {
+      this.req = this.options.req;
+    }
+
+    /**
+     * Initialize the `templateAdapter`, allowing application developers to use whichever
+     * templating system they want.
+     */
     this.templateAdapter = require(this.get('templateAdapter'));
+
+    /**
+     * Instantiate the `Fetcher`, which is used on client and server.
+     */
     this.fetcher = new Fetcher({
       app: this
     });
+
+    /**
+     * Initialize the `ClientRouter` on the client-side.
+     */
     if (!global.isServer) {
       new ClientRouter({
         app: this
       });
     }
+
+    /**
+     * Call `postInitialize()`, to make it easy for an application to easily subclass and add custom
+     * behavior without having to call i.e. `BaseApp.prototype.initialize.apply(this, arguments)`.
+     */
     this.postInitialize();
   },
 

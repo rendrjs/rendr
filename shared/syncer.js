@@ -1,4 +1,4 @@
-var Backbone, extractParamNamesRe, methodMap, modelUtils, qs, server, _, syncer;
+var Backbone, extractParamNamesRe, methodMap, modelUtils, qs, _, syncer;
 
 if (global.isServer) {
   qs = require('qs');
@@ -37,6 +37,7 @@ function serverSync(method, model, options) {
   var api, data, urlParts, verb;
 
   data = _.clone(options.data);
+  data = addApiParams(method, model, data);
   options.url = this.getUrl(options.url, false, data);
   verb = methodMap[method];
   urlParts = options.url.split('?');
@@ -58,8 +59,8 @@ function serverSync(method, model, options) {
   } else {
     _.extend(api.query, data);
   }
-  server = server || require('../server/server');
-  server.dataAdapter.request(this.app.req, api, function(err, response, body) {
+
+  rendr.server.dataAdapter.request(this.app.req, api, function(err, response, body) {
     if (err) {
       if (!_.isObject(body)) {
         body = {

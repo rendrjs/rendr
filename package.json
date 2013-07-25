@@ -1,6 +1,6 @@
 {
   "name": "rendr",
-  "version": "0.4.8-4",
+  "version": "0.4.8-5",
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "express": "~3.0.6",
     "validator": "0.4.21",
     "rendr-handlebars": "0.0.5",
-    "npm": "*"
+    "npm": "1.3.4"
   },
   "devDependencies": {
     "mocha": "*",

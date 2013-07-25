@@ -189,17 +189,14 @@ describe("server/router", function() {
       ]);
     });
 
-    it.skip("should return the route info for a matched full URL", function() {
+    it("should return the error for full URL", function() {
       var route;
+      var fullURL = 'https://www.example.org/users/1234'
 
       this.router.route("/users/:id", "users#show");
-      route = this.router.match('https://www.example.org/users/1234');
-      shouldMatchRoute(route, [
-        '/users/:id', {
-          controller: 'users',
-          action: 'show'
-        }
-      ]);
+      (function(){
+        this.router.match(fullURL).should.throw('Cannot match full URL: "' + fullURL + '". Use pathname instead.');
+      });
     });
 
     it("should return null if no match", function() {

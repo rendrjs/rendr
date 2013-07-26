@@ -33,7 +33,7 @@ ServerRouter.prototype.getParams = function(req) {
   var params = _.clone(req.query || {});
 
   req.route.keys.forEach(function(routeKey) {
-    params[routeKey.name] = req.route.params[routeKey.name];
+    params[routeKey.name] = req.params[routeKey.name];
   });
   params = this.escapeParams(params);
   return params;

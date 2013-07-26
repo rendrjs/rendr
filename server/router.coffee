@@ -22,7 +22,7 @@ module.exports = class ServerRouter extends BaseRouter
 
       params = req.query || {}
       req.route.keys.forEach (routeKey) ->
-        params[routeKey.name] = req.route.params[routeKey.name]
+        params[routeKey.name] = req.params[routeKey.name]
       params = router.escapeParams(params)
 
       action.call context, params, (err, template, locals) ->

@@ -2,7 +2,7 @@
 
 var path = require('path')
   , _ = require('underscore')
-  , layoutTemplate;
+  , cachedLayouts = {};
 
 module.exports = exports = ViewEngine;
 
@@ -16,7 +16,7 @@ function ViewEngine(options) {
 }
 
 ViewEngine.prototype.render = function render(viewPath, data, callback) {
-  var app, layoutData;
+  var app, layoutData, layout;
 
   data.locals = data.locals || {};
   app = data.app;
@@ -26,16 +26,17 @@ ViewEngine.prototype.render = function render(viewPath, data, callback) {
     bootstrappedData: this.getBootstrappedData(data.locals, app),
     _app: app
   });
-  this.renderWithLayout(layoutData, app, callback);
+  layout = data.locals._layout || '__layout';
+  this.renderWithLayout(layout, layoutData, app, callback);
 };
 
 /**
  * Render with a layout.
  */
-ViewEngine.prototype.renderWithLayout = function renderWithLayout(locals, app, callback) {
-  this.getLayoutTemplate(app, function(err, templateFn) {
+ViewEngine.prototype.renderWithLayout = function renderWithLayout(layout, layoutData, app, callback) {
+  this.getLayoutTemplate(layout, app, function(err, templateFn) {
     if (err) return callback(err);
-    var html = templateFn(locals);
+    var html = templateFn(layoutData);
     callback(null, html);
   });
 };
@@ -43,16 +44,15 @@ ViewEngine.prototype.renderWithLayout = function renderWithLayout(locals, app, c
 /**
  * Cache layout template function.
  */
-ViewEngine.prototype.getLayoutTemplate = function getLayoutTemplate(app, callback) {
-  var layoutPath;
-
-  if (layoutTemplate) {
-    return callback(null, layoutTemplate);
+ViewEngine.prototype.getLayoutTemplate = function getLayoutTemplate(layout, app, callback) {
+  var cachedLayout = cachedLayouts[layout];
+  if (cachedLayout) {
+    return callback(null, cachedLayout);
   }
-  app.templateAdapter.getLayout('__layout', function(err, template) {
+  app.templateAdapter.getLayout(layout, function(err, template) {
     if (err) return callback(err);
-    layoutTemplate = template;
-    callback(err, layoutTemplate);
+    cachedLayouts[layout] = template;
+    callback(null, template);
   });
 };
 

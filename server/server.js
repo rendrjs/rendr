@@ -19,6 +19,7 @@ Server.prototype.defaultOptions = {
   dataAdapter: null,
   dataAdapterConfig: null,
   viewEngine: null,
+  viewExtension: 'js',
   router: null,
   errorHandler: null,
   dumpExceptions: false,
@@ -85,7 +86,7 @@ Server.prototype.initExpress = function(expressApp) {
    * This can always be overridden in your app.
    */
   expressApp.set('views', process.cwd() + '/app/views');
-  expressApp.set('view engine', 'js');
+  expressApp.set('view engine', this.options.viewExtension);
   expressApp.engine('js',     this.viewEngine.render);
   expressApp.engine('coffee', this.viewEngine.render);
 };

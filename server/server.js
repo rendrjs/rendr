@@ -88,8 +88,6 @@ Server.prototype.initExpress = function(expressApp) {
   expressApp.set('views', process.cwd() + '/app/views');
   expressApp.set('view engine', this.options.viewExtension);
   expressApp.engine(this.options.viewExtension, this.viewEngine.render);
-  expressApp.engine('js',     this.viewEngine.render);
-  expressApp.engine('coffee', this.viewEngine.render);
 };
 
 Server.prototype.buildApiRoutes = function(expressApp) {

@@ -250,11 +250,13 @@ describe("server/router", function() {
       this.req.__defineGetter__('route', function() {
         return {
           keys: [{name: 'id'}, {name: 'login'}],
-          params: {
-            id: 'id-value',
-            login: 'login-value'
-          }
         };
+      });
+      this.req.__defineGetter__('params', function() {
+        return {
+          id: 'id-value',
+          login: 'login-value'
+        }
       });
       this.router.getParams(this.req).should.eql({
         id: 'id-value',
@@ -270,11 +272,13 @@ describe("server/router", function() {
       this.req.__defineGetter__('route', function() {
         return {
           keys: [{name: 'id'}, {name: 'login'}],
-          params: {
-            id: 'id-value',
-            login: 'login-value'
-          }
         };
+      });
+      this.req.__defineGetter__('params', function() {
+        return {
+          id: 'id-value',
+          login: 'login-value'
+        }
       });
 
       this.router.getParams(this.req).should.eql({

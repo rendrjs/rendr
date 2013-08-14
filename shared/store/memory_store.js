@@ -30,7 +30,7 @@ MemoryStore.prototype.get = function(key) {
 MemoryStore.prototype.set = function(key, value, ttlSec) {
   var expires;
 
-  if (!key || value === undefined) {
+  if (!key || typeof value === "undefined") {
     return false;
   }
   expires = ttlSec ? Date.now() + ttlSec * 1000 : null;
@@ -58,7 +58,7 @@ MemoryStore.prototype._clearAll = function() {
 };
 
 MemoryStore.prototype.clear = function(key) {
-  if (key != null) {
+  if (!!key) {
     return this._clear(key);
   } else {
     return this._clearAll();

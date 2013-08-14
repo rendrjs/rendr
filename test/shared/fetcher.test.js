@@ -46,7 +46,7 @@ Listings = BaseCollection.extend({
       _this = this;
 
     resp = buildCollectionResponse(true);
-    if (options.data != null) {
+    if (!!options.data) {
       resp.meta = options.data;
     }
     setTimeout(function() {
@@ -68,7 +68,7 @@ modelUtils.addClassMapping('Listings', Listings);
 function getModelResponse(version, id, addJsonKey) {
   var resp;
 
-  if (addJsonKey == null) {
+  if (!addJsonKey) {
     addJsonKey = false;
   }
   resp = _.extend({}, listingResponses[version], {
@@ -86,7 +86,7 @@ function getModelResponse(version, id, addJsonKey) {
 function buildCollectionResponse(addJsonKey) {
   var resp;
 
-  if (addJsonKey == null) {
+  if (!addJsonKey) {
     addJsonKey = false;
   }
   resp = [1, 2, 3, 4, 5].map(function(id) {

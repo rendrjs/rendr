@@ -63,7 +63,7 @@ Fetcher.prototype.getModelForSpec = function(spec, attrsOrModels, options) {
   var method, modelName;
   attrsOrModels = attrsOrModels || {};
   options = options || {};
-  if (spec.model != null) {
+  if (!!spec.model) {
     method = 'getModel';
     modelName = spec.model;
   } else {
@@ -76,11 +76,11 @@ Fetcher.prototype.getModelForSpec = function(spec, attrsOrModels, options) {
    * so that the model can interpolate its url '/listings/:id'
    * to i.e. '/listings/42'. See 'syncer' module.
    */
-  if (spec.params != null) {
-    if (spec.model != null) {
+  if (!!spec.params) {
+    if (!!spec.model) {
       // If it's a model, merge the given params with the model attributes.
       _.defaults(attrsOrModels, spec.params);
-    } else if (spec.collection != null) {
+    } else if (!!spec.collection) {
       // If it's a collection, merge the given params with the options.
       _.defaults(options, spec.params);
     }
@@ -145,10 +145,10 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
         modelOptions = {};
 
         // First, see if we have stored the model or collection.
-        if (spec.model != null) {
+        if (!!spec.model) {
           idAttribute = modelUtils.modelIdAttribute(spec.model);
           modelData = this.modelStore.get(spec.model, spec.params[idAttribute]);
-        } else if (spec.collection != null) {
+        } else if (!!spec.collection) {
           collectionData = this.collectionStore.get(spec.collection, spec.params);
           if (collectionData) {
             modelData = this.retrieveModelsForCollectionName(spec.collection, collectionData.ids);
@@ -185,7 +185,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
 };
 
 Fetcher.prototype.needsFetch = function(modelData, spec) {
-  if (modelData == null) return true;
+  if (!modelData) return true;
   if (this.isMissingKeys(modelData, spec.ensureKeys)) return true;
   if (typeof spec.needsFetch === 'function' && spec.needsFetch(modelData)) return true;
   return false;
@@ -194,7 +194,7 @@ Fetcher.prototype.needsFetch = function(modelData, spec) {
 Fetcher.prototype.isMissingKeys = function(modelData, keys) {
   var key, _i, _len;
 
-  if (keys == null) {
+  if (!keys) {
     return false;
   }
   if (!_.isArray(keys)) {
@@ -202,7 +202,7 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
   }
   for (_i = 0, _len = keys.length; _i < _len; _i++) {
     key = keys[_i];
-    if (modelData[key] == null) {
+    if (!modelData[key]) {
       return true;
     }
   }
@@ -283,12 +283,12 @@ Fetcher.prototype.hydrate = function(summaries, options) {
   options = options || {};
   results = {};
   _.each(summaries, function(summary, name) {
-    if (summary.model != null) {
+    if (!!summary.model) {
       results[name] = this.modelStore.get(summary.model, summary.id, true);
-    } else if (summary.collection != null) {
+    } else if (!!summary.collection) {
       // Also support getting all models for a collection.
       collectionData = this.collectionStore.get(summary.collection, summary.params);
-      if (collectionData == null) {
+      if (!collectionData) {
         throw new Error("Collection of type \"" + summary.collection + "\" not found for params: " + JSON.stringify(summary.params));
       }
       models = this.retrieveModelsForCollectionName(summary.collection, collectionData.ids);
@@ -299,7 +299,7 @@ Fetcher.prototype.hydrate = function(summaries, options) {
       };
       results[name] = modelUtils.getCollection(summary.collection, models, collectionOptions);
     }
-    if ((results[name] != null) && (options.app != null)) {
+    if (!!results[name] && !!options.app) {
       results[name].app = options.app;
     }
   }, this);
@@ -324,17 +324,17 @@ Fetcher.prototype.fetch = function(fetchSpecs, options, callback) {
 
   // Different defaults for client v server.
   if (global.isServer) {
-    if (options.readFromCache == null) {
+    if (!options.readFromCache) {
       options.readFromCache = false;
     }
-    if (options.writeToCache == null) {
+    if (!options.writeToCache) {
       options.writeToCache = false;
     }
   } else {
-    if (options.readFromCache == null) {
+    if (!options.readFromCache) {
       options.readFromCache = true;
     }
-    if (options.writeToCache == null) {
+    if (!options.writeToCache) {
       options.writeToCache = true;
     }
   }

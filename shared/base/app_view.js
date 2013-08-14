@@ -3,7 +3,7 @@ var BaseView, hasPushState, _;
 _ = require('underscore');
 BaseView = require('./view');
 
-hasPushState = typeof window !== "undefined" && window.history.pushState != null;
+hasPushState = typeof window !== "undefined" && !!window.history.pushState;
 
 module.exports = BaseView.extend({
   el: 'body',

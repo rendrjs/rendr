@@ -77,7 +77,7 @@ BaseRouter.prototype.getAction = function(route) {
 
 BaseRouter.prototype.getRedirect = function(route, params) {
   var redirect = route.redirect;
-  if (redirect != null) {
+  if (!!redirect) {
     /**
      * Support function and string.
      */

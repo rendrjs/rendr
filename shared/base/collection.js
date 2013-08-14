@@ -63,10 +63,8 @@ module.exports = Super.extend({
    */
   parse: function(resp, modifyInstance) {
     var jsonResp, meta, parsed;
+    modifyInstance = modifyInstance || true;
 
-    if (modifyInstance == null) {
-      modifyInstance = true;
-    }
     if (this.jsonKey && (jsonResp = resp[this.jsonKey])) {
       if (modifyInstance) {
         meta = _.omit(resp, this.jsonKey);

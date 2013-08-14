@@ -67,7 +67,7 @@ utils.addClassMapping = function(key, modelConstructor) {
 uppercaseRe = /([A-Z])/g;
 
 utils.underscorize = function(name) {
-  if (name == null) {
+  if (!name) {
     return undefined;
   }
   name = name.replace(uppercaseRe, function(c) {

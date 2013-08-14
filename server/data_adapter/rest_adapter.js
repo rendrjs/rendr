@@ -127,11 +127,11 @@ RestAdapter.prototype.apiDefaults = function(api) {
   });
 
   // Add a default UserAgent, so some servers don't reject our request.
-  if (api.headers['User-Agent'] == null) {
+  if (api.headers['User-Agent'] === null) {
     api.headers['User-Agent'] = this.options.userAgent;
   }
 
-  if (api.body != null) {
+  if (api.body !== null) {
     api.json = api.body;
   }
 

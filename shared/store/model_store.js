@@ -21,7 +21,7 @@ ModelStore.prototype.set = function(model) {
 
   id = model.get(model.idAttribute);
   modelName = modelUtils.modelName(model.constructor);
-  if (modelName == null) {
+  if (modelName === null) {
     throw new Error('Undefined modelName for model');
   }
   key = getModelStoreKey(modelName, id);
@@ -38,7 +38,7 @@ ModelStore.prototype.set = function(model) {
 ModelStore.prototype.get = function(modelName, id, returnModelInstance) {
   var key, modelData;
 
-  if (returnModelInstance == null) {
+  if (returnModelInstance === null) {
     returnModelInstance = false;
   }
   key = getModelStoreKey(modelName, id);

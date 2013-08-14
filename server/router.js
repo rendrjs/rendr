@@ -54,7 +54,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
     /**
      * If `redirect` is present, then do a redirect and return.
      */
-    if (redirect != null) {
+    if (!!redirect) {
       res.redirect(route.status || 301, redirect);
       return;
     }
@@ -110,7 +110,7 @@ ServerRouter.prototype.handleErr = function(err, req, res) {
 
 ServerRouter.prototype.getHeadersForRoute = function(definition) {
   var headers = {};
-  if (definition.maxAge != null) {
+  if (!!definition.maxAge) {
     headers['Cache-Control'] = "public, max-age=" + definition.maxAge;
   }
   return headers;
@@ -120,7 +120,7 @@ ServerRouter.prototype.getHeadersForRoute = function(definition) {
  * stash error, if handler available
  */
 ServerRouter.prototype.stashError = function(req, err) {
-  if (this.options.stashError != null) {
+  if (!!this.options.stashError) {
     this.options.stashError(req, err);
   }
 };

@@ -115,9 +115,8 @@ syncer.getSync = function getSync() {
  * has a 'url' property, which can be a string or function.
  */
 syncer.getUrl = function getUrl(url, clientPrefix, params) {
-  if (clientPrefix == null) {
-    clientPrefix = false;
-  }
+  clientPrefix = clientPrefix || false;
+
   params = params || {};
   url = url || _.result(this, 'url');
   if (clientPrefix && !~url.indexOf('://')) {
@@ -202,7 +201,7 @@ syncer.objectsDiffer = function objectsDiffer(data1, data2) {
 
 /**
  * This maps i.e. '/listings/:id' to '/listings/3' if
- * the model you supply has model.get('id') == 3.
+ * the model you supply has model.get('id') === 3.
  */
 syncer.interpolateParams = function interpolateParams(model, url, params) {
   var matches;
@@ -216,7 +215,7 @@ syncer.interpolateParams = function interpolateParams(model, url, params) {
       property = param.slice(1);
 
       // Is collection? Then use options.
-      if (model.length != null) {
+      if (!(model instanceof Backbone.Model)) {
         value = model.options[property];
 
       // Otherwise it's a model; use attrs.

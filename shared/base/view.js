@@ -36,15 +36,15 @@ module.exports = BaseView = Backbone.View.extend({
      */
     options = _.extend(this.options, options || {});
 
-    if (options.app != null) {
+    if (!!options.app) {
       this.app = this.options.app;
     }
 
-    if (options.parentView != null) {
+    if (!!options.parentView) {
       this.parentView = options.parentView;
     }
 
-    if (options.model != null) {
+    if (!!options.model) {
       if (!(options.model instanceof Backbone.Model) && options.model_name) {
         options.model = modelUtils.getModel(options.model_name, options.model, {
           parse: true
@@ -54,7 +54,7 @@ module.exports = BaseView = Backbone.View.extend({
       options.model_id = options.model.id;
     }
 
-    if (options.collection != null) {
+    if (!!options.collection) {
       options.collection_name = options.collection_name || modelUtils.modelName(options.collection.constructor);
       options.collection_params = options.collection.params;
     }
@@ -160,11 +160,11 @@ module.exports = BaseView = Backbone.View.extend({
     // Add model & collection meta data from options,
     // as well as any non-object option values.
     _.each(this.options, function(value, key) {
-      if (value != null) {
+      if (!!value) {
         if (key === 'model') {
           key = 'model_id';
           var id = value[value.idAttribute];
-          if (id == null) {
+          if (!id) {
             // Bail if there's no ID; someone's using `this.model` in a
             // non-standard way, and that's okay.
             return;
@@ -195,7 +195,7 @@ module.exports = BaseView = Backbone.View.extend({
     data = this.getTemplateData();
     data = this.decorateTemplateData(data);
     template = this.getTemplate();
-    if (template == null) {
+    if (!template) {
       throw new Error(this.name + ": template \"" + this.getTemplateName() + "\" not found.");
     }
     return template(data);
@@ -240,17 +240,17 @@ module.exports = BaseView = Backbone.View.extend({
 
     params = {};
     params[this.options.param_name] = this.options.param_value;
-    if (this.options.model_id != null) {
+    if (!!this.options.model_id) {
       params.id = this.options.model_id;
     }
-    if (this.options.model_name != null) {
+    if (!!this.options.model_name) {
       fetchSpec = {
         model: {
           model: this.options.model_name,
           params: params
         }
       };
-    } else if (this.options.collection_name != null) {
+    } else if (!!this.options.collection_name) {
       fetchSpec = {
         collection: {
           collection: this.options.collection_name,
@@ -267,7 +267,7 @@ module.exports = BaseView = Backbone.View.extend({
         // Check this.parentView as a way to see if view is still present on the page.
         // It's possible that by the time the XHR returns, the user has navigated
         // away to a new page.
-        if (_this.parentView != null) {
+        if (!!_this.parentView) {
           _this.parseOptions(results);
           _this.render();
         }
@@ -313,13 +313,13 @@ module.exports = BaseView = Backbone.View.extend({
     var fetchSummary, results;
 
     fetchSummary = {};
-    if (this.options.model_name != null && this.options.model_id != null) {
+    if (!!this.options.model_name && !!this.options.model_id) {
       fetchSummary.model = {
         model: this.options.model_name,
         id: this.options.model_id
       };
     }
-    if (this.options.collection_name != null && this.options.collection_params != null) {
+    if (!!this.options.collection_name && !!this.options.collection_params) {
       fetchSummary.collection = {
         collection: this.options.collection_name,
         params: this.options.collection_params
@@ -376,7 +376,7 @@ module.exports = BaseView = Backbone.View.extend({
      * If the view says it should try to be lazy loaded, and it doesn't
      * have a model or collection, then do so.
      */
-    if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
+    if (this.options.lazy === true && !this.options.collection && !this.options.model) {
       this.fetchLazy();
     }
     this.trigger('attach');
@@ -427,7 +427,7 @@ BaseView.getView = function(viewName) {
 
 BaseView.attach = function(app, parentView) {
   var scope, views;
-  scope = parentView != null ? parentView.$el : null;
+  scope = !!parentView ? parentView.$el : null;
   views = $('[data-view]', scope).map(function(i, el) {
     var $el, ViewClass, options, parsed, view, viewName;
 

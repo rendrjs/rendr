@@ -115,7 +115,7 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
       /*
        * If `redirect` is present, then do a redirect and return.
        */
-      if (redirect != null) {
+      if (!!redirect) {
         router.redirectTo(redirect, {replace: true});
       } else {
         if (!action) {
@@ -172,15 +172,13 @@ ClientRouter.prototype.matchingRoute = function(path) {
 };
 
 ClientRouter.prototype.matchesAnyRoute = function(path) {
-  return this.matchingRoute(path) != null;
+  return !!this.matchingRoute(path);
 };
 
 ClientRouter.prototype.redirectTo = function(path, options) {
   var hashParts;
+  options = options || {};
 
-  if (options == null) {
-    options = {};
-  }
   _.defaults(options, {
     trigger: true,
     pushState: true,

@@ -134,6 +134,12 @@ RestAdapter.prototype.apiDefaults = function(api) {
   if (api.body != null) {
     api.json = api.body;
   }
+  
+  // Remove entity body for GET requests if body is empty object
+  if (api.method === 'GET' && Object.keys(api.body).length === 0){
+    delete api.json;
+    delete api.body;
+  }
 
   return api;
 };

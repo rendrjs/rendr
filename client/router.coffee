@@ -103,6 +103,9 @@ module.exports = class ClientRouter extends BaseRouter
     _.extend(query, params)
 
   matchingRoute: (path) ->
+    # Strip a leading slash.
+    if path[0] == '/'
+      path = path.slice(1)
     _.find Backbone.history.handlers, (handler) ->
       handler.route.test(path)
 
@@ -114,8 +117,9 @@ module.exports = class ClientRouter extends BaseRouter
       trigger: true
       pushState: true
 
-    # Do a full-page redirect.
-    if options.pushState is false
+    # Do a full-page redirect if this path isn't supported by our routes,
+    # of if we're asked explicitly to do so.
+    if !@matchesAnyRoute(path) || options.pushState is false
       window.location.href = path
 
     # Do a pushState navigation.

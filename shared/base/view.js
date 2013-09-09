@@ -163,7 +163,7 @@ module.exports = BaseView = Backbone.View.extend({
       if (value != null) {
         if (key === 'model') {
           key = 'model_id';
-          var id = value[value.idAttribute];
+          var id = value.id;
           if (id == null) {
             // Bail if there's no ID; someone's using `this.model` in a
             // non-standard way, and that's okay.

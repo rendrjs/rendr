@@ -27,15 +27,10 @@ function apiProxy(apiHostsMap) {
     rendr.server.dataAdapter.request(req, api, {
       convertErrorCode: false
     }, function(err, response, body) {
-      var status;
-
       if (err) return next(err);
 
-      // Pass through statusCode, but not if it's an i.e. 304.
-      status = response.statusCode;
-      if (utils.isErrorStatus(status)) {
-        res.status(status);
-      }
+      // Pass through statusCode.
+      res.status(response.statusCode);
       res.json(body);
     });
   };

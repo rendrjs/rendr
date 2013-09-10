@@ -45,6 +45,7 @@ function serverSync(method, model, options) {
   api = {
     method: verb,
     path: urlParts[0],
+    headers: options.headers || {},
     query: qs.parse(urlParts[1]) || {},
     api: _.result(this, 'api'),
     body: {}

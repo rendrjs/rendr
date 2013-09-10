@@ -28,7 +28,7 @@ module.exports = Super.extend({
    * Idempotent parse
    */
   parse: function(resp) {
-    if (this.jsonKey) {
+    if (resp != null && this.jsonKey) {
       return resp[this.jsonKey] || resp;
     } else {
       return resp;

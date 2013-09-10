@@ -166,7 +166,7 @@ module.exports = BaseView = Backbone.View.extend({
         if (_.isFunction(value.constructor) && value.constructor.id != null) {
           modelOrCollectionId = value.constructor.id;
           if (modelUtils.isModel(value)) {
-            id = value.id;
+            id = value.get(value.idAttribute);
             if (id == null) {
               // Bail if there's no ID; someone's using `this.model` in a
               // non-standard way, and that's okay.

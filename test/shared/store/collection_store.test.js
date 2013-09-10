@@ -41,7 +41,8 @@ describe('CollectionStore', function() {
     results = this.store.get(collection.constructor.name, params);
     results.should.eql({
       ids: collection.pluck('id'),
-      meta: meta
+      meta: meta,
+      params: params
     });
   });
 
@@ -87,7 +88,8 @@ describe('CollectionStore', function() {
     results = this.store.get(collection.constructor.name, params);
     results.should.eql({
       ids: collection.pluck('login'),
-      meta: meta
+      meta: meta,
+      params: params
     });
   });
 
@@ -123,12 +125,14 @@ describe('CollectionStore', function() {
     results0 = this.store.get(collection0.constructor.name, params0);
     results0.should.eql({
       ids: collection0.pluck('id'),
-      meta: {}
+      meta: {},
+      params: params0
     });
     results10 = this.store.get(collection10.constructor.name, params10);
     results10.should.eql({
       ids: collection10.pluck('id'),
-      meta: {}
+      meta: {},
+      params: params10
     });
   });
 

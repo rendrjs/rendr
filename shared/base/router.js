@@ -92,14 +92,12 @@ BaseRouter.prototype.getRedirect = function(route, params) {
  * Build route definitions based on the routes file.
  */
 BaseRouter.prototype.buildRoutes = function() {
-  var routeBuilder, routes, _this = this;
+  var routeBuilder = require(this.options.paths.routes)
+    , routes = [];
 
   function captureRoutes() {
     routes.push(_.toArray(arguments));
   }
-
-  routeBuilder = require(this.options.paths.routes);
-  routes = [];
 
   try {
     routeBuilder(captureRoutes);
@@ -107,8 +105,8 @@ BaseRouter.prototype.buildRoutes = function() {
       routes = routes.reverse();
     }
     routes.forEach(function(route) {
-      _this.route.apply(_this, route);
-    });
+      this.route.apply(this, route);
+    }, this);
   } catch (e) {
     throw new Error("Error building routes: " + e.message);
   }

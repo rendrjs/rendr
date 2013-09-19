@@ -27,7 +27,8 @@
     "mocha": "*",
     "should": "*",
     "sinon": "1.4.2",
-    "istanbul": "~0.1.10"
+    "istanbul": "~0.1.10",
+    "jquery": "~1.8.3"
   },
   "keywords": [
     "Backbone",

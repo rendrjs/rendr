@@ -19,8 +19,8 @@ function Server(expressApp, options) {
 
   this.viewEngine = this.options.viewEngine || new ViewEngine();
 
-  this.errorHandler = this.options.errorHandler = this.options.errorHandler ||
-    middleware.errorHandler(this.options);
+  this.errorHandler = this.options.errorHandler =
+    this.options.errorHandler || middleware.errorHandler(this.options);
 
   this.router = new Router(this.options);
 

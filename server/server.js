@@ -9,9 +9,25 @@ var _ = require('underscore')
 
 module.exports = Server;
 
-function Server(expressApp, options) {
+var defaultOptions = {
+  dataAdapter: null,
+  dataAdapterConfig: null,
+  viewEngine: null,
+  router: null,
+  errorHandler: null,
+  notFoundHandler: null,
+  dumpExceptions: false,
+  stashError: null,
+  apiPath: '/api',
+  appData: {},
+  paths: {},
+  viewsPath: null
+};
+
+
+function Server(options) {
   this.options = options || {};
-  _.defaults(this.options, this.defaultOptions);
+  _.defaults(this.options, defaultOptions);
 
   this.expressApp = express();
 
@@ -24,37 +40,53 @@ function Server(expressApp, options) {
 
   this.router = new Router(this.options);
 
-  this._configure();
+  /**
+   * Tell Express to use our ViewEngine to handle .js, .coffee files.
+   * This can always be overridden in your app.
+   */
+  this.expressApp.set('views', this.options.viewsPath || (process.cwd() + '/app/views'));
+  this.expressApp.set('view engine', 'js');
+  this.expressApp.engine('js',     this.viewEngine.render);
+  this.expressApp.engine('coffee', this.viewEngine.render);
+
+  this._configured = false;
+
+  /**
+  * This is the middleware handler used to mount the Rendr server onto an Express app.
+  */
+  this.__defineGetter__('handle', function() {
+    return function(req, res, next) {
+      /**
+      * Lazily configure the Express app, so the calling application doesn't have to
+      * call `configure()` if it doesn't have any custom middleware.
+      */
+      if (!this._configured) this.configure();
+
+      this.expressApp.handle(req, res, next);
+    }.bind(this);
+  });
 }
-
-Server.prototype.defaultOptions = {
-  dataAdapter: null,
-  dataAdapterConfig: null,
-  viewEngine: null,
-  router: null,
-  errorHandler: null,
-  dumpExceptions: false,
-  stashError: null,
-  apiPath: '/api',
-  paths: {}
-};
-
-/**
- * A hook provided to configure the Express app, used to initialize middleware, etc.
- */
-Server.prototype.configure = function(fn) {
-  fn(this.expressApp);
-};
 
 /**
  * Attach Rendr's routes to the Express app and setup the middleware stack.
+ * Pass `fn` in order to add custom middleware that should access `req.rendrApp`.
  */
-Server.prototype._configure = function() {
+Server.prototype.configure = function(fn) {
+  var apiPath = this.options.apiPath
+    , notApiRegExp = new RegExp('^(?!' + apiPath.replace('/', '\\/') + '\\/)');
+
+  this._configured = true;
 
   /**
    * First, initialize the Rendr app, accessible at `req.rendrApp`.
    */
   this.expressApp.use(middleware.initApp(this.options.appData));
+
+  /**
+   * Add any custom middleware that has to access `req.rendrApp` but should run before
+   * the Rendr routes
+   */
+  fn && fn(this.expressApp);
 
   /**
    * Add the API handler.
@@ -67,13 +99,11 @@ Server.prototype._configure = function() {
   this.buildRoutes();
 
   /**
-   * Tell Express to use our ViewEngine to handle .js, .coffee files.
-   * This can always be overridden in your app.
+   * If a 404 handler is provided, use it for all non-API routes.
    */
-  this.expressApp.set('views', process.cwd() + '/app/views');
-  this.expressApp.set('view engine', 'js');
-  this.expressApp.engine('js',     this.viewEngine.render);
-  this.expressApp.engine('coffee', this.viewEngine.render);
+  if (this.options.notFoundHandler) {
+    this.expressApp.get(notApiRegExp, this.options.notFoundHandler);
+  }
 };
 
 Server.prototype.buildRoutes = function() {

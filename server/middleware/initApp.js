@@ -8,11 +8,8 @@
  * requests for different users.
  */
 module.exports = function(appAttributes) {
-  appAttributes = appAttributes || {};
   return function(req, res, next) {
-    var App, app;
-
-    App = require(rendr.entryPath + '/app/app');
+    var App = require(rendr.entryPath + '/app/app');
 
     /**
      * Pass any data that needs to be accessible by the client
@@ -27,7 +24,17 @@ module.exports = function(appAttributes) {
       req: req
     };
 
-    app = new App(appAttributes, appOptions);
+    /**
+     * Allow `appAttributes` to be a function for lazy-instantiation based on `req` and `res`.
+     */
+    function getAppAttributes(attrs, req, res) {
+      if (typeof attrs === 'function') {
+        attrs = attrs(req, res);
+      }
+      return attrs || {};
+    }
+
+    var app = new App(getAppAttributes(appAttributes, req, res), appOptions);
 
     /**
      * Stash the app instance on the request so can be accessed in other middleware.

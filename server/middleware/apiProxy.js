@@ -12,7 +12,7 @@ var separator = '/-/';
  */
 module.exports = apiProxy;
 
-function apiProxy() {
+function apiProxy(dataAdapter) {
   return function(req, res, next) {
     var api;
 
@@ -21,7 +21,7 @@ function apiProxy() {
     api.path = apiProxy.getApiPath(req.path);
     api.api = apiProxy.getApiName(req.path);
 
-    rendr.server.dataAdapter.request(req, api, {
+    dataAdapter.request(req, api, {
       convertErrorCode: false
     }, function(err, response, body) {
       if (err) return next(err);

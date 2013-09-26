@@ -189,19 +189,6 @@ describe("server/router", function() {
       ]);
     });
 
-    it.skip("should return the route info for a matched full URL", function() {
-      var route;
-
-      this.router.route("/users/:id", "users#show");
-      route = this.router.match('https://www.example.org/users/1234');
-      shouldMatchRoute(route, [
-        '/users/:id', {
-          controller: 'users',
-          action: 'show'
-        }
-      ]);
-    });
-
     it("should return null if no match", function() {
       should.not.exist(this.router.match('abcd1234xyz'));
     });

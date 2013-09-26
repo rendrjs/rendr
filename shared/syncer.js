@@ -1,27 +1,25 @@
-var Backbone, extractParamNamesRe, methodMap, modelUtils, qs, _, syncer;
+var _ = require('underscore')
+  , Backbone = require('backbone')
+
+  // These are lazy-required.
+  , modelUtils = null
+  , server = null
+
+  // Pull out params in path, like '/users/:id'.
+  , extractParamNamesRe = /:([a-z_-]+)/ig
+
+  , methodMap = {
+    'create': 'POST',
+    'update': 'PUT',
+    'delete': 'DELETE',
+    'read': 'GET'
+  };
 
 if (global.isServer) {
-  qs = require('qs');
+  var qs = require('qs');
 }
 
-_ = require('underscore');
-Backbone = require('backbone');
-
-// These are lazy-required.
-modelUtils = null;
-server = null;
-
-// Pull out params in path, like '/users/:id'.
-extractParamNamesRe = /:([a-zA-Z_-]+)/g;
-
-methodMap = {
-  'create': 'POST',
-  'update': 'PUT',
-  'delete': 'DELETE',
-  'read': 'GET'
-};
-
-syncer = module.exports;
+var syncer = module.exports;
 
 function clientSync(method, model, options) {
   var data;
@@ -142,8 +140,7 @@ syncer.formatClientUrl = function(url, api) {
  * Happens only client-side.
  */
 syncer.checkFresh = function checkFresh() {
-  var url,
-    _this = this;
+  var url;
 
   this.app.trigger('checkFresh:start');
 
@@ -155,25 +152,25 @@ syncer.checkFresh = function checkFresh() {
     var data, differs;
 
     // The second argument 'false' tells 'parse()' not to modify the instance.
-    data = _this.parse(resp, false);
-    differs = syncer.objectsDiffer(data, _this.toJSON());
-    _this.trigger('checkFresh:end', differs);
+    data = this.parse(resp, false);
+    differs = syncer.objectsDiffer(data, this.toJSON());
+    this.trigger('checkFresh:end', differs);
     if (differs) {
-      if (modelUtils.isModel(_this)) {
-        _this.set(data, {
+      if (modelUtils.isModel(this)) {
+        this.set(data, {
           silent: true
         });
       } else {
-        _this.reset(data, {
+        this.reset(data, {
           parse: true,
           silent: true
         });
       }
       // We manually store the updated data.
-      _this.store();
-      _this.trigger('refresh');
+      this.store();
+      this.trigger('refresh');
     }
-  });
+  }.bind(this));
 };
 
 /**

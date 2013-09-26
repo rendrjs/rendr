@@ -273,20 +273,18 @@ module.exports = BaseView = Backbone.View.extend({
       };
     }
     this.setLoading(true);
-    this.app.fetch(fetchSpec, this._fetchLazyCallback);
+    this.app.fetch(fetchSpec, this._fetchLazyCallback.bind(this));
   },
 
   _fetchLazyCallback: function(err, results) {
-    var _this = this;
-
-    _this.setLoading(false);
+    this.setLoading(false);
     if (err) {
       console.log("FETCH ERR: " + err);
-    } else if (_this.viewing) {
+    } else if (this.viewing) {
       // It's possible that by the time the XHR returns, the user has navigated
       // away to a new page, check for whether we are viewing first
-      _this.parseOptions(results);
-      _this.render();
+      this.parseOptions(results);
+      this.render();
     }
   },
 
@@ -418,7 +416,7 @@ module.exports = BaseView = Backbone.View.extend({
     this.parentView = null;
     this.viewing = false;
 
-    obj = this.model;
+    obj = this.model || this.collection;
 
     // Check that the object exists or we are looking at a collection to flip
     // off the events

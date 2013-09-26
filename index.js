@@ -5,8 +5,8 @@ if (!this.window) {
 
   exports.server = null;
 
-  exports.createServer = function(expressApp, options) {
-    return exports.server = new Server(expressApp, options);
+  exports.createServer = function(options) {
+    return exports.server = new Server(options);
   };
 
   exports.entryPath = process.cwd();

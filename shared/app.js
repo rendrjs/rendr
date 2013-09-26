@@ -87,5 +87,6 @@ module.exports = Backbone.Model.extend({
    */
   start: function() {
     this.router.start();
+    this.trigger('start');
   }
 });

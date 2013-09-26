@@ -32,13 +32,14 @@ function clientSync(method, model, options) {
 }
 
 function serverSync(method, model, options) {
-  var api, data, urlParts, verb;
+  var api, data, urlParts, verb, req;
 
   data = _.clone(options.data);
   data = addApiParams(method, model, data);
   options.url = this.getUrl(options.url, false, data);
   verb = methodMap[method];
   urlParts = options.url.split('?');
+  req = this.app.req;
 
   api = {
     method: verb,
@@ -58,7 +59,7 @@ function serverSync(method, model, options) {
     _.extend(api.query, data);
   }
 
-  rendr.server.dataAdapter.request(this.app.req, api, function(err, response, body) {
+  req.dataAdapter.request(req, api, function(err, response, body) {
     if (err) {
       if (!_.isObject(body)) {
         body = {

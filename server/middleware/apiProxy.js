@@ -1,7 +1,4 @@
-var server, utils, _;
-
-_ = require('underscore');
-utils = require('../utils');
+var _ = require('underscore');
 
 /**
  * The separator used in the path. Incoming paths can look like:
@@ -15,7 +12,7 @@ var separator = '/-/';
  */
 module.exports = apiProxy;
 
-function apiProxy(apiHostsMap) {
+function apiProxy() {
   return function(req, res, next) {
     var api;
 

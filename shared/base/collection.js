@@ -67,7 +67,7 @@ module.exports = Super.extend({
     if (modifyInstance == null) {
       modifyInstance = true;
     }
-    if (this.jsonKey && (jsonResp = resp[this.jsonKey])) {
+    if (resp != null && this.jsonKey && (jsonResp = resp[this.jsonKey])) {
       if (modifyInstance) {
         meta = _.omit(resp, this.jsonKey);
         _.extend(this.meta, meta);

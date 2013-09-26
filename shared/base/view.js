@@ -149,7 +149,7 @@ module.exports = BaseView = Backbone.View.extend({
    * Get HTML attributes to add to el.
    */
   getAttributes: function() {
-    var attributes = {};
+    var attributes = {}, fetchSummary = {};
 
     if (this.id) {
       attributes.id = this.id;
@@ -165,28 +165,38 @@ module.exports = BaseView = Backbone.View.extend({
     // Add model & collection meta data from options,
     // as well as any non-object option values.
     _.each(this.options, function(value, key) {
+      var id, modelOrCollectionId;
+
       if (value != null) {
-        if (key === 'model') {
-          key = 'model_id';
-          var id = value[value.idAttribute];
-          if (id == null) {
-            // Bail if there's no ID; someone's using `this.model` in a
-            // non-standard way, and that's okay.
+        if (_.isFunction(value.constructor) && value.constructor.id != null) {
+          modelOrCollectionId = value.constructor.id;
+          if (modelUtils.isModel(value)) {
+            id = value.get(value.idAttribute);
+            if (id == null) {
+              // Bail if there's no ID; someone's using `this.model` in a
+              // non-standard way, and that's okay.
+              return;
+            }
+            // Cast the `id` attribute to string to ensure it's included in attributes.
+            // On the server, it can be i.e. an `ObjectId` from Mongoose.
+            value = id.toString();
+            fetchSummary[key] = {model: modelOrCollectionId, id: value};
             return;
           }
-          // Cast the `id` attribute to string to ensure it's included in attributes.
-          // On the server, it can be i.e. an `ObjectId` from Mongoose.
-          value = id.toString();
-        } else if (key === 'collection') {
-          key = 'collection_params';
-          value = _.escape(JSON.stringify(value.params));
+          if (modelUtils.isCollection(value) && value.params != null) {
+            fetchSummary[key] = {collection: modelOrCollectionId, params: value.params};
+            return;
+          }
         }
         if (!_.isObject(value) && !_.include(this.nonAttributeOptions, key)) {
-          attributes["data-" + key] = _.escape(value);
+          attributes["data-" + key] = value;
         }
       }
     });
 
+    if (!_.isEmpty(fetchSummary)) {
+      attributes['data-fetch_summary'] = JSON.stringify(fetchSummary);
+    }
     return attributes;
   },
 
@@ -215,7 +225,7 @@ module.exports = BaseView = Backbone.View.extend({
     html = this.getInnerHtml();
     attributes = this.getAttributes();
     attrString = _.inject(attributes, function(memo, value, key) {
-      return memo += " " + key + "=\"" + value + "\"";
+      return memo += " " + key + "=\"" + _.escape(value) + "\"";
     }, '');
     return "<" + this.tagName + attrString + ">" + html + "</" + this.tagName + ">";
   },
@@ -317,19 +327,7 @@ module.exports = BaseView = Backbone.View.extend({
   hydrate: function() {
     var fetchSummary, results;
 
-    fetchSummary = {};
-    if (this.options.model_name != null && this.options.model_id != null) {
-      fetchSummary.model = {
-        model: this.options.model_name,
-        id: this.options.model_id
-      };
-    }
-    if (this.options.collection_name != null && this.options.collection_params != null) {
-      fetchSummary.collection = {
-        collection: this.options.collection_name,
-        params: this.options.collection_params
-      };
-    }
+    fetchSummary = this.options.fetch_summary;
     if (!_.isEmpty(fetchSummary)) {
       results = this.app.fetcher.hydrate(fetchSummary, {
         app: this.app

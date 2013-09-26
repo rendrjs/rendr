@@ -178,7 +178,8 @@ describe('fetcher', function() {
       should.not.exist(fetcher.collectionStore.get('Listings', {}));
       fetcher.collectionStore.get('Listings', params).should.eql({
         ids: listings.pluck('id'),
-        meta: {}
+        meta: {},
+        params: params
       });
     });
 

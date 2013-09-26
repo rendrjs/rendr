@@ -153,7 +153,8 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
           if (collectionData) {
             modelData = this.retrieveModelsForCollectionName(spec.collection, collectionData.ids);
             modelOptions = {
-              meta: collectionData.meta
+              meta: collectionData.meta,
+              params: collectionData.params
             };
           }
         }

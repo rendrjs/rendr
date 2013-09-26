@@ -23,7 +23,8 @@ CollectionStore.prototype.set = function(collection, params) {
   idAttribute = collection.model.prototype.idAttribute;
   data = {
     ids: collection.pluck(idAttribute),
-    meta: collection.meta
+    meta: collection.meta,
+    params: collection.params
   };
   return Super.prototype.set.call(this, key, data, null);
 };

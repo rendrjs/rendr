@@ -420,7 +420,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     // Check that the object exists or we are looking at a collection to flip
     // off the events
-    if (!!obj || this.collection) {
+    if (obj) {
       obj.off(null, null, this);
     }
     BaseView.__super__.remove.apply(this, arguments);

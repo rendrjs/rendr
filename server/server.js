@@ -13,7 +13,6 @@ var defaultOptions = {
   dataAdapter: null,
   dataAdapterConfig: null,
   viewEngine: null,
-  router: null,
   errorHandler: null,
   notFoundHandler: null,
   stashError: null,

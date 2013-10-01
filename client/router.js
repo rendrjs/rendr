@@ -207,8 +207,14 @@ ClientRouter.prototype.redirectTo = function(path, options) {
   }
 };
 
+ClientRouter.prototype.handleErr = function(err, route){
+  this.trigger('action:error', err, route);
+}
+
 ClientRouter.prototype.getRenderCallback = function(route) {
   return function(err, viewPath, locals) {
+    if (err) return this.handleErr(err, route);
+
     var View;
 
     if (this.currentView) {

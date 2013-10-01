@@ -7,6 +7,8 @@ sanitize = require('validator').sanitize;
 
 module.exports = ServerRouter;
 
+function noop() {}
+
 function ServerRouter() {
   this._expressRouter = new ExpressRouter();
   this.routesByPath = {};
@@ -48,6 +50,8 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
 
   return function(req, res, next) {
     var app, context, params, redirect;
+
+    router.getBefore(route).apply(router, [action, pattern, route, req, res, next]);
 
     params = router.getParams(req);
     redirect = router.getRedirect(route, params);
@@ -144,4 +148,8 @@ ServerRouter.prototype.match = function(pathToMatch) {
 
   matchedRoute = this._expressRouter.match('get', pathToMatch);
   return matchedRoute ? this.routesByPath[matchedRoute.path] : null;
+};
+
+ServerRouter.prototype.getBefore = function(route) {
+  return route.before || noop;
 };

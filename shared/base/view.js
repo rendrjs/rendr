@@ -409,17 +409,13 @@ module.exports = BaseView = Backbone.View.extend({
   },
 
   remove: function() {
-    var obj;
-
     this.removeChildViews();
     this.childViews = null;
     this.parentView = null;
     this.viewing = false;
 
-    obj = this.model || this.collection;
+    var obj = this.model || this.collection;
 
-    // Check that the object exists or we are looking at a collection to flip
-    // off the events
     if (obj) {
       obj.off(null, null, this);
     }

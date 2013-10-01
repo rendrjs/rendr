@@ -1,0 +1,9 @@
+<h1>Repos</h1>
+
+<ul>
+{{#each models}}
+  <li>
+    <a href="/repos/{{owner.login}}/{{name}}">{{name}}</a>, by <a href="/users/{{owner.login}}">{{owner.login}}</a>
+  </li>
+{{/each}}
+</ul>

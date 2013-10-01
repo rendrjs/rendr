@@ -16,7 +16,6 @@ var defaultOptions = {
   router: null,
   errorHandler: null,
   notFoundHandler: null,
-  dumpExceptions: false,
   stashError: null,
   apiPath: '/api',
   appData: {},
@@ -36,7 +35,7 @@ function Server(options) {
   this.viewEngine = this.options.viewEngine || new ViewEngine();
 
   this.errorHandler = this.options.errorHandler =
-    this.options.errorHandler || middleware.errorHandler(this.options);
+    this.options.errorHandler || express.errorHandler();
 
   this.router = new Router(this.options);
 
@@ -117,6 +116,8 @@ Server.prototype.configure = function(fn) {
    */
   this.buildRoutes();
 
+  this.expressApp.use(this.errorHandler);
+
   /**
    * If a 404 handler is provided, use it for all non-API routes.
    */
@@ -126,20 +127,15 @@ Server.prototype.configure = function(fn) {
 };
 
 Server.prototype.buildRoutes = function() {
-  var routes, path, definition, fnChain;
+  var routes, pattern, route, handler;
 
   routes = this.router.buildRoutes();
   routes.forEach(function(args) {
-    path = args.shift();
-    definition = args.shift();
-
-    // Additional arguments are route handlers.
-    fnChain = args;
-
-    // Have to add error handler AFTER all other handlers.
-    fnChain.push(this.errorHandler);
+    pattern = args[0];
+    route = args[1];
+    handler = args[2];
 
     // Attach the route to the Express server.
-    this.expressApp.get(path, fnChain);
+    this.expressApp.get(pattern, handler);
   }, this);
 };

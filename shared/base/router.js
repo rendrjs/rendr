@@ -190,6 +190,11 @@ BaseRouter.prototype.defaultHandlerParams = function(viewPath, locals, route) {
 BaseRouter.prototype.getHandler = noop;
 
 /**
+ * This is the method that executes before the request.
+ */
+BaseRouter.prototype.before = noop;
+
+/**
  * Mix in Backbone.Events.
  */
 _.extend(BaseRouter.prototype, Backbone.Events);

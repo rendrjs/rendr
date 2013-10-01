@@ -99,6 +99,8 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
   return function() {
     var params, paramsArray, views, redirect;
 
+    router.getBefore(route).apply(router, [action, pattern, route]);
+
     router.trigger('action:start', route, firstRender);
     router.currentRoute = route;
 
@@ -258,4 +260,8 @@ ClientRouter.prototype.getView = function(key) {
     throw new Error("View '" + key + "' not found.");
   }
   return View;
+};
+
+ClientRouter.prototype.getBefore = function(route) {
+  return route.before || noop;
 };

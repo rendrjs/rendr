@@ -48,7 +48,36 @@ describe('BaseView', function() {
 
     it("should delegate to the app's templateAdapter", function() {
         this.topView.getTemplate();
-        this.app.templateAdapter.getTemplate.called.should.be.true
+        this.app.templateAdapter.getTemplate.called.should.be.true;
+    });
+  });
+
+  describe('_fetchLazyCallback', function() {
+    beforeEach(function() {
+      this.app = {
+        templateAdapter: {
+          getTemplate: sinon.spy()
+        }
+      };
+
+      this.topView = new this.MyTopView({
+        app: this.app
+      });
+
+      this.topView.setLoading = sinon.stub();
+      this.topView.render = sinon.spy();
+    });
+
+    it("should not call render if the view isn't being viewed", function() {
+      this.topView.viewing = false;
+      this.topView._fetchLazyCallback(null, {});
+      this.topView.render.called.should.be.false;
+    });
+
+    it("should call render if the view is being viewed", function() {
+      this.topView.viewing = true;
+      this.topView._fetchLazyCallback(null, {});
+      this.topView.render.called.should.be.true;
     });
   });
 });

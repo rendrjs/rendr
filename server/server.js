@@ -19,7 +19,8 @@ var defaultOptions = {
   apiPath: '/api',
   appData: {},
   paths: {},
-  viewsPath: null
+  viewsPath: null,
+  defaultEngine: 'js'
 };
 
 
@@ -43,9 +44,8 @@ function Server(options) {
    * This can always be overridden in your app.
    */
   this.expressApp.set('views', this.options.viewsPath || (process.cwd() + '/app/views'));
-  this.expressApp.set('view engine', 'js');
-  this.expressApp.engine('js',     this.viewEngine.render);
-  this.expressApp.engine('coffee', this.viewEngine.render);
+  this.expressApp.set('view engine', this.options.defaultEngine);
+  this.expressApp.engine(this.options.defaultEngine, this.viewEngine.render);
 
   this._configured = false;
 

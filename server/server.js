@@ -45,8 +45,7 @@ function Server(options) {
    */
   this.expressApp.set('views', this.options.viewsPath || (process.cwd() + '/app/views'));
   this.expressApp.set('view engine', this.options.defaultEngine);
-  this.expressApp.engine('js',     this.viewEngine.render);
-  this.expressApp.engine('coffee', this.viewEngine.render);
+  this.expressApp.engine(this.options.defaultEngine, this.viewEngine.render);
 
   this._configured = false;
 

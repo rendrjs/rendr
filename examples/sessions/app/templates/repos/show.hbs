@@ -1,0 +1,35 @@
+<a href="/users/{{owner.login}}">{{owner.login}}</a> / {{name}}<br>
+
+
+{{#if build.last_build_id}}
+  <br>
+  <p><a href="https://travis-ci.org/{{owner.login}}/{{name}}/builds/{{build.last_build_id}}">Latest TravisCI build</a></p>
+{{/if}}
+
+<h3>Stats</h3>
+<div class="row-fluid">
+  <div class="span6">
+    <table class="table">
+      <tr>
+        <th>Description</th>
+        <td>{{description}}</td>
+      </tr>
+      <tr>
+        <th>Language</th>
+        <td>{{language}}</td>
+      </tr>
+      <tr>
+        <th>Watchers</th>
+        <td>{{watchers_count}}</td>
+      </tr>
+      <tr>
+        <th>Forks</th>
+        <td>{{forks_count}}</td>
+      </tr>
+      <tr>
+        <th>Open Issues</th>
+        <td>{{open_issues_count}}</td>
+      </tr>
+    </table>
+  </div>
+</div>

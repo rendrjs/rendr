@@ -1,0 +1,19 @@
+<h3>Repos</h3>
+<table class="repos-table table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Watchers</th>
+      <th>Forks</th>
+    </tr>
+  </thead>
+  <tbody>
+  {{#each models}}
+    <tr>
+      <td><a href="/repos/{{full_name}}">{{name}}</a></td>
+      <td>{{watchers_count}}</td>
+      <td>{{forks_count}}</td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>

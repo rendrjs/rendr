@@ -11,6 +11,24 @@ app.use(express.logger());
 app.use(express.bodyParser());
 
 /**
+ * The `cookieParser` middleware is required for sessions.
+ */
+app.use(express.cookieParser());
+
+/**
+ * Add session support. This will populate `req.session`.
+ */
+app.use(express.session({
+  secret: 'this should be some long random string',
+
+  /**
+   * In production apps, you should probably use something like Redis or Memcached
+   * to store sessions. Look at the `connect-redis` or `connect-memcached` modules.
+   */
+  store: null
+}));
+
+/**
  * In this simple example, the DataAdapter config, which specifies host, port, etc. of the API
  * to hit, is written inline. In a real world example, you would probably move this out to a
  * config file. Also, if you want more control over the fetching of data, you can pass your own
@@ -33,24 +51,6 @@ var dataAdapterConfig = {
 var server = rendr.createServer({
   dataAdapterConfig: dataAdapterConfig
 });
-
-/**
- * The `cookieParser` middleware is required for sessions.
- */
-app.use(express.cookieParser());
-
-/**
- * Add session support. This will populate `req.session`.
- */
-app.use(express.session({
-  secret: 'this should be some long random string',
-
-  /**
-   * In production apps, you should probably use something like Redis or Memcached
-   * to store sessions. Look at the `connect-redis` or `connect-memcached` modules.
-   */
-  store: null
-}));
 
 /**
   * To mount Rendr, which owns its own Express instance for better encapsulation,

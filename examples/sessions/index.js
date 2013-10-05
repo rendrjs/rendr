@@ -74,7 +74,8 @@ server.configure(function(rendrExpressApp) {
       , session = req.session;
 
     /**
-     * Let's keep session data stored in a `data` object, so we don't send metadata like `session.cookie` to the client.
+     * Let's keep session data stored in a `data` object, so we don't send metadata
+     * like `session.cookie` to the client.
      */
     session.data = session.data || {};
 
@@ -95,6 +96,7 @@ server.configure(function(rendrExpressApp) {
   /**
    * Add a middleware that demonstrates updating session data.
    * Increment a counter for every page hit.
+   * Test it out by executing `App.get('session')` in the console of the web browser.
    */
   rendrExpressApp.use(function(req, res, next) {
     var app = req.rendrApp

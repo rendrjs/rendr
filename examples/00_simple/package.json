@@ -12,7 +12,7 @@
     "underscore": "~1.4.4",
     "async": "~0.1.22",
     "rendr-handlebars": "0.0.5",
-    "rendr": "0.5.0-alpha04"
+    "rendr": "0.5.0-alpha05"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

@@ -1,0 +1,15 @@
+# Default config
+
+server:
+  port: 3030
+
+api:
+  default:
+    host: api.github.com
+    protocol: https
+  travis-ci:
+    host: api.travis-ci.org
+    protocol: https
+
+session:
+  secret: this should be some long random string

@@ -1,0 +1,18 @@
+# Default config
+
+server:
+  port: 3030
+
+# `appData` is a hash of values that will be set on the `req.rendrApp` (middleware)
+# and `this.app` (models, views, controllers). These are available in both the
+# client and the server.
+appData:
+  someProperty: someValue
+
+api:
+  default:
+    host: api.github.com
+    protocol: https
+  travis-ci:
+    host: api.travis-ci.org
+    protocol: https

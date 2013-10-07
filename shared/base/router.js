@@ -50,13 +50,8 @@ BaseRouter.prototype._initOptions = function(options) {
 };
 
 BaseRouter.prototype.getController = function(controllerName) {
-  var controllerDir, controller;
-  controllerDir = this.options.paths.controllerDir;
-  try {
-    controller = require(controllerDir + "/" + controllerName + "_controller");
-  } catch (e) {
-    controller = undefined;
-  }
+  var controllerDir = this.options.paths.controllerDir
+    , controller = require(controllerDir + "/" + controllerName + "_controller");
   return controller;
 };
 
@@ -69,8 +64,6 @@ BaseRouter.prototype.getAction = function(route) {
   controller = this.getController(route.controller);
   if (controller) {
     action = controller[route.action];
-  } else {
-    action = undefined;
   }
   return action;
 };
@@ -108,7 +101,7 @@ BaseRouter.prototype.buildRoutes = function() {
       this.route.apply(this, route);
     }, this);
   } catch (e) {
-    throw new Error("Error building routes: " + e.message);
+    throw new Error("Error building routes: " + e.stack);
   }
   return this.routes();
 };

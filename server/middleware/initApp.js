@@ -7,7 +7,11 @@
  * We can't just access it as a global, because there are concurrent
  * requests for different users.
  */
-module.exports = function(appAttributes) {
+
+var _ = require('underscore');
+
+module.exports = function(appAttributes, options) {
+  options = options || {};
   return function(req, res, next) {
     var App = require(rendr.entryPath + '/app/app');
 
@@ -34,7 +38,17 @@ module.exports = function(appAttributes) {
       return attrs || {};
     }
 
-    var app = new App(getAppAttributes(appAttributes, req, res), appOptions);
+    var attributes = getAppAttributes(appAttributes, req, res);
+
+    _.extend(attributes, {
+      /**
+       * Pass through `apiPath` so models and collections can properly fetch from the
+       * correct path.
+       */
+      apiPath: options.apiPath
+    });
+
+    var app = new App(attributes, appOptions);
 
     /**
      * Stash the app instance on the request so can be accessed in other middleware.

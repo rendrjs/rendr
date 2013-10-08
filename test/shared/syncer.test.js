@@ -1,9 +1,9 @@
-var Backbone, should, syncer, _;
-
-syncer = require('../../shared/syncer');
-_ = require('underscore');
-Backbone = require('backbone');
-should = require('should');
+var _ = require('underscore')
+  , Backbone = require('backbone')
+  , should = require('should')
+  , syncer = require('../../shared/syncer')
+  , BaseModel = require('../../shared/base/model')
+  , App = require('../../shared/app');
 
 describe('syncer', function() {
 
@@ -149,12 +149,22 @@ describe('syncer', function() {
   });
 
   describe('formatClientUrl', function() {
+    beforeEach(function() {
+      var app = new App;
+      this.model = new BaseModel({}, {app: app});
+    });
+
     it("should support default api", function() {
-      syncer.formatClientUrl('/path/to/resource').should.eql('/api/-/path/to/resource');
+      this.model.formatClientUrl('/path/to/resource').should.eql('/api/-/path/to/resource');
     });
 
     it("should support specifying an api", function() {
-      syncer.formatClientUrl('/path/to/resource', 'api-name').should.eql('/api/api-name/-/path/to/resource');
+      this.model.formatClientUrl('/path/to/resource', 'api-name').should.eql('/api/api-name/-/path/to/resource');
+    });
+
+    it("should support custom apiPath", function() {
+      this.model.app.set('apiPath', '/foo/bar');
+      this.model.formatClientUrl('/path/to/resource').should.eql('/foo/bar/-/path/to/resource');
     });
   });
 

@@ -1,13 +1,10 @@
-var Backbone, BaseModel, syncer, _, Super;
+var _ = require('underscore')
+  , Backbone = require('backbone')
+  , syncer = require('../syncer')
+  , BaseModel = require('./model')
+  , Super = Backbone.Collection;
 
-_ = require('underscore');
-Backbone = require('backbone');
-syncer = require('../syncer');
-BaseModel = require('./model');
-
-Super = Backbone.Collection;
-
-module.exports = Super.extend({
+BaseCollection = Super.extend({
 
   model: BaseModel,
 
@@ -43,8 +40,6 @@ module.exports = Super.extend({
       _.extend(this.meta, this.options.meta);
       delete this.options.meta;
     }
-
-    Super.prototype.initialize.apply(this, arguments);
   },
 
   /**
@@ -103,14 +98,6 @@ module.exports = Super.extend({
     return Super.prototype.fetch.apply(this, arguments);
   },
 
-  lastCheckedFresh: null,
-
-  checkFresh: syncer.checkFresh,
-
-  sync: syncer.getSync(),
-
-  getUrl: syncer.getUrl,
-
   /**
    * Instance method to store the collection and its models.
    */
@@ -121,3 +108,11 @@ module.exports = Super.extend({
     this.app.fetcher.collectionStore.set(this);
   }
 });
+
+/**
+ * Mix-in the `syncer`, shared between `BaseModel` and `BaseCollection`, which
+ * encapsulates logic for fetching data from the API.
+ */
+_.extend(BaseCollection.prototype, syncer);
+
+module.exports = BaseCollection;

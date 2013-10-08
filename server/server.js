@@ -97,7 +97,9 @@ Server.prototype.configure = function(fn) {
   /**
    * Initialize the Rendr app, accessible at `req.rendrApp`.
    */
-  this.expressApp.use(middleware.initApp(this.options.appData));
+  this.expressApp.use(middleware.initApp(this.options.appData, {
+    apiPath: this.options.apiPath
+  }));
 
   /**
    * Add any custom middleware that has to access `req.rendrApp` but should run before

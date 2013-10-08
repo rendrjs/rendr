@@ -127,7 +127,7 @@ syncer.getUrl = function getUrl(url, clientPrefix, params) {
 };
 
 syncer.formatClientUrl = function(url, api) {
-  var prefix = '/api';
+  var prefix = this.app.get('apiPath') || '/api';
   if (api) {
     prefix += '/' + api;
   }

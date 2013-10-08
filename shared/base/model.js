@@ -1,12 +1,8 @@
-var _, Backbone, syncer, Super;
+var _ = require('underscore')
+  , Backbone = require('backbone')
+  , syncer = require('../syncer');
 
-_ = require('underscore');
-Backbone = require('backbone');
-syncer = require('../syncer');
-
-Super = Backbone.Model;
-
-module.exports = Super.extend({
+var BaseModel = Backbone.Model.extend({
 
   initialize: function(models, options) {
     // Capture the options as instance variable.
@@ -20,8 +16,6 @@ module.exports = Super.extend({
     }
 
     this.on('change', this.store, this);
-
-    Super.prototype.initialize.apply(this, arguments);
   },
 
   /**
@@ -35,12 +29,6 @@ module.exports = Super.extend({
     }
   },
 
-  checkFresh: syncer.checkFresh,
-
-  sync: syncer.getSync(),
-
-  getUrl: syncer.getUrl,
-
   /**
    * Instance method to store in the modelStore.
    */
@@ -48,3 +36,11 @@ module.exports = Super.extend({
     this.app.fetcher.modelStore.set(this);
   }
 });
+
+/**
+ * Mix-in the `syncer`, shared between `BaseModel` and `BaseCollection`, which
+ * encapsulates logic for fetching data from the API.
+ */
+_.extend(BaseModel.prototype, syncer);
+
+module.exports = BaseModel;

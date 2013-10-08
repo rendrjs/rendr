@@ -1,9 +1,15 @@
+/**
+ * `syncer` is a collection of instance methods that are mixed into the prototypes
+ * of `BaseModel` and `BaseCollection`. The purpose is to encapsulate shared logic
+ * for fetching data from the API.
+ */
+
 var _ = require('underscore')
   , Backbone = require('backbone')
 
-  // These are lazy-required.
+  // This is lazy-required to prevent circular dependency.
+  // TODO: Fix that shit.
   , modelUtils = null
-  , server = null
 
   // Pull out params in path, like '/users/:id'.
   , extractParamNamesRe = /:([a-z_-]+)/ig
@@ -84,10 +90,8 @@ function serverSync(method, model, options) {
 }
 
 function addApiParams(method, model, params) {
-  var ret;
-
   params = params || {};
-  ret = _.clone(params);
+  var ret = _.clone(params);
 
   /**
    * So, by default Backbone sends all of the model's
@@ -101,12 +105,9 @@ function addApiParams(method, model, params) {
   return ret;
 }
 
-syncer.getSync = function getSync() {
-  if (global.isServer) {
-    return serverSync;
-  } else {
-    return clientSync;
-  }
+syncer.sync = function sync() {
+  var syncMethod = global.isServer ? serverSync : clientSync;
+  return syncMethod.apply(this, arguments);
 };
 
 /**
@@ -120,9 +121,9 @@ syncer.getUrl = function getUrl(url, clientPrefix, params) {
   params = params || {};
   url = url || _.result(this, 'url');
   if (clientPrefix && !~url.indexOf('://')) {
-    url = syncer.formatClientUrl(url, _.result(this, 'api'));
+    url = this.formatClientUrl(url, _.result(this, 'api'));
   }
-  return syncer.interpolateParams(this, url, params);
+  return this.interpolateParams(this, url, params);
 };
 
 syncer.formatClientUrl = function(url, api) {
@@ -154,7 +155,7 @@ syncer.checkFresh = function checkFresh() {
 
     // The second argument 'false' tells 'parse()' not to modify the instance.
     data = this.parse(resp, false);
-    differs = syncer.objectsDiffer(data, this.toJSON());
+    differs = this.objectsDiffer(data, this.toJSON());
     this.trigger('checkFresh:end', differs);
     if (differs) {
       if (modelUtils.isModel(this)) {
@@ -189,7 +190,7 @@ syncer.objectsDiffer = function objectsDiffer(data1, data2) {
 
     // If attribute is an object recurse
     if (_.isObject(value1) && _.isObject(value2)) {
-      changed = syncer.objectsDiffer(value1, value2);
+      changed = this.objectsDiffer(value1, value2);
     // Test for equality
     } else if (!_.isEqual(value1, value2)) {
       changed = true;

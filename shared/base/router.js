@@ -61,9 +61,11 @@ BaseRouter.prototype.getController = function(controllerName) {
  */
 BaseRouter.prototype.getAction = function(route) {
   var controller, action;
-  controller = this.getController(route.controller);
-  if (controller) {
-    action = controller[route.action];
+  if (route.controller) {
+    controller = this.getController(route.controller);
+    if (controller) {
+      action = controller[route.action];
+    }
   }
   return action;
 };

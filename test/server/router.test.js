@@ -79,7 +79,17 @@ describe("server/router", function() {
           role: 'admin'
         }
       ]);
+    });
 
+    it("should support `redirect` option", function() {
+      var route = this.router.route("/test", {
+        redirect: '/foo'
+      });
+      shouldMatchRoute(route, [
+        '/test', {
+          redirect: '/foo'
+        }
+      ]);
     });
   });
 

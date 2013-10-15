@@ -182,12 +182,15 @@ Fetcher.prototype.fetchFromApi = function(spec, callback) {
     success: function(model, body) {
       callback(null, model);
     },
-    error: function(model, body, options) {
-      var bodyOutput, err;
+    error: function(model, resp, options) {
+      var body, respOutput, err;
 
-      bodyOutput = typeof body === 'string' ? body.slice(0, 150) : JSON.stringify(body);
-      err = new Error("ERROR fetching model '" + modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + bodyOutput);
-      err.status = body.status;
+      body = resp.body;
+      resp.body = typeof body === 'string' ? body.slice(0, 150) : body;
+      respOutput = JSON.stringify(resp);
+      err = new Error("ERROR fetching model '" + modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
+      err.status = resp.status;
+      err.body = body;
       callback(err);
     }
   });

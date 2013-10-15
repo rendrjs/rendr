@@ -1,38 +1,3 @@
-/*
-fetchSpec looks like:
-
-  {
-     listing: {model: 'Listing', id: 3}
-  }
-
-or
-
-  {
-     listing: {model: 'Listing', params: {id: 3}},
-     reviews: {collection: 'Reviews', params: {listingId: 3, offset: 0, per_page: 10}}
-  }
-
-listing = new Listing
-listing.fetch(params)
-// /listings/3
-
-reviews = new Reviews
-reviews.fetch(params)
-
-Listing.prototype.url
-Listing.prototype.fetch.call(context)
-
-// /reviews?listingId=3&offset=0&per_page=10
-// /listings/3/reviews?offset=0&per_page=10
-
-and returns an identifying object:
-
-  {
-     listing: {model: 'Listing', id: 3},
-     reviews: {collection: 'Reviews', ids: [1,3,5,8]}
-  }
-*/
-
 var Backbone, CollectionStore, ModelStore, async, modelUtils, _;
 
 _ = require('underscore');

@@ -28,12 +28,31 @@ if (global.isServer) {
 var syncer = module.exports;
 
 function clientSync(method, model, options) {
-  var data;
+  var data, error;
   data = _.clone(options.data);
   options.url = this.getUrl(options.url, true, data);
   data = addApiParams(method, model, data);
   options.data = data;
   options.emulateJSON = true;
+  error = options.error;
+  if (error) {
+    options.error = function(xhr) {
+      var body, contentType, resp;
+      body = xhr.responseText;
+      contentType = xhr.getResponseHeader('content-type');
+      if (contentType.indexOf('application/json') !== -1) {
+        try {
+          body = JSON.parse(body);
+        } catch (e) {
+        }
+      }
+      resp = {
+        body: body,
+        status: xhr.status
+      };
+      error(resp);
+    }
+  };
   return Backbone.sync(method, model, options);
 }
 
@@ -66,19 +85,17 @@ function serverSync(method, model, options) {
   }
 
   req.dataAdapter.request(req, api, function(err, response, body) {
+    var resp;
     if (err) {
-      if (!_.isObject(body)) {
-        body = {
-          body: body
-        };
-      }
-
-      // Pass through the statusCode, so lower-level code can handle i.e. 401 properly.
-      body.status = err.status;
+      resp = {
+        body: body,
+        // Pass through the statusCode, so lower-level code can handle i.e. 401 properly.
+        status: err.status
+      };
 
       if (options.error) {
         // This `error` has signature of $.ajax, not Backbone.sync.
-        options.error(body);
+        options.error(resp);
       } else {
         throw err;
       }

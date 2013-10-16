@@ -127,9 +127,11 @@ BaseRouter.prototype.route = function(pattern) {
   definitions = _.toArray(arguments).slice(1);
   route = this.parseDefinitions(definitions);
   action = this.getAction(route);
-  if (pattern.slice(0, 1) !== '/') {
+  
+  if (!(pattern instanceof RegExp) && pattern.slice(0, 1) !== '/') {
     pattern = "/" + pattern;
   }
+
   handler = this.getHandler(action, pattern, route);
   routeObj = [pattern, route, handler];
   this._routes.push(routeObj);

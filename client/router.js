@@ -83,13 +83,13 @@ ClientRouter.prototype.postInitialize = noop;
 ClientRouter.prototype.addBackboneRoute = function(routeObj) {
   var handler, name, pattern, route;
 
-  pattern = routeObj[0];
+  // Backbone.History wants no leading slash on strings.  
+  pattern = (routeObj[0] instanceof RegExp) ? routeObj[0] : routeObj[0].slice(1);
   route = routeObj[1];
   handler = routeObj[2];
   name = route.controller + ":" + route.action;
 
-  // Backbone.History wants no leading slash.
-  this._router.route(pattern.slice(1), name, handler);
+  this._router.route(pattern, name, handler);
 };
 
 ClientRouter.prototype.getHandler = function(action, pattern, route) {
@@ -148,10 +148,12 @@ ClientRouter.prototype.navigate = function() {
 ClientRouter.prototype.getParamsHash = function(pattern, paramsArray, search) {
   var paramNames, params, query;
 
-  paramNames = (pattern.match(extractParamNamesRe) || []).map(function(name) {
-    return name.slice(1);
-  });
-  params = paramNames.reduce(function(memo, name, i) {
+  if (!(pattern instanceof RegExp)) {
+    paramNames = (pattern.match(extractParamNamesRe) || []).map(function(name) {
+      return name.slice(1);
+    });
+  }
+  params = (paramNames || []).reduce(function(memo, name, i) {
     memo[name] = decodeURIComponent(paramsArray[i]);
     return memo;
   }, {});

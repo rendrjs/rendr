@@ -13,6 +13,26 @@ module.exports = BaseRouter;
  * Base router class shared betwen ClientRouter and ServerRouter.
  */
 function BaseRouter(options) {
+  
+  if (!this._initOptions){
+    var IEFunctions =this.__proto__;
+    this.options =null;
+    this._routes =null;
+    this.reverseRoutes =false;
+    this.initialize =IEFunctions.initialize;
+    this._initOptions =IEFunctions._initOptions;
+    this.getController =IEFunctions.getController;
+    this.getAction =IEFunctions.getAction;
+    this.getRedirect =IEFunctions.getRedirect;
+    this.buildRoutes =IEFunctions.buildRoutes;
+    this.routes= IEFunctions.routes;
+    this.route =IEFunctions.route;
+    this.parseDefinitions =IEFunctions.parseDefinitions;
+    this.defaultHandlerParams =IEFunctions.defaultHandlerParams;
+    this.getHandler =IEFunctions.getHandler;
+    _.extend(this, Backbone.Events);
+  }
+  
   this.route = this.route.bind(this);
   this._routes = [];
   this._initOptions(options);

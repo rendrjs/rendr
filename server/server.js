@@ -43,7 +43,7 @@ function Server(options) {
    * Tell Express to use our ViewEngine to handle .js, .coffee files.
    * This can always be overridden in your app.
    */
-  this.expressApp.set('views', this.options.viewsPath || (process.cwd() + '/app/views'));
+  this.expressApp.set('views', this.options.viewsPath || (rendr.entryPath + '/app/views'));
   this.expressApp.set('view engine', this.options.defaultEngine);
   this.expressApp.engine(this.options.defaultEngine, this.viewEngine.render);
 

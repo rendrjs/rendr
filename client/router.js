@@ -24,6 +24,31 @@ function noop() {}
 module.exports = ClientRouter;
 
 function ClientRouter(options) {
+  
+  if(!this.start){
+    var IEFunctions = this.__proto__;
+    this.currentFragment = null;
+    this.previousFragment = null;
+    this.currentRoute = null;
+    this._router = null;
+    this.reverseRoutes = null;
+    this.initialize = IEFunctions.initialize;
+    this.postInitialize = IEFunctions.postInitialize;
+    this.addBackboneRoute = IEFunctions.addBackboneRoute;
+    this.getHandler = IEFunctions.getHandler;
+    this.getMainView = IEFunctions.getMainView;
+    this.navigate = IEFunctions.navigate;
+    this.getParamsHash = IEFunctions.getParamsHash;
+    this.matchingRoute = IEFunctions.matchingRoute;
+    this.matchesAnyRoute = IEFunctions.matchesAnyRoute;
+    this.redirectTo = IEFunctions.redirectTo;
+    this.getRenderCallback = IEFunctions.getRenderCallback;
+    this.renderView = IEFunctions.renderView;
+    this.start = IEFunctions.start;
+    this.trackAction = IEFunctions.trackAction;
+    this.getView = IEFunctions.getView;
+  }
+  
   this._router = new Backbone.Router();
   BaseRouter.apply(this, arguments);
 }

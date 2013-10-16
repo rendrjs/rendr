@@ -49,6 +49,18 @@ describe("server/router", function() {
       ]);
     });
 
+    it("should support RegExp route definitions", function() {
+      var route
+        , routeRegex = /reg[ex]{2}ro(u|t)e?/;
+      route = this.router.route(routeRegex, "test#index");
+      shouldMatchRoute(route, [
+        routeRegex, {
+          controller: 'test',
+          action: 'index'
+        }
+      ]);
+    });
+
     it("should support object as second argument", function() {
       var route;
 

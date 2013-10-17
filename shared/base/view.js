@@ -9,6 +9,11 @@ modelUtils = require('../modelUtils');
 function noop() {}
 
 module.exports = BaseView = Backbone.View.extend({
+  constructor: function (options) {
+    this.options = options || {};
+    Backbone.View.apply(this, arguments);
+  },
+
   initialize: function(options) {
     var obj;
 

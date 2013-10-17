@@ -362,6 +362,36 @@ describe('fetcher', function() {
       });
     });
 
+    it("should be able to fetch a model from cache with other attributes", function(done) {
+      var fetchSpec;
+      var listingAttrs = {
+        id: 'myId',
+        name: 'New Name'
+      };
+      listingWithName = new Listing(listingAttrs);
+      fetcher.modelStore.set(listingWithName);
+
+      fetchSpec = {
+        model: {
+          model: 'Listing',
+          params: {
+            name: 'New Name'
+          }
+        }
+      };
+      fetcher.pendingFetches.should.eql(0);
+      fetcher.fetch(fetchSpec, {readFromCache: true}, function(err, results) {
+        fetcher.pendingFetches.should.eql(0);
+        if (err) return done(err);
+        results.model.should.be.an.instanceOf(Listing);
+        results.model.toJSON().should.eql(listingAttrs);
+        done();
+      });
+      fetcher.pendingFetches.should.eql(0);
+
+    });
+
+
     it("should be able to re-fetch if already exists but is missing key", function(done) {
       // First, fetch the collection, which has smaller versions of the models.
       var fetchSpec;

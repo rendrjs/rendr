@@ -9,12 +9,13 @@ function MemoryStore(options) {
 MemoryStore.prototype.cacheVersion = '';
 
 MemoryStore.prototype.get = function(key) {
-  var data;
-
   if (!key) {
     return;
   }
-  data = this._get(key);
+  return this.validateExpiration(key, this._get(key));
+};
+
+MemoryStore.prototype.validateExpiration = function(key, data){
   if (data && data.expires && Date.now() > data.expires) {
     if (typeof console !== "undefined") {
       console.log("MemoryStore: Expiring key \"" + key + "\".");

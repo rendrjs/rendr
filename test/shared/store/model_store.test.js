@@ -93,4 +93,36 @@ describe('ModelStore', function() {
     result = this.store.get('my_model', 1);
     result.should.eql(finalModelAttrs);
   });
+  describe('find', function(){
+    function MySecondModel() {
+      MySecondModel.super_.apply(this, arguments);
+    }
+    util.inherits(MySecondModel, BaseModel);
+
+    modelUtils.addClassMapping(modelUtils.modelName(MySecondModel), MySecondModel);
+
+    it('should find a model on custom attributes', function(){
+      var model, modelAttrs, result;
+      modelAttrs = {
+        foo: 'bar',
+        id: 1
+      };
+      model = new MyModel(modelAttrs);
+      this.store.set(model);
+      result = this.store.find('my_model', {foo: 'bar'});
+      result.should.eql(modelAttrs);
+    });
+
+    it('should skip different models, even when they match the query', function(){
+      var model, modelAttrs, result;
+      modelAttrs = {
+        foo: 'bar',
+        id: 1
+      };
+      model = new MySecondModel(modelAttrs);
+      this.store.set(model);
+      result = this.store.find('my_model', {foo: 'bar'});
+      should.strictEqual(undefined, result);
+    });
+  });
 });

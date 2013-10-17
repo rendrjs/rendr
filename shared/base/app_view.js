@@ -1,9 +1,7 @@
-var BaseView, hasPushState, _;
+var BaseView, _;
 
 _ = require('underscore');
 BaseView = require('./view');
-
-hasPushState = typeof window !== "undefined" && window.history.pushState != null;
 
 module.exports = BaseView.extend({
   el: 'body',
@@ -22,6 +20,8 @@ module.exports = BaseView.extend({
     this._bindInterceptClick();
   },
 
+  hasPushState: typeof window !== "undefined" && window.history.pushState != null,
+
   render: function() {},
 
   setCurrentView: function(view) {
@@ -39,18 +39,19 @@ module.exports = BaseView.extend({
      * full URL, so we use jQuery instead of just e.currentTarget.href
      */
     var href = $(e.currentTarget).attr('href');
-    if (this.shouldInterceptClick(href, e.currentTarget)) {
+    if (this.shouldInterceptClick(href, e.currentTarget, e)) {
       e.preventDefault();
       this.app.router.redirectTo(href);
     }
   },
 
-  shouldInterceptClick: function(href, el) {
+  shouldInterceptClick: function(href, el, e) {
     var hashParts, isHashClick;
 
-    if (!(href && hasPushState)) {
+    if (!(href && this.hasPushState) || e.metaKey || e.shiftKey) {
       return false;
     }
+
     hashParts = href.split('#');
     isHashClick = hashParts.length > 1 && hashParts[0] === window.location.pathname;
     return !isHashClick && href.slice(0, 1) === '/' && href.slice(0, 2) !== '//';

@@ -162,7 +162,7 @@ describe("server/router", function() {
 
       this.router.buildRoutes();
       routes = this.router.routes();
-      routes.length.should.eql(3);
+      routes.length.should.eql(4);
       shouldMatchRoute(routes[0], [
         '/users/login', {
           controller: 'users',
@@ -179,6 +179,12 @@ describe("server/router", function() {
         '/test', {
           controller: 'test',
           action: 'index'
+        }
+      ]);
+      shouldMatchRoute(routes[3], [
+         /^\/regexp\/(foo|bar)/, {
+          controller: 'test',
+          action: 'regexp'
         }
       ]);
     });
@@ -234,6 +240,39 @@ describe("server/router", function() {
           action: 'login'
         }
       ]);
+    });
+
+    it("should match regexp routes", function() {
+      var route;
+
+      this.router.route(/^\/regexp\/(foo|bar)/, "test#regexp");
+
+      route = this.router.match('/regexp/food');
+      shouldMatchRoute(route, [
+        /^\/regexp\/(foo|bar)/, {
+          controller: 'test',
+          action: 'regexp'
+        }
+      ]);
+
+      route = this.router.match('/regexp/bart');
+      shouldMatchRoute(route, [
+        /^\/regexp\/(foo|bar)/, {
+          controller: 'test',
+          action: 'regexp'
+        }
+      ]);
+
+      // No leading slash.
+      route = this.router.match('regexp/foodie');
+      shouldMatchRoute(route, [
+        /^\/regexp\/(foo|bar)/, {
+          controller: 'test',
+          action: 'regexp'
+        }
+      ]);
+
+      should.not.exist(this.router.match('/regexp/b'));
     });
   });
 

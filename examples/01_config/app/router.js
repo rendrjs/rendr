@@ -4,7 +4,11 @@ var Router = module.exports = function Router(options) {
   BaseClientRouter.call(this, options);
 };
 
-Router.prototype.__proto__ = BaseClientRouter.prototype;
+/**
+ * Set up inheritance.
+ */
+Router.prototype = Object.create(BaseClientRouter.prototype);
+Router.prototype.constructor = BaseClientRouter;
 
 Router.prototype.postInitialize = function() {
   this.on('action:start', this.trackImpression, this);

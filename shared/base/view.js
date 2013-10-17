@@ -9,11 +9,6 @@ modelUtils = require('../modelUtils');
 function noop() {}
 
 module.exports = BaseView = Backbone.View.extend({
-  constructor: function (options) {
-    this.options = options || {};
-    Backbone.View.apply(this, arguments);
-  },
-
   initialize: function(options) {
     var obj;
 
@@ -39,7 +34,7 @@ module.exports = BaseView = Backbone.View.extend({
     /**
      * Populate `this.options` and alias as `options`.
      */
-    options = _.extend(this.options, options || {});
+    this.options = options = _.extend({}, _.result(this, 'options'), options);
 
     if (options.app != null) {
       this.app = this.options.app;

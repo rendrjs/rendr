@@ -54,11 +54,47 @@ ModelStore.prototype.get = function(modelName, id, returnModelInstance) {
   }
 };
 
+ModelStore.prototype.find = function(modelName, params){
+  var prefix, foundCachedObject, _this, data, foundCachedObjectKey;
+  prefix = this._formatKey(keyPrefix(modelName));
+  _this = this;
+  // find the cached object that has attributes which are a subset of the params
+  foundCachedObject = _.find(this.cache, function(cacheObject, key){
+    // since we're iterating over the entire cache, prevent searching different models
+    if (!startsWith(key, prefix))
+      return false;
+    // ensure the object is still within the cache ttl
+    data = Super.prototype.validateExpiration.call(_this, key, cacheObject);
+    // validate subset
+    if (data && isObjectSubset(params, data)){
+      // we store the key outside the iterator because _.find only returns the value, not the key
+      foundCachedObjectKey = key;
+      return true;
+    }
+    return false;
+  });
+  return foundCachedObject && Super.prototype.validateExpiration.call(this, foundCachedObjectKey, foundCachedObject);
+}
+
 ModelStore.prototype._formatKey = function(key) {
   return Super.prototype._formatKey.call(this, "_ms:" + key);
 };
 
+function startsWith(string, prefix){
+  return string.slice(0, prefix.length) == prefix;
+}
+
+function isObjectSubset(potentialSubset, objectToTest){
+  // check all the keys of the subset, and sure their values are the same in the objectToTest
+  return _.all(potentialSubset, function(value, key){
+    return objectToTest[key] == value;
+  });
+}
+
+function keyPrefix(modelName){
+  return modelUtils.underscorize(modelName);
+}
+
 function getModelStoreKey(modelName, id) {
-  var underscored = modelUtils.underscorize(modelName);
-  return underscored + ":" + id;
+  return keyPrefix(modelName) + ":" + id;
 }

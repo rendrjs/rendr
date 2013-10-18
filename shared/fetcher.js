@@ -101,7 +101,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
 
   _.each(fetchSpecs, function(spec, name) {
     batchedRequests[name] = function(cb) {
-      var collectionData, idAttribute, model, modelData, modelOptions;
+      var collectionData, model, modelData, modelOptions;
 
       if (!options.readFromCache) {
         this.fetchFromApi(spec, cb);
@@ -111,8 +111,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
 
         // First, see if we have stored the model or collection.
         if (spec.model != null) {
-          idAttribute = modelUtils.modelIdAttribute(spec.model);
-          modelData = this.modelStore.get(spec.model, spec.params[idAttribute]);
+          modelData = this._retrieveModel(spec);
         } else if (spec.collection != null) {
           collectionData = this.collectionStore.get(spec.collection, spec.params);
           if (collectionData) {
@@ -148,6 +147,21 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
     }.bind(this);
   }, this);
   async.parallel(batchedRequests, callback);
+};
+
+Fetcher.prototype._retrieveModel = function(spec) {
+  var idAttribute, modelData;
+  // Attempt to fetch from the modelStore based on the idAttribute
+  idAttribute = modelUtils.modelIdAttribute(spec.model);
+  modelData = this.modelStore.get(spec.model, spec.params[idAttribute]);
+  if (modelData)
+    return modelData;
+
+  // if there are no other keys than the id in the params, return null;
+  if (_.isEmpty(_.omit(spec.params, idAttribute)))
+    return null;
+  // Attempt to fetch the model in the modelStore based on the other params
+  return this.modelStore.find(spec.model, spec.params);
 };
 
 Fetcher.prototype.needsFetch = function(modelData, spec) {

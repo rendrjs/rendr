@@ -1,9 +1,9 @@
 var App, AppView, should, clientTestHelper;
 
-App = require('../../../shared/app');
-AppView = require('../../../shared/base/app_view');
+App = require('../../shared/app');
+AppView = require('../../client/app_view');
 should = require('should');
-clientTestHelper = require('../../helpers/client_test');
+clientTestHelper = require('../helpers/client_test');
 
 describe('AppView', function() {
   before(clientTestHelper.before);

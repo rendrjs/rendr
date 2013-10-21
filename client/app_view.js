@@ -1,7 +1,7 @@
 var BaseView, _;
 
 _ = require('underscore');
-BaseView = require('./view');
+BaseView = require('../shared/base/view');
 
 module.exports = BaseView.extend({
   el: 'body',

@@ -1,4 +1,4 @@
-var BaseAppView = require('rendr/shared/base/app_view');
+var BaseAppView = require('rendr/client/app_view');
 
 var $body = $('body');
 

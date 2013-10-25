@@ -5,14 +5,11 @@
 Rendr is a small library from [Airbnb](https://www.airbnb.com) that allows you to run your [Backbone.js](http://backbonejs.org/) apps seamlessly on both the client and the server. Allow your web server to serve fully-formed HTML pages to any deep link of your app, while preserving the snappy feel of a traditional Backbone.js client-side MVC app. 
 
 
-## Reporting problems and getting help
+## Getting Started
 
-Please use the [issue tracker][issues] to report bugs. For support with using
-rendr, try asking in the [Google group][ggroup] or join #rendr on
-irc.freenode.org.
+To see how to use Rendr to build a simple web app, check out the [examples](https://github.com/airbnb/rendr/tree/master/examples) directory for a number of different ways to set up a Rendr app.
 
-[ggroup]: https://groups.google.com/forum/#!forum/rendrjs
-[issues]: https://github.com/airbnb/rendr/issues
+Check out the [blog post](http://nerds.airbnb.com/weve-launched-our-first-nodejs-app-to-product) for a more thorough introduction to Rendr.
 
 ## The Premise
 
@@ -32,12 +29,6 @@ Some specific design goals:
 * Hide complexity in library
 * No server-side DOM
 * Simple Express middleware
-
-## Getting Started
-
-To see how to use Rendr to build a simple web app, check out the [examples](https://github.com/airbnb/rendr/tree/master/examples) directory for a number of different ways to set up a Rendr app.
-
-Check out the [blog post](http://nerds.airbnb.com/weve-launched-our-first-nodejs-app-to-product) for a more thorough introduction to Rendr.
 
 ## What's Included
 

@@ -1,12 +1,8 @@
+[![travis-ci status](https://secure.travis-ci.org/airbnb/rendr.png)](http://travis-ci.org/#!/airbnb/rendr/builds)
+
 <img src="http://cl.ly/image/272q3f1u313b/Rendr-logotype.png" width="395" height="100">
 
-Rendr is a small library from [Airbnb](https://www.airbnb.com) that allows you to run your [Backbone.js](http://backbonejs.org/) apps seamlessly on both the client and the server. Allow your web server to serve fully-formed HTML pages to any deep link of your app, while preserving the snappy feel of a traditional Backbone.js client-side MVC app.
-
-Check out the [blog post](http://nerds.airbnb.com/weve-launched-our-first-nodejs-app-to-product) for a more thorough introduction to Rendr.
-
-To see how to use Rendr to build a simple web app, check out [airbnb/rendr-app-template](https://github.com/airbnb/rendr-app-template).
-
-Build status: [![travis-ci status](https://secure.travis-ci.org/airbnb/rendr.png)](http://travis-ci.org/#!/airbnb/rendr/builds)
+Rendr is a small library from [Airbnb](https://www.airbnb.com) that allows you to run your [Backbone.js](http://backbonejs.org/) apps seamlessly on both the client and the server. Allow your web server to serve fully-formed HTML pages to any deep link of your app, while preserving the snappy feel of a traditional Backbone.js client-side MVC app. 
 
 
 ## Reporting problems and getting help
@@ -36,6 +32,12 @@ Some specific design goals:
 * Hide complexity in library
 * No server-side DOM
 * Simple Express middleware
+
+## Getting Started
+
+To see how to use Rendr to build a simple web app, check out the [examples](https://github.com/airbnb/rendr/tree/master/examples) directory for a number of different ways to set up a Rendr app.
+
+Check out the [blog post](http://nerds.airbnb.com/weve-launched-our-first-nodejs-app-to-product) for a more thorough introduction to Rendr.
 
 ## What's Included
 

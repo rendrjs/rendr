@@ -1,4 +1,5 @@
 [![travis-ci status](https://secure.travis-ci.org/airbnb/rendr.png)](http://travis-ci.org/#!/airbnb/rendr/builds)
+[![Dependency Status](https://david-dm.org/alanshaw/david.png)](https://david-dm.org/airbnb/rendr)
 
 <img src="http://cl.ly/image/272q3f1u313b/Rendr-logotype.png" width="395" height="100">
 

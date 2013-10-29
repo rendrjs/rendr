@@ -311,6 +311,31 @@ describe("server/router", function() {
       this.req = { route: expressRoute, params: params, rendrApp: rendrApp };
     });
 
+    it("should return a middleware function that calls the action with the correct context", function () {
+      var rendrApp = this.req.rendrApp,
+          rendrRoute = { controller: 'users', action: 'show' },
+          res = { render: sinon.spy(), redirect: sinon.spy() },
+          handler;
+
+        handler = this.router.getHandler(function (params, callback) {
+          params.should.eql({ id: 1 });
+          this.currentRoute.should.equal(rendrRoute);
+          this.app.should.equal(rendrApp);
+          this.redirectTo.should.have.type('function');
+          callback(null, 'template/path', { some: 'data' });
+        }, this.pattern, rendrRoute);
+
+        handler(this.req, res);
+
+        res.render.calledOnce.should.be.ok;
+        res.render.firstCall.args[0].should.equal('template/path');
+        res.render.firstCall.args[1].should.eql({
+          locals: { some: 'data' },
+          app: this.req.rendrApp,
+          req: this.req
+        });
+    });
+
     describe('redirectTo', function () {
       it("should redirect to another page", function () {
         var rendrApp = this.req.rendrApp,

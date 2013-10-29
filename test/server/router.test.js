@@ -1,11 +1,12 @@
 /*global describe, it, beforeEach */
 
-var Router, config, should, express, _;
+var Router, config, should, express, _, sinon;
 
 should = require('should');
 Router = require('../../server/router');
 express = require('express');
 _ = require('underscore');
+sinon = require('sinon');
 
 config = {
   paths: {
@@ -293,6 +294,56 @@ describe("server/router", function() {
 
       this.router.getParams(this.req).should.eql({
         foo: '[removed]alert&#40;"foo"&#41;[removed]'
+      });
+    });
+  });
+
+  describe("getHandler", function () {
+    beforeEach(function () {
+      var rendrApp = {},
+          expressRoute = {
+            keys: [ { name: 'id' } ]
+          }
+          params = { id: 1 };
+
+      this.router = new Router(config);
+      this.pattern = '/users/:id';
+      this.req = { route: expressRoute, params: params, rendrApp: rendrApp };
+    });
+
+    describe('redirectTo', function () {
+      it("should redirect to another page", function () {
+        var rendrApp = this.req.rendrApp,
+            rendrRoute = { controller: 'users', action: 'show' },
+            res = { redirect: sinon.spy() },
+            handler;
+
+          handler = this.router.getHandler(function (params, callback) {
+            this.redirectTo('/some_uri')
+          }, this.pattern, rendrRoute);
+
+          handler(this.req, res);
+
+          res.redirect.calledOnce.should.be.ok;
+          res.redirect.firstCall.args.should.eql(['/some_uri']);
+          res.redirect.firstCall.thisValue.should.equal(res);
+      });
+
+      it("should redirect to another page using a specific http status code", function () {
+        var rendrApp = this.req.rendrApp,
+            rendrRoute = { controller: 'users', action: 'show' },
+            res = { redirect: sinon.spy() },
+            handler;
+
+          handler = this.router.getHandler(function (params, callback) {
+            this.redirectTo(301, '/some_uri');
+          }, this.pattern, rendrRoute);
+
+          handler(this.req, res);
+
+          res.redirect.calledOnce.should.be.ok;
+          res.redirect.firstCall.args.should.eql([301, '/some_uri']);
+          res.redirect.firstCall.thisValue.should.equal(res);
       });
     });
   });

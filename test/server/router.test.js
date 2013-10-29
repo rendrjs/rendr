@@ -359,7 +359,7 @@ describe("server/router", function() {
             handler;
 
           handler = this.router.getHandler(function () {
-            this.redirectTo(301, '/some_uri');
+            this.redirectTo('/some_uri', {status: 301});
           }, this.pattern, rendrRoute);
 
           handler(this.req, res);

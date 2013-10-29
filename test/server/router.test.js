@@ -303,7 +303,7 @@ describe("server/router", function() {
       var rendrApp = {},
           expressRoute = {
             keys: [ { name: 'id' } ]
-          }
+          },
           params = { id: 1 };
 
       this.router = new Router(config);
@@ -338,13 +338,12 @@ describe("server/router", function() {
 
     describe('redirectTo', function () {
       it("should redirect to another page", function () {
-        var rendrApp = this.req.rendrApp,
-            rendrRoute = { controller: 'users', action: 'show' },
+        var rendrRoute = { controller: 'users', action: 'show' },
             res = { redirect: sinon.spy() },
             handler;
 
-          handler = this.router.getHandler(function (params, callback) {
-            this.redirectTo('/some_uri')
+          handler = this.router.getHandler(function () {
+            this.redirectTo('/some_uri');
           }, this.pattern, rendrRoute);
 
           handler(this.req, res);
@@ -355,12 +354,11 @@ describe("server/router", function() {
       });
 
       it("should redirect to another page using a specific http status code", function () {
-        var rendrApp = this.req.rendrApp,
-            rendrRoute = { controller: 'users', action: 'show' },
+        var rendrRoute = { controller: 'users', action: 'show' },
             res = { redirect: sinon.spy() },
             handler;
 
-          handler = this.router.getHandler(function (params, callback) {
+          handler = this.router.getHandler(function () {
             this.redirectTo(301, '/some_uri');
           }, this.pattern, rendrRoute);
 

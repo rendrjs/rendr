@@ -69,7 +69,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
     };
 
     action.call(context, params, function(err, viewPath, locals) {
-      if (err) return router.handleErr(err, req, res);
+      if (err) return router.handleErr(err, req, next);
 
       var defaults = router.defaultHandlerParams(viewPath, locals, route);
       viewPath = defaults[0], locals = defaults[1];
@@ -81,7 +81,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
       };
 
       res.render(viewPath, viewData, function(err, html) {
-        if (err) return router.handleErr(err, req, res);
+        if (err) return router.handleErr(err, req, next);
         res.set(router.getHeadersForRoute(route));
         res.type('html').end(html);
       });
@@ -100,12 +100,9 @@ ServerRouter.prototype.addExpressRoute = function(routeObj) {
  * Handle an error that happens while executing an action.
  * Could happen during the controller action, view rendering, etc.
  */
-ServerRouter.prototype.handleErr = function(err, req, res) {
+ServerRouter.prototype.handleErr = function(err, req, next) {
   this.stashError(req, err);
-
-  var errorHandler = this.options.errorHandler;
-
-  errorHandler(err, req, res);
+  next(err);
 };
 
 ServerRouter.prototype.getHeadersForRoute = function(definition) {

@@ -1,11 +1,12 @@
 /*global describe, it, beforeEach */
 
-var Router, config, should, express, _;
+var Router, config, should, express, _, sinon;
 
 should = require('should');
 Router = require('../../server/router');
 express = require('express');
 _ = require('underscore');
+sinon = require('sinon');
 
 config = {
   paths: {
@@ -344,6 +345,79 @@ describe("server/router", function() {
 
       this.router.getParams(this.req).should.eql({
         foo: '[removed]alert&#40;"foo"&#41;[removed]'
+      });
+    });
+  });
+
+  describe("getHandler", function () {
+    beforeEach(function () {
+      var rendrApp = {},
+          expressRoute = {
+            keys: [ { name: 'id' } ]
+          },
+          params = { id: 1 };
+
+      this.router = new Router(config);
+      this.pattern = '/users/:id';
+      this.req = { route: expressRoute, params: params, rendrApp: rendrApp };
+    });
+
+    it("should return a middleware function that calls the action with the correct context", function () {
+      var rendrApp = this.req.rendrApp,
+          rendrRoute = { controller: 'users', action: 'show' },
+          res = { render: sinon.spy(), redirect: sinon.spy() },
+          handler;
+
+        handler = this.router.getHandler(function (params, callback) {
+          params.should.eql({ id: 1 });
+          this.currentRoute.should.equal(rendrRoute);
+          this.app.should.equal(rendrApp);
+          this.redirectTo.should.have.type('function');
+          callback(null, 'template/path', { some: 'data' });
+        }, this.pattern, rendrRoute);
+
+        handler(this.req, res);
+
+        res.render.calledOnce.should.be.ok;
+        res.render.firstCall.args[0].should.equal('template/path');
+        res.render.firstCall.args[1].should.eql({
+          locals: { some: 'data' },
+          app: this.req.rendrApp,
+          req: this.req
+        });
+    });
+
+    describe('redirectTo', function () {
+      it("should redirect to another page", function () {
+        var rendrRoute = { controller: 'users', action: 'show' },
+            res = { redirect: sinon.spy() },
+            handler;
+
+          handler = this.router.getHandler(function () {
+            this.redirectTo('/some_uri');
+          }, this.pattern, rendrRoute);
+
+          handler(this.req, res);
+
+          res.redirect.calledOnce.should.be.ok;
+          res.redirect.firstCall.args.should.eql(['/some_uri']);
+          res.redirect.firstCall.thisValue.should.equal(res);
+      });
+
+      it("should redirect to another page using a specific http status code", function () {
+        var rendrRoute = { controller: 'users', action: 'show' },
+            res = { redirect: sinon.spy() },
+            handler;
+
+          handler = this.router.getHandler(function () {
+            this.redirectTo('/some_uri', {status: 301});
+          }, this.pattern, rendrRoute);
+
+          handler(this.req, res);
+
+          res.redirect.calledOnce.should.be.ok;
+          res.redirect.firstCall.args.should.eql([301, '/some_uri']);
+          res.redirect.firstCall.thisValue.should.equal(res);
       });
     });
   });

@@ -63,8 +63,13 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
     context = {
       currentRoute: route,
       app: app,
-      redirectTo: function(url) {
-        res.redirect(url);
+      redirectTo: function(uri, options) {
+        if (options !== undefined && options.status) {
+          res.redirect(options.status, uri);
+        }
+        else {
+          res.redirect(uri);
+        }
       }
     };
 

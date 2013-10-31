@@ -26,7 +26,6 @@ function BaseRouter(options) {
  *     - entryPath (required)
  *     - routes (optional)
  *     - controllerDir (optional)
- *   - stashError: optional function to notify server of error
  */
 BaseRouter.prototype.options = null;
 

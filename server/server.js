@@ -15,7 +15,6 @@ var defaultOptions = {
   viewEngine: null,
   errorHandler: null,
   notFoundHandler: null,
-  stashError: null,
   apiPath: '/api',
   appData: {},
   paths: {},

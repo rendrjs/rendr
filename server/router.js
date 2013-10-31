@@ -98,7 +98,7 @@ ServerRouter.prototype.addExpressRoute = function(routeObj) {
   var path = routeObj[0];
 
   this.routesByPath[path] = routeObj;
-  this._expressRouter.route('get', path, []);
+  this._expressRouter.route('all', path, []);
 };
 
 ServerRouter.prototype.getHeadersForRoute = function(definition) {
@@ -126,6 +126,6 @@ ServerRouter.prototype.match = function(pathToMatch) {
     pathToMatch = '/' + pathToMatch;
   }
 
-  matchedRoute = this._expressRouter.match('get', pathToMatch);
+  matchedRoute = this._expressRouter.match('all', pathToMatch);
   return matchedRoute ? this.routesByPath[matchedRoute.path] : null;
 };

@@ -29,7 +29,7 @@ function Server(options) {
 
   this.expressApp = express();
 
-  this.dataAdapter = this.options.dataAdapter || new RestAdapter(this.options.dataAdapterConfig);;
+  this.dataAdapter = this.options.dataAdapter || new RestAdapter(this.options.dataAdapterConfig);
 
   this.viewEngine = this.options.viewEngine || new ViewEngine();
 
@@ -136,6 +136,6 @@ Server.prototype.buildRoutes = function() {
     handler = args[2];
 
     // Attach the route to the Express server.
-    this.expressApp.get(pattern, handler);
+    this.expressApp.all(pattern, handler);
   }, this);
 };

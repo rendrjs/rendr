@@ -1,7 +1,7 @@
 var App, Backbone, BaseView, Router, should, routerConfig, clientTestHelper;
 
 Backbone = require('backbone');
-should = require('should');
+should = require('chai').should();
 
 App = require('../../shared/app');
 BaseView = require('../../shared/base/view');

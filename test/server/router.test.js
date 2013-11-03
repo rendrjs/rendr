@@ -1,8 +1,10 @@
 /*global describe, it, beforeEach */
 
-var Router, config, should, express, _, sinon;
+var Router, config, chai, should, express, _, sinon;
 
-should = require('should');
+chai = require('chai');
+chai.use(require('sinon-chai'));
+should = chai.should();
 Router = require('../../server/router');
 express = require('express');
 _ = require('underscore');
@@ -369,18 +371,17 @@ describe("server/router", function() {
           handler;
 
         handler = this.router.getHandler(function (params, callback) {
-          params.should.eql({ id: 1 });
+          params.should.eql({ id: '1' });
           this.currentRoute.should.equal(rendrRoute);
           this.app.should.equal(rendrApp);
-          this.redirectTo.should.have.type('function');
+          this.redirectTo.should.be.a('function');
           callback(null, 'template/path', { some: 'data' });
         }, this.pattern, rendrRoute);
 
         handler(this.req, res);
 
-        res.render.calledOnce.should.be.ok;
-        res.render.firstCall.args[0].should.equal('template/path');
-        res.render.firstCall.args[1].should.eql({
+        res.render.should.have.been.calledOnce;
+        res.render.should.have.been.calledWith('template/path', {
           locals: { some: 'data' },
           app: this.req.rendrApp,
           req: this.req
@@ -399,9 +400,9 @@ describe("server/router", function() {
 
           handler(this.req, res);
 
-          res.redirect.calledOnce.should.be.ok;
-          res.redirect.firstCall.args.should.eql(['/some_uri']);
-          res.redirect.firstCall.thisValue.should.equal(res);
+          res.redirect.should.have.been.calledOnce;
+          res.redirect.should.have.been.calledWithExactly('/some_uri');
+          res.redirect.should.have.been.calledOn(res);
       });
 
       it("should redirect to another page using a specific http status code", function () {
@@ -415,9 +416,9 @@ describe("server/router", function() {
 
           handler(this.req, res);
 
-          res.redirect.calledOnce.should.be.ok;
-          res.redirect.firstCall.args.should.eql([301, '/some_uri']);
-          res.redirect.firstCall.thisValue.should.equal(res);
+          res.redirect.should.have.been.calledOnce;
+          res.redirect.should.have.been.calledWithExactly(301, '/some_uri');
+          res.redirect.should.have.been.calledOn(res);
       });
     });
   });

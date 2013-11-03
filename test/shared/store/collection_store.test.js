@@ -1,6 +1,6 @@
 var BaseCollection, BaseModel, CollectionStore, modelUtils, should, util;
 
-should = require('should');
+should = require('chai').should();
 util = require('util');
 CollectionStore = require('../../../shared/store/collection_store');
 BaseCollection = require('../../../shared/base/collection');

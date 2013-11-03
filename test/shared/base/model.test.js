@@ -1,6 +1,6 @@
 var App, BaseModel, modelUtils, should;
 
-should = require('should');
+should = require('chai').should();
 BaseModel = require('../../../shared/base/model');
 modelUtils = require('../../../shared/modelUtils');
 App = require('../../../shared/app');

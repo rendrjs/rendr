@@ -26,8 +26,9 @@
   },
   "devDependencies": {
     "mocha": "*",
-    "should": "*",
+    "chai": "1.8.1",
     "sinon": "1.4.2",
+    "sinon-chai": "2.4.0",
     "istanbul": "~0.1.10",
     "jquery": "~1.8.3"
   },

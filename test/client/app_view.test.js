@@ -2,7 +2,7 @@ var App, AppView, should, clientTestHelper;
 
 App = require('../../shared/app');
 AppView = require('../../client/app_view');
-should = require('should');
+should = require('chai').should();
 clientTestHelper = require('../helpers/client_test');
 
 describe('AppView', function() {

@@ -1,7 +1,7 @@
 var MemoryStore, should;
 
 MemoryStore = require('../../../shared/store/memory_store');
-should = require('should');
+should = require('chai').should();
 
 describe('MemoryStore', function() {
   beforeEach(function() {

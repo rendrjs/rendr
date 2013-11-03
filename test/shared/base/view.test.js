@@ -1,6 +1,6 @@
 var BaseView, should, sinon;
 
-should = require('should');
+should = require('chai').should();
 sinon = require('sinon');
 BaseView = require('../../../shared/base/view');
 

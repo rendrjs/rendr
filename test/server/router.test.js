@@ -2,7 +2,7 @@
 
 var Router, config, should, express, _, sinon;
 
-should = require('should');
+should = require('chai').should();
 Router = require('../../server/router');
 express = require('express');
 _ = require('underscore');
@@ -369,10 +369,10 @@ describe("server/router", function() {
           handler;
 
         handler = this.router.getHandler(function (params, callback) {
-          params.should.eql({ id: 1 });
+          params.should.eql({ id: '1' });
           this.currentRoute.should.equal(rendrRoute);
           this.app.should.equal(rendrApp);
-          this.redirectTo.should.have.type('function');
+          this.redirectTo.should.be.a('function');
           callback(null, 'template/path', { some: 'data' });
         }, this.pattern, rendrRoute);
 

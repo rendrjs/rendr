@@ -2,7 +2,7 @@ var BaseModel, ModelStore, modelUtils, should, _, util;
 
 util = require('util');
 _ = require('underscore');
-should = require('should');
+should = require('chai').should();
 ModelStore = require('../../../shared/store/model_store');
 BaseModel = require('../../../shared/base/model');
 modelUtils = require('../../../shared/modelUtils');
@@ -122,7 +122,7 @@ describe('ModelStore', function() {
       model = new MySecondModel(modelAttrs);
       this.store.set(model);
       result = this.store.find('my_model', {foo: 'bar'});
-      should.strictEqual(undefined, result);
+      should.equal(result, undefined);
     });
   });
 });

@@ -1,7 +1,7 @@
 var App, BaseCollection, BaseModel, modelUtils, should, _;
 
 _ = require('underscore');
-should = require('should');
+should = require('chai').should();
 BaseCollection = require('../../../shared/base/collection');
 BaseModel = require('../../../shared/base/model');
 modelUtils = require('../../../shared/modelUtils');
@@ -87,7 +87,7 @@ describe('BaseCollection', function() {
         url: 'foo',
         data: params
       });
-      should.deepEqual(params, collection.params);
+      params.should.deep.equal(collection.params);
     });
   });
 

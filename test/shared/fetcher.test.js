@@ -2,7 +2,7 @@ var App, Listing, Listings, BaseCollection, BaseModel, fetcher, listingResponses
   modelUtils, should, _;
 
 _ = require('underscore');
-should = require('should');
+should = require('chai').should();
 modelUtils = require('../../shared/modelUtils');
 BaseModel = require('../../shared/base/model');
 BaseCollection = require('../../shared/base/collection');
@@ -224,10 +224,10 @@ describe('fetcher', function() {
       hydrated = fetcher.hydrate(fetchSummary);
       listing = hydrated.listing;
       listing.should.be.an.instanceOf(Listing);
-      should.deepEqual(listing.toJSON(), rawListing);
+      listing.toJSON().should.deep.equal(rawListing);
       listings = hydrated.listings;
       listings.should.be.an.instanceOf(Listings);
-      should.deepEqual(listings.toJSON(), rawListings);
+      listings.toJSON().should.deep.equal(rawListings);
     });
 
     it("should inject the app instance", function() {

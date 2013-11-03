@@ -1,6 +1,6 @@
 var _ = require('underscore'),
     apiProxy = require('./../../../server/middleware/apiProxy'),
-    should = require('should');
+    should = require('chai').should();
 
 describe('apiProxy', function() {
 

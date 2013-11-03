@@ -1,6 +1,6 @@
 require('../../shared/globals');
 
-var should = require('should')
+var should = require('chai').should()
   , sinon = require('sinon')
   , ViewEngine = require('../../server/viewEngine')
   , BaseView = require('../../shared/base/view');

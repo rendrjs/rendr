@@ -48,7 +48,7 @@ describe('BaseView', function() {
 
     it("should delegate to the app's templateAdapter", function() {
         this.topView.getTemplate();
-        this.app.templateAdapter.getTemplate.called.should.be.true;
+        this.app.templateAdapter.getTemplate.should.have.been.calledOnce;
     });
   });
 
@@ -71,13 +71,13 @@ describe('BaseView', function() {
     it("should not call render if the view isn't being viewed", function() {
       this.topView.viewing = false;
       this.topView._fetchLazyCallback(null, {});
-      this.topView.render.called.should.be.false;
+      this.topView.render.should.not.have.been.called;
     });
 
     it("should call render if the view is being viewed", function() {
       this.topView.viewing = true;
       this.topView._fetchLazyCallback(null, {});
-      this.topView.render.called.should.be.true;
+      this.topView.render.should.have.been.called;
     });
   });
 });

@@ -37,7 +37,7 @@ describe('ViewEngine', function() {
 
   it("should lookup the layout template via the app's templateAdapter", function(done) {
     viewEngine.render('name', {app: app}, function () {
-      app.templateAdapter.getLayout.called.should.be.true;
+      app.templateAdapter.getLayout.should.have.been.calledOnce;
       done();
     });
   });

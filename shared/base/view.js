@@ -151,6 +151,9 @@ module.exports = BaseView = Backbone.View.extend({
   getAttributes: function() {
     var attributes = {}, fetchSummary = {};
 
+    if (this.attributes) {
+      _.extend(attributes, _.result(this, 'attributes'));
+    }
     if (this.id) {
       attributes.id = this.id;
     }

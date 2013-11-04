@@ -52,6 +52,62 @@ describe('BaseView', function() {
     });
   });
 
+  describe('getAttributes', function () {
+    beforeEach(function () {
+      this.View = BaseView.extend({
+        id: 'aViewId',
+        className: 'aClassName',
+        name: 'A View Name'
+      });
+    });
+
+    it('should handle view.attributes being non-existant', function () {
+      var view = new this.View();
+
+      view.getAttributes().should.deep.equal({
+        id: 'aViewId',
+        'class': 'aClassName',
+        'data-view': 'A View Name'
+      });
+    });
+
+    it('should handle view.attributes being an object', function () {
+      var view = new this.View();
+
+      view.attributes = {
+        attribute1: 'value1',
+        attribute2: 'value2'
+      };
+
+      view.getAttributes().should.deep.equal({
+        id: 'aViewId',
+        'class': 'aClassName',
+        'data-view': 'A View Name',
+        attribute1: 'value1',
+        attribute2: 'value2'
+      });
+    });
+
+    it('should handle view.attributes being a function', function () {
+      var view = new this.View();
+
+      view.attributes = function () {
+        return {
+          attribute1: 'value1',
+          attribute2: 'value2'
+        };
+      };
+
+      view.getAttributes().should.deep.equal({
+        id: 'aViewId',
+        'class': 'aClassName',
+        'data-view': 'A View Name',
+        attribute1: 'value1',
+        attribute2: 'value2'
+      });
+    });
+  });
+
   describe('_fetchLazyCallback', function() {
     beforeEach(function() {
       this.app = {

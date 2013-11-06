@@ -6,5 +6,6 @@ if (typeof window !== "undefined" && window !== null) {
   };
 } else {
   global.isServer = true;
-  global.rendr = require('../index');
+  var serverOnly_rendrIndex = '../index';
+  global.rendr = require(serverOnly_rendrIndex);
 }

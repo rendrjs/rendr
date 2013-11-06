@@ -25,12 +25,12 @@ utils.getCollection = function(path, models, options) {
 
 utils.getModelConstructor = function(path) {
   path = utils.underscorize(path);
-  return classMap[path] || require(rendr.entryPath + "/app/models/" + path);
+  return classMap[path] || require(rendr.entryPath + "app/models/" + path);
 };
 
 utils.getCollectionConstructor = function(path) {
   path = utils.underscorize(path);
-  return classMap[path] || require(rendr.entryPath + "/app/collections/" + path);
+  return classMap[path] || require(rendr.entryPath + "app/collections/" + path);
 };
 
 utils.getConstructor = function(type, path) {

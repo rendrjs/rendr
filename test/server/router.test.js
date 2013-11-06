@@ -12,7 +12,7 @@ sinon = require('sinon');
 
 config = {
   paths: {
-    entryPath: __dirname + "/../fixtures"
+    entryPath: __dirname + "/../fixtures/"
   }
 };
 

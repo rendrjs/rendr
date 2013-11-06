@@ -44,8 +44,8 @@ BaseRouter.prototype._initOptions = function(options) {
   this.options = options || {};
   paths = this.options.paths = this.options.paths || {};
   paths.entryPath = paths.entryPath || rendr.entryPath;
-  paths.routes = paths.routes || paths.entryPath + '/app/routes';
-  paths.controllerDir = paths.controllerDir || paths.entryPath + '/app/controllers';
+  paths.routes = paths.routes || paths.entryPath + 'app/routes';
+  paths.controllerDir = paths.controllerDir || paths.entryPath + 'app/controllers';
 };
 
 BaseRouter.prototype.getController = function(controllerName) {

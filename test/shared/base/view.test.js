@@ -52,6 +52,31 @@ describe('BaseView', function() {
     });
   });
 
+  describe('getTemplateData', function () {
+
+    it('returns its model', function () {
+      var model =  { foo: 'bar' },
+          view = new BaseView({ model: model });
+
+      view.getTemplateData().should.deep.equal(model);
+    });
+
+    it('returns its collection as models', function () {
+      var collection = { models: [ {foo: 1} ] },
+          view = new BaseView({ collection: collection});
+
+      view.getTemplateData().should.deep.equal({ models: collection });
+    });
+
+    it('returns options if there is neither model nor collection', function () {
+      var options = { options: 1 },
+          view = new BaseView( options );
+
+      view.getTemplateData().should.deep.equal(options);
+    });
+
+  });
+
   describe('getAttributes', function () {
     beforeEach(function () {
       this.View = BaseView.extend({

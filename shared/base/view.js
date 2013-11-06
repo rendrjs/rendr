@@ -99,10 +99,10 @@ module.exports = BaseView = Backbone.View.extend({
    */
   getTemplateData: function() {
     if (this.model) {
-      return this.model.toJSON();
+      return this.model;
     } else if (this.collection) {
       return {
-        models: this.collection.toJSON(),
+        models: this.collection,
         meta: this.collection.meta,
         params: this.collection.params
       };

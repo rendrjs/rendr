@@ -13,7 +13,7 @@
     "url": "git://github.com/spikebrehm/rendr.git"
   },
   "dependencies": {
-    "underscore": "1.4.4",
+    "underscore": "1.5.2",
     "backbone": "1.0.0",
     "async":"0.1.22",
     "qs": "0.5.1",

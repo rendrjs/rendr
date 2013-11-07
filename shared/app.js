@@ -12,7 +12,8 @@ Backbone = require('backbone');
 Fetcher = require('./fetcher');
 
 if (!global.isServer) {
-  ClientRouter = require(rendr.entryPath + "/app/router");
+  // client side only, entryPath is always empty
+  ClientRouter = require('app/router');
 }
 
 function noop() {}

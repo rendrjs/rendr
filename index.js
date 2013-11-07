@@ -9,5 +9,5 @@ if (!this.window) {
     return exports.server = new Server(options);
   };
 
-  exports.entryPath = process.cwd();
+  exports.entryPath = process.cwd() + '/';
 }

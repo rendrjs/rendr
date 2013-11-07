@@ -22,6 +22,7 @@ var _ = require('underscore')
   };
 
 if (global.isServer) {
+  // hide it from requirejs since it's server only
   var serverOnly_qs = 'qs';
   var qs = require(serverOnly_qs);
 }
@@ -166,6 +167,7 @@ syncer.checkFresh = function checkFresh() {
 
   // Lame: have to lazy-require to prevent circular dependency.
   // It is circular dep
+  // hide it from requirejs since it's optional/lazy-loaded
   var lazyRequire_modelUtils = './modelUtils';
   modelUtils = modelUtils || require(lazyRequire_modelUtils);
   url = this.getUrl(null, true);

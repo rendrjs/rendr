@@ -50,7 +50,19 @@ BaseRouter.prototype._initOptions = function(options) {
 
 BaseRouter.prototype.getController = function(controllerName) {
   var controllerDir = this.options.paths.controllerDir
-    , controller = require(controllerDir + "/" + controllerName + "_controller");
+    , controller;
+
+  // preload all controllers on the server or in non-AMD env
+  // for requirejs return path that will be lazy loaded
+  if (!global.isServer && typeof define != 'undefined')
+  {
+    controller = controllerDir + "/" + controllerName + "_controller";
+  }
+  else
+  {
+    controller = require(controllerDir + "/" + controllerName + "_controller")
+  }
+
   return controller;
 };
 
@@ -62,8 +74,11 @@ BaseRouter.prototype.getAction = function(route) {
   var controller, action;
   if (route.controller) {
     controller = this.getController(route.controller);
-    if (controller) {
+    if (typeof controller == 'object') {
       action = controller[route.action];
+    }
+    else if (typeof controller == 'string') {
+      action = controller;
     }
   }
   return action;

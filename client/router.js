@@ -121,7 +121,25 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
         if (!action) {
           throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
         }
-        action.call(router, params, router.getRenderCallback(route));
+        // in AMD environment action is the string containing path to the controller
+        // which will be loaded async (might be preloaded)
+        else if (typeof action == 'string')
+        {
+          require([action], function(controller)
+          {
+            // check we have everythign we need
+            if (typeof controller[route.action] != 'function')
+            {
+              throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
+            }
+
+            controller[route.action].call(router, params, router.getRenderCallback(route));
+          });
+        }
+        else
+        {
+          action.call(router, params, router.getRenderCallback(route));
+        }
       }
     }
   };

@@ -127,7 +127,7 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
         {
           require([action], function(controller)
           {
-            // check we have everythign we need
+            // check we have everything we need
             if (typeof controller[route.action] != 'function')
             {
               throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");

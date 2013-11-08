@@ -76,6 +76,8 @@ BaseRouter.prototype.getAction = function(route) {
     if (typeof controller == 'object') {
       action = controller[route.action];
     }
+    // In AMD environment controller is path string,
+    // which will be loaded when controller is needed.
     else if (typeof controller == 'string') {
       action = controller;
     }

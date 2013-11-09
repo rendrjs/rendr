@@ -1,4 +1,5 @@
-var should = require("should");
+require("chai").should();
+
 var Repos = require('../../../app/collections/repos');
 
 describe('Repos', function() {

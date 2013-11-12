@@ -28,7 +28,7 @@ module.exports = function(grunt) {
           namespace: false,
           commonjs: true,
           processName: function(filename) {
-            return filename.replace('apps/main/app/', 'app/').replace('app/templates/', '').replace('.hbs', '');
+            return filename.replace('apps/main/app/templates/', '').replace('.hbs', '');
           }
         },
         src: "apps/main/app/templates/**/*.hbs",

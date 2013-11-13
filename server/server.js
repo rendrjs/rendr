@@ -13,6 +13,7 @@ var defaultOptions = {
   dataAdapter: null,
   dataAdapterConfig: null,
   viewEngine: null,
+  viewEngineConfig: {},
   errorHandler: null,
   notFoundHandler: null,
   apiPath: '/api',
@@ -29,9 +30,9 @@ function Server(options) {
 
   this.expressApp = express();
 
-  this.dataAdapter = this.options.dataAdapter || new RestAdapter(this.options.dataAdapterConfig);;
+  this.dataAdapter = this.options.dataAdapter || new RestAdapter(this.options.dataAdapterConfig);
 
-  this.viewEngine = this.options.viewEngine || new ViewEngine();
+  this.viewEngine = this.options.viewEngine || new ViewEngine(this.options.viewEngineConfig);
 
   this.errorHandler = this.options.errorHandler =
     this.options.errorHandler || express.errorHandler();

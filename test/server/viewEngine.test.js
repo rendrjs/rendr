@@ -10,10 +10,10 @@ describe('ViewEngine', function() {
 
   beforeEach(function() {
 
-    viewEngine = new ViewEngine;
+    viewEngine = new ViewEngine({renderData: {render: 'data'}});
 
     function layoutTemplate(locals) {
-      return '<body>'+locals.body+'</body>';
+      return '<body>'+locals.body+'-'+locals.render+'</body>';
     }
 
     function View () {
@@ -42,9 +42,9 @@ describe('ViewEngine', function() {
     });
   });
 
-  it("should pass the rendered view template to the layout template", function(done) {
+  it("should pass the rendered view template to the layout template with the data in the render hash", function(done) {
     viewEngine.render('name', {app: app}, function (err, html) {
-      html.should.equal('<body>contents</body>');
+      html.should.equal('<body>contents-data</body>');
       done();
     });
   });

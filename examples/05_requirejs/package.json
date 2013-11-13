@@ -1,0 +1,33 @@
+{
+  "name": "rendr-app-template",
+  "version": "0.2.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --ui bdd --reporter spec  ./test --recursive",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "~>3",
+    "underscore": "~1.4.4",
+    "async": "~0.1.22",
+    "rendr-handlebars": "alexindigo/rendr-handlebars.git",
+    "rendr": "alexindigo/rendr.git",
+    "amdefine": "~0.1.0"
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.9",
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-contrib-stylus": "~0.5.0",
+    "grunt-contrib-handlebars": "~0.5.11",
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-rendr-requirejs": "alexindigo/grunt-rendr-requirejs.git",
+    "nodemon": "~0.7.6",
+    "mocha": "~1.9.0",
+    "should": "~1.2.2"
+  },
+  "engines": {
+    "node": ">=0.8"
+  }
+}

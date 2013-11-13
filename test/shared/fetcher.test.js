@@ -1,12 +1,17 @@
 var App, Listing, Listings, BaseCollection, BaseModel, fetcher, listingResponses,
-  modelUtils, should, _;
+  modelUtils, sinon, chai, sinonChai, should, _;
 
 _ = require('underscore');
-should = require('chai').should();
+chai = require('chai');
+should = chai.should();
+sinon = require('sinon');
+sinonChai = require('sinon-chai');
 modelUtils = require('../../shared/modelUtils');
 BaseModel = require('../../shared/base/model');
 BaseCollection = require('../../shared/base/collection');
 App = require('../../shared/app');
+
+chai.use(sinonChai);
 
 fetcher = null;
 
@@ -105,6 +110,38 @@ describe('fetcher', function() {
   beforeEach(function() {
     this.app = new App;
     fetcher = this.app.fetcher;
+  });
+
+  describe('getModelForSpec', function () {
+    beforeEach(function () {
+      sinon.stub(modelUtils, 'getModelConstructor').returns(BaseModel);
+      sinon.stub(modelUtils, 'getCollectionConstructor').returns(BaseCollection);
+    });
+
+    afterEach(function () {
+      modelUtils.getModelConstructor.restore();
+      modelUtils.getCollectionConstructor.restore();
+    });
+
+    it('should return an empty model', function () {
+      var model = fetcher.getModelForSpec({ model: 'SomeModel' });
+
+      modelUtils.getModelConstructor.should.have.been.calledOnce;
+      modelUtils.getModelConstructor.should.have.been.calledWith('SomeModel');
+
+      model.should.be.instanceOf(BaseModel);
+      model.attributes.should.be.empty;
+    });
+
+    it('should return an empty collection', function () {
+      var collection = fetcher.getModelForSpec({ collection: 'SomeCollection' });
+
+      modelUtils.getCollectionConstructor.should.have.been.calledOnce;
+      modelUtils.getCollectionConstructor.should.have.been.calledWith('SomeCollection');
+
+      collection.should.be.instanceOf(BaseCollection);
+      collection.should.have.length(0);
+    });
   });
 
   describe('hydrate', function() {

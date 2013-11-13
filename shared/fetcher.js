@@ -26,14 +26,15 @@ function Fetcher(options) {
  */
 Fetcher.prototype.getModelForSpec = function(spec, attrsOrModels, options) {
   var method, modelName;
-  attrsOrModels = attrsOrModels || {};
   options = options || {};
   if (spec.model != null) {
     method = 'getModel';
     modelName = spec.model;
+    attrsOrModels = attrsOrModels || {};
   } else {
     method = 'getCollection';
     modelName = spec.collection;
+    attrsOrModels = attrsOrModels || [];
   }
 
   /**

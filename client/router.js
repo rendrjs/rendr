@@ -1,6 +1,10 @@
 /*global rendr*/
 
 var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, defaultRootPath;
+// Since we make rendr files AMD friendly on app setup stage
+// we need to pretend that this code is pure commonjs
+// means no AMD-style require calls
+var requireAMD = require;
 
 _ = require('underscore');
 Backbone = require('backbone');
@@ -133,7 +137,8 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
         // which will be loaded async (might be preloaded)
         else if (typeof action == 'string')
         {
-          require([action], function(controller)
+          // Only used in AMD environment
+          requireAMD([action], function(controller)
           {
             // check we have everything we need
             if (typeof controller[route.action] != 'function')

@@ -21,6 +21,16 @@ function Fetcher(options) {
   });
 }
 
+Fetcher.prototype.addAppToOptions = function(options) {
+  options = options || {};
+
+  _.defaults(options, {
+    app: this.app
+  });
+
+  return options;
+};
+
 /**
  * Returns an instance of Model or Collection.
  */
@@ -37,15 +47,11 @@ Fetcher.prototype.getModelOrCollectionForSpec = function(spec, attrsOrModels, op
  */
 Fetcher.prototype.getCollectionForSpec = function(spec, models, options) {
   models = models || [];
-  options = options || {};
+  options = this.addAppToOptions(options);
 
   if (spec.params) {
     _.defaults(options, spec.params);
   }
-
-  _.defaults(options, {
-    app: this.app
-  });
 
   return modelUtils.getCollection(spec.collection, models, options);
 };
@@ -55,15 +61,11 @@ Fetcher.prototype.getCollectionForSpec = function(spec, models, options) {
  */
 Fetcher.prototype.getModelForSpec = function(spec, attributes, options) {
   attributes = attributes || {};
-  options = options || {};
+  options = this.addAppToOptions(options);
 
   if(spec.params) {
     _.defaults(attributes, spec.params);
   }
-
-  _.defaults(options, {
-    app: this.app
-  });
 
   return modelUtils.getModel(spec.model, attributes, options);
 };

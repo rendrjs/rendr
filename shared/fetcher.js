@@ -24,37 +24,48 @@ function Fetcher(options) {
 /**
  * Returns an instance of Model or Collection.
  */
-Fetcher.prototype.getModelForSpec = function(spec, attrsOrModels, options) {
-  var method, modelName;
-  options = options || {};
-  if (spec.model != null) {
-    method = 'getModel';
-    modelName = spec.model;
-    attrsOrModels = attrsOrModels || {};
-  } else {
-    method = 'getCollection';
-    modelName = spec.collection;
-    attrsOrModels = attrsOrModels || [];
+Fetcher.prototype.getModelOrCollectionForSpec = function(spec, attrsOrModels, options) {
+  if (spec.model) {
+    return this.getModelForSpec(spec, attrsOrModels, options);
   }
 
-  /**
-   * We have to initialize the model with its ID for now
-   * so that the model can interpolate its url '/listings/:id'
-   * to i.e. '/listings/42'. See 'syncer' module.
-   */
-  if (spec.params != null) {
-    if (spec.model != null) {
-      // If it's a model, merge the given params with the model attributes.
-      _.defaults(attrsOrModels, spec.params);
-    } else if (spec.collection != null) {
-      // If it's a collection, merge the given params with the options.
-      _.defaults(options, spec.params);
-    }
+  return this.getCollectionForSpec(spec, attrsOrModels, options);
+};
+
+/**
+ * Returns an instance of Collection.
+ */
+Fetcher.prototype.getCollectionForSpec = function(spec, models, options) {
+  models = models || [];
+  options = options || {};
+
+  if (spec.params) {
+    _.defaults(options, spec.params);
   }
+
   _.defaults(options, {
     app: this.app
   });
-  return modelUtils[method](modelName, attrsOrModels, options);
+
+  return modelUtils.getCollection(spec.collection, models, options);
+};
+
+/**
+ * Returns an instance of Model.
+ */
+Fetcher.prototype.getModelForSpec = function(spec, attributes, options) {
+  attributes = attributes || {};
+  options = options || {};
+
+  if(spec.params) {
+    _.defaults(attributes, spec.params);
+  }
+
+  _.defaults(options, {
+    app: this.app
+  });
+
+  return modelUtils.getModel(spec.model, attributes, options);
 };
 
 /**
@@ -126,7 +137,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
 
         // If we found the model/collection in the store, then return that.
         if (!this.needsFetch(modelData, spec)) {
-          model = this.getModelForSpec(spec, modelData, modelOptions);
+          model = this.getModelOrCollectionForSpec(spec, modelData, modelOptions);
 
           /**
            * If 'checkFresh' is set (and we're in the client), then before we
@@ -191,7 +202,7 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
 };
 
 Fetcher.prototype.fetchFromApi = function(spec, callback) {
-  var model = this.getModelForSpec(spec);
+  var model = this.getModelOrCollectionForSpec(spec);
   model.fetch({
     data: spec.params,
     success: function(model, body) {
@@ -255,7 +266,7 @@ Fetcher.prototype.bootstrapData = function(modelMap) {
     , modelOrCollection;
 
   _.each(modelMap, function(map, name) {
-    modelOrCollection = this.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'));
+    modelOrCollection = this.getModelOrCollectionForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'));
     results[name] = modelOrCollection;
   }, this);
   this.storeResults(results);

@@ -21,13 +21,10 @@ function Fetcher(options) {
   });
 }
 
-Fetcher.prototype.addAppToOptions = function(options) {
-  options = options || {};
-
-  _.defaults(options, {
-    app: this.app
-  });
-
+Fetcher.prototype.buildOptions = function(additionalOptions, params) {
+  var options = {app: this.app};
+  _.defaults(options, additionalOptions);
+  _.defaults(options, params);
   return options;
 };
 
@@ -46,24 +43,21 @@ Fetcher.prototype.getModelOrCollectionForSpec = function(spec, attrsOrModels, op
  * Returns an instance of Collection.
  */
 Fetcher.prototype.getCollectionForSpec = function(spec, models, options) {
+  var collectionOptions = this.buildOptions(options, spec.params);
   models = models || [];
-  options = this.addAppToOptions(options);
-
-  _.defaults(options, spec.params);
-
-  return modelUtils.getCollection(spec.collection, models, options);
+  return modelUtils.getCollection(spec.collection, models, collectionOptions);
 };
 
 /**
  * Returns an instance of Model.
  */
 Fetcher.prototype.getModelForSpec = function(spec, attributes, options) {
-  attributes = attributes || {};
-  options = this.addAppToOptions(options);
+  var modelOptions = this.buildOptions(options);
 
+  attributes = attributes || {};
   _.defaults(attributes, spec.params);
 
-  return modelUtils.getModel(spec.model, attributes, options);
+  return modelUtils.getModel(spec.model, attributes, modelOptions);
 };
 
 /**
@@ -271,7 +265,7 @@ Fetcher.prototype.bootstrapData = function(modelMap) {
 };
 
 Fetcher.prototype.hydrate = function(summaries, options) {
-  var collectionData, collectionOptions, models, results;
+  var collectionData, collectionOptions, models, results, additionalOptions;
 
   options = options || {};
   results = {};
@@ -285,11 +279,8 @@ Fetcher.prototype.hydrate = function(summaries, options) {
         throw new Error("Collection of type \"" + summary.collection + "\" not found for params: " + JSON.stringify(summary.params));
       }
       models = this.retrieveModelsForCollectionName(summary.collection, collectionData.ids);
-      collectionOptions = {
-        params: summary.params,
-        meta: collectionData.meta,
-        app: options.app
-      };
+      additionalOptions = { params: summary.params, meta: collectionData.meta };
+      collectionOptions = this.buildOptions(additionalOptions, summary.params);
       results[name] = modelUtils.getCollection(summary.collection, models, collectionOptions);
     }
     if ((results[name] != null) && (options.app != null)) {

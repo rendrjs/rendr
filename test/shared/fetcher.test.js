@@ -112,6 +112,32 @@ describe('fetcher', function() {
     fetcher = this.app.fetcher;
   });
 
+  describe('buildOptions', function () {
+     it('should merge the app with custom options', function () {
+       fetcher.buildOptions().should.be.deep.equal({app: this.app});
+     });
+
+    it('should append specified additional options', function () {
+      fetcher.buildOptions({foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app});
+    });
+
+    it('should merge specified params with specified options that are empty', function () {
+      fetcher.buildOptions(null, {foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app});
+    });
+
+    it('should merge specified params with the specified options', function () {
+      var additionalOptions = {anyOption: 'withValue'},
+        params = {anyParam: 'paramValue'},
+        expected = {
+          app: this.app,
+          anyOption: 'withValue',
+          anyParam: 'paramValue'
+        };
+
+      fetcher.buildOptions(additionalOptions, params).should.be.deep.equal(expected);
+    });
+  });
+
   describe('getModelOrCollectionForSpec', function () {
     beforeEach(function () {
       sinon.stub(modelUtils, 'getModelConstructor').returns(BaseModel);

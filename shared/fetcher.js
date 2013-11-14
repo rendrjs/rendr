@@ -49,9 +49,7 @@ Fetcher.prototype.getCollectionForSpec = function(spec, models, options) {
   models = models || [];
   options = this.addAppToOptions(options);
 
-  if (spec.params) {
-    _.defaults(options, spec.params);
-  }
+  _.defaults(options, spec.params);
 
   return modelUtils.getCollection(spec.collection, models, options);
 };
@@ -63,9 +61,7 @@ Fetcher.prototype.getModelForSpec = function(spec, attributes, options) {
   attributes = attributes || {};
   options = this.addAppToOptions(options);
 
-  if(spec.params) {
-    _.defaults(attributes, spec.params);
-  }
+  _.defaults(attributes, spec.params);
 
   return modelUtils.getModel(spec.model, attributes, options);
 };

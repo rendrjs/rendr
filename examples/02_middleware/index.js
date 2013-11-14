@@ -31,6 +31,17 @@ var server = rendr.createServer({
 app.use(mw.addLocaleToRequest());
 
 /**
+ * Demonstrate how to use Express' `res.locals` to pass additional data to the
+ * layout template. You can see how this value is used in the layout file,
+ * `app/templates/__layout.hbs`. You can also use Express' `app.locals` for
+ * values that are not request-specific.
+ */
+app.use(function(req, res, next) {
+  res.locals.repoUrl = 'https://github.com/airbnb/rendr';
+  next();
+});
+
+/**
   * To mount Rendr, which owns its own Express instance for better encapsulation,
   * simply add `server` as a middleware onto your Express app.
   * This will add all of the routes defined in your `app/routes.js`.

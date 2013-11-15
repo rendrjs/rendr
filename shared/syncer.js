@@ -24,6 +24,8 @@ if (isServer) {
   // hide it from requirejs since it's server only
   var serverOnly_qs = 'qs';
   var qs = require(serverOnly_qs);
+} else {
+  Backbone.$ = window.$;
 }
 
 var syncer = module.exports;

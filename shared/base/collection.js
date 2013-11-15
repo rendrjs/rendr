@@ -4,6 +4,10 @@ var _ = require('underscore')
   , BaseModel = require('./model')
   , Super = Backbone.Collection;
 
+if (!global.isServer) {
+  Backbone.$ = window.$;
+}
+
 BaseCollection = Super.extend({
 
   model: BaseModel,

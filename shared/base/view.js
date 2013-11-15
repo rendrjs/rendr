@@ -9,6 +9,10 @@ _ = require('underscore');
 Backbone = require('backbone');
 async = require('async');
 
+if (!global.isServer) {
+  Backbone.$ = window.$;
+}
+
 function noop() {}
 
 module.exports = BaseView = Backbone.View.extend({

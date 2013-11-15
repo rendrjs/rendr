@@ -66,6 +66,67 @@ module.exports = function(grunt) {
       }
     },
 
+    copy: {
+      jquery: {
+        src: 'assets/vendor/jquery-1.9.1.min.js',
+        dest: 'public/jquery-1.9.1.min.js'
+      },
+      json2: {
+        src: 'assets/vendor/json2.js',
+        dest: 'public/json2.js'
+      }
+    },
+
+    browserify: {
+      basic: {
+        src: [
+            'app/router.js',
+            'app/routes.js',
+            rendrDir + '/client/**/*.js',
+            rendrDir + '/shared/**/*.js',
+            rendrHandlebarsDir + '/index.js',
+            rendrHandlebarsDir + '/shared/*.js',
+            'app/**/*.js'
+        ], 
+        dest: 'public/mergedAssets.js', 
+        options: {
+          debug: true,
+          transform: ['hbsfy'],
+          ignore: [
+            'node_modules/rendr/index.js'
+          ],
+          noParse: [
+            'assets/vendor/**/*.js'
+          ],
+          require: true,
+          alias: [
+            'app/app.js:app/app',
+            'app/router.js:/app/router',
+            'app/routes.js:/app/routes',
+            rendrHandlebarsDir + '/index.js:rendr-handlebars',
+            'node_modules/rendr/node_modules/backbone/backbone.js:backbone'
+          ],
+          aliasMappings: [
+            {
+              cwd: 'app/',
+              src: ['**/*.js'],
+              dest: '/app/'
+            },
+            {
+              cwd: 'node_modules/rendr/client',
+              src: ['node_modules/rendr/client/**/*.js'],
+              dest: 'rendr/client'
+            }, 
+            {
+              cwd: rendrDir + '/shared',
+              src: [rendrDir + '/shared/**/*.js'],
+              dest: 'rendr/shared'
+            }
+          ]
+        }
+      }
+    },
+
     rendr_stitch: {
       compile: {
         options: {
@@ -77,8 +138,7 @@ module.exports = function(grunt) {
             backbone: '../rendr/node_modules/backbone/backbone.js',
             handlebars: '../rendr-handlebars/node_modules/handlebars/dist/handlebars.runtime.js',
             async: '../rendr/node_modules/async/lib/async.js'
-          },
-          aliases: [
+          }, aliases: [
             {from: rendrDir + '/client', to: 'rendr/client'},
             {from: rendrDir + '/shared', to: 'rendr/shared'},
             {from: rendrHandlebarsDir, to: 'rendr-handlebars'},
@@ -111,10 +171,11 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-handlebars');
-  grunt.loadNpmTasks('grunt-rendr-stitch');
 
   grunt.registerTask('runNode', function () {
     grunt.util.spawn({
@@ -129,11 +190,13 @@ module.exports = function(grunt) {
   });
 
 
-  grunt.registerTask('compile', ['handlebars', 'rendr_stitch', 'stylus']);
+  grunt.registerTask('compile', ['copy', 'handlebars', 'browserify', 'stylus']);
 
   // Run the server and watch for file changes
   grunt.registerTask('server', ['runNode', 'compile', 'watch']);
 
   // Default task(s).
   grunt.registerTask('default', ['compile']);
+
+  grunt.registerTask('aa', ['browserify']);
 };

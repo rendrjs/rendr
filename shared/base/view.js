@@ -6,6 +6,10 @@ _ = require('underscore');
 Backbone = require('backbone');
 modelUtils = require('../modelUtils');
 
+if (!global.isServer) {
+  Backbone.$ = window.$;
+}
+
 function noop() {}
 
 module.exports = BaseView = Backbone.View.extend({

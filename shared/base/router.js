@@ -5,6 +5,10 @@ var Backbone, BaseRouter, noop, _;
 _ = require('underscore');
 Backbone = require('backbone');
 
+if (!global.isServer) {
+  Backbone.$ = window.$;
+}
+
 function noop() {}
 
 module.exports = BaseRouter;

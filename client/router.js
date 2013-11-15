@@ -7,6 +7,8 @@ Backbone = require('backbone');
 BaseRouter = require('../shared/base/router');
 BaseView = require('../shared/base/view');
 
+Backbone.$ = window.$;
+
 try {
   AppView = require(rendr.entryPath + 'app/views/app_view');
 } catch (e) {

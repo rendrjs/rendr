@@ -112,7 +112,33 @@ describe('fetcher', function() {
     fetcher = this.app.fetcher;
   });
 
-  describe('getModelForSpec', function () {
+  describe('buildOptions', function () {
+     it('should merge the app with custom options', function () {
+       fetcher.buildOptions().should.be.deep.equal({app: this.app});
+     });
+
+    it('should append specified additional options', function () {
+      fetcher.buildOptions({foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app});
+    });
+
+    it('should merge specified params with specified options that are empty', function () {
+      fetcher.buildOptions(null, {foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app});
+    });
+
+    it('should merge specified params with the specified options', function () {
+      var additionalOptions = {anyOption: 'withValue'},
+        params = {anyParam: 'paramValue'},
+        expected = {
+          app: this.app,
+          anyOption: 'withValue',
+          anyParam: 'paramValue'
+        };
+
+      fetcher.buildOptions(additionalOptions, params).should.be.deep.equal(expected);
+    });
+  });
+
+  describe('getModelOrCollectionForSpec', function () {
     beforeEach(function () {
       sinon.stub(modelUtils, 'getModelConstructor').returns(BaseModel);
       sinon.stub(modelUtils, 'getCollectionConstructor').returns(BaseCollection);
@@ -124,7 +150,7 @@ describe('fetcher', function() {
     });
 
     it('should return an empty model', function () {
-      var model = fetcher.getModelForSpec({ model: 'SomeModel' });
+      var model = fetcher.getModelOrCollectionForSpec({ model: 'SomeModel' });
 
       modelUtils.getModelConstructor.should.have.been.calledOnce;
       modelUtils.getModelConstructor.should.have.been.calledWith('SomeModel');
@@ -134,7 +160,7 @@ describe('fetcher', function() {
     });
 
     it('should return an empty collection', function () {
-      var collection = fetcher.getModelForSpec({ collection: 'SomeCollection' });
+      var collection = fetcher.getModelOrCollectionForSpec({ collection: 'SomeCollection' });
 
       modelUtils.getCollectionConstructor.should.have.been.calledOnce;
       modelUtils.getCollectionConstructor.should.have.been.calledWith('SomeCollection');

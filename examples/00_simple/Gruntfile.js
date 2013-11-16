@@ -101,8 +101,8 @@ module.exports = function(grunt) {
           require: true,
           alias: [
             'app/app.js:app/app',
-            'app/router.js:/app/router',
-            'app/routes.js:/app/routes',
+            'app/router.js:app/router',
+            'app/routes.js:app/routes',
             rendrHandlebarsDir + '/index.js:rendr-handlebars',
             'node_modules/rendr/node_modules/backbone/backbone.js:backbone'
           ],
@@ -110,7 +110,7 @@ module.exports = function(grunt) {
             {
               cwd: 'app/',
               src: ['**/*.js'],
-              dest: '/app/'
+              dest: 'app/'
             },
             {
               cwd: 'node_modules/rendr/client',

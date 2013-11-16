@@ -4,7 +4,6 @@ if (typeof define !== 'function') {
 
 define(function(require)
 {
-
   var BaseAppView = require('rendr/client/app_view');
 
   var $body = $('body');

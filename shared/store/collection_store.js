@@ -32,21 +32,34 @@ CollectionStore.prototype.set = function(collection, params) {
 /*
 * Returns an array of model ids.
 */
-CollectionStore.prototype.get = function(collectionName, params) {
-  var Collection, key;
-
-  params = params || {};
+CollectionStore.prototype.get = function(collectionName, params, callback) {
+  var Collection, key, _collectionStore = this;
 
   /*
   * Kind of jank-sauce. Always merge in the default
   * params for the given collection.
   */
-  Collection = modelUtils.getCollectionConstructor(collectionName);
+  if (typeof callback == 'function') {
+    modelUtils.getCollectionConstructor(collectionName, function(Collection)
+    {
+      callback(_collectionStore._getPostConstructor(collectionName, params, Collection));
+    });
+    return;
+  } else {
+    Collection = modelUtils.getCollectionConstructor(collectionName);
+    return this._getPostConstructor(collectionName, params, Collection);
+  }
+};
+
+CollectionStore.prototype._getPostConstructor = function(collectionName, params, Collection)
+{
+  params = params || {};
+
   params = _.clone(params);
   params = _.defaults(params, Collection.prototype.defaultParams);
   key = getStoreKey(collectionName, params);
   return Super.prototype.get.call(this, key);
-};
+}
 
 CollectionStore.prototype._formatKey = function(key) {
   return Super.prototype._formatKey.call(this, "_cs:" + key);

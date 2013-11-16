@@ -7,14 +7,3 @@
   </li>
 {{/each}}
 </ul>
-
-<script>
-// it's a hack, will be made proper in the step 3 of the changes
-var firstPage = function(callback)
-{
-  require(
-  [ 'app/collections/users'
-  , 'app/views/users/index'
-  ], function(){ callback(); });
-}
-</script>

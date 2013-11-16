@@ -7,5 +7,9 @@ examples/*/node_modules
 examples/**/compiledTemplates.js
 examples/*/public/mergedAssets.js
 examples/*/public/styles.css
+examples/*/public/mergedAssets.js
+examples/*/public/js/rendr*
+examples/*/public/js/libs.js
+examples/*/public/js/app
 .DS_Store
 runtime.json

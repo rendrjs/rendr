@@ -87,8 +87,8 @@ module.exports = function(grunt) {
             rendrHandlebarsDir + '/index.js',
             rendrHandlebarsDir + '/shared/*.js',
             'app/**/*.js'
-        ], 
-        dest: 'public/mergedAssets.js', 
+        ],
+        dest: 'public/mergedAssets.js',
         options: {
           debug: true,
           transform: ['hbsfy'],
@@ -116,7 +116,7 @@ module.exports = function(grunt) {
               cwd: 'node_modules/rendr/client',
               src: ['node_modules/rendr/client/**/*.js'],
               dest: 'rendr/client'
-            }, 
+            },
             {
               cwd: rendrDir + '/shared',
               src: [rendrDir + '/shared/**/*.js'],
@@ -124,49 +124,6 @@ module.exports = function(grunt) {
             }
           ]
         }
-      }
-    },
-
-    rendr_stitch: {
-      compile: {
-        options: {
-          dependencies: [
-            'assets/vendor/**/*.js'
-          ],
-          npmDependencies: {
-            underscore: '../rendr/node_modules/underscore/underscore.js',
-            backbone: '../rendr/node_modules/backbone/backbone.js',
-            handlebars: '../rendr-handlebars/node_modules/handlebars/dist/handlebars.runtime.js',
-            async: '../rendr/node_modules/async/lib/async.js'
-          }, aliases: [
-            {from: rendrDir + '/client', to: 'rendr/client'},
-            {from: rendrDir + '/shared', to: 'rendr/shared'},
-            {from: rendrHandlebarsDir, to: 'rendr-handlebars'},
-            {from: rendrHandlebarsDir + '/shared', to: 'rendr-handlebars/shared'}
-          ]
-        },
-        files: [{
-          dest: 'public/mergedAssets.js',
-          src: [
-            'app/**/*.js',
-            rendrDir + '/client/**/*.js',
-            rendrDir + '/shared/**/*.js',
-            rendrHandlebarsDir + '/index.js',
-            rendrHandlebarsDir + '/shared/*.js'
-          ]
-        }]
-      },
-      tests: {
-        options: {
-          dependencies: [ 'public/mergedAssets.js' ],
-          npmDependencies: {
-            chai: 'chai.js',
-          },
-        },
-        files: [{
-          dest: 'test/stitched.js',
-          src: []
-        }]
       }
     }
   });

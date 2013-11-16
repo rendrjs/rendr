@@ -28,11 +28,11 @@ module.exports = function(grunt) {
           namespace: false,
           commonjs: true,
           processName: function(filename) {
-            return filename.replace('app/templates/', '').replace('.hbs', '');
+            return filename.replace('apps/main/app/templates/', '').replace('.hbs', '');
           }
         },
-        src: "app/templates/**/*.hbs",
-        dest: "app/templates/compiledTemplates.js",
+        src: "apps/main/app/templates/**/*.hbs",
+        dest: "apps/main/app/templates/compiledTemplates.js",
         filter: function(filepath) {
           var filename = path.basename(filepath);
           // Exclude files that begin with '__' from being sent to the client,
@@ -51,7 +51,7 @@ module.exports = function(grunt) {
         }
       },
       templates: {
-        files: 'app/**/*.hbs',
+        files: 'apps/main/app/**/*.hbs',
         tasks: ['handlebars'],
         options: {
           interrupt: true

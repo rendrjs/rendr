@@ -2,6 +2,10 @@ var _ = require('underscore')
   , Backbone = require('backbone')
   , syncer = require('../syncer');
 
+if (!global.isServer) {
+  Backbone.$ = window.$;
+}
+
 var BaseModel = Backbone.Model.extend({
 
   initialize: function(models, options) {

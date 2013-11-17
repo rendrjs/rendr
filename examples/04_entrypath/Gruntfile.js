@@ -28,11 +28,11 @@ module.exports = function(grunt) {
           namespace: false,
           commonjs: true,
           processName: function(filename) {
-            return filename.replace('app/templates/', '').replace('.hbs', '');
+            return filename.replace('apps/main/app/', 'app/').replace('app/templates/', '').replace('.hbs', '');
           }
         },
-        src: "app/templates/**/*.hbs",
-        dest: "app/templates/compiledTemplates.js",
+        src: "apps/main/app/templates/**/*.hbs",
+        dest: "apps/main/app/templates/compiledTemplates.js",
         filter: function(filepath) {
           var filename = path.basename(filepath);
           // Exclude files that begin with '__' from being sent to the client,
@@ -44,14 +44,14 @@ module.exports = function(grunt) {
 
     watch: {
       scripts: {
-        files: 'app/**/*.js',
+        files: 'apps/main/app/**/*.js',
         tasks: ['rendr_stitch'],
         options: {
           interrupt: true
         }
       },
       templates: {
-        files: 'app/**/*.hbs',
+        files: 'apps/main/app/**/*.hbs',
         tasks: ['handlebars'],
         options: {
           interrupt: true
@@ -79,6 +79,7 @@ module.exports = function(grunt) {
             async: '../rendr/node_modules/async/lib/async.js'
           },
           aliases: [
+            {from: 'apps/main/app/', to: 'app/'},
             {from: rendrDir + '/client', to: 'rendr/client'},
             {from: rendrDir + '/shared', to: 'rendr/shared'},
             {from: rendrHandlebarsDir, to: 'rendr-handlebars'},
@@ -88,7 +89,7 @@ module.exports = function(grunt) {
         files: [{
           dest: 'public/mergedAssets.js',
           src: [
-            'app/**/*.js',
+            'apps/main/app/**/*.js',
             rendrDir + '/client/**/*.js',
             rendrDir + '/shared/**/*.js',
             rendrHandlebarsDir + '/index.js',

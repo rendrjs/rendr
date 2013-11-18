@@ -1,4 +1,4 @@
-var BaseModel, ModelStore, modelUtils, should, _, util;
+var BaseModel, ModelStore, modelUtils, should, _, util, addClassMapping;
 
 util = require('util');
 _ = require('underscore');
@@ -6,6 +6,7 @@ should = require('chai').should();
 ModelStore = require('../../../shared/store/model_store');
 BaseModel = require('../../../shared/base/model');
 modelUtils = require('../../../shared/modelUtils');
+addClassMapping = require('../../helpers/add_class_mapping')
 
 
 function MyModel() {
@@ -15,7 +16,7 @@ util.inherits(MyModel, BaseModel);
 
 function App() {}
 
-modelUtils.addClassMapping(modelUtils.modelName(MyModel), MyModel);
+addClassMapping(modelUtils.modelName(MyModel), MyModel);
 
 describe('ModelStore', function() {
   beforeEach(function() {
@@ -99,7 +100,7 @@ describe('ModelStore', function() {
     }
     util.inherits(MySecondModel, BaseModel);
 
-    modelUtils.addClassMapping(modelUtils.modelName(MySecondModel), MySecondModel);
+    addClassMapping(modelUtils.modelName(MySecondModel), MySecondModel);
 
     it('should find a model on custom attributes', function(){
       var model, modelAttrs, result;

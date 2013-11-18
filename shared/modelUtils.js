@@ -33,12 +33,6 @@ utils.getCollectionConstructor = function(path) {
   return classMap[path] || require(rendr.entryPath + "app/collections/" + path);
 };
 
-utils.getConstructor = function(type, path) {
-  var method;
-  method = type === 'model' ? utils.getModelConstructor : utils.getCollectionConstructor;
-  return method(path);
-};
-
 utils.isModel = function(obj) {
   return obj instanceof BaseModel;
 };

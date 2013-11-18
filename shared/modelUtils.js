@@ -1,11 +1,13 @@
 /*global rendr*/
 
-var BaseCollection, BaseModel, classMap, uppercaseRe, utils;
+var BaseCollection, BaseModel, uppercaseRe, utils;
 
 BaseModel = require('./base/model');
 BaseCollection = require('./base/collection');
 
 utils = module.exports;
+
+utils._classMap = {};
 
 utils.getModel = function(path, attrs, options) {
   var Model;
@@ -25,12 +27,12 @@ utils.getCollection = function(path, models, options) {
 
 utils.getModelConstructor = function(path) {
   path = utils.underscorize(path);
-  return classMap[path] || require(rendr.entryPath + "app/models/" + path);
+  return utils._classMap[path] || require(rendr.entryPath + "app/models/" + path);
 };
 
 utils.getCollectionConstructor = function(path) {
   path = utils.underscorize(path);
-  return classMap[path] || require(rendr.entryPath + "app/collections/" + path);
+  return utils._classMap[path] || require(rendr.entryPath + "app/collections/" + path);
 };
 
 utils.isModel = function(obj) {
@@ -46,16 +48,6 @@ utils.getModelNameForCollectionName = function(collectionName) {
 
   Collection = utils.getCollectionConstructor(collectionName);
   return utils.modelName(Collection.prototype.model);
-};
-
-classMap = {};
-
-/**
- * Use this to specify class constructors based on
- * model/collection name. Useful i.e. for testing.
- */
-utils.addClassMapping = function(key, modelConstructor) {
-  classMap[utils.underscorize(key)] = modelConstructor;
 };
 
 uppercaseRe = /([A-Z])/g;

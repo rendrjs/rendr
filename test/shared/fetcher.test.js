@@ -1,5 +1,5 @@
 var App, Listing, Listings, BaseCollection, BaseModel, fetcher, listingResponses,
-  modelUtils, sinon, chai, sinonChai, should, _;
+  modelUtils, sinon, chai, sinonChai, should, _, addClassMapping;
 
 _ = require('underscore');
 chai = require('chai');
@@ -10,6 +10,7 @@ modelUtils = require('../../shared/modelUtils');
 BaseModel = require('../../shared/base/model');
 BaseCollection = require('../../shared/base/collection');
 App = require('../../shared/app');
+addClassMapping = require('../helpers/add_class_mapping')
 
 chai.use(sinonChai);
 
@@ -67,8 +68,8 @@ Listings = BaseCollection.extend({
 });
 Listings.id = 'Listings';
 
-modelUtils.addClassMapping('Listing', Listing);
-modelUtils.addClassMapping('Listings', Listings);
+addClassMapping('Listing', Listing);
+addClassMapping('Listings', Listings);
 
 function getModelResponse(version, id, addJsonKey) {
   var resp;
@@ -405,7 +406,7 @@ describe('fetcher', function() {
         name: 'Some Person'
       };
       someperson = new User(userAttrs);
-      modelUtils.addClassMapping('user', User);
+      addClassMapping('user', User);
       fetcher.modelStore.set(someperson);
       fetchSpec = {
         model: {

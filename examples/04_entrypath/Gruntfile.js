@@ -28,7 +28,7 @@ module.exports = function(grunt) {
           namespace: false,
           commonjs: true,
           processName: function(filename) {
-            return filename.replace('apps/main/app/templates/', '').replace('.hbs', '');
+            return filename.replace('apps/main/app/', 'app/').replace('app/templates/', '').replace('.hbs', '');
           }
         },
         src: "apps/main/app/templates/**/*.hbs",
@@ -44,7 +44,7 @@ module.exports = function(grunt) {
 
     watch: {
       scripts: {
-        files: 'app/**/*.js',
+        files: 'apps/main/app/**/*.js',
         tasks: ['rendr_stitch'],
         options: {
           interrupt: true
@@ -79,6 +79,7 @@ module.exports = function(grunt) {
             async: '../rendr/node_modules/async/lib/async.js'
           },
           aliases: [
+            {from: 'apps/main/app/', to: 'app/'},
             {from: rendrDir + '/client', to: 'rendr/client'},
             {from: rendrDir + '/shared', to: 'rendr/shared'},
             {from: rendrHandlebarsDir, to: 'rendr-handlebars'},
@@ -88,7 +89,7 @@ module.exports = function(grunt) {
         files: [{
           dest: 'public/mergedAssets.js',
           src: [
-            'app/**/*.js',
+            'apps/main/app/**/*.js',
             rendrDir + '/client/**/*.js',
             rendrDir + '/shared/**/*.js',
             rendrHandlebarsDir + '/index.js',

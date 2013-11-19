@@ -1,0 +1,19 @@
+<h1>Repos</h1>
+
+<ul>
+{{#each models}}
+  <li>
+    <a href="/repos/{{owner.login}}/{{name}}">{{name}}</a>, by <a href="/users/{{owner.login}}">{{owner.login}}</a>
+  </li>
+{{/each}}
+</ul>
+<script>
+// it's a hack, will be made proper in the step 3 of the changes
+var firstPage = function(callback)
+{
+  require(
+  [ 'app/collections/repos'
+  , 'app/views/repos/index'
+  ], function(){ callback(); });
+}
+</script>

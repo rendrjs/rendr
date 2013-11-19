@@ -1,5 +1,10 @@
 /*global rendr*/
 
+// Since we make rendr files AMD friendly on app setup stage
+// we need to pretend that this code is pure commonjs
+// means no AMD-style require calls
+var requireAMD = require;
+
 var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _;
 
 _ = require('underscore');
@@ -83,7 +88,7 @@ ClientRouter.prototype.postInitialize = noop;
 ClientRouter.prototype.addBackboneRoute = function(routeObj) {
   var handler, name, pattern, route;
 
-  // Backbone.History wants no leading slash on strings.  
+  // Backbone.History wants no leading slash on strings.
   pattern = (routeObj[0] instanceof RegExp) ? routeObj[0] : routeObj[0].slice(1);
   route = routeObj[1];
   handler = routeObj[2];
@@ -94,6 +99,12 @@ ClientRouter.prototype.addBackboneRoute = function(routeObj) {
 
 ClientRouter.prototype.getHandler = function(action, pattern, route) {
   var router = this;
+
+  // abstract action call
+  function actionCall(action, params)
+  {
+    action.call(router, params, router.getRenderCallback(route));
+  }
 
   // This returns a function which is called by Backbone.history.
   return function() {
@@ -121,7 +132,26 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
         if (!action) {
           throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
         }
-        action.call(router, params, router.getRenderCallback(route));
+        // in AMD environment action is the string containing path to the controller
+        // which will be loaded async (might be preloaded)
+        else if (typeof action == 'string')
+        {
+          // Only used in AMD environment
+          requireAMD([action], function(controller)
+          {
+            // check we have everything we need
+            if (typeof controller[route.action] != 'function')
+            {
+              throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
+            }
+
+            actionCall(controller[route.action], params);
+          });
+        }
+        else
+        {
+          actionCall(action, params);
+        }
       }
     }
   };

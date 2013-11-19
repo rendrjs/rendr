@@ -2,9 +2,6 @@ var path = require('path')
   , async = require('async')
   ;
 
-var exec = require('child_process').exec;
-
-
 var stylesheetsDir = 'assets/stylesheets';
 var rendrDir = 'node_modules/rendr';
 var rendrHandlebarsDir = 'node_modules/rendr-handlebars';
@@ -12,7 +9,7 @@ var rendrModulesDir = rendrDir + '/node_modules';
 
 module.exports = function(grunt)
 {
-  // attache current grunt instance as first argument
+  // attach current grunt instance as first argument
   var executeFunc = executeFuncStub.bind(this, grunt);
 
   // workaround, while Jon is working on custom paths for the app
@@ -283,69 +280,7 @@ module.exports = function(grunt)
             { name: 'rendr/shared/store/model_store', exclude: ['underscore', 'rendr/shared/store/memory_store', 'rendr/shared/modelUtils', 'rendr/shared/base/collection', 'rendr/shared/base/model', 'rendr/shared/syncer', 'backbone'] }
           ]
         }
-      },
-
-      // compile:
-      // {
-      //   options:
-      //   {
-      //     optimize: 'none',
-      //     appDir: 'tmp/rendr/client',
-      //     dir: 'public/js/rendr/client',
-      //     baseUrl: './rendr/client',
-      //     cjsTranslate: true,
-      //     paths:
-      //     {
-      //       'rendr/client': '../..',
-      //       'rendr/shared': '../../../shared',
-      //       'underscore': '../../../../../node_modules/rendr/node_modules/underscore/underscore',
-      //       'backbone': '../../../../../node_modules/rendr/node_modules/backbone/backbone',
-      //     },
-      //     rawText:
-      //     {
-      //       'qs': 'define(["qs"], function () {});'
-      //     },
-      //     modules:
-      //     [
-      //       {name: 'rendr/client/app_view', exclude: ['underscore', 'backbone', 'rendr/shared/base/view']},
-      //       {name: 'rendr/client/router', exclude: ['underscore', 'backbone', 'rendr/shared/base/router', 'rendr/shared/base/view', 'rendr/client/app_view']}
-      //     ]
-      //   }
-      // }
-    },
-
-    // rendr_stitch: {
-    //   compile: {
-    //     options: {
-    //       dependencies: [
-    //         'assets/vendor/**/*.js'
-    //       ],
-    //       npmDependencies: {
-    //         underscore: '../rendr/node_modules/underscore/underscore.js',
-    //         backbone: '../rendr/node_modules/backbone/backbone.js',
-    //         handlebars: '../rendr-handlebars/node_modules/handlebars/dist/handlebars.runtime.js',
-    //         async: '../rendr/node_modules/async/lib/async.js'
-    //       },
-    //       aliases: [
-    //         {from: rendrDir + '/client', to: 'rendr/client'},
-    //         {from: rendrDir + '/shared', to: 'rendr/shared'},
-    //         {from: rendrHandlebarsDir, to: 'rendr-handlebars'},
-    //         {from: rendrHandlebarsDir + '/shared', to: 'rendr-handlebars/shared'}
-    //       ]
-    //     },
-    //     files: [{
-    //       dest: 'public/mergedAssets.js',
-    //       src: [
-    //         'app/**/*.js',
-    //         rendrDir + '/client/**/*.js',
-    //         rendrDir + '/shared/**/*.js',
-    //         rendrHandlebarsDir + '/index.js',
-    //         rendrHandlebarsDir + '/shared/*.js'
-    //       ]
-    //     }]
-    //   }
-    // }
-
+      }
   });
 
   grunt.loadNpmTasks('grunt-contrib-stylus');
@@ -353,7 +288,6 @@ module.exports = function(grunt)
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-rendr-requirejs');
-//  grunt.loadNpmTasks('grunt-rendr-stitch');
 
   // get init tasks together
   grunt.registerTask('init_rendr',
@@ -387,7 +321,6 @@ module.exports = function(grunt)
     });
   });
 
-//  grunt.registerTask('compile', ['handlebars', 'rendr_requirejs', 'stylus']);
   grunt.registerTask('compile', ['handlebars', 'stylus']);
 
   // Run the server and watch for file changes

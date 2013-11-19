@@ -5,7 +5,6 @@ coverage
 *.swp
 examples/*/node_modules
 examples/**/compiledTemplates.js
-examples/*/public/mergedAssets.js
 examples/*/public/styles.css
 examples/*/public/mergedAssets.js
 examples/*/public/js/rendr*

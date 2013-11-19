@@ -5,7 +5,7 @@
 // means no AMD-style require calls
 var requireAMD = require;
 
-var Backbone, BaseView, modelUtils, _;
+var Backbone, BaseView, modelUtils, _, async;
 
 _ = require('underscore');
 Backbone = require('backbone');
@@ -375,7 +375,7 @@ module.exports = BaseView = Backbone.View.extend({
      * Hydrate looks if there is a model or collection associated
      * with this view, and tries to load it from memory.
      */
-    this.hydrate(function()
+    this.hydrate(function(err)
     {
       /**
        * Call preRender() so we can access things setup by @hydrate()

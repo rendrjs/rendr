@@ -11,8 +11,8 @@
     "express": "~>3",
     "underscore": "~1.4.4",
     "async": "~0.1.22",
-    "rendr-handlebars": "git@github.com:akbarahmed/rendr-handlebars.git#browserify",
-    "rendr": "git@github.com:akbarahmed/rendr.git#browserify",
+    "rendr-handlebars": "git+https://git@github.com/akbarahmed/rendr-handlebars.git#browserify",
+    "rendr": "git+https://git@github.com/akbarahmed/rendr.git#browserify",
     "hbsfy": "~1.0.0"
   },
   "devDependencies": {

@@ -171,6 +171,7 @@ Fetcher.prototype._retrieveModel = function(spec) {
 Fetcher.prototype.needsFetch = function(modelData, spec) {
   if (modelData == null) return true;
   if (this.isMissingKeys(modelData, spec.ensureKeys)) return true;
+  if (spec.needsFetch === true) return true;
   if (typeof spec.needsFetch === 'function' && spec.needsFetch(modelData)) return true;
   return false;
 };

@@ -19,13 +19,13 @@
     "grunt": "~0.4.1",
     "browserify": "~2.35.0",
     "grunt-browserify": "~1.2.9",
+    "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-stylus": "~0.5.0",
     "grunt-contrib-handlebars": "~0.5.11",
     "grunt-contrib-watch": "~0.3.1",
     "nodemon": "~0.7.6",
     "mocha": "~1.9.0",
-    "should": "~1.2.2",
-    "grunt-contrib-copy": "~0.4.1"
+    "should": "~1.2.2"
   },
   "engines": {
     "node": ">=0.8"

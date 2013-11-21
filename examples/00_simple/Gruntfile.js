@@ -1,3 +1,4 @@
+
 var path = require('path');
 
 var stylesheetsDir = 'assets/stylesheets';
@@ -45,7 +46,7 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: 'app/**/*.js',
-        tasks: ['rendr_stitch'],
+        tasks: ['browserify'],
         options: {
           interrupt: true
         }
@@ -69,11 +70,11 @@ module.exports = function(grunt) {
     copy: {
       jquery: {
         src: 'assets/vendor/jquery-1.9.1.min.js',
-        dest: 'public/jquery-1.9.1.min.js'
+        dest: 'public/js/jquery-1.9.1.min.js'
       },
       json2: {
         src: 'assets/vendor/json2.js',
-        dest: 'public/json2.js'
+        dest: 'public/js/json2.js'
       }
     },
 
@@ -155,5 +156,5 @@ module.exports = function(grunt) {
   // Default task(s).
   grunt.registerTask('default', ['compile']);
 
-  grunt.registerTask('aa', ['browserify']);
 };
+

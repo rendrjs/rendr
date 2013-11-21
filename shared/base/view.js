@@ -342,6 +342,8 @@ module.exports = BaseView = Backbone.View.extend({
         this.parseOptions(results);
         callback(err);
       }.bind(this));
+    } else {
+      callback(null);
     }
   },
 

@@ -6,7 +6,7 @@ define(function(require)
 {
   var Base = require('./base');
 
-  exports = Base.extend({
+  var exports = Base.extend({
     url: '/repos/:owner/:name',
     idAttribute: 'name'
   });

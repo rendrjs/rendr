@@ -1,6 +1,6 @@
 {
   "name": "rendr",
-  "version": "0.5.0-alpha08",
+  "version": "0.5.0-alpha09",
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "sinon-chai": "2.4.0",
     "istanbul": "~0.1.10",
     "jquery": "~1.8.3",
-    "rendr-handlebars": "0.0.8"
+    "rendr-handlebars": "0.0.9"
   },
   "keywords": [
     "Backbone",

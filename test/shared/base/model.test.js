@@ -1,9 +1,11 @@
-var App, BaseModel, modelUtils, should;
+var App, BaseModel, modelUtils, should, addClassMapping;
 
 should = require('chai').should();
 BaseModel = require('../../../shared/base/model');
 modelUtils = require('../../../shared/modelUtils');
 App = require('../../../shared/app');
+addClassMapping = require('../../helpers/add_class_mapping')
+
 
 describe('BaseModel', function() {
   beforeEach(function() {
@@ -12,7 +14,7 @@ describe('BaseModel', function() {
     this.MyModel = BaseModel.extend({});
     this.MyModel.id = 'MyModel';
 
-    modelUtils.addClassMapping(this.MyModel.id, this.MyModel);
+    addClassMapping(this.MyModel.id, this.MyModel);
   });
 
   it("should update modelStore when values change", function() {

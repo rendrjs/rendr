@@ -59,6 +59,10 @@ module.exports = BaseView = Backbone.View.extend({
       options.collection_params = options.collection.params;
     }
 
+    if(options.preventPostInitialize){
+      this.postInitialize = noop;
+    }
+
     this.model = options.model;
     this.collection = options.collection;
   },
@@ -422,6 +426,7 @@ module.exports = BaseView = Backbone.View.extend({
     if (obj) {
       obj.off(null, null, this);
     }
+    this.app.off(null, null, this);
     BaseView.__super__.remove.apply(this, arguments);
     this.trigger('remove');
   }

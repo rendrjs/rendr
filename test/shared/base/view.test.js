@@ -1,8 +1,10 @@
-var BaseView, should, sinon;
+var BaseView, should, sinon, ModelUtils, modelUtils;
 
 should = require('chai').should();
 sinon = require('sinon');
 BaseView = require('../../../shared/base/view');
+ModelUtils = require('../../../shared/modelUtils');
+modelUtils = new ModelUtils();
 
 describe('BaseView', function() {
   beforeEach(function() {
@@ -11,23 +13,24 @@ describe('BaseView', function() {
 
     this.MyBottomView = BaseView.extend({});
     this.MyBottomView.id = 'MyBottomView';
+    this.app = {modelUtils: modelUtils};
   });
 
   it("should return correct views by name", function() {
     var anotherBottomView, bottomView, childViews, topView;
 
-    topView = new this.MyTopView();
+    topView = new this.MyTopView({app: this.app});
     topView.childViews = [];
     topView.getChildViewsByName().should.be.empty;
     topView.getChildViewsByName('foo').should.be.empty;
-    bottomView = new this.MyBottomView();
+    bottomView = new this.MyBottomView({app: this.app});
     topView.childViews.push(bottomView);
     topView.getChildViewsByName().should.be.empty;
     topView.getChildViewsByName('foo').should.be.empty;
     childViews = topView.getChildViewsByName('my_bottom_view');
     childViews.should.have.length(1);
     bottomView.should.eql(childViews[0]);
-    anotherBottomView = new this.MyBottomView();
+    anotherBottomView = new this.MyBottomView({app: this.app});
     topView.childViews.push(anotherBottomView);
     childViews = topView.getChildViewsByName('my_bottom_view');
     childViews.should.have.length(2);
@@ -38,7 +41,8 @@ describe('BaseView', function() {
       this.app = {
         templateAdapter: {
           getTemplate: sinon.spy()
-        }
+        },
+        modelUtils: modelUtils
       };
 
       this.topView = new this.MyTopView({
@@ -62,7 +66,7 @@ describe('BaseView', function() {
     });
 
     it('should handle view.attributes being non-existant', function () {
-      var view = new this.View();
+      var view = new this.View({app: this.app});
 
       view.getAttributes().should.deep.equal({
         id: 'aViewId',
@@ -72,7 +76,7 @@ describe('BaseView', function() {
     });
 
     it('should handle view.attributes being an object', function () {
-      var view = new this.View();
+      var view = new this.View({app: this.app});
 
       view.attributes = {
         attribute1: 'value1',
@@ -89,7 +93,7 @@ describe('BaseView', function() {
     });
 
     it('should handle view.attributes being a function', function () {
-      var view = new this.View();
+      var view = new this.View({app: this.app});
 
       view.attributes = function () {
         return {
@@ -113,7 +117,8 @@ describe('BaseView', function() {
       this.app = {
         templateAdapter: {
           getTemplate: sinon.spy()
-        }
+        },
+        modelUtils: modelUtils
       };
 
       this.topView = new this.MyTopView({

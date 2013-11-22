@@ -13,7 +13,7 @@ var _ = require('underscore');
 module.exports = function(appAttributes, options) {
   options = options || {};
   return function(req, res, next) {
-    var App = require(rendr.entryPath + 'app/app');
+    var App = require(options.entryPath + 'app/app');
 
     /**
      * Pass any data that needs to be accessible by the client
@@ -25,7 +25,8 @@ module.exports = function(appAttributes, options) {
        * Hold on to a copy of the original request, so we can pull headers, etc.
        * This will only be accessible on the server.
        */
-      req: req
+      req: req,
+      entryPath: options.entryPath
     };
 
     /**

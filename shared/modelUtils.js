@@ -1,93 +1,98 @@
-/*global rendr*/
+var BaseCollection, BaseModel, ModelUtils;
 
-var BaseCollection, BaseModel, uppercaseRe, utils;
+BaseModel = require("./base/model");
 
-BaseModel = require('./base/model');
-BaseCollection = require('./base/collection');
+BaseCollection = require("./base/collection");
 
-utils = module.exports;
-
-utils._classMap = {};
-
-utils.getModel = function(path, attrs, options) {
-  var Model;
-  attrs = attrs || {};
-  options = options || {};
-  Model = utils.getModelConstructor(path);
-  return new Model(attrs, options);
-};
-
-utils.getCollection = function(path, models, options) {
-  var Collection;
-  models = models || [];
-  options = options || {};
-  Collection = utils.getCollectionConstructor(path);
-  return new Collection(models, options);
-};
-
-utils.getModelConstructor = function(path) {
-  path = utils.underscorize(path);
-  return utils._classMap[path] || require(rendr.entryPath + "app/models/" + path);
-};
-
-utils.getCollectionConstructor = function(path) {
-  path = utils.underscorize(path);
-  return utils._classMap[path] || require(rendr.entryPath + "app/collections/" + path);
-};
-
-utils.isModel = function(obj) {
-  return obj instanceof BaseModel;
-};
-
-utils.isCollection = function(obj) {
-  return obj instanceof BaseCollection;
-};
-
-utils.getModelNameForCollectionName = function(collectionName) {
-  var Collection;
-
-  Collection = utils.getCollectionConstructor(collectionName);
-  return utils.modelName(Collection.prototype.model);
-};
-
-uppercaseRe = /([A-Z])/g;
-
-utils.underscorize = function(name) {
-  if (name == null) {
-    return undefined;
+module.exports = ModelUtils = (function() {
+  function ModelUtils(entryPath) {
+    this.entryPath = entryPath;
+    this._classMap = {};
   }
-  name = name.replace(uppercaseRe, function(c) {
-    return "_" + c.toLowerCase();
-  });
-  if (name[0] === '_') {
-    name = name.slice(1);
-  }
-  return name;
-};
 
-/**
- * The 'name' property is added to the constructor when using a named function,
- * and it cannot be changed.  I.e.:
- *
- *   function MyClass(){}
- *   MyClass.name
- *     -> "MyClass"
- *
- * We first look for the 'id' property of the constructor, which is compatible
- *  with standard Backbone-style class inheritance.
- *
- *   var MyClass = Backbone.Model.extend({});
- *   MyClass.name
- *     -> ""
- *   MyClass.id = "MyClass"
- *
- */
-utils.modelName = function(modelOrCollectionClass) {
-  return utils.underscorize(modelOrCollectionClass.id || modelOrCollectionClass.name);
-};
+  ModelUtils.prototype.getModel = function(path, attrs, options) {
+    var Model;
+    attrs = attrs || {};
+    options = options || {};
+    Model = this.getModelConstructor(path);
+    return new Model(attrs, options);
+  };
 
-utils.modelIdAttribute = function(modelName) {
-  var constructor;
-  constructor = utils.getModelConstructor(modelName);
-  return constructor.prototype.idAttribute;
-};
+  ModelUtils.prototype.getCollection = function(path, models, options) {
+    var Collection;
+    models = models || [];
+    options = options || {};
+    Collection = this.getCollectionConstructor(path);
+    return new Collection(models, options);
+  };
+
+  ModelUtils.prototype.getModelConstructor = function(path) {
+    path = this.underscorize(path);
+    return this._classMap[path] || require(this.entryPath + "app/models/" + path);
+  };
+
+  ModelUtils.prototype.getCollectionConstructor = function(path) {
+    path = this.underscorize(path);
+    return this._classMap[path] || require(this.entryPath + "app/collections/" + path);
+  };
+
+  ModelUtils.prototype.isModel = function(obj) {
+    return obj instanceof BaseModel;
+  };
+
+  ModelUtils.prototype.isCollection = function(obj) {
+    return obj instanceof BaseCollection;
+  };
+
+  ModelUtils.prototype.getModelNameForCollectionName = function(collectionName) {
+    var Collection;
+    Collection = this.getCollectionConstructor(collectionName);
+    return this.modelName(Collection.prototype.model);
+  };
+
+  ModelUtils.uppercaseRe = /([A-Z])/g;
+
+  ModelUtils.prototype.underscorize = function(name) {
+    if (name == null) {
+      return undefined;
+    }
+    name = name.replace(ModelUtils.uppercaseRe, function(c) {
+      return "_" + c.toLowerCase();
+    });
+    if (name[0] === "_") {
+      name = name.slice(1);
+    }
+    return name;
+  };
+
+  /*
+  The 'name' property is added to the constructor when using a named function,
+  and it cannot be changed.  I.e.:
+
+  function MyClass(){}
+  MyClass.name
+  -> "MyClass"
+
+  We first look for the 'id' property of the constructor, which is compatible
+  with standard Backbone-style class inheritance.
+
+  var MyClass = Backbone.Model.extend({});
+  MyClass.name
+  -> ""
+  MyClass.id = "MyClass"
+  */
+
+
+  ModelUtils.prototype.modelName = function(modelOrCollectionClass) {
+    return this.underscorize(modelOrCollectionClass.id || modelOrCollectionClass.name);
+  };
+
+  ModelUtils.prototype.modelIdAttribute = function(modelName) {
+    var constructor;
+    constructor = this.getModelConstructor(modelName);
+    return constructor.prototype.idAttribute;
+  };
+
+  return ModelUtils;
+
+})();

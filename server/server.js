@@ -9,23 +9,32 @@ var _ = require('underscore')
 
 module.exports = Server;
 
-var defaultOptions = {
-  dataAdapter: null,
-  dataAdapterConfig: null,
-  viewEngine: null,
-  errorHandler: null,
-  notFoundHandler: null,
-  apiPath: '/api',
-  appData: {},
-  paths: {},
-  viewsPath: null,
-  defaultEngine: 'js'
-};
+function defaultOptions(){
+  return {
+    dataAdapter: null,
+    dataAdapterConfig: null,
+    viewEngine: null,
+    errorHandler: null,
+    notFoundHandler: null,
+    mountPath: null,
+    apiPath: '/api',
+    appData: {},
+    paths: {},
+    viewsPath: null,
+    defaultEngine: 'js',
+    entryPath: process.cwd() + '/'
+  };
+}
 
 
 function Server(options) {
+  if(typeof rendr !== 'undefined' && rendr.entryPath){
+    console.warn("Setting rendr.entryPath is now deprecated. Please pass in entryPath when initializing the rendr server.")
+    options.entryPath = rendr.entryPath;
+  }
+
   this.options = options || {};
-  _.defaults(this.options, defaultOptions);
+  _.defaults(this.options, defaultOptions());
 
   this.expressApp = express();
 
@@ -42,7 +51,7 @@ function Server(options) {
    * Tell Express to use our ViewEngine to handle .js, .coffee files.
    * This can always be overridden in your app.
    */
-  this.expressApp.set('views', this.options.viewsPath || (rendr.entryPath + 'app/views'));
+  this.expressApp.set('views', this.options.viewsPath || (this.options.entryPath + 'app/views'));
   this.expressApp.set('view engine', this.options.defaultEngine);
   this.expressApp.engine(this.options.defaultEngine, this.viewEngine.render);
 
@@ -97,7 +106,8 @@ Server.prototype.configure = function(fn) {
    * Initialize the Rendr app, accessible at `req.rendrApp`.
    */
   this.expressApp.use(middleware.initApp(this.options.appData, {
-    apiPath: this.options.apiPath
+    apiPath: this.options.apiPath,
+    entryPath: this.options.entryPath
   }));
 
   /**

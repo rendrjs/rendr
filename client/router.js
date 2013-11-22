@@ -7,12 +7,6 @@ Backbone = require('backbone');
 BaseRouter = require('../shared/base/router');
 BaseView = require('../shared/base/view');
 
-try {
-  AppView = require(rendr.entryPath + 'app/views/app_view');
-} catch (e) {
-  AppView = require('./app_view');
-}
-
 extractParamNamesRe = /:(\w+)/g;
 
 plusRe = /\+/g;
@@ -57,6 +51,12 @@ ClientRouter.prototype.reverseRoutes = true;
 
 ClientRouter.prototype.initialize = function(options) {
   this.app = options.app;
+
+  try {
+    AppView = require(options.entryPath + 'app/views/app_view');
+  } catch (e) {
+    AppView = require('./app_view');
+  }
 
   // We do this here so that it's available in AppView initialization.
   this.app.router = this;

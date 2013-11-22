@@ -1,8 +1,7 @@
-var MemoryStore, Super, modelUtils, _;
+var MemoryStore, Super, _;
 
 _ = require('underscore');
 Super = MemoryStore = require('./memory_store');
-modelUtils = require('../modelUtils');
 
 module.exports = CollectionStore;
 
@@ -19,7 +18,7 @@ CollectionStore.prototype.constructor = CollectionStore;
 CollectionStore.prototype.set = function(collection, params) {
   var data, idAttribute, key;
   params = params || collection.params;
-  key = getStoreKey(modelUtils.modelName(collection.constructor), params);
+  key = this._getStoreKey(this.modelUtils.modelName(collection.constructor), params);
   idAttribute = collection.model.prototype.idAttribute;
   data = {
     ids: collection.pluck(idAttribute),
@@ -41,10 +40,10 @@ CollectionStore.prototype.get = function(collectionName, params) {
   * Kind of jank-sauce. Always merge in the default
   * params for the given collection.
   */
-  Collection = modelUtils.getCollectionConstructor(collectionName);
+  Collection = this.modelUtils.getCollectionConstructor(collectionName);
   params = _.clone(params);
   params = _.defaults(params, Collection.prototype.defaultParams);
-  key = getStoreKey(collectionName, params);
+  key = this._getStoreKey(collectionName, params);
   return Super.prototype.get.call(this, key);
 };
 
@@ -52,9 +51,9 @@ CollectionStore.prototype._formatKey = function(key) {
   return Super.prototype._formatKey.call(this, "_cs:" + key);
 };
 
-function getStoreKey(collectionName, params) {
+CollectionStore.prototype._getStoreKey = function(collectionName, params) {
   var underscored;
-  underscored = modelUtils.underscorize(collectionName);
+  underscored = this.modelUtils.underscorize(collectionName);
   return underscored + ":" + JSON.stringify(sortParams(params));
 }
 

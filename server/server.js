@@ -107,7 +107,8 @@ Server.prototype.configure = function(fn) {
    */
   this.expressApp.use(middleware.initApp(this.options.appData, {
     apiPath: this.options.apiPath,
-    entryPath: this.options.entryPath
+    entryPath: this.options.entryPath,
+    modelUtils: this.options.modelUtils
   }));
 
   /**

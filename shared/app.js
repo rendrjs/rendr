@@ -63,7 +63,8 @@ module.exports = Backbone.Model.extend({
     if (!global.isServer) {
       new ClientRouter({
         app: this,
-        entryPath: clientEntryPath
+        entryPath: clientEntryPath,
+        rootPath: attributes.rootPath
       });
     }
 

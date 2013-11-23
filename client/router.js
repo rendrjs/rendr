@@ -1,6 +1,6 @@
 /*global rendr*/
 
-var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _;
+var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, defaultRootPath;
 
 _ = require('underscore');
 Backbone = require('backbone');
@@ -12,6 +12,8 @@ extractParamNamesRe = /:(\w+)/g;
 plusRe = /\+/g;
 
 firstRender = true;
+
+defaultRootPath = '';
 
 function noop() {}
 
@@ -245,7 +247,8 @@ ClientRouter.prototype.renderView = function() {
 ClientRouter.prototype.start = function() {
   Backbone.history.start({
     pushState: true,
-    hashChange: false
+    hashChange: false,
+    root: this.options.rootPath || defaultRootPath
   });
 };
 

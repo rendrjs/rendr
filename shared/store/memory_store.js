@@ -3,6 +3,7 @@ module.exports = MemoryStore;
 function MemoryStore(options) {
   this.options = options || {};
   this.app = this.options.app;
+  this.modelUtils = this.options.modelUtils;
   this.cache = {};
 }
 

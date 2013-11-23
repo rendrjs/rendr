@@ -1,16 +1,18 @@
 var App, Listing, Listings, BaseCollection, BaseModel, fetcher, listingResponses,
-  modelUtils, sinon, chai, sinonChai, should, _, addClassMapping;
+  ModelUtils, modelUtils, sinon, chai, sinonChai, should, _, AddClassMapping, addClassMapping;
 
 _ = require('underscore');
 chai = require('chai');
 should = chai.should();
 sinon = require('sinon');
 sinonChai = require('sinon-chai');
-modelUtils = require('../../shared/modelUtils');
+ModelUtils = require('../../shared/modelUtils');
+modelUtils = new ModelUtils()
+AddClassMapping = require('../helpers/add_class_mapping')
+addClassMapping = new AddClassMapping(modelUtils)
 BaseModel = require('../../shared/base/model');
 BaseCollection = require('../../shared/base/collection');
 App = require('../../shared/app');
-addClassMapping = require('../helpers/add_class_mapping')
 
 chai.use(sinonChai);
 
@@ -68,8 +70,8 @@ Listings = BaseCollection.extend({
 });
 Listings.id = 'Listings';
 
-addClassMapping('Listing', Listing);
-addClassMapping('Listings', Listings);
+addClassMapping.add('Listing', Listing);
+addClassMapping.add('Listings', Listings);
 
 function getModelResponse(version, id, addJsonKey) {
   var resp;
@@ -109,7 +111,7 @@ function buildCollectionResponse(addJsonKey) {
 
 describe('fetcher', function() {
   beforeEach(function() {
-    this.app = new App;
+    this.app = new App(null, {modelUtils: modelUtils});
     fetcher = this.app.fetcher;
   });
 
@@ -406,7 +408,7 @@ describe('fetcher', function() {
         name: 'Some Person'
       };
       someperson = new User(userAttrs);
-      addClassMapping('user', User);
+      addClassMapping.add('user', User);
       fetcher.modelStore.set(someperson);
       fetchSpec = {
         model: {

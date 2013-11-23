@@ -1,9 +1,17 @@
-utils = require('../../shared/modelUtils')
+var AddClassMapping, ModelUtils;
 
-/**
- * Use this to specify class constructors based on
- * model/collection name. Useful i.e. for testing.
- */
-module.exports = function(key, modelConstructor) {
-  utils._classMap[utils.underscorize(key)] = modelConstructor;
-};
+ModelUtils = require('../../shared/modelUtils');
+
+module.exports = AddClassMapping = (function() {
+  function AddClassMapping(utils) {
+    this.utils = utils;
+    this.utils || (this.utils = new ModelUtils);
+  }
+
+  AddClassMapping.prototype.add = function(key, modelConstructor) {
+    return this.utils._classMap[this.utils.underscorize(key)] = modelConstructor;
+  };
+
+  return AddClassMapping;
+
+})();

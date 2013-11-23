@@ -2,7 +2,7 @@
 
 var path = require('path')
   , _ = require('underscore')
-  , layoutTemplate;
+  , layoutTemplates = {};
 
 module.exports = exports = ViewEngine;
 
@@ -46,13 +46,13 @@ ViewEngine.prototype.renderWithLayout = function renderWithLayout(locals, app, c
 ViewEngine.prototype.getLayoutTemplate = function getLayoutTemplate(app, callback) {
   var layoutPath;
 
-  if (layoutTemplate) {
-    return callback(null, layoutTemplate);
+  if (layoutTemplates[app.options.entryPath]) {
+    return callback(null, layoutTemplates[app.options.entryPath]);
   }
-  app.templateAdapter.getLayout('__layout', function(err, template) {
+  app.templateAdapter.getLayout('__layout', app.options.entryPath, function(err, template) {
     if (err) return callback(err);
-    layoutTemplate = template;
-    callback(err, layoutTemplate);
+    layoutTemplates[app.options.entryPath] = template;
+    callback(err, template);
   });
 };
 
@@ -66,17 +66,16 @@ ViewEngine.prototype.getViewHtml = function getViewHtml(viewPath, locals, app) {
   // Pass in the app.
   locals.app = app;
   name = viewPath.substr(viewPath.indexOf(basePath) + basePath.length + 1);
-  View = BaseView.getView(name);
+  View = BaseView.getView(name, app.options.entryPath);
   view = new View(locals);
   return view.getHtml();
 };
 
 ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, app) {
-  var modelUtils = require('../shared/modelUtils')
-    , bootstrappedData = {};
+  var bootstrappedData = {};
 
   _.each(locals, function(modelOrCollection, name) {
-    if (modelUtils.isModel(modelOrCollection) || modelUtils.isCollection(modelOrCollection)) {
+    if (app.modelUtils.isModel(modelOrCollection) || app.modelUtils.isCollection(modelOrCollection)) {
       bootstrappedData[name] = {
         summary: app.fetcher.summarize(modelOrCollection),
         data: modelOrCollection.toJSON()

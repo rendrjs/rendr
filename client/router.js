@@ -1,12 +1,11 @@
 /*global rendr*/
 
-var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, defaultRootPath, RendrAppView;
+var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, defaultRootPath;
 
 _ = require('underscore');
 Backbone = require('backbone');
 BaseRouter = require('../shared/base/router');
 BaseView = require('../shared/base/view');
-RendrAppView = require('./app_view');
 
 extractParamNamesRe = /:(\w+)/g;
 
@@ -55,7 +54,7 @@ ClientRouter.prototype.reverseRoutes = true;
 ClientRouter.prototype.initialize = function(options) {
   this.app = options.app;
 
-  var AppView = this.app.customAppView || RendrAppView;
+  var AppView = this.options.appViewClass;
 
   // We do this here so that it's available in AppView initialization.
   this.app.router = this;

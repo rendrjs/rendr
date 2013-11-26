@@ -10,7 +10,7 @@ var Backbone, ClientRouter, Fetcher, ModelUtils;
 require('./globals');
 Backbone = require('backbone');
 Fetcher = require('./fetcher');
-ModelUtils = require('./modelUtils')
+ModelUtils = require('./modelUtils');
 
 if (!global.isServer) {
   ClientRouter = require('app/router');
@@ -66,6 +66,7 @@ module.exports = Backbone.Model.extend({
       new ClientRouter({
         app: this,
         entryPath: entryPath,
+        appViewClass: this.getAppViewClass(),
         rootPath: attributes.rootPath
       });
     }
@@ -84,6 +85,13 @@ module.exports = Backbone.Model.extend({
    */
   fetch: function() {
     this.fetcher.fetch.apply(this.fetcher, arguments);
+  },
+
+  /**
+   * @client
+   */
+  getAppViewClass: function () {
+    return require('../client/app_view');
   },
 
   /**

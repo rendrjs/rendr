@@ -115,10 +115,12 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
     router.currentRoute = route;
 
     if (firstRender) {
-      views = BaseView.attach(router.app);
-      router.currentView = router.getMainView(views);
-      router.trigger('action:end', route, firstRender);
       firstRender = false;
+      BaseView.attach(router.app, null, function(views)
+      {
+        router.currentView = router.getMainView(views);
+        router.trigger('action:end', route, true);
+      });
     } else {
       paramsArray = _.toArray(arguments);
       params = router.getParamsHash(pattern, paramsArray, window.location.search);
@@ -248,7 +250,7 @@ ClientRouter.prototype.getRenderCallback = function(route) {
   return function(err, viewPath, locals) {
     if (err) return this.handleErr(err, route);
 
-    var View;
+    var View, _router = this;
 
     if (this.currentView) {
       this.currentView.remove();
@@ -261,11 +263,13 @@ ClientRouter.prototype.getRenderCallback = function(route) {
 
     // Inject the app.
     locals.app = this.app;
-    View = this.getView(viewPath);
-    this.currentView = new View(locals);
-    this.renderView();
+    this.getView(viewPath, function(View)
+    {
+      _router.currentView = new View(locals);
+      _router.renderView();
 
-    this.trigger('action:end', route, firstRender);
+      _router.trigger('action:end', route, firstRender);
+    });
   }.bind(this);
 };
 
@@ -286,10 +290,14 @@ ClientRouter.prototype.trackAction = function() {
   this.currentFragment = Backbone.history.getFragment();
 };
 
-ClientRouter.prototype.getView = function(key) {
-  var View = BaseView.getView(key);
-  if (!_.isFunction(View)) {
-    throw new Error("View '" + key + "' not found.");
-  }
-  return View;
+ClientRouter.prototype.getView = function(key, callback) {
+  var View = BaseView.getView(key, this.options.entryPath, function(View)
+  {
+    // TODO: Make it function (err, View)
+    if (!_.isFunction(View)) {
+      throw new Error("View '" + key + "' not found.");
+    }
+
+    callback(View);
+  });
 };

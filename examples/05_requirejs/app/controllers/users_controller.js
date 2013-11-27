@@ -10,24 +10,16 @@ define(function(require)
   return {
     index: function(params, callback) {
 
-      var _controller = this;
-
       var spec = {
         collection: {collection: 'Users', params: params}
       };
 
-      // It's another workaround and will be integrated into Rendr on step 3 of my changes
-      require([rendr.entryPath + 'app/views/users/index', rendr.entryPath + 'app/collections/users'], function(view)
-      {
-        _controller.app.fetch(spec, function(err, result) {
-          callback(err, result);
-        });
+      this.app.fetch(spec, function(err, result) {
+        callback(err, result);
       });
     },
 
     show: function(params, callback) {
-
-      var _controller = this;
 
       var spec = {
         model: {model: 'User', params: params},
@@ -35,16 +27,8 @@ define(function(require)
       };
 
       // It's another workaround and will be integrated into Rendr on step 3 of my changes
-      require(
-      [ rendr.entryPath + 'app/views/users/show'
-      , rendr.entryPath + 'app/views/user_repos_view'
-      , rendr.entryPath + 'app/collections/users'
-      , rendr.entryPath + 'app/collections/repos'
-      ], function(view)
-      {
-        _controller.app.fetch(spec, function(err, result) {
-          callback(err, result);
-        });
+      this.app.fetch(spec, function(err, result) {
+        callback(err, result);
       });
     },
 
@@ -53,13 +37,11 @@ define(function(require)
     // subview. We have both here for demonstration purposes.
     show_lazy: function(params, callback) {
 
-      var _controller = this;
-
       var spec = {
         model: {model: 'User', params: params}
       };
 
-      _controller.app.fetch(spec, function(err, result) {
+      this.app.fetch(spec, function(err, result) {
         if (err) return callback(err);
         // Extend the hash of options we pass to the view's constructor
         // to include the `template_name` option, which will be used

@@ -198,10 +198,11 @@ describe('fetcher', function() {
         }
       };
       fetcher.storeResults(results);
-      hydrated = fetcher.hydrate(fetchSummary);
-      listing = hydrated.listing;
-      listing.should.be.an.instanceOf(Listing);
-      listing.toJSON().should.eql(rawListing);
+      fetcher.hydrate(fetchSummary, function(err, hydrated) {
+        listing = hydrated.listing;
+        listing.should.be.an.instanceOf(Listing);
+        listing.toJSON().should.eql(rawListing);
+      });
     });
 
     it("should be able to store and hydrate a collection", function() {
@@ -236,16 +237,17 @@ describe('fetcher', function() {
         }
       };
       fetcher.storeResults(results);
-      hydrated = fetcher.hydrate(fetchSummary);
-      listings = hydrated.listings;
-      listings.should.be.an.instanceOf(Listings);
-      listings.toJSON().should.eql(rawListings);
-      listings.params.should.eql(params);
-      should.not.exist(fetcher.collectionStore.get('Listings', {}));
-      fetcher.collectionStore.get('Listings', params).should.eql({
-        ids: listings.pluck('id'),
-        meta: {},
-        params: params
+      fetcher.hydrate(fetchSummary, function(err, hydrated) {
+        listings = hydrated.listings;
+        listings.should.be.an.instanceOf(Listings);
+        listings.toJSON().should.eql(rawListings);
+        listings.params.should.eql(params);
+        should.not.exist(fetcher.collectionStore.get('Listings', {}));
+        fetcher.collectionStore.get('Listings', params).should.eql({
+          ids: listings.pluck('id'),
+          meta: {},
+          params: params
+        });
       });
     });
 
@@ -287,13 +289,15 @@ describe('fetcher', function() {
         }
       };
       fetcher.storeResults(results);
-      hydrated = fetcher.hydrate(fetchSummary);
-      listing = hydrated.listing;
-      listing.should.be.an.instanceOf(Listing);
-      listing.toJSON().should.deep.equal(rawListing);
-      listings = hydrated.listings;
-      listings.should.be.an.instanceOf(Listings);
-      listings.toJSON().should.deep.equal(rawListings);
+      fetcher.hydrate(fetchSummary, function(err, hydrated)
+      {
+        listing = hydrated.listing;
+        listing.should.be.an.instanceOf(Listing);
+        listing.toJSON().should.deep.equal(rawListing);
+        listings = hydrated.listings;
+        listings.should.be.an.instanceOf(Listings);
+        listings.toJSON().should.deep.equal(rawListings);
+      });
     });
 
     it("should inject the app instance", function() {
@@ -312,11 +316,11 @@ describe('fetcher', function() {
       app = {
         fake: 'app'
       };
-      results = fetcher.hydrate(summaries, {
-        app: app
+      fetcher.hydrate(summaries, {app: app}, function(err, results)
+      {
+        model = results.model;
+        model.app.should.eql(app);
       });
-      model = results.model;
-      model.app.should.eql(app);
     });
   });
 

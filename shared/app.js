@@ -5,17 +5,14 @@
  * The client also subclasses it for client-specific stuff.
  */
 
-var Backbone, ClientRouter, Fetcher, clientEntryPath, ModelUtils;
+var Backbone, ClientRouter, Fetcher, ModelUtils;
 
 require('./globals');
 Backbone = require('backbone');
 Fetcher = require('./fetcher');
 ModelUtils = require('./modelUtils')
 
-clientEntryPath = '';
-
 if (!global.isServer) {
-  // client side only, entryPath is always empty
   ClientRouter = require('app/router');
 }
 
@@ -34,7 +31,12 @@ module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
     this.options = options || {};
 
-    entryPath = this.options.entryPath || clientEntryPath
+    var entryPath = this.options.entryPath || '';
+    if (!global.isServer) {
+      // the entry path must always be empty for the client
+      entryPath =  '';
+    }
+
     this.modelUtils = this.options.modelUtils || new ModelUtils(entryPath);
 
     /**
@@ -63,7 +65,7 @@ module.exports = Backbone.Model.extend({
     if (!global.isServer) {
       new ClientRouter({
         app: this,
-        entryPath: clientEntryPath,
+        entryPath: entryPath,
         rootPath: attributes.rootPath
       });
     }

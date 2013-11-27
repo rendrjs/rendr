@@ -197,6 +197,9 @@ module.exports = function(grunt)
           cjsTranslate: true,
           create: true,
           name: 'rendr-handlebars',
+          rawText: {
+              'rendr/shared/globals': 'define(["rendr/shared/globals"], function () {});'
+          },
           include:
           [
             'rendr-handlebars'

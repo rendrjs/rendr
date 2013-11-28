@@ -1,9 +1,6 @@
 var path = require('path');
 
 var stylesheetsDir = 'assets/stylesheets';
-var rendrDir = 'node_modules/rendr';
-var rendrHandlebarsDir = 'node_modules/rendr-handlebars';
-var rendrModulesDir = rendrDir + '/node_modules';
 
 module.exports = function(grunt) {
   // Project configuration.
@@ -66,47 +63,40 @@ module.exports = function(grunt) {
       }
     },
 
-    rendr_stitch: {
-      compile: {
+    copy: {
+      jquery: {
+        src: 'assets/vendor/jquery-1.9.1.min.js',
+        dest: 'public/js/jquery-1.9.1.min.js'
+      },
+      json2: {
+        src: 'assets/vendor/json2.js',
+        dest: 'public/js/json2.js'
+      }
+    },
+
+    browserify: {
+      basic: {
+        src: [
+          'app/**/*.js',
+        ],
+        dest: 'public/mergedAssets.js',
         options: {
-          dependencies: [
+          debug: true,
+          transform: ['hbsfy'],
+          noParse: [
             'assets/vendor/**/*.js'
           ],
-          npmDependencies: {
-            underscore: '../rendr/node_modules/underscore/underscore.js',
-            backbone: '../rendr/node_modules/backbone/backbone.js',
-            handlebars: '../rendr-handlebars/node_modules/handlebars/dist/handlebars.runtime.js',
-            async: '../rendr/node_modules/async/lib/async.js'
-          },
-          aliases: [
-            {from: rendrDir + '/client', to: 'rendr/client'},
-            {from: rendrDir + '/shared', to: 'rendr/shared'},
-            {from: rendrHandlebarsDir, to: 'rendr-handlebars'},
-            {from: rendrHandlebarsDir + '/shared', to: 'rendr-handlebars/shared'}
-          ]
-        },
-        files: [{
-          dest: 'public/mergedAssets.js',
-          src: [
-            'app/**/*.js',
-            rendrDir + '/client/**/*.js',
-            rendrDir + '/shared/**/*.js',
-            rendrHandlebarsDir + '/index.js',
-            rendrHandlebarsDir + '/shared/*.js'
-          ]
-        }]
-      },
-      tests: {
-        options: {
-          dependencies: [ 'public/mergedAssets.js' ],
-          npmDependencies: {
-            chai: 'chai.js',
-          },
-        },
-        files: [{
-          dest: 'test/stitched.js',
-          src: []
-        }]
+          alias: [
+            'node_modules/rendr-handlebars/index.js:rendr-handlebars',
+          ],
+          aliasMappings: [
+            {
+              cwd: 'app/',
+              src: ['**/*.js'],
+              dest: 'app/'
+            },
+          ],
+        }
       }
     }
   });

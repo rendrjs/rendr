@@ -1,17 +1,20 @@
-var BaseCollection, BaseModel, CollectionStore, modelUtils, should, util;
+var BaseCollection, BaseModel, CollectionStore, ModelUtils, modelUtils, should, util, AddClassMapping, addClassMapping;
 
 should = require('chai').should();
 util = require('util');
 CollectionStore = require('../../../shared/store/collection_store');
 BaseCollection = require('../../../shared/base/collection');
 BaseModel = require('../../../shared/base/model');
-modelUtils = require('../../../shared/modelUtils');
+ModelUtils = require('../../../shared/modelUtils');
+modelUtils = new ModelUtils()
+AddClassMapping = require('../../helpers/add_class_mapping')
+addClassMapping = new AddClassMapping(modelUtils)
 
-modelUtils.addClassMapping(BaseCollection.name, BaseCollection);
+addClassMapping.add(BaseCollection.name, BaseCollection);
 
 describe('CollectionStore', function() {
   beforeEach(function() {
-    this.store = new CollectionStore;
+    this.store = new CollectionStore({modelUtils: modelUtils});
     this.store.clear();
   });
 
@@ -84,7 +87,7 @@ describe('CollectionStore', function() {
       params: params
     });
     this.store.set(collection, params);
-    modelUtils.addClassMapping(collection.constructor.name, MyCollection);
+    addClassMapping.add(collection.constructor.name, MyCollection);
     results = this.store.get(collection.constructor.name, params);
     results.should.eql({
       ids: collection.pluck('login'),

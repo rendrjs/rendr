@@ -95,6 +95,18 @@ module.exports = function(grunt) {
             rendrHandlebarsDir + '/shared/*.js'
           ]
         }]
+      },
+      tests: {
+        options: {
+          dependencies: [ 'public/mergedAssets.js' ],
+          npmDependencies: {
+            chai: 'chai.js',
+          },
+        },
+        files: [{
+          dest: 'test/stitched.js',
+          src: []
+        }]
       }
     }
   });

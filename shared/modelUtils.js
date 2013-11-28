@@ -1,5 +1,3 @@
-/*global rendr*/
-
 // Since we make rendr files AMD friendly on app setup stage
 // we need to pretend that this code is pure commonjs
 // means no AMD-style require calls
@@ -8,146 +6,138 @@ var requireAMD = require;
 var typePath = {
   model: "app/models/",
   collection: "app/collections/"
-}
+};
 
-var BaseCollection, BaseModel, classMap, uppercaseRe, utils;
+var BaseCollection, BaseModel, ModelUtils;
 
-BaseModel = require('./base/model');
-BaseCollection = require('./base/collection');
+BaseModel = require("./base/model");
 
-utils = module.exports;
+BaseCollection = require("./base/collection");
 
-utils.getModel = function(path, attrs, options, callback) {
-  var Model;
-  attrs = attrs || {};
-  options = options || {};
-  if (typeof callback == 'function') {
-    utils.getModelConstructor(path, function(Model) {
-      callback(new Model(attrs, options));
-    });
-  } else {
-    Model = utils.getModelConstructor(path);
-    return new Model(attrs, options);
+module.exports = ModelUtils = (function() {
+  function ModelUtils(entryPath) {
+    this.entryPath = entryPath;
+    this._classMap = {};
   }
-};
 
-utils.getCollection = function(path, models, options, callback) {
-  var Collection;
-  models = models || [];
-  options = options || {};
-  if (typeof callback == 'function') {
-    utils.getCollectionConstructor(path, function(Collection) {
-      callback(new Collection(models, options));
-    });
-  } else {
-    Collection = utils.getCollectionConstructor(path);
-    return new Collection(models, options);
-  }
-};
+  ModelUtils.prototype.getModel = function(path, attrs, options, callback) {
+    var Model;
+    attrs = attrs || {};
+    options = options || {};
+    if (typeof callback == 'function') {
+      this.getModelConstructor(path, function(Model) {
+        callback(new Model(attrs, options));
+      });
+    } else {
+      Model = this.getModelConstructor(path);
+      return new Model(attrs, options);
+    }
+  };
 
-utils.getModelConstructor = function(path, callback) {
-  return this._fetchConstructor('model', path, callback);
-};
+  ModelUtils.prototype.getCollection = function(path, models, options, callback) {
+    var Collection;
+    models = models || [];
+    options = options || {};
+    if (typeof callback == 'function') {
+      this.getCollectionConstructor(path, function(Collection) {
+        callback(new Collection(models, options));
+      });
+    } else {
+      Collection = this.getCollectionConstructor(path);
+      return new Collection(models, options);
+    }
+  };
 
-utils.getCollectionConstructor = function(path, callback) {
-  return this._fetchConstructor('collection', path, callback);
-};
+  ModelUtils.prototype.getModelConstructor = function(path, callback) {
+    return this.fetchConstructor('model', path, callback);
+  };
 
-utils._fetchConstructor = function(type, path, callback) {
-  path = utils.underscorize(path);
+  ModelUtils.prototype.getCollectionConstructor = function(path, callback) {
+    return this.fetchConstructor('collection', path, callback);
+  };
 
-  var fullPath = rendr.entryPath + typePath[type] + path;
+  ModelUtils.prototype.fetchConstructor = function(type, path, callback) {
+    path = this.underscorize(path);
 
-  if (classMap[path]) {
-    return (typeof callback == 'function') ? callback(classMap[path]) : classMap[path];
-  } else if (typeof callback == 'function') {
-    // Only used in AMD environment
-    if (typeof define != 'undefined')
-    {
-      requireAMD([fullPath], callback);
+    var fullPath = this.entryPath + typePath[type] + path;
+
+    if (classMap[path]) {
+      return (typeof callback == 'function') ? callback(classMap[path]) : classMap[path];
+    } else if (typeof callback == 'function') {
+      // Only used in AMD environment
+      if (typeof define != 'undefined')
+      {
+        requireAMD([fullPath], callback);
+      }
+      else
+      {
+        callback(require(fullPath));
+      }
+      return;
     }
     else
     {
-      callback(require(fullPath));
+      return require(fullPath);
     }
-    return;
-  }
-  else
-  {
-    return require(fullPath);
-  }
-}
+  };
 
-utils.getConstructor = function(type, path) {
-  var method;
-  method = type === 'model' ? utils.getModelConstructor : utils.getCollectionConstructor;
-  return method(path);
-};
+  ModelUtils.prototype.isModel = function(obj) {
+    return obj instanceof BaseModel;
+  };
 
-utils.isModel = function(obj) {
-  return obj instanceof BaseModel;
-};
+  ModelUtils.prototype.isCollection = function(obj) {
+    return obj instanceof BaseCollection;
+  };
 
-utils.isCollection = function(obj) {
-  return obj instanceof BaseCollection;
-};
+  ModelUtils.prototype.getModelNameForCollectionName = function(collectionName) {
+    var Collection;
+    Collection = this.getCollectionConstructor(collectionName);
+    return this.modelName(Collection.prototype.model);
+  };
 
-utils.getModelNameForCollectionName = function(collectionName) {
-  var Collection;
+  ModelUtils.uppercaseRe = /([A-Z])/g;
 
-  Collection = utils.getCollectionConstructor(collectionName);
-  return utils.modelName(Collection.prototype.model);
-};
+  ModelUtils.prototype.underscorize = function(name) {
+    if (name == null) {
+      return undefined;
+    }
+    name = name.replace(ModelUtils.uppercaseRe, function(c) {
+      return "_" + c.toLowerCase();
+    });
+    if (name[0] === "_") {
+      name = name.slice(1);
+    }
+    return name;
+  };
 
-classMap = {};
+  /*
+  The 'name' property is added to the constructor when using a named function,
+  and it cannot be changed.  I.e.:
 
-/**
- * Use this to specify class constructors based on
- * model/collection name. Useful i.e. for testing.
- */
-utils.addClassMapping = function(key, modelConstructor) {
-  classMap[utils.underscorize(key)] = modelConstructor;
-};
+  function MyClass(){}
+  MyClass.name
+  -> "MyClass"
 
-uppercaseRe = /([A-Z])/g;
+  We first look for the 'id' property of the constructor, which is compatible
+  with standard Backbone-style class inheritance.
 
-utils.underscorize = function(name) {
-  if (name == null) {
-    return undefined;
-  }
-  name = name.replace(uppercaseRe, function(c) {
-    return "_" + c.toLowerCase();
-  });
-  if (name[0] === '_') {
-    name = name.slice(1);
-  }
-  return name;
-};
+  var MyClass = Backbone.Model.extend({});
+  MyClass.name
+  -> ""
+  MyClass.id = "MyClass"
+  */
 
-/**
- * The 'name' property is added to the constructor when using a named function,
- * and it cannot be changed.  I.e.:
- *
- *   function MyClass(){}
- *   MyClass.name
- *     -> "MyClass"
- *
- * We first look for the 'id' property of the constructor, which is compatible
- *  with standard Backbone-style class inheritance.
- *
- *   var MyClass = Backbone.Model.extend({});
- *   MyClass.name
- *     -> ""
- *   MyClass.id = "MyClass"
- *
- */
-utils.modelName = function(modelOrCollectionClass) {
-  return utils.underscorize(modelOrCollectionClass.id || modelOrCollectionClass.name);
-};
 
-utils.modelIdAttribute = function(modelName, callback) {
-  utils.getModelConstructor(modelName, function(constructor)
-  {
-    callback(constructor.prototype.idAttribute);
-  });
-};
+  ModelUtils.prototype.modelName = function(modelOrCollectionClass) {
+    return this.underscorize(modelOrCollectionClass.id || modelOrCollectionClass.name);
+  };
+
+  ModelUtils.prototype.modelIdAttribute = function(modelName, callback) {
+    this.getModelConstructor(modelName, function(constructor) {
+      callback(constructor.prototype.idAttribute);
+    });
+  };
+
+  return ModelUtils;
+
+})();

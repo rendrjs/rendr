@@ -5,11 +5,10 @@
 // means no AMD-style require calls
 var requireAMD = require;
 
-var Backbone, BaseView, modelUtils, _, async;
+var Backbone, BaseView, _, async;
 
 _ = require('underscore');
 Backbone = require('backbone');
-modelUtils = require('../modelUtils');
 async = require('async');
 
 function noop() {}
@@ -18,8 +17,9 @@ module.exports = BaseView = Backbone.View.extend({
   initialize: function(options) {
     var obj;
 
-    this.name = this.name || modelUtils.underscorize(this.constructor.id || this.constructor.name);
     this.parseOptions(options);
+
+    this.name = this.name || this.app.modelUtils.underscorize(this.constructor.id || this.constructor.name);
     this.postInitialize();
     if ((obj = this.model || this.collection) && this.renderOnRefresh) {
       obj.on('refresh', this.render, this);
@@ -44,6 +44,8 @@ module.exports = BaseView = Backbone.View.extend({
 
     if (options.app != null) {
       this.app = this.options.app;
+    }else {
+      throw new Error("options.app expected when initializing a new view")
     }
 
     if (options.parentView != null) {
@@ -52,16 +54,16 @@ module.exports = BaseView = Backbone.View.extend({
 
     if (options.model != null) {
       if (!(options.model instanceof Backbone.Model) && options.model_name) {
-        options.model = modelUtils.getModel(options.model_name, options.model, {
+        options.model = this.app.modelUtils.getModel(options.model_name, options.model, {
           parse: true
         });
       }
-      options.model_name = options.model_name || modelUtils.modelName(options.model.constructor);
+      options.model_name = options.model_name || this.app.modelUtils.modelName(options.model.constructor);
       options.model_id = options.model.id;
     }
 
     if (options.collection != null) {
-      options.collection_name = options.collection_name || modelUtils.modelName(options.collection.constructor);
+      options.collection_name = options.collection_name || this.app.modelUtils.modelName(options.collection.constructor);
       options.collection_params = options.collection.params;
     }
 
@@ -155,7 +157,7 @@ module.exports = BaseView = Backbone.View.extend({
    * Get HTML attributes to add to el.
    */
   getAttributes: function() {
-    var attributes = {}, fetchSummary = {};
+    var attributes = {}, fetchSummary = {}, modelUtils = this.app.modelUtils;
 
     if (this.attributes) {
       _.extend(attributes, _.result(this, 'attributes'));
@@ -449,19 +451,22 @@ module.exports = BaseView = Backbone.View.extend({
  * -------------
  */
 
-BaseView.getView = function(viewName, callback) {
+BaseView.getView = function(viewName, entryPath, callback) {
+  if (entryPath === undefined) {
+    entryPath = '';
+  }
   // check for AMD environment
   if (typeof callback == 'function') {
     // Only used in AMD environment
     if (typeof define != 'undefined') {
-      requireAMD([rendr.entryPath + "app/views/" + viewName], callback);
+      requireAMD([entryPath + "app/views/" + viewName], callback);
     }
     else
     {
-      callback(require(rendr.entryPath + "app/views/" + viewName));
+      callback(require(entryPath + "app/views/" + viewName));
     }
   } else {
-    return require(rendr.entryPath + "app/views/" + viewName);
+    return require(entryPath + "app/views/" + viewName);
   }
 };
 

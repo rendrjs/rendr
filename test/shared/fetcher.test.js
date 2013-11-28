@@ -1,12 +1,20 @@
 var App, Listing, Listings, BaseCollection, BaseModel, fetcher, listingResponses,
-  modelUtils, should, _;
+  ModelUtils, modelUtils, sinon, chai, sinonChai, should, _, AddClassMapping, addClassMapping;
 
 _ = require('underscore');
-should = require('chai').should();
-modelUtils = require('../../shared/modelUtils');
+chai = require('chai');
+should = chai.should();
+sinon = require('sinon');
+sinonChai = require('sinon-chai');
+ModelUtils = require('../../shared/modelUtils');
+modelUtils = new ModelUtils()
+AddClassMapping = require('../helpers/add_class_mapping')
+addClassMapping = new AddClassMapping(modelUtils)
 BaseModel = require('../../shared/base/model');
 BaseCollection = require('../../shared/base/collection');
 App = require('../../shared/app');
+
+chai.use(sinonChai);
 
 fetcher = null;
 
@@ -62,8 +70,8 @@ Listings = BaseCollection.extend({
 });
 Listings.id = 'Listings';
 
-modelUtils.addClassMapping('Listing', Listing);
-modelUtils.addClassMapping('Listings', Listings);
+addClassMapping.add('Listing', Listing);
+addClassMapping.add('Listings', Listings);
 
 function getModelResponse(version, id, addJsonKey) {
   var resp;
@@ -103,8 +111,66 @@ function buildCollectionResponse(addJsonKey) {
 
 describe('fetcher', function() {
   beforeEach(function() {
-    this.app = new App;
+    this.app = new App(null, {modelUtils: modelUtils});
     fetcher = this.app.fetcher;
+  });
+
+  describe('buildOptions', function () {
+     it('should merge the app with custom options', function () {
+       fetcher.buildOptions().should.be.deep.equal({app: this.app});
+     });
+
+    it('should append specified additional options', function () {
+      fetcher.buildOptions({foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app});
+    });
+
+    it('should merge specified params with specified options that are empty', function () {
+      fetcher.buildOptions(null, {foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app});
+    });
+
+    it('should merge specified params with the specified options', function () {
+      var additionalOptions = {anyOption: 'withValue'},
+        params = {anyParam: 'paramValue'},
+        expected = {
+          app: this.app,
+          anyOption: 'withValue',
+          anyParam: 'paramValue'
+        };
+
+      fetcher.buildOptions(additionalOptions, params).should.be.deep.equal(expected);
+    });
+  });
+
+  describe('getModelOrCollectionForSpec', function () {
+    beforeEach(function () {
+      sinon.stub(modelUtils, 'getModelConstructor').returns(BaseModel);
+      sinon.stub(modelUtils, 'getCollectionConstructor').returns(BaseCollection);
+    });
+
+    afterEach(function () {
+      modelUtils.getModelConstructor.restore();
+      modelUtils.getCollectionConstructor.restore();
+    });
+
+    it('should return an empty model', function () {
+      var model = fetcher.getModelOrCollectionForSpec({ model: 'SomeModel' });
+
+      modelUtils.getModelConstructor.should.have.been.calledOnce;
+      modelUtils.getModelConstructor.should.have.been.calledWith('SomeModel');
+
+      model.should.be.instanceOf(BaseModel);
+      model.attributes.should.be.empty;
+    });
+
+    it('should return an empty collection', function () {
+      var collection = fetcher.getModelOrCollectionForSpec({ collection: 'SomeCollection' });
+
+      modelUtils.getCollectionConstructor.should.have.been.calledOnce;
+      modelUtils.getCollectionConstructor.should.have.been.calledWith('SomeCollection');
+
+      collection.should.be.instanceOf(BaseCollection);
+      collection.should.have.length(0);
+    });
   });
 
   describe('hydrate', function() {
@@ -346,7 +412,7 @@ describe('fetcher', function() {
         name: 'Some Person'
       };
       someperson = new User(userAttrs);
-      modelUtils.addClassMapping('user', User);
+      addClassMapping.add('user', User);
       fetcher.modelStore.set(someperson);
       fetchSpec = {
         model: {

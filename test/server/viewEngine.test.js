@@ -27,7 +27,8 @@ describe('ViewEngine', function() {
       templateAdapter: {
         getLayout: sinon.stub().yields(null, layoutTemplate)
       },
-      toJSON: sinon.stub()
+      toJSON: sinon.stub(),
+      options: {}
     };
   });
 

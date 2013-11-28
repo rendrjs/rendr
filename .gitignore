@@ -5,8 +5,9 @@ coverage
 *.swp
 examples/*/node_modules
 examples/**/compiledTemplates.js
-examples/*/public/styles.css
 examples/*/public/mergedAssets.js
+examples/*/test/stitched.js
+examples/*/public/styles.css
 examples/*/public/js/rendr*
 examples/*/public/js/libs.js
 examples/*/public/js/app

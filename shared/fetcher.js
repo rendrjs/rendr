@@ -1,10 +1,9 @@
-var Backbone, CollectionStore, ModelStore, async, modelUtils, _;
+var Backbone, CollectionStore, ModelStore, async, _;
 
 _ = require('underscore');
 Backbone = require('backbone');
 async = require('async');
 
-modelUtils = require('./modelUtils');
 ModelStore = require('./store/model_store');
 CollectionStore = require('./store/collection_store');
 
@@ -13,47 +12,54 @@ module.exports = Fetcher;
 function Fetcher(options) {
   this.options = options;
   this.app = this.options.app;
+  this.modelUtils = this.app.modelUtils;
   this.modelStore = new ModelStore({
-    app: this.app
+    app: this.app,
+    modelUtils: this.modelUtils
   });
   this.collectionStore = new CollectionStore({
-    app: this.app
+    app: this.app,
+    modelUtils: this.modelUtils
   });
 }
+
+Fetcher.prototype.buildOptions = function(additionalOptions, params) {
+  var options = {app: this.app};
+  _.defaults(options, additionalOptions);
+  _.defaults(options, params);
+  return options;
+};
 
 /**
  * Returns an instance of Model or Collection.
  */
-Fetcher.prototype.getModelForSpec = function(spec, attrsOrModels, options, callback) {
-  var method, modelName;
-  attrsOrModels = attrsOrModels || {};
-  options = options || {};
-  if (spec.model != null) {
-    method = 'getModel';
-    modelName = spec.model;
+Fetcher.prototype.getModelOrCollectionForSpec = function(spec, attrsOrModels, options, callback) {
+  if (spec.model) {
+    return this.getModelForSpec(spec, attrsOrModels, options, callback);
   } else {
-    method = 'getCollection';
-    modelName = spec.collection;
+    return this.getCollectionForSpec(spec, attrsOrModels, options, callback);
   }
+};
 
-  /**
-   * We have to initialize the model with its ID for now
-   * so that the model can interpolate its url '/listings/:id'
-   * to i.e. '/listings/42'. See 'syncer' module.
-   */
-  if (spec.params != null) {
-    if (spec.model != null) {
-      // If it's a model, merge the given params with the model attributes.
-      _.defaults(attrsOrModels, spec.params);
-    } else if (spec.collection != null) {
-      // If it's a collection, merge the given params with the options.
-      _.defaults(options, spec.params);
-    }
-  }
-  _.defaults(options, {
-    app: this.app
-  });
-  return modelUtils[method](modelName, attrsOrModels, options, callback);
+/**
+ * Returns an instance of Collection.
+ */
+Fetcher.prototype.getCollectionForSpec = function(spec, models, options, callback) {
+  var collectionOptions = this.buildOptions(options, spec.params);
+  models = models || [];
+  return this.modelUtils.getCollection(spec.collection, models, collectionOptions, callback);
+};
+
+/**
+ * Returns an instance of Model.
+ */
+Fetcher.prototype.getModelForSpec = function(spec, attributes, options, callback) {
+  var modelOptions = this.buildOptions(options);
+
+  attributes = attributes || {};
+  _.defaults(attributes, spec.params);
+
+  return this.modelUtils.getModel(spec.model, attributes, modelOptions, callback);
 };
 
 /**
@@ -166,7 +172,7 @@ Fetcher.prototype._retrieveModel = function(spec, callback) {
   var idAttribute, modelData, _fetcher = this;
 
   // Attempt to fetch from the modelStore based on the idAttribute
-  modelUtils.modelIdAttribute(spec.model, function(err, idAttribute)
+  this.modelUtils.modelIdAttribute(spec.model, function(err, idAttribute)
   {
     modelData = _fetcher.modelStore.get(spec.model, spec.params[idAttribute]);
     if (modelData)
@@ -184,6 +190,7 @@ Fetcher.prototype._retrieveModel = function(spec, callback) {
 Fetcher.prototype.needsFetch = function(modelData, spec) {
   if (modelData == null) return true;
   if (this.isMissingKeys(modelData, spec.ensureKeys)) return true;
+  if (spec.needsFetch === true) return true;
   if (typeof spec.needsFetch === 'function' && spec.needsFetch(modelData)) return true;
   return false;
 };
@@ -207,7 +214,7 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
 };
 
 Fetcher.prototype.fetchFromApi = function(spec, callback) {
-  var model = this.getModelForSpec(spec);
+  var model = this.getModelOrCollectionForSpec(spec);
   model.fetch({
     data: spec.params,
     success: function(model, body) {
@@ -219,7 +226,7 @@ Fetcher.prototype.fetchFromApi = function(spec, callback) {
       body = resp.body;
       resp.body = typeof body === 'string' ? body.slice(0, 150) : body;
       respOutput = JSON.stringify(resp);
-      err = new Error("ERROR fetching model '" + modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
+      err = new Error("ERROR fetching model '" + this.modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
       err.status = resp.status;
       err.body = body;
       callback(err);
@@ -228,7 +235,7 @@ Fetcher.prototype.fetchFromApi = function(spec, callback) {
 };
 
 Fetcher.prototype.retrieveModelsForCollectionName = function(collectionName, modelIds) {
-  var modelName = modelUtils.getModelNameForCollectionName(collectionName);
+  var modelName = this.modelUtils.getModelNameForCollectionName(collectionName);
   return this.retrieveModels(modelName, modelIds);
 };
 
@@ -242,18 +249,18 @@ Fetcher.prototype.summarize = function(modelOrCollection) {
   var summary = {}
     , idAttribute;
 
-  if (modelUtils.isCollection(modelOrCollection)) {
+  if (this.modelUtils.isCollection(modelOrCollection)) {
     idAttribute = modelOrCollection.model.prototype.idAttribute;
     summary = {
-      collection: modelUtils.modelName(modelOrCollection.constructor),
+      collection: this.modelUtils.modelName(modelOrCollection.constructor),
       ids: modelOrCollection.pluck(idAttribute),
       params: modelOrCollection.params,
       meta: modelOrCollection.meta
     };
-  } else if (modelUtils.isModel(modelOrCollection)) {
+  } else if (this.modelUtils.isModel(modelOrCollection)) {
     idAttribute = modelOrCollection.idAttribute;
     summary = {
-      model: modelUtils.modelName(modelOrCollection.constructor),
+      model: this.modelUtils.modelName(modelOrCollection.constructor),
       id: modelOrCollection.get(idAttribute)
     };
   }
@@ -322,7 +329,7 @@ Fetcher.prototype.hydrate = function(summaries, options, callback) {
           meta: collectionData.meta,
           app: options.app
         };
-        modelUtils.getCollection(summary.collection, models, collectionOptions, function(collection)
+        _fetcher.modelUtils.getCollection(summary.collection, models, collectionOptions, function(collection)
         {
           results[name] = collection;
 

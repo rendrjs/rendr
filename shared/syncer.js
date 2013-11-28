@@ -7,10 +7,6 @@
 var _ = require('underscore')
   , Backbone = require('backbone')
 
-  // This is lazy-required to prevent circular dependency.
-  // TODO: Fix that shit.
-  , modelUtils = null
-
   // Pull out params in path, like '/users/:id'.
   , extractParamNamesRe = /:([a-z_-]+)/ig
 
@@ -168,8 +164,6 @@ syncer.checkFresh = function checkFresh() {
   // Lame: have to lazy-require to prevent circular dependency.
   // It is circular dep
   // hide it from requirejs since it's optional/lazy-loaded
-  var lazyRequire_modelUtils = './modelUtils';
-  modelUtils = modelUtils || require(lazyRequire_modelUtils);
   url = this.getUrl(null, true);
 
   $.getJSON(url, this.params, function(resp) {
@@ -180,7 +174,7 @@ syncer.checkFresh = function checkFresh() {
     differs = this.objectsDiffer(data, this.toJSON());
     this.trigger('checkFresh:end', differs);
     if (differs) {
-      if (modelUtils.isModel(this)) {
+      if (this.app.modelUtils.isModel(this)) {
         this.set(data, {
           silent: true
         });

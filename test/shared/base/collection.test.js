@@ -1,15 +1,18 @@
-var App, BaseCollection, BaseModel, modelUtils, should, _;
+var App, BaseCollection, BaseModel, ModelUtils, should, _, AddClassMapping;
 
 _ = require('underscore');
 should = require('chai').should();
 BaseCollection = require('../../../shared/base/collection');
 BaseModel = require('../../../shared/base/model');
-modelUtils = require('../../../shared/modelUtils');
 App = require('../../../shared/app');
+
+ModelUtils = require('../../../shared/modelUtils');
+AddClassMapping = require('../../helpers/add_class_mapping')
 
 describe('BaseCollection', function() {
   beforeEach(function() {
     this.app = new App();
+    this.addClassMapping = new AddClassMapping(this.app.modelUtils)
   });
 
   describe('parse', function() {
@@ -138,7 +141,7 @@ describe('BaseCollection', function() {
 
       this.MyCollection = BaseCollection.extend({});
 
-      modelUtils.addClassMapping(this.MyCollection.name, this.MyCollection);
+      this.addClassMapping.add(this.MyCollection.name, this.MyCollection);
     });
 
     it("should store its models in the modelStore and params in collectionStore", function() {

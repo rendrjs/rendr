@@ -5,24 +5,20 @@
 // means no AMD-style require calls
 var requireAMD = require;
 
-var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _;
+var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, defaultRootPath;
 
 _ = require('underscore');
 Backbone = require('backbone');
 BaseRouter = require('../shared/base/router');
 BaseView = require('../shared/base/view');
 
-try {
-  AppView = require(rendr.entryPath + 'app/views/app_view');
-} catch (e) {
-  AppView = require('./app_view');
-}
-
 extractParamNamesRe = /:(\w+)/g;
 
 plusRe = /\+/g;
 
 firstRender = true;
+
+defaultRootPath = '';
 
 function noop() {}
 
@@ -62,6 +58,8 @@ ClientRouter.prototype.reverseRoutes = true;
 
 ClientRouter.prototype.initialize = function(options) {
   this.app = options.app;
+
+  var AppView = this.options.appViewClass;
 
   // We do this here so that it's available in AppView initialization.
   this.app.router = this;
@@ -173,8 +171,15 @@ ClientRouter.prototype.getMainView = function(views) {
 /*
  * Proxy to Backbone.Router.
  */
-ClientRouter.prototype.navigate = function() {
-  this._router.navigate.apply(this._router, arguments);
+ClientRouter.prototype.navigate = function(path, options) {
+  var fragment = Backbone.history.getFragment(path);
+
+  // check if local router can handle route
+  if(this.matchesAnyRoute(fragment)) {
+    this._router.navigate.apply(this._router, arguments);
+  } else {
+    this.redirectTo(fragment, {pushState: false});
+  }
 };
 
 ClientRouter.prototype.getParamsHash = function(pattern, paramsArray, search) {
@@ -279,7 +284,8 @@ ClientRouter.prototype.renderView = function() {
 ClientRouter.prototype.start = function() {
   Backbone.history.start({
     pushState: true,
-    hashChange: false
+    hashChange: false,
+    root: this.options.rootPath || defaultRootPath
   });
 };
 
@@ -289,7 +295,7 @@ ClientRouter.prototype.trackAction = function() {
 };
 
 ClientRouter.prototype.getView = function(key, callback) {
-  var View = BaseView.getView(key, function(View)
+  var View = BaseView.getView(key, this.options.entryPath, function(View)
   {
     // TODO: Make it function (err, View)
     if (!_.isFunction(View)) {

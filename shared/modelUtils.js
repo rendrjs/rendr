@@ -65,18 +65,13 @@ module.exports = ModelUtils = (function() {
       return (typeof callback == 'function') ? callback(this._classMap[path]) : this._classMap[path];
     } else if (typeof callback == 'function') {
       // Only used in AMD environment
-      if (typeof define != 'undefined')
-      {
+      if (typeof define != 'undefined') {
         requireAMD([fullPath], callback);
-      }
-      else
-      {
+      } else {
         callback(require(fullPath));
       }
       return;
-    }
-    else
-    {
+    } else {
       return require(fullPath);
     }
   };

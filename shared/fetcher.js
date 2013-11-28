@@ -124,8 +124,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
 
         } else if (spec.collection != null) {
 
-          this.collectionStore.get(spec.collection, spec.params, function(collectionData)
-          {
+          this.collectionStore.get(spec.collection, spec.params, function(collectionData) {
             if (collectionData) {
               modelData = this.retrieveModelsForCollectionName(spec.collection, collectionData.ids);
               modelOptions = {
@@ -169,12 +168,11 @@ Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, c
 }
 
 Fetcher.prototype._retrieveModel = function(spec, callback) {
-  var idAttribute, modelData, _fetcher = this;
+  var _fetcher = this;
 
   // Attempt to fetch from the modelStore based on the idAttribute
-  this.modelUtils.modelIdAttribute(spec.model, function(err, idAttribute)
-  {
-    modelData = _fetcher.modelStore.get(spec.model, spec.params[idAttribute]);
+  this.modelUtils.modelIdAttribute(spec.model, function(err, idAttribute) {
+    var modelData = _fetcher.modelStore.get(spec.model, spec.params[idAttribute]);
     if (modelData)
       return callback(null, modelData);
 
@@ -275,13 +273,11 @@ Fetcher.prototype.storeResults = function(results) {
 
 Fetcher.prototype.bootstrapData = function(modelMap) {
   var results = {}
-    , modelOrCollection
     , _fetcher = this;
 
   async.forEach(_.keys(modelMap), function(name, cb) {
     var map = modelMap[name];
-    _fetcher.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'), function(modelOrCollection)
-    {
+    _fetcher.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'), function(modelOrCollection) {
       results[name] = modelOrCollection;
       cb(null);
     });
@@ -317,8 +313,7 @@ Fetcher.prototype.hydrate = function(summaries, options, callback) {
 
     } else if (summary.collection != null) {
       // Also support getting all models for a collection.
-      _fetcher.collectionStore.get(summary.collection, summary.params, function(collectionData)
-      {
+      _fetcher.collectionStore.get(summary.collection, summary.params, function(collectionData) {
         if (collectionData == null) {
           throw new Error("Collection of type \"" + summary.collection + "\" not found for params: " + JSON.stringify(summary.params));
         }
@@ -329,8 +324,7 @@ Fetcher.prototype.hydrate = function(summaries, options, callback) {
           meta: collectionData.meta,
           app: options.app
         };
-        _fetcher.modelUtils.getCollection(summary.collection, models, collectionOptions, function(collection)
-        {
+        _fetcher.modelUtils.getCollection(summary.collection, models, collectionOptions, function(collection) {
           results[name] = collection;
 
           if ((results[name] != null) && (options.app != null)) {
@@ -341,8 +335,7 @@ Fetcher.prototype.hydrate = function(summaries, options, callback) {
         });
       });
     }
-  }, function(err)
-  {
+  }, function(err) {
     callback(err, results);
   });
 };

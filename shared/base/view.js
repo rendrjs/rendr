@@ -44,7 +44,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     if (options.app != null) {
       this.app = this.options.app;
-    }else {
+    } else {
       throw new Error("options.app expected when initializing a new view")
     }
 
@@ -334,9 +334,7 @@ module.exports = BaseView = Backbone.View.extend({
    * to pre-exisitng DOM.
    */
   hydrate: function(callback) {
-    var fetchSummary, results;
-
-    fetchSummary = this.options.fetch_summary;
+    var fetchSummary = this.options.fetch_summary;
     if (!_.isEmpty(fetchSummary)) {
       this.app.fetcher.hydrate(fetchSummary, {
         app: this.app
@@ -379,8 +377,7 @@ module.exports = BaseView = Backbone.View.extend({
      * Hydrate looks if there is a model or collection associated
      * with this view, and tries to load it from memory.
      */
-    this.hydrate(function(err)
-    {
+    this.hydrate(function(err) {
       /**
        * Call preRender() so we can access things setup by @hydrate()
        * (like @model) in i.e. @getTemplateData().
@@ -418,8 +415,7 @@ module.exports = BaseView = Backbone.View.extend({
     // Remove all child views in case we are re-rendering through
     // manual .render() or 'refresh' being triggered on the view.
     this.removeChildViews();
-    BaseView.attach(this.app, this, function(views)
-    {
+    BaseView.attach(this.app, this, function(views) {
       _baseView.childViews = views;
     });
   },
@@ -452,32 +448,32 @@ module.exports = BaseView = Backbone.View.extend({
  */
 
 BaseView.getView = function(viewName, entryPath, callback) {
+  var viewPath;
   if (entryPath === undefined) {
     entryPath = '';
   }
+  viewPath = entryPath + "app/views/" + viewName;
   // check for AMD environment
   if (typeof callback == 'function') {
     // Only used in AMD environment
     if (typeof define != 'undefined') {
-      requireAMD([entryPath + "app/views/" + viewName], callback);
-    }
-    else
-    {
-      callback(require(entryPath + "app/views/" + viewName));
+      requireAMD([viewPath], callback);
+    } else {
+      callback(require(viewPath));
     }
   } else {
-    return require(entryPath + "app/views/" + viewName);
+    return require(viewPath);
   }
 };
 
 BaseView.attach = function(app, parentView, callback) {
-  var scope, views, list;
+  var scope, list;
   scope = parentView != null ? parentView.$el : null;
 
   list = $('[data-view]', scope).toArray();
 
   async.map(list, function(el, cb) {
-    var $el, ViewClass, options, parsed, view, viewName;
+    var $el, options, parsed, viewName;
     $el = $(el);
     if (!$el.data('view-attached')) {
       options = $el.data();
@@ -492,9 +488,8 @@ BaseView.attach = function(app, parentView, callback) {
         }
       });
       options.app = app;
-      BaseView.getView(viewName, function(ViewClass)
-      {
-        view = new ViewClass(options);
+      BaseView.getView(viewName, function(ViewClass) {
+        var view = new ViewClass(options);
         view.attach($el, parentView);
         cb(null, view);
       });

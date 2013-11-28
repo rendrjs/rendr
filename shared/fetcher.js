@@ -7,10 +7,6 @@ async = require('async');
 ModelStore = require('./store/model_store');
 CollectionStore = require('./store/collection_store');
 
-if (!global.isServer) {
-  Backbone.$ = window.$;
-}
-
 module.exports = Fetcher;
 
 function Fetcher(options) {

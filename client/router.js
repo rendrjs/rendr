@@ -7,6 +7,8 @@ Backbone = require('backbone');
 BaseRouter = require('../shared/base/router');
 BaseView = require('../shared/base/view');
 
+Backbone.$ = window.$;
+
 extractParamNamesRe = /:(\w+)/g;
 
 plusRe = /\+/g;

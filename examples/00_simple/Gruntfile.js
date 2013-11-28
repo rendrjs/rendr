@@ -1,3 +1,4 @@
+
 var path = require('path');
 
 var stylesheetsDir = 'assets/stylesheets';
@@ -42,7 +43,7 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: 'app/**/*.js',
-        tasks: ['rendr_stitch'],
+        tasks: ['browserify'],
         options: {
           interrupt: true
         }
@@ -101,10 +102,11 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-handlebars');
-  grunt.loadNpmTasks('grunt-rendr-stitch');
 
   grunt.registerTask('runNode', function () {
     grunt.util.spawn({
@@ -119,11 +121,13 @@ module.exports = function(grunt) {
   });
 
 
-  grunt.registerTask('compile', ['handlebars', 'rendr_stitch', 'stylus']);
+  grunt.registerTask('compile', ['copy', 'handlebars', 'browserify', 'stylus']);
 
   // Run the server and watch for file changes
   grunt.registerTask('server', ['runNode', 'compile', 'watch']);
 
   // Default task(s).
   grunt.registerTask('default', ['compile']);
+
 };
+

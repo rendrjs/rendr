@@ -32,18 +32,19 @@ CollectionStore.prototype.set = function(collection, params) {
 * Returns an array of model ids.
 */
 CollectionStore.prototype.get = function(collectionName, params, callback) {
+  var _collectionStore = this;
   /*
   * Kind of jank-sauce. Always merge in the default
   * params for the given collection.
   */
   if (typeof callback == 'function') {
-    modelUtils.getCollectionConstructor(collectionName, function(Collection)
+    this.modelUtils.getCollectionConstructor(collectionName, function(Collection)
     {
-      callback(get.call(this, collectionName, params, Collection));
+      callback(get.call(_collectionStore, collectionName, params, Collection));
     });
     return;
   } else {
-    var Collection = modelUtils.getCollectionConstructor(collectionName);
+    var Collection = this.modelUtils.getCollectionConstructor(collectionName);
     return get.call(this, collectionName, params, Collection);
   }
 

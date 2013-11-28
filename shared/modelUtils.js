@@ -61,8 +61,8 @@ module.exports = ModelUtils = (function() {
 
     var fullPath = this.entryPath + typePath[type] + path;
 
-    if (classMap[path]) {
-      return (typeof callback == 'function') ? callback(classMap[path]) : classMap[path];
+    if (this._classMap[path]) {
+      return (typeof callback == 'function') ? callback(this._classMap[path]) : this._classMap[path];
     } else if (typeof callback == 'function') {
       // Only used in AMD environment
       if (typeof define != 'undefined')

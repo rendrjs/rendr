@@ -1,4 +1,5 @@
-var should = require("should");
+require("chai").should();
+
 var User = require('../../../app/models/user');
 
 describe('User', function() {

@@ -1,8 +1,7 @@
-var MemoryStore, Super, modelUtils, _;
+var MemoryStore, Super, _;
 
 _ = require('underscore');
 Super = MemoryStore = require('./memory_store');
-modelUtils = require('../modelUtils');
 
 module.exports = ModelStore;
 
@@ -20,11 +19,11 @@ ModelStore.prototype.set = function(model) {
   var existingAttrs, id, key, modelName, newAttrs;
 
   id = model.get(model.idAttribute);
-  modelName = modelUtils.modelName(model.constructor);
+  modelName = this.modelUtils.modelName(model.constructor);
   if (modelName == null) {
     throw new Error('Undefined modelName for model');
   }
-  key = getModelStoreKey(modelName, id);
+  key = this._getModelStoreKey(modelName, id);
 
   /*
   * We want to merge the model attrs with whatever is already
@@ -41,11 +40,11 @@ ModelStore.prototype.get = function(modelName, id, returnModelInstance) {
   if (returnModelInstance == null) {
     returnModelInstance = false;
   }
-  key = getModelStoreKey(modelName, id);
+  key = this._getModelStoreKey(modelName, id);
   modelData = Super.prototype.get.call(this, key);
   if (modelData) {
     if (returnModelInstance) {
-      return modelUtils.getModel(modelName, modelData, {
+      return this.modelUtils.getModel(modelName, modelData, {
         app: this.app
       });
     } else {
@@ -56,7 +55,7 @@ ModelStore.prototype.get = function(modelName, id, returnModelInstance) {
 
 ModelStore.prototype.find = function(modelName, params){
   var prefix, foundCachedObject, _this, data, foundCachedObjectKey;
-  prefix = this._formatKey(keyPrefix(modelName));
+  prefix = this._formatKey(this._keyPrefix(modelName));
   _this = this;
   // find the cached object that has attributes which are a subset of the params
   foundCachedObject = _.find(this.cache, function(cacheObject, key){
@@ -91,10 +90,10 @@ function isObjectSubset(potentialSubset, objectToTest){
   });
 }
 
-function keyPrefix(modelName){
-  return modelUtils.underscorize(modelName);
+ModelStore.prototype._keyPrefix = function(modelName){
+  return this.modelUtils.underscorize(modelName);
 }
 
-function getModelStoreKey(modelName, id) {
-  return keyPrefix(modelName) + ":" + id;
+ModelStore.prototype._getModelStoreKey = function(modelName, id) {
+  return this._keyPrefix(modelName) + ":" + id;
 }

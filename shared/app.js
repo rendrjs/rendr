@@ -5,14 +5,14 @@
  * The client also subclasses it for client-specific stuff.
  */
 
-var Backbone, ClientRouter, Fetcher;
+var Backbone, ClientRouter, Fetcher, ModelUtils;
 
 require('./globals');
 Backbone = require('backbone');
 Fetcher = require('./fetcher');
+ModelUtils = require('./modelUtils');
 
 if (!global.isServer) {
-  // client side only, entryPath is always empty
   ClientRouter = require('app/router');
   Backbone.$ = window.$;
 }
@@ -32,6 +32,14 @@ module.exports = Backbone.Model.extend({
   initialize: function(attributes, options) {
     this.options = options || {};
 
+    var entryPath = this.options.entryPath || '';
+    if (!global.isServer) {
+      // the entry path must always be empty for the client
+      entryPath =  '';
+    }
+
+    this.modelUtils = this.options.modelUtils || new ModelUtils(entryPath);
+
     /**
      * On the server-side, you can access the Express request, `req`.
      */
@@ -43,7 +51,7 @@ module.exports = Backbone.Model.extend({
      * Initialize the `templateAdapter`, allowing application developers to use whichever
      * templating system they want.
      */
-    this.templateAdapter = require(this.get('templateAdapter'));
+    this.templateAdapter = require(this.get('templateAdapter'))({entryPath: entryPath});
 
     /**
      * Instantiate the `Fetcher`, which is used on client and server.
@@ -57,7 +65,10 @@ module.exports = Backbone.Model.extend({
      */
     if (!global.isServer) {
       new ClientRouter({
-        app: this
+        app: this,
+        entryPath: entryPath,
+        appViewClass: this.getAppViewClass(),
+        rootPath: attributes.rootPath
       });
     }
 
@@ -75,6 +86,13 @@ module.exports = Backbone.Model.extend({
    */
   fetch: function() {
     this.fetcher.fetch.apply(this.fetcher, arguments);
+  },
+
+  /**
+   * @client
+   */
+  getAppViewClass: function () {
+    return require('../client/app_view');
   },
 
   /**

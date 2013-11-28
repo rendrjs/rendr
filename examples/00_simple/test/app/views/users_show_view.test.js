@@ -1,4 +1,4 @@
-var should = require("should");
+require('chai');
 var UsersShowView = require('../../../app/views/users/show');
 
 describe('UsersShowView', function() {

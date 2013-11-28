@@ -6,6 +6,7 @@ coverage
 examples/*/node_modules
 examples/**/compiledTemplates.js
 examples/*/public/mergedAssets.js
+examples/*/test/stitched.js
 examples/*/public/styles.css
 .DS_Store
 runtime.json

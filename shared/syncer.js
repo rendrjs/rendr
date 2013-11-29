@@ -38,7 +38,7 @@ function clientSync(method, model, options) {
       var body, contentType, resp;
       body = xhr.responseText;
       contentType = xhr.getResponseHeader('content-type');
-      if (contentType.indexOf('application/json') !== -1) {
+      if (contentType && contentType.indexOf('application/json') !== -1) {
         try {
           body = JSON.parse(body);
         } catch (e) {

@@ -54,11 +54,7 @@ ClientRouter.prototype.reverseRoutes = true;
 ClientRouter.prototype.initialize = function(options) {
   this.app = options.app;
 
-  try {
-    AppView = require(options.entryPath + 'app/views/app_view');
-  } catch (e) {
-    AppView = require('./app_view');
-  }
+  var AppView = this.options.appViewClass;
 
   // We do this here so that it's available in AppView initialization.
   this.app.router = this;

@@ -49,7 +49,7 @@ ViewEngine.prototype.getLayoutTemplate = function getLayoutTemplate(app, callbac
   if (layoutTemplates[app.options.entryPath]) {
     return callback(null, layoutTemplates[app.options.entryPath]);
   }
-  app.templateAdapter.getLayout('__layout', app.options.entryPath, function(err, template) {
+  app.templateAdapter.getLayout('__layout', app.options, function(err, template) {
     if (err) return callback(err);
     layoutTemplates[app.options.entryPath] = template;
     callback(err, template);

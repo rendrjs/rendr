@@ -27,9 +27,7 @@ module.exports = function(appAttributes, options) {
        */
       req: req,
       entryPath: options.entryPath,
-      modelUtils: options.modelUtils,
-      templatePath: options.templatePath,
-      compiledTemplatesFile: options.compiledTemplatesFile
+      modelUtils: options.modelUtils
     };
 
     /**

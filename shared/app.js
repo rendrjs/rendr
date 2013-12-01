@@ -5,14 +5,17 @@
  * The client also subclasses it for client-specific stuff.
  */
 
-var Backbone, ClientRouter, Fetcher, ModelUtils;
+var Backbone, ClientRouter, Fetcher, clientEntryPath, ModelUtils;
 
 require('./globals');
 Backbone = require('backbone');
 Fetcher = require('./fetcher');
-ModelUtils = require('./modelUtils');
+ModelUtils = require('./modelUtils')
+
+clientEntryPath = '';
 
 if (!global.isServer) {
+  // client side only, entryPath is always empty
   ClientRouter = require('app/router');
 }
 
@@ -29,16 +32,9 @@ module.exports = Backbone.Model.extend({
    * @shared
    */
   initialize: function(attributes, options) {
-    this.options = options || {
-      compiledTemplatesFile: ''
-    };
+    this.options = options || {};
 
-    var entryPath = this.options.entryPath || '';
-    if (!global.isServer) {
-      // the entry path must always be empty for the client
-      entryPath =  '';
-    }
-
+    entryPath = this.options.entryPath || clientEntryPath
     this.modelUtils = this.options.modelUtils || new ModelUtils(entryPath);
 
     /**
@@ -52,10 +48,7 @@ module.exports = Backbone.Model.extend({
      * Initialize the `templateAdapter`, allowing application developers to use whichever
      * templating system they want.
      */
-    this.templateAdapter = require(this.get('templateAdapter'))({
-      entryPath: entryPath,
-      compiledTemplatesFile: this.options.compiledTemplatesFile
-    });
+    this.templateAdapter = require(this.get('templateAdapter'))({entryPath: entryPath});
 
     /**
      * Instantiate the `Fetcher`, which is used on client and server.
@@ -70,8 +63,7 @@ module.exports = Backbone.Model.extend({
     if (!global.isServer) {
       new ClientRouter({
         app: this,
-        entryPath: entryPath,
-        appViewClass: this.getAppViewClass(),
+        entryPath: clientEntryPath,
         rootPath: attributes.rootPath
       });
     }
@@ -90,13 +82,6 @@ module.exports = Backbone.Model.extend({
    */
   fetch: function() {
     this.fetcher.fetch.apply(this.fetcher, arguments);
-  },
-
-  /**
-   * @client
-   */
-  getAppViewClass: function () {
-    return require('../client/app_view');
   },
 
   /**

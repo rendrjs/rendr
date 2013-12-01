@@ -5,9 +5,7 @@ var _ = require('underscore')
   , Router = require('./router')
   , RestAdapter = require('./data_adapter/rest_adapter')
   , ViewEngine = require('./viewEngine')
-  , middleware = require('./middleware'),
-    path = require('path'),
-    fs = require('fs');
+  , middleware = require('./middleware');
 
 module.exports = Server;
 
@@ -24,11 +22,10 @@ function defaultOptions(){
     paths: {},
     viewsPath: null,
     defaultEngine: 'js',
-    entryPath: process.cwd() + '/',
-    templatePath: '/app/templates/',
-    compiledTemplatesFile: '/app/templates/compiledTemplates.js'
+    entryPath: process.cwd() + '/'
   };
 }
+
 
 function Server(options) {
   if(typeof rendr !== 'undefined' && rendr.entryPath){
@@ -36,7 +33,8 @@ function Server(options) {
     options.entryPath = rendr.entryPath;
   }
 
-  this.options = this.initOptions(options, defaultOptions());
+  this.options = options || {};
+  _.defaults(this.options, defaultOptions());
 
   this.expressApp = express();
 
@@ -48,7 +46,6 @@ function Server(options) {
     this.options.errorHandler || express.errorHandler();
 
   this.router = new Router(this.options);
-
 
   /**
    * Tell Express to use our ViewEngine to handle .js, .coffee files.
@@ -74,29 +71,6 @@ function Server(options) {
       this.expressApp.handle(req, res, next);
     }.bind(this);
   });
-}
-
-
-/**
- * Make sure the options are defaulted properly and resolve paths
- */
-Server.prototype.initOptions = function(options, defaultOptions) {
-  options = options || {};
-  options = _.defaults(options, defaultOptions);
-
-  if (!fs.existsSync(options.entryPath)) {
-    throw new Error("Rendr - Invalid entryPath: [" + options.entryPath + "]")
-  }
-
-  options.entryPath = path.normalize(options.entryPath);
-
-  /**
-  * Resolve these options to absolute paths
-  */
-  options.templatePath = path.join(options.entryPath, options.templatePath);
-  options.compiledTemplatesFile = path.join(options.entryPath, options.compiledTemplatesFile);
-
-  return options;
 }
 
 /**
@@ -134,9 +108,7 @@ Server.prototype.configure = function(fn) {
   this.expressApp.use(middleware.initApp(this.options.appData, {
     apiPath: this.options.apiPath,
     entryPath: this.options.entryPath,
-    modelUtils: this.options.modelUtils,
-    templatePath: this.options.templatePath,
-    compiledTemplatesFile: this.options.compiledTemplatesFile
+    modelUtils: this.options.modelUtils
   }));
 
   /**

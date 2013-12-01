@@ -5,7 +5,6 @@ should = require('chai').should();
 
 App = require('../../shared/app');
 BaseView = require('../../shared/base/view');
-AppView = require('../../client/app_view');
 Router = require('../../client/router');
 clientTestHelper = require('../helpers/client_test');
 
@@ -13,8 +12,7 @@ routerConfig = {
   app: new App,
   paths: {
     entryPath: __dirname + "/../fixtures/"
-  },
-  appViewClass: AppView,
+  }
 };
 
 describe("client/router", function() {

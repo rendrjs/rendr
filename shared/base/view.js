@@ -449,9 +449,9 @@ module.exports = BaseView = Backbone.View.extend({
 
 BaseView.getView = function(viewName, entryPath, callback) {
   var viewPath;
-  if (entryPath === undefined) {
-    entryPath = '';
-  }
+
+  if (!entryPath) entryPath = '';
+
   viewPath = entryPath + "app/views/" + viewName;
   // check for AMD environment
   if (typeof callback == 'function') {
@@ -488,7 +488,7 @@ BaseView.attach = function(app, parentView, callback) {
         }
       });
       options.app = app;
-      BaseView.getView(viewName, function(ViewClass) {
+      BaseView.getView(viewName, app.options.entryPath, function(ViewClass) {
         var view = new ViewClass(options);
         view.attach($el, parentView);
         cb(null, view);

@@ -258,7 +258,7 @@ ClientRouter.prototype.getRenderCallback = function(route) {
 
     // Inject the app.
     locals.app = this.app;
-    this.getView(viewPath, function(View) {
+    this.getView(viewPath, this.options.entryPath, function(View) {
       _router.currentView = new View(locals);
       _router.renderView();
 

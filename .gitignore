@@ -2,7 +2,7 @@ node_modules
 tmp
 npm-debug.log
 coverage
-*.swp
+*.sw?
 examples/*/node_modules
 examples/**/compiledTemplates.js
 examples/*/public/mergedAssets.js

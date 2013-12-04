@@ -43,6 +43,16 @@ module.exports = BaseApp.extend({
 
     // Call 'super'.
     BaseApp.prototype.start.call(this);
+  },
+
+  /**
+   * Client-side only.
+   *
+   * This method also exists on shared/app.js, and is called by client/router.
+   * Override it here to specify your own app_view object.
+   */
+  getAppViewClass: function() {
+    return require('./views/app_view');
   }
 
 });

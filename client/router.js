@@ -60,6 +60,7 @@ ClientRouter.prototype.initialize = function(options) {
   this.app.router = this;
 
   this.on('route:add', this.addBackboneRoute, this);
+  this.on('action:start', this.app.modelUtils.clean, this.app.modelUtils);
   this.on('action:start', this.trackAction, this);
   this.app.on('reload', this.renderView, this);
 

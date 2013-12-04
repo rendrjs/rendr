@@ -8,13 +8,23 @@ module.exports = ModelUtils = (function() {
   function ModelUtils(entryPath) {
     this.entryPath = entryPath;
     this._classMap = {};
+    this.modelInstances = {};
+  }
+
+  ModelUtils.prototype.clean = function(){
+    this.modelInstances = {};
   }
 
   ModelUtils.prototype.getModel = function(path, attrs, options) {
-    var Model;
+    var Model, modelId, key;
     attrs = attrs || {};
     options = options || {};
     Model = this.getModelConstructor(path);
+    modelId = attrs[this.modelIdAttribute(path)];
+    if (modelId && !isServer) {
+      key = path+":"+modelId;
+      return this.modelInstances[key] || (this.modelInstances[key] = new Model(attrs, options));
+    }
     return new Model(attrs, options);
   };
 

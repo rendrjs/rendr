@@ -284,8 +284,8 @@ ClientRouter.prototype.trackAction = function() {
   this.currentFragment = Backbone.history.getFragment();
 };
 
-ClientRouter.prototype.getView = function(key, callback) {
-  var View = BaseView.getView(key, this.options.entryPath, function(View) {
+ClientRouter.prototype.getView = function(key, entryPath, callback) {
+  var View = BaseView.getView(key, entryPath, function(View) {
     // TODO: Make it function (err, View)
     if (!_.isFunction(View)) {
       throw new Error("View '" + key + "' not found.");

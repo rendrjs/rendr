@@ -198,6 +198,7 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
 
 Fetcher.prototype.fetchFromApi = function(spec, callback) {
   var model = this.getModelOrCollectionForSpec(spec);
+  var _this = this;
   model.fetch({
     data: spec.params,
     success: function(model, body) {
@@ -209,7 +210,7 @@ Fetcher.prototype.fetchFromApi = function(spec, callback) {
       body = resp.body;
       resp.body = typeof body === 'string' ? body.slice(0, 150) : body;
       respOutput = JSON.stringify(resp);
-      err = new Error("ERROR fetching model '" + this.modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
+      err = new Error("ERROR fetching model '" + _this.modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
       err.status = resp.status;
       err.body = body;
       callback(err);

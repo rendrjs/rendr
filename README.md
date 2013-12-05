@@ -146,6 +146,8 @@ Inherits from `BaseRouter`.
 
 ## Rendr Options
 
+#### Setting things up
+
 Explaination of Rendr options.
 
 - **apiPath** *Optional* 
@@ -202,6 +204,25 @@ rendr.createServer(config);
 
 
 ```
+
+#### Adding middleware to Rendr's Express
+
+
+You can optionally add any custom middleware that has to access `req.rendrApp` but should run before
+the Rendr routes by calling configure after createServer.
+
+```
+
+rendr.createServer(config);
+rendr.configure(function(expressApp) {
+
+    expressApp.use(...)
+
+})
+
+```
+
+
 
 ### Express middleware
 

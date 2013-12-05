@@ -143,9 +143,70 @@ Inherits from `BaseRouter`.
 
 Inherits from `BaseRouter`.
 
+
+## Rendr Options
+
+Explaination of Rendr options.
+
+- **apiPath** *Optional* 
+    - Root of the API proxy's virual path. Default is "/api". Anything after this root will be followed by a '-'. Example: /api/-/path/to/resource.  This allows the proxy to intercept API routes.
+    
+    - Can also be a full path to a remote API i.e. http://api.myserver
+
+- **defaultEngine** *Optional*. Tell the ViewEngine to load different extensions. Default is "js".  Can also be "coffee".
+
+- **notFoundHandler** *Optional*. Callback for 404s.
+
+- **errorHandler** *Optional* Callback for Express 500.
+
+- **entryPath** *Optional* Root path of your app.  Defaults to "process.cwd() + '/'"
+
+- **dataAdapterConfig**
+    - **host** Host of the API.
+    - **protocol** Protocol of the API
+
+- **dataAdapter** *Optional* Override the internal DataAdapter with your own.
+
+- **appData** *Optional* An object containing params that can be passed down to the client.  Available as **appAttributes**. Pass any data that needs to be accessible by the client and server into appData.
+
+- **viewsPath** *Optiona* Override where your views are stored. Defaults to "app/views". Path is relative to entryPath.
+
+- **entryPath** *Optiona* Override where your views are stored. Defaults to "app/views". Path is relative to entryPath.
+    
+  
+```
+var config = {
+  
+  apiPath: '/my_fancy/api',
+  defaultEngine: "js/coffee",
+  
+  dataAdapter: {...},
+  dataAdapterConfig: {
+    "default": {
+      host: "localhost:3001",
+      protocol: "http"
+    }
+  },
+  entryPath: "/myapps",
+  notFoundHandler: function (req, res, next){},
+  errorHandler: function (err, req, res, next){},
+  appData: {
+    key: "value"
+  }
+  viewsPath: "/app/views",
+  entryPath: process.cwd() + '/'
+};
+
+
+rendr.createServer(config);
+
+
+```
+
 ### Express middleware
 
 There are a few middleware functions included. Use some or all of these, or use your own.
+
 
 ### `initApp`
 

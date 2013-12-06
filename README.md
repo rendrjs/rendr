@@ -205,7 +205,7 @@ rendr.createServer(config);
 
 - ``viewEngine`` *Optional* - Provides a way to set a custom [Express.js view engine](http://expressjs.com/api.html#app.engine)
 
-    **Default:** ``new ViewEngine()`` - Rendr provides a built in [ViewEngine](https://github.com/airbnb/rendr/blob/master/server/viewEngine.js) that hooks to TemplateAdapters.  See [rendr-handlebars](https://github.com/airbnb/rendr-handlebars).
+    **Default:** ``new ViewEngine()`` - Rendr provides a built in [ViewEngine](https://github.com/airbnb/rendr/blob/master/server/viewEngine.js) that hooks to [Template Adapters](#template-adapters).  See [rendr-handlebars](https://github.com/airbnb/rendr-handlebars).
 
 - ``viewsPath`` *Optional* - Override where your views are stored. Path is relative to ``entryPath``.
 
@@ -260,9 +260,9 @@ rendr.configure(function(expressApp) {
 
 ```
 
-### TemplateAdapters
+### Template Adapters
 
-Provides a way for Rendr to utilize custom html templating engines.  Rendr's [ViewEngine](https://github.com/airbnb/rendr/blob/master/server/viewEngine.js) will delegate to the TemplateAdapter. You can build your own to provide say Jade or Underscore templates.
+Provides a way for Rendr to utilize custom html templating engines.  Rendr's [ViewEngine](https://github.com/airbnb/rendr/blob/master/server/viewEngine.js) will delegate to the [Template Adapter](https://github.com/airbnb/rendr-handlebars/blob/master/index.js). You can build your own to provide your template engine of choice (i.e. Jade or Underscore templates, etc).
 
 Rendr provides a Template Adapter for [Handlebars](https://github.com/wycats/handlebars.js)
 

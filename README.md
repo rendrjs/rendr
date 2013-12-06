@@ -176,7 +176,7 @@ rendr.createServer(config);
 
 - ``dataAdapterConfig`` *Required* - Configuration options that are passed to the DataAdapter.  See [DataAdapter Config](#dataadapter-config)
 
-- ``apiPath`` *Optional* - Root of the API proxy's virual path. Anything after this root will be followed by a ``-``. Example: ``/api/-/path/to/resource``. Allows the proxy to intercept API routes. Can also be a full path to a remote API ``http://api.myserver``
+- ``apiPath`` *Optional* - Root of the API proxy's virtual path. Anything after this root will be followed by a ``-``. Example: ``/api/-/path/to/resource``. Allows the proxy to intercept API routes. Can also be a full path to a remote API ``http://api.myserver``
 
     **Default:** ``api``
 
@@ -232,7 +232,9 @@ var dataAdapterConfig = {
 
 ```
 
-Example of how a Backbone model can be configured to select the DataAdapter config.  Note: This example assumes you are using the [RestAdapter](https://github.com/airbnb/rendr/blob/master/server/data_adapter/rest_adapter.js).
+Example of how a Backbone model can be configured to select the DataAdapter config.  
+
+*Note: This example assumes you are using the [RestAdapter](https://github.com/airbnb/rendr/blob/master/server/data_adapter/rest_adapter.js).*
 
 ````
 module.exports = Base.extend({
@@ -262,16 +264,16 @@ rendr.configure(function(expressApp) {
 
 ### Template Adapters
 
-Provides a way for Rendr to utilize custom html templating engines.  Rendr's [ViewEngine](https://github.com/airbnb/rendr/blob/master/server/viewEngine.js) will delegate to the [Template Adapter](https://github.com/airbnb/rendr-handlebars/blob/master/index.js). You can build your own to provide your template engine of choice (i.e. Jade or Underscore templates, etc).
+Provides a way for Rendr to utilize custom html template engines.  Rendr's [ViewEngine](https://github.com/airbnb/rendr/blob/master/server/viewEngine.js) will delegate to the [Template Adapter](https://github.com/airbnb/rendr-handlebars/blob/master/index.js). You can build your own to provide your template engine of choice (i.e. Jade, Underscore templates, etc).
 
-Rendr provides a Template Adapter for [Handlebars](https://github.com/wycats/handlebars.js)
+####Available Template Adapters
 
-Other avaialble template adapters
+- [rendr-handlebars](https://github.com/airbnb/rendr-handlebars) - [Handlebars.js](https://github.com/wycats/handlebars.js) support.  This is the default adapter.
 
-- [Emblem to Handlebars](https://github.com/modalstudios/rendr-emblem)
+- [rendr-emblem](https://github.com/modalstudios/rendr-emblem) - [Emblem.js](https://github.com/machty/emblem.js/) with [Handlebars.js](https://github.com/wycats/handlebars.js) fallback support.
 
 
-####Using Custom
+####Using Custom Adapters
 
 You can tell Rendr which Template Adapter like this.
 

@@ -14,6 +14,7 @@ irc.freenode.org.
 [ggroup]: https://groups.google.com/forum/#!forum/rendrjs
 [issues]: https://github.com/airbnb/rendr/issues
 
+
 ## Getting Started
 
 To see how to use Rendr to build a simple web app, check out the [examples](https://github.com/airbnb/rendr/tree/master/examples) directory for a number of different ways to set up a Rendr app.
@@ -146,66 +147,103 @@ Inherits from `BaseRouter`.
 
 ## Rendr Options
 
-#### Setting things up
 
-Explaination of Rendr options.
+### Server Config
 
-- **apiPath** *Optional* 
-    - Root of the API proxy's virual path. Default is "/api". Anything after this root will be followed by a '-'. Example: /api/-/path/to/resource.  This allows the proxy to intercept API routes.
-    
-    - Can also be a full path to a remote API i.e. http://api.myserver
-
-- **defaultEngine** *Optional*. Tell the ViewEngine to load different extensions. Default is "js".  Can also be "coffee".
-
-- **notFoundHandler** *Optional*. Callback for 404s.
-
-- **errorHandler** *Optional* Callback for Express 500.
-
-- **entryPath** *Optional* Root path of your app.  Defaults to "process.cwd() + '/'"
-
-- **dataAdapterConfig**
-    - **host** Host of the API.
-    - **protocol** Protocol of the API
-
-- **dataAdapter** *Optional* Override the internal DataAdapter with your own.
-
-- **appData** *Optional* An object containing params that can be passed down to the client.  Available as **appAttributes**. Pass any data that needs to be accessible by the client and server into appData.
-
-- **viewsPath** *Optiona* Override where your views are stored. Defaults to "app/views". Path is relative to entryPath.
-
-- **entryPath** *Optiona* Override where your views are stored. Defaults to "app/views". Path is relative to entryPath.
-    
+####Example
   
 ```
 var config = {
-  
-  apiPath: '/my_fancy/api',
-  defaultEngine: "js/coffee",
-  
-  dataAdapter: {...},
   dataAdapterConfig: {
-    "default": {
-      host: "localhost:3001",
-      protocol: "http"
+    'default': {
+      host: 'api.github.com',
+      protocol: 'https'
     }
   },
-  entryPath: "/myapps",
-  notFoundHandler: function (req, res, next){},
+  
+  apiPath: '/api',
+  appData: { myAttr: 'value'},
+  dataAdapter: {...},
+  defaultEngine: 'js',
+  entryPath: process.cwd() + '/myapp'
   errorHandler: function (err, req, res, next){},
-  appData: {
-    key: "value"
-  }
+  notFoundHandler: function (req, res, next){},
   viewsPath: "/app/views",
-  entryPath: process.cwd() + '/'
 };
-
-
 rendr.createServer(config);
-
 
 ```
 
-#### Adding middleware to Rendr's Express
+- ``dataAdapterConfig`` *Required* - Configuration options that are passed to the DataAdapter.  See [DataAdapter Config](#dataadapter-config)
+
+- ``apiPath`` *Optional* - Root of the API proxy's virual path. Anything after this root will be followed by a ``-``. Example: ``/api/-/path/to/resource``. Allows the proxy to intercept API routes. Can also be a full path to a remote API ``http://api.myserver``
+
+    **Default:** ``api``
+
+- ``appData`` *Optional* - Pass any data that needs to be accessible by the client. Accessible from within your Handlebars context ``app.attributes.myAttr``, and also within your views and models ```this.app.attributes.myAttr```.
+
+- ``dataAdapter`` *Optional* - The DataAdapter that Rendr uses.
+
+    **Default:**  [RestAdapter](https://github.com/airbnb/rendr/blob/master/server/data_adapter/rest_adapter.js) which enables Rendr to speak basic REST using HTTP & JSON.  This is good for consuming an existing RESTful API that exists externally to your Node app.
+
+- ``defaultEngine`` *Optional* - Tell the ViewEngine to load different file types. Example: ``coffee``
+
+    **Default:** ``js``
+
+- ``entryPath`` *Optional* - Root path of your app.
+
+    **Default:** ``process.cwd() + '/'`` - Current working directory of the node process
+
+- ``errorHandler`` *Optional* Callback for [Express.js errors](http://expressjs.com/guide.html#error-handling).
+
+   **Example** ``function (req, res, next) { }``
+
+
+- ``notFoundHandler`` *Optional* - Callback for [Express.js not found errors](http://expressjs.com/guide.html#error-handling)
+
+   **Example** ``function (err, req, res, next) { }``
+
+- ``viewEngine`` *Optional* - Provides a way to set a custom [Express.js view engine](http://expressjs.com/api.html#app.engine)
+
+    **Default:** ``new ViewEngine()`` - Rendr provides a built in [ViewEngine](https://github.com/airbnb/rendr/blob/master/server/viewEngine.js) that hooks to TemplateAdapters.  See [rendr-handlebars](https://github.com/airbnb/rendr-handlebars).
+
+- ``viewsPath`` *Optional* - Override where your views are stored. Path is relative to ``entryPath``.
+
+    **Default:** ``app/views``
+    
+
+### DataAdapter Config
+
+This configuration is passed to the current DataAdapter, which by default is the [RestAdapter](https://github.com/airbnb/rendr/blob/master/server/data_adapter/rest_adapter.js). 
+
+
+####Example
+```
+var dataAdapterConfig = {
+  'default': {
+    host: 'api.github.com',
+    protocol: 'https'
+  },
+  'travis-ci': {
+    host: 'api.travis-ci.org',
+    protocol: 'https'
+  }
+};
+
+```
+
+Example of how a Backbone model can be configured to select the DataAdapter config.  Note: This example assumes you are using the [RestAdapter](https://github.com/airbnb/rendr/blob/master/server/data_adapter/rest_adapter.js).
+
+````
+module.exports = Base.extend({
+  url: '/repos/:owner/:name',
+  api: 'travis-ci'
+});
+module.exports.id = 'Build';
+
+````
+
+### Adding middleware to Rendr's Express
 
 
 You can optionally add any custom middleware that has to access `req.rendrApp` but should run before
@@ -222,6 +260,32 @@ rendr.configure(function(expressApp) {
 
 ```
 
+### TemplateAdapters
+
+Provides a way for Rendr to utilize custom html templating engines.  Rendr's [ViewEngine](https://github.com/airbnb/rendr/blob/master/server/viewEngine.js) will delegate to the TemplateAdapter. You can build your own to provide say Jade or Underscore templates.
+
+Rendr provides a Template Adapter for [Handlebars](https://github.com/wycats/handlebars.js)
+
+Other avaialble template adapters
+
+- [Emblem to Handlebars](https://github.com/modalstudios/rendr-emblem)
+
+
+####Using Custom
+
+You can tell Rendr which Template Adapter like this.
+
+````
+// /app/app.js
+
+module.exports = BaseApp.extend({
+  defaults: {
+    templateAdapter: 'rendr-emblem'
+  }
+
+});
+
+````
 
 
 ### Express middleware

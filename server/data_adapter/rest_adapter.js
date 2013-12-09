@@ -55,7 +55,7 @@ RestAdapter.prototype.request = function(req, api, options, callback) {
   /**
    * Get defaults for the `api` object.
    */
-  api = this.apiDefaults(api);
+  api = this.apiDefaults(api, req);
 
   /**
    * Request timing.
@@ -100,7 +100,7 @@ RestAdapter.prototype.isJSONResponse = function(response) {
   return contentType.indexOf('application/json') !== -1;
 };
 
-RestAdapter.prototype.apiDefaults = function(api) {
+RestAdapter.prototype.apiDefaults = function(api, req) {
   var urlOpts, apiHost;
 
   api = _.clone(api);

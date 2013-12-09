@@ -22,7 +22,8 @@ function defaultOptions(){
     paths: {},
     viewsPath: null,
     defaultEngine: 'js',
-    entryPath: process.cwd() + '/'
+    entryPath: process.cwd() + '/',
+    apiProxy: null
   };
 }
 
@@ -32,7 +33,6 @@ function Server(options) {
     console.warn("Setting rendr.entryPath is now deprecated. Please pass in entryPath when initializing the rendr server.")
     options.entryPath = rendr.entryPath;
   }
-
   this.options = options || {};
   _.defaults(this.options, defaultOptions());
 
@@ -120,7 +120,8 @@ Server.prototype.configure = function(fn) {
   /**
    * Add the API handler.
    */
-  this.expressApp.use(this.options.apiPath, middleware.apiProxy(dataAdapter));
+  this.options.apiProxy = this.options.apiProxy || middleware.apiProxy;
+  this.expressApp.use(this.options.apiPath, this.options.apiProxy(dataAdapter));
 
   /**
    * Add the routes for everything defined in our routes file.

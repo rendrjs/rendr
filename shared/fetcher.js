@@ -147,7 +147,7 @@ Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, c
 
   // If we found the model/collection in the store, then return that.
   if (!this.needsFetch(modelData, spec)) {
-    model = this.getModelForSpec(spec, modelData, modelOptions);
+    model = this.getModelOrCollectionForSpec(spec, modelData, modelOptions);
 
     /**
      * If 'checkFresh' is set (and we're in the client), then before we
@@ -278,7 +278,7 @@ Fetcher.prototype.bootstrapData = function(modelMap) {
 
   async.forEach(_.keys(modelMap), function(name, cb) {
     var map = modelMap[name];
-    _fetcher.getModelForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'), function(modelOrCollection) {
+    _fetcher.getModelOrCollectionForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'), function(modelOrCollection) {
       results[name] = modelOrCollection;
       cb(null);
     });

@@ -8,7 +8,7 @@ isServer = (typeof window === 'undefined');
 ModelStore = require('./store/model_store');
 CollectionStore = require('./store/collection_store');
 
-if (!global.isServer) {
+if (!isServer) {
   Backbone.$ = window.$;
 }
 

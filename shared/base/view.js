@@ -8,8 +8,9 @@ var Backbone, BaseView, _, async;
 _ = require('underscore');
 Backbone = require('backbone');
 async = require('async');
+isServer = (typeof window === 'undefined');
 
-if (!global.isServer) {
+if (!isServer) {
   Backbone.$ = window.$;
 }
 

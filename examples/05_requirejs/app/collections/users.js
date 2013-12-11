@@ -1,9 +1,8 @@
 if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
+  var define = require('amdefine')(module);
 }
 
-define(function(require)
-{
+define(function(require) {
 
   var User = require('../models/user')
     , Base = require('./base');

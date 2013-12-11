@@ -1,9 +1,8 @@
 if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
+  var define = require('amdefine')(module);
 }
 
-define(function(require)
-{
+define(function(require) {
 
   var BaseApp = require('rendr/shared/app')
     , handlebarsHelpers = require('./lib/handlebarsHelpers');

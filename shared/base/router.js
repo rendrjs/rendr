@@ -1,9 +1,8 @@
-/*global rendr*/
-
-var Backbone, BaseRouter, noop, _;
+var Backbone, BaseRouter, noop, _, isServer;
 
 _ = require('underscore');
 Backbone = require('backbone');
+isServer = (typeof window === 'undefined');
 
 function noop() {}
 
@@ -56,7 +55,7 @@ BaseRouter.prototype.getController = function(controllerName) {
   // for requirejs return path that will be lazy loaded
   controllerPath = controllerDir + "/" + controllerName + "_controller";
 
-  if (!global.isServer && typeof define !== 'undefined') {
+  if (!isServer && typeof define !== 'undefined') {
     controller = controllerPath;
   } else {
     controller = require(controllerPath);

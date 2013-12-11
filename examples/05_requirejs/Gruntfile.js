@@ -171,9 +171,6 @@ module.exports = function(grunt) {
           cjsTranslate: true,
           create: true,
           name: 'rendr-handlebars',
-          rawText: {
-            'rendr/shared/globals': 'define(["rendr/shared/globals"], function () {});'
-          },
           include: [
             'rendr-handlebars'
           ],
@@ -217,11 +214,9 @@ module.exports = function(grunt) {
           dir: 'public/js/rendr/shared',
           baseUrl: './rendr/shared',
           cjsTranslate: true,
-          insertRequire: ['rendr/shared/globals'],
           paths: {
             'rendr/shared': '../..',
             'rendr/client': '../../../client',
-            'globals': '../../globals'
           },
           rawText: {
             'app/router': 'define(["app/router"], function () {});'
@@ -232,9 +227,8 @@ module.exports = function(grunt) {
             {name: 'async', location: 'rendr/node_modules/async/lib', main: 'async.js'}
           ],
           modules: [
-            { name: 'rendr/shared/app', exclude: ['backbone', 'rendr/shared/globals', 'rendr/shared/fetcher', 'app/router'] },
+            { name: 'rendr/shared/app', exclude: ['backbone', 'rendr/shared/fetcher', 'app/router'] },
             { name: 'rendr/shared/fetcher', exclude: ['underscore', 'backbone', 'async', 'rendr/shared/modelUtils', 'rendr/shared/store/model_store', 'rendr/shared/store/collection_store'] },
-            { name: 'rendr/shared/globals' },
             { name: 'rendr/shared/modelUtils', exclude: ['rendr/shared/base/model', 'rendr/shared/base/collection'] },
             { name: 'rendr/shared/syncer', exclude: ['underscore', 'backbone'] },
             { name: 'rendr/shared/base/collection', exclude: ['underscore', 'backbone', 'rendr/shared/syncer', 'rendr/shared/base/model'] },

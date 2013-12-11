@@ -1,9 +1,8 @@
 if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
+  var define = require('amdefine')(module);
 }
 
-define(function(require)
-{
+define(function(require) {
 
   /**
    * We inject the Handlebars instance, because this module doesn't know where

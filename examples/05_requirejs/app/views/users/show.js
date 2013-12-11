@@ -1,9 +1,8 @@
 if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
+  var define = require('amdefine')(module);
 }
 
-define(['require', '../user_repos_view'], function(require)
-{
+define(['require', '../user_repos_view'], function(require) {
 
   var BaseView = require('../base');
 

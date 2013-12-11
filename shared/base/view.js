@@ -161,10 +161,10 @@ module.exports = BaseView = Backbone.View.extend({
       _.extend(attributes, _.result(this, 'attributes'));
     }
     if (this.id) {
-      attributes.id = this.id;
+      attributes.id = _.result(this, "id");
     }
     if (this.className) {
-      attributes['class'] = this.className;
+      attributes['class'] = _.result(this, "className");
     }
 
     // Add `data-view` attribute with view key.
@@ -229,14 +229,15 @@ module.exports = BaseView = Backbone.View.extend({
    * Get the HTML for the view, including the wrapper element.
    */
   getHtml: function() {
-    var attrString, attributes, html;
+    var attrString, attributes, html, tagName;
 
     html = this.getInnerHtml();
     attributes = this.getAttributes();
     attrString = _.inject(attributes, function(memo, value, key) {
       return memo += " " + key + "=\"" + _.escape(value) + "\"";
     }, '');
-    return "<" + this.tagName + attrString + ">" + html + "</" + this.tagName + ">";
+    tagName = _.result(this, "tagName");
+    return "<" + tagName + attrString + ">" + html + "</" + tagName + ">";
   },
 
   render: function() {

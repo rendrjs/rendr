@@ -163,7 +163,7 @@ module.exports = BaseView = Backbone.View.extend({
       _.extend(attributes, _.result(this, 'attributes'));
     }
     if (this.id) {
-      attributes.id = this.id;
+      attributes.id = _.result(this, "id");
     }
     if (this.className) {
       attributes['class'] = _.result(this, "className");

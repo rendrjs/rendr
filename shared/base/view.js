@@ -231,14 +231,15 @@ module.exports = BaseView = Backbone.View.extend({
    * Get the HTML for the view, including the wrapper element.
    */
   getHtml: function() {
-    var attrString, attributes, html;
+    var attrString, attributes, html, tagName;
 
     html = this.getInnerHtml();
     attributes = this.getAttributes();
     attrString = _.inject(attributes, function(memo, value, key) {
       return memo += " " + key + "=\"" + _.escape(value) + "\"";
     }, '');
-    return "<" + this.tagName + attrString + ">" + html + "</" + this.tagName + ">";
+    tagName = _.result(this, "tagName");
+    return "<" + tagName + attrString + ">" + html + "</" + tagName + ">";
   },
 
   render: function() {

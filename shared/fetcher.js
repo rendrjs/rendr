@@ -1,8 +1,9 @@
-var Backbone, CollectionStore, ModelStore, async, _;
+var Backbone, CollectionStore, ModelStore, async, _, isServer;
 
 _ = require('underscore');
 Backbone = require('backbone');
 async = require('async');
+isServer = (typeof window === 'undefined');
 
 ModelStore = require('./store/model_store');
 CollectionStore = require('./store/collection_store');
@@ -154,7 +155,7 @@ Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, c
      * return the cached object we fire off a fetch, compare the results,
      * and if the data is different, we trigger a 'refresh' event.
      */
-    if (spec.checkFresh && !global.isServer && this.shouldCheckFresh(spec)) {
+    if (spec.checkFresh && !isServer && this.shouldCheckFresh(spec)) {
       model.checkFresh();
       this.didCheckFresh(spec);
     }
@@ -358,7 +359,7 @@ Fetcher.prototype.fetch = function(fetchSpecs, options, callback) {
   }
 
   // Different defaults for client v server.
-  if (global.isServer) {
+  if (isServer) {
     if (options.readFromCache == null) {
       options.readFromCache = false;
     }

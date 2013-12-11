@@ -11,7 +11,7 @@ clientTestHelper = require('../helpers/client_test');
 AppViewClass = require('../../client/app_view');
 
 routerConfig = {
-  app: new App,
+  app: new App({}, {}),
   appViewClass: AppViewClass,
   paths: {
     entryPath: __dirname + "/../fixtures/"

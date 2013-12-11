@@ -15,9 +15,12 @@ var _ = require('underscore')
     'update': 'PUT',
     'delete': 'DELETE',
     'read': 'GET'
-  };
+  }
 
-if (global.isServer) {
+  , isServer = (typeof window === 'undefined')
+;
+
+if (isServer) {
   // hide it from requirejs since it's server only
   var serverOnly_qs = 'qs';
   var qs = require(serverOnly_qs);
@@ -121,7 +124,7 @@ function addApiParams(method, model, params) {
 }
 
 syncer.sync = function sync() {
-  var syncMethod = global.isServer ? serverSync : clientSync;
+  var syncMethod = isServer ? serverSync : clientSync;
   return syncMethod.apply(this, arguments);
 };
 

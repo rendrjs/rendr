@@ -1,5 +1,3 @@
-require('../shared/globals');
-
 var _ = require('underscore')
   , express = require('express')
   , Router = require('./router')

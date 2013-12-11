@@ -257,6 +257,7 @@ module.exports = function(grunt)
           paths:
           {
             'rendr/shared': '../..',
+            'rendr/client': '../../../client',
             'globals': '../../globals'
           },
           rawText: {

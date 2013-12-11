@@ -86,6 +86,7 @@ RestAdapter.prototype.request = function(req, api, options, callback) {
     if (typeof body === 'string' && this.isJSONResponse(response)) {
       try {
         body = JSON.parse(body);
+        if (body === null) throw new Error("JSON parse returned null")
       } catch (e) {
         err = e;
       }

@@ -163,7 +163,7 @@ var config = {
   
   apiPath: '/api',
   appData: { myAttr: 'value'},
-  dataAdapter: {...},
+  dataAdapter: myDataAdapterInstance,
   defaultEngine: 'js',
   entryPath: process.cwd() + '/myapp'
   errorHandler: function (err, req, res, next){},
@@ -174,7 +174,18 @@ rendr.createServer(config);
 
 ```
 
-- ``dataAdapterConfig`` *Required* - Configuration options that are passed to the DataAdapter.  See [DataAdapter Config](#dataadapter-config)
+Either a ``dataAdapter`` or ``dataAdapterConfig`` must be present.  
+
+
+- ``dataAdapterConfig`` - This is the standard way of configuring Rendr's built in  DataAdapter.  See [DataAdapter Config](#dataadapter-config)
+
+
+- ``dataAdapter`` - Allows you to override the default DataAdapter and provide your own.  The ``dataAdapterConfig`` will be ignored.
+
+    **Default:**  [RestAdapter](https://github.com/airbnb/rendr/blob/master/server/data_adapter/rest_adapter.js) which enables Rendr to speak basic REST using HTTP & JSON.  This is good for consuming an     existing RESTful API that exists externally to your Node app.
+    
+    
+---
 
 - ``apiPath`` *Optional* - Root of the API proxy's virtual path. Anything after this root will be followed by a ``-``. Example: ``/api/-/path/to/resource``. Allows the proxy to intercept API routes. Can also be a full path to a remote API ``http://api.myserver``
 
@@ -182,9 +193,6 @@ rendr.createServer(config);
 
 - ``appData`` *Optional* - Pass any data that needs to be accessible by the client. Accessible from within your Handlebars context ``app.attributes.myAttr``, and also within your views and models ```this.app.attributes.myAttr```.
 
-- ``dataAdapter`` *Optional* - The DataAdapter that Rendr uses.
-
-    **Default:**  [RestAdapter](https://github.com/airbnb/rendr/blob/master/server/data_adapter/rest_adapter.js) which enables Rendr to speak basic REST using HTTP & JSON.  This is good for consuming an existing RESTful API that exists externally to your Node app.
 
 - ``defaultEngine`` *Optional* - Tell the ViewEngine to load different file types. Example: ``coffee``
 
@@ -196,12 +204,12 @@ rendr.createServer(config);
 
 - ``errorHandler`` *Optional* Callback for [Express.js errors](http://expressjs.com/guide.html#error-handling).
 
-   **Example** ``function (req, res, next) { }``
+   **Example** ``function (err, req, res, next) { }``
 
 
 - ``notFoundHandler`` *Optional* - Callback for [Express.js not found errors](http://expressjs.com/guide.html#error-handling)
 
-   **Example** ``function (err, req, res, next) { }``
+   **Example** ``function (req, res, next) { }``
 
 - ``viewEngine`` *Optional* - Provides a way to set a custom [Express.js view engine](http://expressjs.com/api.html#app.engine)
 
@@ -218,6 +226,19 @@ This configuration is passed to the current DataAdapter, which by default is the
 
 
 ####Example
+
+**Simple**
+
+```
+var dataAdapterConfig = {
+  host: 'api.github.com',
+  protocol: 'https'
+};
+
+```
+
+**Multiple**
+
 ```
 var dataAdapterConfig = {
   'default': {
@@ -232,7 +253,7 @@ var dataAdapterConfig = {
 
 ```
 
-Example of how a Backbone model can be configured to select the DataAdapter config.  
+Example of how a Backbone model can be configured to select one of the DataAdapter configs.
 
 *Note: This example assumes you are using the [RestAdapter](https://github.com/airbnb/rendr/blob/master/server/data_adapter/rest_adapter.js).*
 
@@ -275,7 +296,7 @@ Provides a way for Rendr to utilize custom html template engines.  Rendr's [View
 
 ####Using Custom Adapters
 
-You can tell Rendr which Template Adapter like this.
+You can tell Rendr which Template Adapter to use.  This represents the node-module that contains the adapter.
 
 ````
 // /app/app.js

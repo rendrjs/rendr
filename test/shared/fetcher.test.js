@@ -289,8 +289,7 @@ describe('fetcher', function() {
         }
       };
       fetcher.storeResults(results);
-      fetcher.hydrate(fetchSummary, function(err, hydrated)
-      {
+      fetcher.hydrate(fetchSummary, function(err, hydrated) {
         listing = hydrated.listing;
         listing.should.be.an.instanceOf(Listing);
         listing.toJSON().should.deep.equal(rawListing);
@@ -316,8 +315,7 @@ describe('fetcher', function() {
       app = {
         fake: 'app'
       };
-      fetcher.hydrate(summaries, {app: app}, function(err, results)
-      {
+      fetcher.hydrate(summaries, {app: app}, function(err, results) {
         model = results.model;
         model.app.should.eql(app);
       });

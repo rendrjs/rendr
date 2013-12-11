@@ -9,7 +9,7 @@ var _ = require('underscore')
 
 module.exports = Server;
 
-function defaultOptions(){
+function defaultOptions() {
   return {
     dataAdapter: null,
     dataAdapterConfig: null,
@@ -29,7 +29,7 @@ function defaultOptions(){
 
 
 function Server(options) {
-  if(typeof rendr !== 'undefined' && rendr.entryPath){
+  if (typeof rendr !== 'undefined' && rendr.entryPath) {
     console.warn("Setting rendr.entryPath is now deprecated. Please pass in entryPath when initializing the rendr server.")
     options.entryPath = rendr.entryPath;
   }

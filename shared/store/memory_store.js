@@ -16,7 +16,7 @@ MemoryStore.prototype.get = function(key) {
   return this.validateExpiration(key, this._get(key));
 };
 
-MemoryStore.prototype.validateExpiration = function(key, data){
+MemoryStore.prototype.validateExpiration = function(key, data) {
   if (data && data.expires && Date.now() > data.expires) {
     if (typeof console !== "undefined") {
       console.log("MemoryStore: Expiring key \"" + key + "\".");

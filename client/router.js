@@ -1,5 +1,10 @@
 /*global rendr*/
 
+// Since we make rendr files AMD friendly on app setup stage
+// we need to pretend that this code is pure commonjs
+// means no AMD-style require calls
+var requireAMD = require;
+
 var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, defaultRootPath;
 
 _ = require('underscore');
@@ -93,18 +98,24 @@ ClientRouter.prototype.addBackboneRoute = function(routeObj) {
 ClientRouter.prototype.getHandler = function(action, pattern, route) {
   var router = this;
 
+  // abstract action call
+  function actionCall(action, params) {
+    action.call(router, params, router.getRenderCallback(route));
+  }
+
   // This returns a function which is called by Backbone.history.
   return function() {
-    var params, paramsArray, views, redirect;
+    var params, paramsArray, redirect;
 
     router.trigger('action:start', route, firstRender);
     router.currentRoute = route;
 
     if (firstRender) {
-      views = BaseView.attach(router.app);
-      router.currentView = router.getMainView(views);
-      router.trigger('action:end', route, firstRender);
       firstRender = false;
+      BaseView.attach(router.app, null, function(views) {
+        router.currentView = router.getMainView(views);
+        router.trigger('action:end', route, true);
+      });
     } else {
       paramsArray = _.toArray(arguments);
       params = router.getParamsHash(pattern, paramsArray, window.location.search);
@@ -118,8 +129,20 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
       } else {
         if (!action) {
           throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
+        } else if (typeof action == 'string') {
+          // in AMD environment action is the string containing path to the controller
+          // which will be loaded async (might be preloaded)
+          // Only used in AMD environment
+          requireAMD([action], function(controller) {
+            // check we have everything we need
+            if (typeof controller[route.action] != 'function') {
+              throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
+            }
+            actionCall(controller[route.action], params);
+          });
+        } else {
+          actionCall(action, params);
         }
-        action.call(router, params, router.getRenderCallback(route));
       }
     }
   };
@@ -143,7 +166,7 @@ ClientRouter.prototype.navigate = function(path, options) {
   var fragment = Backbone.history.getFragment(path);
 
   // check if local router can handle route
-  if(this.matchesAnyRoute(fragment)) {
+  if (this.matchesAnyRoute(fragment)) {
     this._router.navigate.apply(this._router, arguments);
   } else {
     this.redirectTo(fragment, {pushState: false});
@@ -214,7 +237,7 @@ ClientRouter.prototype.redirectTo = function(path, options) {
   }
 };
 
-ClientRouter.prototype.handleErr = function(err, route){
+ClientRouter.prototype.handleErr = function(err, route) {
   this.trigger('action:error', err, route);
 }
 
@@ -222,7 +245,7 @@ ClientRouter.prototype.getRenderCallback = function(route) {
   return function(err, viewPath, locals) {
     if (err) return this.handleErr(err, route);
 
-    var View;
+    var View, _router = this;
 
     if (this.currentView) {
       this.currentView.remove();
@@ -235,11 +258,12 @@ ClientRouter.prototype.getRenderCallback = function(route) {
 
     // Inject the app.
     locals.app = this.app;
-    View = this.getView(viewPath);
-    this.currentView = new View(locals);
-    this.renderView();
+    this.getView(viewPath, this.options.entryPath, function(View) {
+      _router.currentView = new View(locals);
+      _router.renderView();
 
-    this.trigger('action:end', route, firstRender);
+      _router.trigger('action:end', route, firstRender);
+    });
   }.bind(this);
 };
 
@@ -260,10 +284,13 @@ ClientRouter.prototype.trackAction = function() {
   this.currentFragment = Backbone.history.getFragment();
 };
 
-ClientRouter.prototype.getView = function(key) {
-  var View = BaseView.getView(key);
-  if (!_.isFunction(View)) {
-    throw new Error("View '" + key + "' not found.");
-  }
-  return View;
+ClientRouter.prototype.getView = function(key, entryPath, callback) {
+  var View = BaseView.getView(key, entryPath, function(View) {
+    // TODO: Make it function (err, View)
+    if (!_.isFunction(View)) {
+      throw new Error("View '" + key + "' not found.");
+    }
+
+    callback(View);
+  });
 };

@@ -1,3 +1,13 @@
+// Since we make rendr files AMD friendly on app setup stage
+// we need to pretend that this code is pure commonjs
+// means no AMD-style require calls
+var requireAMD = require;
+
+var typePath = {
+  model: "app/models/",
+  collection: "app/collections/"
+};
+
 var BaseCollection, BaseModel, ModelUtils;
 
 BaseModel = require("./base/model");
@@ -10,30 +20,60 @@ module.exports = ModelUtils = (function() {
     this._classMap = {};
   }
 
-  ModelUtils.prototype.getModel = function(path, attrs, options) {
+  ModelUtils.prototype.getModel = function(path, attrs, options, callback) {
     var Model;
     attrs = attrs || {};
     options = options || {};
-    Model = this.getModelConstructor(path);
-    return new Model(attrs, options);
+    if (typeof callback == 'function') {
+      this.getModelConstructor(path, function(Model) {
+        callback(new Model(attrs, options));
+      });
+    } else {
+      Model = this.getModelConstructor(path);
+      return new Model(attrs, options);
+    }
   };
 
-  ModelUtils.prototype.getCollection = function(path, models, options) {
+  ModelUtils.prototype.getCollection = function(path, models, options, callback) {
     var Collection;
     models = models || [];
     options = options || {};
-    Collection = this.getCollectionConstructor(path);
-    return new Collection(models, options);
+    if (typeof callback == 'function') {
+      this.getCollectionConstructor(path, function(Collection) {
+        callback(new Collection(models, options));
+      });
+    } else {
+      Collection = this.getCollectionConstructor(path);
+      return new Collection(models, options);
+    }
   };
 
-  ModelUtils.prototype.getModelConstructor = function(path) {
-    path = this.underscorize(path);
-    return this._classMap[path] || require(this.entryPath + "app/models/" + path);
+  ModelUtils.prototype.getModelConstructor = function(path, callback) {
+    return this.fetchConstructor('model', path, callback);
   };
 
-  ModelUtils.prototype.getCollectionConstructor = function(path) {
+  ModelUtils.prototype.getCollectionConstructor = function(path, callback) {
+    return this.fetchConstructor('collection', path, callback);
+  };
+
+  ModelUtils.prototype.fetchConstructor = function(type, path, callback) {
     path = this.underscorize(path);
-    return this._classMap[path] || require(this.entryPath + "app/collections/" + path);
+
+    var fullPath = this.entryPath + typePath[type] + path;
+
+    if (this._classMap[path]) {
+      return (typeof callback == 'function') ? callback(this._classMap[path]) : this._classMap[path];
+    } else if (typeof callback == 'function') {
+      // Only used in AMD environment
+      if (typeof define != 'undefined') {
+        requireAMD([fullPath], callback);
+      } else {
+        callback(require(fullPath));
+      }
+      return;
+    } else {
+      return require(fullPath);
+    }
   };
 
   ModelUtils.prototype.isModel = function(obj) {
@@ -87,10 +127,10 @@ module.exports = ModelUtils = (function() {
     return this.underscorize(modelOrCollectionClass.id || modelOrCollectionClass.name);
   };
 
-  ModelUtils.prototype.modelIdAttribute = function(modelName) {
-    var constructor;
-    constructor = this.getModelConstructor(modelName);
-    return constructor.prototype.idAttribute;
+  ModelUtils.prototype.modelIdAttribute = function(modelName, callback) {
+    this.getModelConstructor(modelName, function(constructor) {
+      callback(constructor.prototype.idAttribute);
+    });
   };
 
   return ModelUtils;

@@ -1,4 +1,4 @@
-var App, Backbone, BaseView, Router, should, routerConfig, clientTestHelper;
+var App, Backbone, BaseView, AppViewClass, Router, should, routerConfig, clientTestHelper;
 
 Backbone = require('backbone');
 should = require('chai').should();
@@ -8,9 +8,11 @@ BaseView = require('../../shared/base/view');
 AppView = require('../../client/app_view');
 Router = require('../../client/router');
 clientTestHelper = require('../helpers/client_test');
+AppViewClass = require('../../client/app_view');
 
 routerConfig = {
   app: new App,
+  appViewClass: AppViewClass,
   paths: {
     entryPath: __dirname + "/../fixtures/"
   },

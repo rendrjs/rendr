@@ -2,7 +2,7 @@
 ## GitHub Browser
 
 The purpose of this little app is to demonstrate how to extend the appView for the page to pass
-events and data about the state of the app to the main app view.  In this case it's used to set the 
+events and data about the state of the app to the main app view.  In this case it's used to set the
 page title appropriately.
 
 ![Screenshot](http://cl.ly/image/062d3S2D1Y38/Screen%20Shot%202013-04-09%20at%203.14.31%20PM.png)
@@ -305,58 +305,6 @@ Views also have a `parentView` property, which will be non-null unless they are 
 
 	App.router.currentView.parentView
 	=> null
-
-## Lazy-loading data for views
-
-So far, our [`users#show` action](https://github.com/airbnb/rendr-app-template/blob/master/app/controllers/users_controller.js#L11) pulls down both a `User` model and a `Repos` collection for that model. If we were to navigate from `users#index` to `users#show`, we already have that user model cached in memory (because we fetched it in order to render the list), but we have to make a roundtrip to the server to fetch the `Repos`, which aren't part of the `User` attributes. This means that instead of immediately rendering the `users/show` view, we wait for the `Repos` API call to finish. But what if instead we want to lazy-load the `Repos` so we can render that view immediately for a better user experience?
-
-We can achieve this by lazy-loading models or collections in our subviews. Check out the `users#show_lazy` action, which demonstrates this approach:
-
-```js
-// app/controllers/users_controller.js
-module.exports = {
-  // ...
-
-  show_lazy: function(params, callback) {
-    var spec = {
-      model: {model: 'User', params: params}
-    };
-    this.app.fetch(spec, function(err, result) {
-      if (err) return callback(err);
-      // Extend the hash of options we pass to the view's constructor
-      // to include the `template_name` option, which will be used
-      // to look up the template file. This is a convenience so we
-      // don't have to create a separate view class.
-      _.extend(result, {
-        template_name: 'users/show_lazy'
-      });
-      callback(err, 'users/show', result);
-    });
-  }
-}
-```
-The first thing to notice is that in our fetch `spec`, we only specify the `User` model, leaving out the `Repos` collection. Then, we tell the view to use a different template than the default. We do this by passing in a `template_name` property to the view's options, which is passed to its constructor. We extend the `result` object to have this; the third argument to our `callback` is an object that's passed to the view's constructor. We could have also created a separate view class in JavaScript for this, to match our new template.
-
-Here's the `users/show_lazy` template, abbreviated:
-
-```html
-<!-- app/templates/users/show_lazy.hbs -->
-...
-
-<div class="span6">
-  {{view "user_repos_view" collection_name="Repos" param_name="login" param_value=login lazy="true"}}
-</div>
-
-<div class="span6">
-  ...
-</div>
-```
-
-So, the only difference to our original `users/show` template is that instead of passing `collection=repos` to our `user_repos_view` subview, we pass `collection_name="Repos" param_name="login" param_value=login lazy="true"`. When fetching collections, we specify params, which are used to fetch and cache the models for that collection. We quote all of these arguments except for `param_value=login`; quoted arguments are passed in as string literals, and unquoted arguments are references to variables that are available in the current Handlebars scope. `login` is one of the attributes of a `User` model, which gets passed into the template. The `lazy="true"` tells the view that it needs to fetch (or find a cached version of) the specified model or collection.
-
-We can see this at play in our app if we add a route in our [`app/routes.js`](https://github.com/airbnb/rendr-app-template/blob/master/app/routes.js#L7) file that routes `users_lazy/:login` to `users#show_lazy`, and change our [`app/templates/users_index_view.hbs`](https://github.com/airbnb/rendr-app-template/blob/master/app/templates/users_index_view.hbs#L6) to link to `/users_lazy/{{login}}`.
-
-Now, if we click from the list of users on `users#index`, you'll see the page gets rendered immediately, and the repos are rendered once the API call finishes. If you click back and forward in your browser, you see it's cached.
 
 ## Templates
 

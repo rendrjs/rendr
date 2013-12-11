@@ -256,6 +256,7 @@ module.exports = function(grunt)
           insertRequire: ['rendr/shared/globals'],
           paths:
           {
+            'rendr/client': '../../../client',
             'rendr/shared': '../..',
             'globals': '../../globals'
           },

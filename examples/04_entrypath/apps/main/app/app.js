@@ -44,5 +44,4 @@ module.exports = BaseApp.extend({
     // Call 'super'.
     BaseApp.prototype.start.call(this);
   }
-
 });

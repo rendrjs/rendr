@@ -71,10 +71,6 @@ module.exports = function(grunt) {
         src: 'assets/vendor/jquery-1.9.1.min.js',
         dest: 'public/js/jquery-1.9.1.min.js'
       },
-      json2: {
-        src: 'assets/vendor/json2.js',
-        dest: 'public/js/json2.js'
-      }
     },
 
     browserify: {

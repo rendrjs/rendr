@@ -13,22 +13,22 @@ var separator = '/-/';
 module.exports = apiProxy;
 
 function apiProxy(dataAdapter) {
-  return function(req, res, next) {
+  return function(requestFromClient, responseToClient, next) {
     var api;
 
-    api = _.pick(req, 'query', 'method', 'body');
+    api = _.pick(requestFromClient, 'query', 'method', 'body');
 
-    api.path = apiProxy.getApiPath(req.path);
-    api.api = apiProxy.getApiName(req.path);
+    api.path = apiProxy.getApiPath(requestFromClient.path);
+    api.api = apiProxy.getApiName(requestFromClient.path);
 
-    dataAdapter.request(req, api, {
+    dataAdapter.request(requestFromClient, api, {
       convertErrorCode: false
-    }, function(err, response, body) {
+    }, function(err, responseFromApi, body) {
       if (err) return next(err);
 
       // Pass through statusCode.
-      res.status(response.statusCode);
-      res.json(body);
+      responseToClient.status(responseFromApi.statusCode);
+      responseToClient.json(body);
     });
   };
 };

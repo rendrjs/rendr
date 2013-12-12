@@ -1,6 +1,7 @@
-var BaseAppView = require('rendr/client/app_view');
-
-var $body = $('body');
+var BaseAppView = require('rendr/client/app_view')
+  , $ = require('jquery')
+  , $body = $('body')
+;
 
 module.exports = BaseAppView.extend({
   postInitialize: function() {

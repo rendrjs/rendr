@@ -5,7 +5,7 @@ var _ = require('underscore')
 ;
 
 if (!isServer) {
-  Backbone.$ = window.$;
+  Backbone.$ = window.$ || require('jquery');
 }
 
 var BaseModel = Backbone.Model.extend({

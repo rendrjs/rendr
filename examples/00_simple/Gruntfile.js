@@ -64,13 +64,6 @@ module.exports = function(grunt) {
       }
     },
 
-    copy: {
-      jquery: {
-        src: 'assets/vendor/jquery-1.9.1.min.js',
-        dest: 'public/js/jquery-1.9.1.min.js'
-      },
-    },
-
     browserify: {
       basic: {
         src: [
@@ -80,9 +73,6 @@ module.exports = function(grunt) {
         options: {
           debug: true,
           transform: ['hbsfy'],
-          noParse: [
-            'assets/vendor/**/*.js'
-          ],
           alias: [
             'node_modules/rendr-handlebars/index.js:rendr-handlebars',
           ],
@@ -93,13 +83,18 @@ module.exports = function(grunt) {
               dest: 'app/'
             },
           ],
+          shim: {
+            jquery: {
+              path: 'assets/vendor/jquery-1.9.1.min.js',
+              exports: '$',
+            },
+          },
         }
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -117,7 +112,7 @@ module.exports = function(grunt) {
   });
 
 
-  grunt.registerTask('compile', ['copy', 'handlebars', 'browserify', 'stylus']);
+  grunt.registerTask('compile', ['handlebars', 'browserify', 'stylus']);
 
   // Run the server and watch for file changes
   grunt.registerTask('server', ['runNode', 'compile', 'watch']);

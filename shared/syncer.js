@@ -25,7 +25,7 @@ if (isServer) {
   var serverOnly_qs = 'qs';
   var qs = require(serverOnly_qs);
 } else {
-  Backbone.$ = window.$;
+  Backbone.$ = window.$ || require('jquery');
 }
 
 var syncer = module.exports;

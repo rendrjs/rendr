@@ -7,7 +7,7 @@ var _ = require('underscore')
 ;
 
 if (!isServer) {
-  Backbone.$ = window.$;
+  Backbone.$ = window.$ || require('jquery');
 }
 
 BaseCollection = Super.extend({

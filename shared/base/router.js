@@ -5,7 +5,7 @@ Backbone = require('backbone');
 isServer = (typeof window === 'undefined');
 
 if (!isServer) {
-  Backbone.$ = window.$;
+  Backbone.$ = window.$ || require('jquery');
 }
 
 function noop() {}

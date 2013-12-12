@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --ui bdd --reporter spec  ./test/app --recursive && karma start test/karma.config.js --single-run",
+    "test": "mocha --ui bdd --reporter spec ./test/app --recursive --require ./test/helper.js && karma start test/karma.config.js --single-run",
     "start": "node index.js"
   },
   "dependencies": {

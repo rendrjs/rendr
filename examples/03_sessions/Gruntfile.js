@@ -81,31 +81,17 @@ module.exports = function(grunt) {
     browserify: {
       basic: {
         src: [
-            'app/router.js',
-            'app/routes.js',
-            rendrDir + '/client/**/*.js',
-            rendrDir + '/shared/**/*.js',
-            rendrHandlebarsDir + '/index.js',
-            rendrHandlebarsDir + '/shared/*.js',
-            'app/**/*.js'
-        ], 
-        dest: 'public/mergedAssets.js', 
+          'app/**/*.js',
+        ],
+        dest: 'public/mergedAssets.js',
         options: {
           debug: true,
           transform: ['hbsfy'],
-          ignore: [
-            'node_modules/rendr/index.js'
-          ],
           noParse: [
             'assets/vendor/**/*.js'
           ],
-          require: true,
           alias: [
-            'app/app.js:app/app',
-            'app/router.js:app/router',
-            'app/routes.js:app/routes',
-            rendrHandlebarsDir + '/index.js:rendr-handlebars',
-            'node_modules/rendr/node_modules/backbone/backbone.js:backbone'
+            'node_modules/rendr-handlebars/index.js:rendr-handlebars',
           ],
           aliasMappings: [
             {
@@ -113,17 +99,7 @@ module.exports = function(grunt) {
               src: ['**/*.js'],
               dest: 'app/'
             },
-            {
-              cwd: 'node_modules/rendr/client',
-              src: ['node_modules/rendr/client/**/*.js'],
-              dest: 'rendr/client'
-            }, 
-            {
-              cwd: rendrDir + '/shared',
-              src: [rendrDir + '/shared/**/*.js'],
-              dest: 'rendr/shared'
-            }
-          ]
+          ],
         }
       }
     }

@@ -22,7 +22,7 @@
     "grunt-contrib-stylus": "~0.5.0",
     "grunt-contrib-handlebars": "~0.5.11",
     "grunt-contrib-requirejs": "~0.4.1",
-    "grunt-rendr-requirejs": "alexindigo/grunt-rendr-requirejs.git",
+    "grunt-rendr-requirejs": "~0.0.1",
     "nodemon": "~0.7.6",
     "mocha": "~1.9.0",
     "should": "~1.2.2"

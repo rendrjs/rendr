@@ -176,15 +176,22 @@ ClientRouter.prototype.navigate = function(path, options) {
 ClientRouter.prototype.getParamsHash = function(pattern, paramsArray, search) {
   var paramNames, params, query;
 
-  if (!(pattern instanceof RegExp)) {
+  if (pattern instanceof RegExp) {
+    params = (paramsArray || []).reduce(function (memo, val, i) {
+      memo[i] = decodeURIComponent(val);
+      return memo;
+    }, {});
+  } else {
     paramNames = (pattern.match(extractParamNamesRe) || []).map(function(name) {
       return name.slice(1);
     });
+
+    params = (paramNames || []).reduce(function(memo, name, i) {
+      memo[name] = decodeURIComponent(paramsArray[i]);
+      return memo;
+    }, {});
   }
-  params = (paramNames || []).reduce(function(memo, name, i) {
-    memo[name] = decodeURIComponent(paramsArray[i]);
-    return memo;
-  }, {});
+
   query = search.slice(1).split('&').reduce(function(memo, queryPart) {
     var parts = queryPart.split('=');
     if (parts.length > 1) {
@@ -192,6 +199,7 @@ ClientRouter.prototype.getParamsHash = function(pattern, paramsArray, search) {
     }
     return memo;
   }, {});
+
   return _.extend(query, params);
 };
 

@@ -10,10 +10,6 @@ if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
 }
 
-if (!global.isServer) {
-  Backbone.$ = window.$;
-}
-
 BaseCollection = Super.extend({
 
   model: BaseModel,

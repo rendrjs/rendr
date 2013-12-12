@@ -11,8 +11,6 @@ BaseRouter = require('../shared/base/router');
 BaseView = require('../shared/base/view');
 $ = (typeof window !== 'undefined' && window.$) || require('jquery');
 
-Backbone.$ = window.$;
-
 extractParamNamesRe = /:(\w+)/g;
 
 plusRe = /\+/g;

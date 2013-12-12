@@ -8,10 +8,6 @@ if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
 }
 
-if (!global.isServer) {
-  Backbone.$ = window.$;
-}
-
 function noop() {}
 
 module.exports = BaseRouter;

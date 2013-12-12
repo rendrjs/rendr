@@ -22,24 +22,31 @@ Run `npm install` to install dependencies:
 Then, use `grunt server` to start up the web server. Grunt will recompile and restart the server when files change.
 
     $ grunt server
-	Running "bgShell:runNode" (bgShell) task
 
-	Running "handlebars:compile" (handlebars) task
-	File "app/templates/compiledTemplates.js" created.
+    Running "runNode" task
 
-	Running "rendr_stitch:compile" (rendr_stitch) task
-	4 Apr 09:58:02 - [nodemon] v0.7.2
-	4 Apr 09:58:02 - [nodemon] watching: /Users/spike/code/rendr/examples/simple
-	4 Apr 09:58:02 - [nodemon] starting `node index.js`
-	4 Apr 09:58:02 - [nodemon] reading ignore list
-	File "public/mergedAssets.js" created.
+    Running "handlebars:compile" (handlebars) task
+    11 Dec 17:40:30 - [nodemon] v0.7.10
+    11 Dec 17:40:30 - [nodemon] to restart at any time, enter `rs`
+    11 Dec 17:40:30 - [nodemon] watching: /Users/spike/code/rendr/examples/00_simple
+    File "app/templates/compiledTemplates.js" created.
 
-	Running "stylus:compile" (stylus) task
-	File public/styles.css created.
-	server pid 87338 listening on port 3030 in development mode
+    Running "browserify:basic" (browserify) task
+    11 Dec 17:40:30 - [nodemon] starting `node index.js`
+    connect.multipart() will be removed in connect 3.0
+    visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+    connect.limit() will be removed in connect 3.0
+    server pid 86724 listening on port 3030 in development mode
+    >> Bundled public/mergedAssets.js
 
-	Running "watch" task
-	Waiting...
+    Running "stylus:compile" (stylus) task
+    File public/styles.css created.
+
+    Running "watch" task
+    Waiting...
+
+    11 Dec 17:40:32 - [nodemon] starting `node index.js`
+    server pid 86728 listening on port 3030 in development mode
 
 Now, pull up the app in your web browser. It defaults to port `3030`.
 
@@ -79,14 +86,16 @@ Check out the directory structure:
 
 **Note**: I want to stress that this is just one way to build an app using Rendr. I hope it can evolve to support a number of different app configurations, with the shared premise that the components should be able to run on either side of the wire. For example, the full-on client-side MVC model isn't appropriate for all types of apps. Sometimes it's more appropriate to load HTML fragments over the wire, also known as PJAX. Rendr apps should be able to support this as well.
 
-## CommonJS using Stitch
+## CommonJS using Browserify
 
-Node.js uses the CommonJS module pattern, and using a tool called [Stitch](https://github.com/sstephenson/stitch), we can emulate it in the browser. This looks familiar in Node.js:
+Node.js uses the CommonJS module pattern, and using a tool called
+[Browserify](https://github.com/substack/node-browserify), we can utilize our CommonJS modules in
+the browser. This looks familiar in Node.js:
 
 ```js
 var User = require('app/models/user');
 ```
-Using Stitch, we can use the same `require()` function in the browser. This allows us to focus on application logic, not packaging modules separately for client and server.
+Using Browserify, we can use the same `require()` function in the browser. This allows us to focus on application logic, not packaging modules separately for client and server.
 
 In Node.js, you can also use `require()` to load submodules within NPM models. For example, we could load Rendr's base view in order to extend it to create a view for our app.
 
@@ -94,7 +103,7 @@ In Node.js, you can also use `require()` to load submodules within NPM models. F
 var BaseView = require('rendr/shared/base/view');
 ```
 
-Because of a trick in the way we do Stitch packaging, this module path works in the browser as well.
+This module path works in the browser as well.
 
 ## Routes file
 
@@ -314,7 +323,11 @@ So far, Rendr just supports Handlebars templates, but it should be possible to m
 
 ## Assets
 
-In this example we use [Grunt](https://github.com/gruntjs/grunt) to manage asset compilation. We compile JavaScripts using [Stitch](https://github.com/sstephenson/stitch) and stylesheets using [Stylus](https://github.com/learnboost/stylus). Check out `Gruntfile.js` in the root directory of this repo for details.
+In this example we use [Grunt](https://github.com/gruntjs/grunt) to manage asset compilation. We
+use [Browserify](https://github.com/substack/node-browserify) to package our JavaScript in a way
+that allows us to retain the CommonJS semantics for the browser. We compile stylesheets using
+[Stylus](https://github.com/learnboost/stylus). Check out `Gruntfile.js` in the root directory of
+this repo for details.
 
 
 ## License

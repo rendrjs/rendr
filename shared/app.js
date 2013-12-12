@@ -12,6 +12,7 @@ isServer = (typeof window === 'undefined');
 
 if (!isServer) {
   ClientRouter = require('app/router');
+  Backbone.$ = window.$ || require('jquery');
 }
 
 function noop() {}

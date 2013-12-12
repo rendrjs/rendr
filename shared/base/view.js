@@ -8,6 +8,11 @@ var Backbone, BaseView, _, async;
 _ = require('underscore');
 Backbone = require('backbone');
 async = require('async');
+isServer = (typeof window === 'undefined');
+
+if (!isServer) {
+  Backbone.$ = window.$ || require('jquery');
+}
 
 function noop() {}
 

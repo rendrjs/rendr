@@ -1,6 +1,12 @@
 var _ = require('underscore')
   , Backbone = require('backbone')
-  , syncer = require('../syncer');
+  , syncer = require('../syncer')
+  , isServer = (typeof window === 'undefined')
+;
+
+if (!isServer) {
+  Backbone.$ = window.$ || require('jquery');
+}
 
 var BaseModel = Backbone.Model.extend({
 

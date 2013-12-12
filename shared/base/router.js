@@ -4,6 +4,10 @@ _ = require('underscore');
 Backbone = require('backbone');
 isServer = (typeof window === 'undefined');
 
+if (!isServer) {
+  Backbone.$ = window.$ || require('jquery');
+}
+
 function noop() {}
 
 module.exports = BaseRouter;

@@ -8,6 +8,10 @@ isServer = (typeof window === 'undefined');
 ModelStore = require('./store/model_store');
 CollectionStore = require('./store/collection_store');
 
+if (!isServer) {
+  Backbone.$ = window.$ || require('jquery');
+}
+
 module.exports = Fetcher;
 
 function Fetcher(options) {

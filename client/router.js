@@ -3,12 +3,13 @@
 // means no AMD-style require calls
 var requireAMD = require;
 
-var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, defaultRootPath;
+var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, defaultRootPath, $;
 
 _ = require('underscore');
 Backbone = require('backbone');
 BaseRouter = require('../shared/base/router');
 BaseView = require('../shared/base/view');
+$ = (typeof window !== 'undefined' && window.$) || require('jquery');
 
 extractParamNamesRe = /:(\w+)/g;
 
@@ -17,6 +18,8 @@ plusRe = /\+/g;
 firstRender = true;
 
 defaultRootPath = '';
+
+Backbone.$ = $;
 
 function noop() {}
 

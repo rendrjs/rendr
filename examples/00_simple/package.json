@@ -16,10 +16,11 @@
   },
   "devDependencies": {
     "grunt": "~0.4.1",
+    "grunt-browserify": "~1.2.9",
     "grunt-contrib-stylus": "~0.5.0",
     "grunt-contrib-handlebars": "~0.5.11",
-    "grunt-rendr-stitch": "~0.0.6",
     "grunt-contrib-watch": "~0.3.1",
+    "hbsfy": "~1.0.0",
     "nodemon": "~0.7.6",
     "mocha": "~1.9.0",
     "chai": "~1.8.1",

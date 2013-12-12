@@ -125,7 +125,6 @@ module.exports = function(grunt) {
           name: 'libs',
           paths: {
             jquery: '../../assets/vendor/jquery-1.9.1.min',
-            json: '../../assets/vendor/json2'
           },
           shim: {
             async: {
@@ -147,7 +146,6 @@ module.exports = function(grunt) {
           },
           include: [
             'requirejs',
-            'json',
             'jquery',
             'underscore',
             'backbone',

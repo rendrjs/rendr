@@ -1,7 +1,10 @@
-var BaseView, _;
+var _ = require('underscore')
+  , Backbone = require('backbone')
+  , BaseView = require('../shared/base/view')
+  , $ = (typeof window !== 'undefined' && window.$) || require('jquery')
+;
 
-_ = require('underscore');
-BaseView = require('../shared/base/view');
+Backbone.$ = $;
 
 module.exports = BaseView.extend({
   el: 'body',

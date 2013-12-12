@@ -2,11 +2,14 @@ node_modules
 tmp
 npm-debug.log
 coverage
-*.swp
+*.sw?
 examples/*/node_modules
 examples/**/compiledTemplates.js
 examples/*/public/mergedAssets.js
 examples/*/test/stitched.js
 examples/*/public/styles.css
+examples/*/public/js/rendr*
+examples/*/public/js/libs.js
+examples/*/public/js/app
 .DS_Store
 runtime.json

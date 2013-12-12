@@ -1,20 +1,18 @@
-/*global rendr*/
-
 /**
  * This is the app instance that is shared between client and server.
  * The client also subclasses it for client-specific stuff.
  */
 
-var Backbone, ClientRouter, Fetcher, ModelUtils;
+var Backbone, ClientRouter, Fetcher, ModelUtils, isServer;
 
-require('./globals');
 Backbone = require('backbone');
 Fetcher = require('./fetcher');
 ModelUtils = require('./modelUtils');
+isServer = (typeof window === 'undefined');
 
-if (!global.isServer) {
+if (!isServer) {
   ClientRouter = require('app/router');
-  Backbone.$ = window.$;
+  Backbone.$ = window.$ || require('jquery');
 }
 
 function noop() {}
@@ -33,7 +31,7 @@ module.exports = Backbone.Model.extend({
     this.options = options || {};
 
     var entryPath = this.options.entryPath || '';
-    if (!global.isServer) {
+    if (!isServer) {
       // the entry path must always be empty for the client
       entryPath =  '';
     }
@@ -63,7 +61,7 @@ module.exports = Backbone.Model.extend({
     /**
      * Initialize the `ClientRouter` on the client-side.
      */
-    if (!global.isServer) {
+    if (!isServer) {
       new ClientRouter({
         app: this,
         entryPath: entryPath,

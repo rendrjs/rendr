@@ -15,8 +15,9 @@ exports.before = function(){
   this.originalDelegate = BaseView.prototype.delegateEvents;
   BaseView.prototype._ensureElement = Backbone.View.prototype._ensureElement;
   BaseView.prototype.delegateEvents = Backbone.View.prototype.delegateEvents;
-  Backbone.$ = global.$ = require('jquery').create();
-  global.window = {};
+  global.window = {
+    $: require('jquery').create(),
+  };
 }
 
 exports.after = function(){

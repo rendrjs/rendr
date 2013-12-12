@@ -1,5 +1,3 @@
-/*global rendr*/
-
 /**
  * We add `req.rendrApp` so any middleware can access the Rendr
  * app. We need to inject it into views, models, etc., in order

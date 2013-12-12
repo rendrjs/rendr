@@ -67,45 +67,17 @@ module.exports = function(grunt) {
       }
     },
 
-    copy: {
-      jquery: {
-        src: 'assets/vendor/jquery-1.9.1.min.js',
-        dest: 'public/js/jquery-1.9.1.min.js'
-      },
-      json2: {
-        src: 'assets/vendor/json2.js',
-        dest: 'public/js/json2.js'
-      }
-    },
-
     browserify: {
       basic: {
         src: [
-            'app/router.js',
-            'app/routes.js',
-            rendrDir + '/client/**/*.js',
-            rendrDir + '/shared/**/*.js',
-            rendrHandlebarsDir + '/index.js',
-            rendrHandlebarsDir + '/shared/*.js',
-            'app/**/*.js'
-        ], 
-        dest: 'public/mergedAssets.js', 
+          'app/**/*.js',
+        ],
+        dest: 'public/mergedAssets.js',
         options: {
           debug: true,
           transform: ['hbsfy'],
-          ignore: [
-            'node_modules/rendr/index.js'
-          ],
-          noParse: [
-            'assets/vendor/**/*.js'
-          ],
-          require: true,
           alias: [
-            'app/app.js:app/app',
-            'app/router.js:app/router',
-            'app/routes.js:app/routes',
-            rendrHandlebarsDir + '/index.js:rendr-handlebars',
-            'node_modules/rendr/node_modules/backbone/backbone.js:backbone'
+            'node_modules/rendr-handlebars/index.js:rendr-handlebars',
           ],
           aliasMappings: [
             {
@@ -113,24 +85,19 @@ module.exports = function(grunt) {
               src: ['**/*.js'],
               dest: 'app/'
             },
-            {
-              cwd: 'node_modules/rendr/client',
-              src: ['node_modules/rendr/client/**/*.js'],
-              dest: 'rendr/client'
-            }, 
-            {
-              cwd: rendrDir + '/shared',
-              src: [rendrDir + '/shared/**/*.js'],
-              dest: 'rendr/shared'
-            }
-          ]
+          ],
+          shim: {
+            jquery: {
+              path: 'assets/vendor/jquery-1.9.1.min.js',
+              exports: '$',
+            },
+          },
         }
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -148,7 +115,7 @@ module.exports = function(grunt) {
   });
 
 
-  grunt.registerTask('compile', ['copy', 'handlebars', 'browserify', 'stylus']);
+  grunt.registerTask('compile', ['handlebars', 'browserify', 'stylus']);
 
   // Run the server and watch for file changes
   grunt.registerTask('server', ['runNode', 'compile', 'watch']);

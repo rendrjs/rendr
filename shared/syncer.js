@@ -15,14 +15,17 @@ var _ = require('underscore')
     'update': 'PUT',
     'delete': 'DELETE',
     'read': 'GET'
-  };
+  }
 
-if (global.isServer) {
+  , isServer = (typeof window === 'undefined')
+;
+
+if (isServer) {
   // hide it from requirejs since it's server only
   var serverOnly_qs = 'qs';
   var qs = require(serverOnly_qs);
 } else {
-  Backbone.$ = window.$;
+  Backbone.$ = window.$ || require('jquery');
 }
 
 var syncer = module.exports;
@@ -40,7 +43,7 @@ function clientSync(method, model, options) {
       var body, contentType, resp;
       body = xhr.responseText;
       contentType = xhr.getResponseHeader('content-type');
-      if (contentType.indexOf('application/json') !== -1) {
+      if (contentType && contentType.indexOf('application/json') !== -1) {
         try {
           body = JSON.parse(body);
         } catch (e) {
@@ -123,7 +126,7 @@ function addApiParams(method, model, params) {
 }
 
 syncer.sync = function sync() {
-  var syncMethod = global.isServer ? serverSync : clientSync;
+  var syncMethod = isServer ? serverSync : clientSync;
   return syncMethod.apply(this, arguments);
 };
 

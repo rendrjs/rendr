@@ -22,24 +22,31 @@ Run `npm install` to install dependencies:
 Then, use `grunt server` to start up the web server. Grunt will recompile and restart the server when files change.
 
     $ grunt server
-	Running "bgShell:runNode" (bgShell) task
 
-	Running "handlebars:compile" (handlebars) task
-	File "app/templates/compiledTemplates.js" created.
+    Running "runNode" task
 
-	Running "rendr_stitch:compile" (rendr_stitch) task
-	4 Apr 09:58:02 - [nodemon] v0.7.2
-	4 Apr 09:58:02 - [nodemon] watching: /Users/spike/code/rendr/examples/simple
-	4 Apr 09:58:02 - [nodemon] starting `node index.js`
-	4 Apr 09:58:02 - [nodemon] reading ignore list
-	File "public/mergedAssets.js" created.
+    Running "handlebars:compile" (handlebars) task
+    11 Dec 17:40:30 - [nodemon] v0.7.10
+    11 Dec 17:40:30 - [nodemon] to restart at any time, enter `rs`
+    11 Dec 17:40:30 - [nodemon] watching: /Users/spike/code/rendr/examples/00_simple
+    File "app/templates/compiledTemplates.js" created.
 
-	Running "stylus:compile" (stylus) task
-	File public/styles.css created.
-	server pid 87338 listening on port 3030 in development mode
+    Running "browserify:basic" (browserify) task
+    11 Dec 17:40:30 - [nodemon] starting `node index.js`
+    connect.multipart() will be removed in connect 3.0
+    visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+    connect.limit() will be removed in connect 3.0
+    server pid 86724 listening on port 3030 in development mode
+    >> Bundled public/mergedAssets.js
 
-	Running "watch" task
-	Waiting...
+    Running "stylus:compile" (stylus) task
+    File public/styles.css created.
+
+    Running "watch" task
+    Waiting...
+
+    11 Dec 17:40:32 - [nodemon] starting `node index.js`
+    server pid 86728 listening on port 3030 in development mode
 
 Now, pull up the app in your web browser. It defaults to port `3030`.
 
@@ -79,14 +86,16 @@ Check out the directory structure:
 
 **Note**: I want to stress that this is just one way to build an app using Rendr. I hope it can evolve to support a number of different app configurations, with the shared premise that the components should be able to run on either side of the wire. For example, the full-on client-side MVC model isn't appropriate for all types of apps. Sometimes it's more appropriate to load HTML fragments over the wire, also known as PJAX. Rendr apps should be able to support this as well.
 
-## CommonJS using Stitch
+## CommonJS using Browserify
 
-Node.js uses the CommonJS module pattern, and using a tool called [Stitch](https://github.com/sstephenson/stitch), we can emulate it in the browser. This looks familiar in Node.js:
+Node.js uses the CommonJS module pattern, and using a tool called
+[Browserify](https://github.com/substack/node-browserify), we can utilize our CommonJS modules in
+the browser. This looks familiar in Node.js:
 
 ```js
 var User = require('app/models/user');
 ```
-Using Stitch, we can use the same `require()` function in the browser. This allows us to focus on application logic, not packaging modules separately for client and server.
+Using Browserify, we can use the same `require()` function in the browser. This allows us to focus on application logic, not packaging modules separately for client and server.
 
 In Node.js, you can also use `require()` to load submodules within NPM models. For example, we could load Rendr's base view in order to extend it to create a view for our app.
 
@@ -94,7 +103,7 @@ In Node.js, you can also use `require()` to load submodules within NPM models. F
 var BaseView = require('rendr/shared/base/view');
 ```
 
-Because of a trick in the way we do Stitch packaging, this module path works in the browser as well.
+This module path works in the browser as well.
 
 ## Routes file
 
@@ -304,58 +313,6 @@ Views also have a `parentView` property, which will be non-null unless they are 
 	App.router.currentView.parentView
 	=> null
 
-## Lazy-loading data for views
-
-So far, our [`users#show` action](https://github.com/airbnb/rendr-app-template/blob/master/app/controllers/users_controller.js#L11) pulls down both a `User` model and a `Repos` collection for that model. If we were to navigate from `users#index` to `users#show`, we already have that user model cached in memory (because we fetched it in order to render the list), but we have to make a roundtrip to the server to fetch the `Repos`, which aren't part of the `User` attributes. This means that instead of immediately rendering the `users/show` view, we wait for the `Repos` API call to finish. But what if instead we want to lazy-load the `Repos` so we can render that view immediately for a better user experience?
-
-We can achieve this by lazy-loading models or collections in our subviews. Check out the `users#show_lazy` action, which demonstrates this approach:
-
-```js
-// app/controllers/users_controller.js
-module.exports = {
-  // ...
-
-  show_lazy: function(params, callback) {
-    var spec = {
-      model: {model: 'User', params: params}
-    };
-    this.app.fetch(spec, function(err, result) {
-      if (err) return callback(err);
-      // Extend the hash of options we pass to the view's constructor
-      // to include the `template_name` option, which will be used
-      // to look up the template file. This is a convenience so we
-      // don't have to create a separate view class.
-      _.extend(result, {
-        template_name: 'users/show_lazy'
-      });
-      callback(err, 'users/show', result);
-    });
-  }
-}
-```
-The first thing to notice is that in our fetch `spec`, we only specify the `User` model, leaving out the `Repos` collection. Then, we tell the view to use a different template than the default. We do this by passing in a `template_name` property to the view's options, which is passed to its constructor. We extend the `result` object to have this; the third argument to our `callback` is an object that's passed to the view's constructor. We could have also created a separate view class in JavaScript for this, to match our new template.
-
-Here's the `users/show_lazy` template, abbreviated:
-
-```html
-<!-- app/templates/users/show_lazy.hbs -->
-...
-
-<div class="span6">
-  {{view "user_repos_view" collection_name="Repos" param_name="login" param_value=login lazy="true"}}
-</div>
-
-<div class="span6">
-  ...
-</div>
-```
-
-So, the only difference to our original `users/show` template is that instead of passing `collection=repos` to our `user_repos_view` subview, we pass `collection_name="Repos" param_name="login" param_value=login lazy="true"`. When fetching collections, we specify params, which are used to fetch and cache the models for that collection. We quote all of these arguments except for `param_value=login`; quoted arguments are passed in as string literals, and unquoted arguments are references to variables that are available in the current Handlebars scope. `login` is one of the attributes of a `User` model, which gets passed into the template. The `lazy="true"` tells the view that it needs to fetch (or find a cached version of) the specified model or collection.
-
-We can see this at play in our app if we add a route in our [`app/routes.js`](https://github.com/airbnb/rendr-app-template/blob/master/app/routes.js#L7) file that routes `users_lazy/:login` to `users#show_lazy`, and change our [`app/templates/users_index_view.hbs`](https://github.com/airbnb/rendr-app-template/blob/master/app/templates/users_index_view.hbs#L6) to link to `/users_lazy/{{login}}`.
-
-Now, if we click from the list of users on `users#index`, you'll see the page gets rendered immediately, and the repos are rendered once the API call finishes. If you click back and forward in your browser, you see it's cached.
-
 ## Templates
 
 So far, Rendr just supports Handlebars templates, but it should be possible to make this interchangeable. For now, place your templates in `app/templates` with a name that matches the underscorized view's identifier and file extension of `.hbs`.  So, the view with an identifier of `HomeIndexView` will look for a template at `app/templates/home_index_view.hbs`.
@@ -366,7 +323,11 @@ So far, Rendr just supports Handlebars templates, but it should be possible to m
 
 ## Assets
 
-In this example we use [Grunt](https://github.com/gruntjs/grunt) to manage asset compilation. We compile JavaScripts using [Stitch](https://github.com/sstephenson/stitch) and stylesheets using [Stylus](https://github.com/learnboost/stylus). Check out `Gruntfile.js` in the root directory of this repo for details.
+In this example we use [Grunt](https://github.com/gruntjs/grunt) to manage asset compilation. We
+use [Browserify](https://github.com/substack/node-browserify) to package our JavaScript in a way
+that allows us to retain the CommonJS semantics for the browser. We compile stylesheets using
+[Stylus](https://github.com/learnboost/stylus). Check out `Gruntfile.js` in the root directory of
+this repo for details.
 
 
 ## License

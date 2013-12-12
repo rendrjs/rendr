@@ -1,9 +1,18 @@
-/*global rendr*/
+// Since we make rendr files AMD friendly on app setup stage
+// we need to pretend that this code is pure commonjs
+// means no AMD-style require calls
+var requireAMD = require;
 
-var Backbone, BaseView, _;
+var Backbone, BaseView, _, async;
 
 _ = require('underscore');
 Backbone = require('backbone');
+async = require('async');
+isServer = (typeof window === 'undefined');
+
+if (!isServer) {
+  Backbone.$ = window.$ || require('jquery');
+}
 
 if (!global.isServer) {
   Backbone.$ = window.$;
@@ -42,7 +51,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     if (options.app != null) {
       this.app = this.options.app;
-    }else {
+    } else {
       throw new Error("options.app expected when initializing a new view")
     }
 
@@ -161,10 +170,10 @@ module.exports = BaseView = Backbone.View.extend({
       _.extend(attributes, _.result(this, 'attributes'));
     }
     if (this.id) {
-      attributes.id = this.id;
+      attributes.id = _.result(this, "id");
     }
     if (this.className) {
-      attributes['class'] = this.className;
+      attributes['class'] = _.result(this, "className");
     }
 
     // Add `data-view` attribute with view key.
@@ -229,14 +238,15 @@ module.exports = BaseView = Backbone.View.extend({
    * Get the HTML for the view, including the wrapper element.
    */
   getHtml: function() {
-    var attrString, attributes, html;
+    var attrString, attributes, html, tagName;
 
     html = this.getInnerHtml();
     attributes = this.getAttributes();
     attrString = _.inject(attributes, function(memo, value, key) {
       return memo += " " + key + "=\"" + _.escape(value) + "\"";
     }, '');
-    return "<" + this.tagName + attrString + ">" + html + "</" + this.tagName + ">";
+    tagName = _.result(this, "tagName");
+    return "<" + tagName + attrString + ">" + html + "</" + tagName + ">";
   },
 
   render: function() {
@@ -331,15 +341,17 @@ module.exports = BaseView = Backbone.View.extend({
    * Hydrate this view with the data it needs, if being attached
    * to pre-exisitng DOM.
    */
-  hydrate: function() {
-    var fetchSummary, results;
-
-    fetchSummary = this.options.fetch_summary;
+  hydrate: function(callback) {
+    var fetchSummary = this.options.fetch_summary;
     if (!_.isEmpty(fetchSummary)) {
-      results = this.app.fetcher.hydrate(fetchSummary, {
+      this.app.fetcher.hydrate(fetchSummary, {
         app: this.app
-      });
-      this.parseOptions(results);
+      }, function(err, results) {
+        this.parseOptions(results);
+        callback(err);
+      }.bind(this));
+    } else {
+      callback(null);
     }
   },
 
@@ -373,28 +385,29 @@ module.exports = BaseView = Backbone.View.extend({
      * Hydrate looks if there is a model or collection associated
      * with this view, and tries to load it from memory.
      */
-    this.hydrate();
+    this.hydrate(function(err) {
+      /**
+       * Call preRender() so we can access things setup by @hydrate()
+       * (like @model) in i.e. @getTemplateData().
+       */
+      this._preRender();
 
-    /**
-     * Call preRender() so we can access things setup by @hydrate()
-     * (like @model) in i.e. @getTemplateData().
-     */
-    this._preRender();
+      /**
+       * We have to call postRender() so client-only things happen,
+       * i.e. initialize slideshows, etc.
+       */
+      this._postRender();
 
-    /**
-     * We have to call postRender() so client-only things happen,
-     * i.e. initialize slideshows, etc.
-     */
-    this._postRender();
+      /**
+       * If the view says it should try to be lazy loaded, and it doesn't
+       * have a model or collection, then do so.
+       */
+      if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
+        this.fetchLazy();
+      }
+      this.trigger('attach');
+    }.bind(this));
 
-    /**
-     * If the view says it should try to be lazy loaded, and it doesn't
-     * have a model or collection, then do so.
-     */
-    if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
-      this.fetchLazy();
-    }
-    this.trigger('attach');
   },
 
   /**
@@ -405,10 +418,14 @@ module.exports = BaseView = Backbone.View.extend({
    * Attach childView
    */
   attachChildViews: function() {
+    var _baseView = this;
+
     // Remove all child views in case we are re-rendering through
     // manual .render() or 'refresh' being triggered on the view.
     this.removeChildViews();
-    this.childViews = BaseView.attach(this.app, this);
+    BaseView.attach(this.app, this, function(views) {
+      _baseView.childViews = views;
+    });
   },
 
   removeChildViews: function() {
@@ -438,18 +455,33 @@ module.exports = BaseView = Backbone.View.extend({
  * -------------
  */
 
-BaseView.getView = function(viewName, entryPath) {
-  if (entryPath === undefined)
-    entryPath = ''
-  return require(entryPath + "app/views/" + viewName);
+BaseView.getView = function(viewName, entryPath, callback) {
+  var viewPath;
+
+  if (!entryPath) entryPath = '';
+
+  viewPath = entryPath + "app/views/" + viewName;
+  // check for AMD environment
+  if (typeof callback == 'function') {
+    // Only used in AMD environment
+    if (typeof define != 'undefined') {
+      requireAMD([viewPath], callback);
+    } else {
+      callback(require(viewPath));
+    }
+  } else {
+    return require(viewPath);
+  }
 };
 
-BaseView.attach = function(app, parentView) {
-  var scope, views;
+BaseView.attach = function(app, parentView, callback) {
+  var scope, list;
   scope = parentView != null ? parentView.$el : null;
-  views = $('[data-view]', scope).map(function(i, el) {
-    var $el, ViewClass, options, parsed, view, viewName;
 
+  list = $('[data-view]', scope).toArray();
+
+  async.map(list, function(el, cb) {
+    var $el, options, parsed, viewName;
     $el = $(el);
     if (!$el.data('view-attached')) {
       options = $el.data();
@@ -464,13 +496,16 @@ BaseView.attach = function(app, parentView) {
         }
       });
       options.app = app;
-      ViewClass = BaseView.getView(viewName);
-      view = new ViewClass(options);
-      view.attach($el, parentView);
-      return view;
+      BaseView.getView(viewName, app.options.entryPath, function(ViewClass) {
+        var view = new ViewClass(options);
+        view.attach($el, parentView);
+        cb(null, view);
+      });
     }
+  }, function(err, views) {
+    // no error handling originally
+    callback(_.compact(views));
   });
-  return _.compact(views);
 };
 
 /**

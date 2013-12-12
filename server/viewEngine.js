@@ -1,5 +1,3 @@
-/*global rendr*/
-
 var path = require('path')
   , _ = require('underscore')
   , layoutTemplates = {};

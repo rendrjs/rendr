@@ -1,9 +1,10 @@
-var App, AppView, should, clientTestHelper;
+var App, AppView, should, clientTestHelper, $;
 
 App = require('../../shared/app');
 AppView = require('../../client/app_view');
 should = require('chai').should();
 clientTestHelper = require('../helpers/client_test');
+$ = require('jquery');
 
 describe('AppView', function() {
   before(clientTestHelper.before);

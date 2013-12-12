@@ -55,7 +55,7 @@ RestAdapter.prototype.request = function(req, api, options, callback) {
   /**
    * Get defaults for the `api` object.
    */
-  api = this.apiDefaults(api);
+  api = this.apiDefaults(api, req);
 
   /**
    * Request timing.
@@ -100,7 +100,7 @@ RestAdapter.prototype.isJSONResponse = function(response) {
   return contentType.indexOf('application/json') !== -1;
 };
 
-RestAdapter.prototype.apiDefaults = function(api) {
+RestAdapter.prototype.apiDefaults = function(api, req) {
   var urlOpts, apiHost;
 
   api = _.clone(api);
@@ -131,12 +131,13 @@ RestAdapter.prototype.apiDefaults = function(api) {
     api.headers['User-Agent'] = this.options.userAgent;
   }
 
-  if (api.body != null) {
+  // make it json, but only if content-type is empty or 'application/json'
+  if (api.body != null && (!api.headers['Content-Type'] || api.headers['Content-Type'] == 'application/json')) {
     api.json = api.body;
   }
-  
+
   // Remove entity body for GET requests if body is empty object
-  if (api.method === 'GET' && Object.keys(api.body).length === 0){
+  if (api.method === 'GET' && Object.keys(api.body).length === 0) {
     delete api.json;
     delete api.body;
   }

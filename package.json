@@ -16,7 +16,7 @@
     "underscore": "1.5.2",
     "backbone": "1.0.0",
     "async":"0.1.22",
-    "qs": "0.5.1",
+    "qs": "0.6.6",
     "express": "~3",
     "validator": "0.4.21",
     "request": "~2.16",

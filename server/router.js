@@ -1,9 +1,9 @@
-var BaseRouter, ServerRouter, ExpressRouter, sanitize, _;
+var BaseRouter, ServerRouter, ExpressRouter, sanitizer, _;
 
 _ = require('underscore');
 BaseRouter = require('../shared/base/router');
 ExpressRouter = require('express').Router;
-sanitize = require('validator').sanitize;
+sanitizer = require('sanitizer');
 
 module.exports = ServerRouter;
 
@@ -24,7 +24,7 @@ ServerRouter.prototype.constructor = ServerRouter;
 ServerRouter.prototype.escapeParams = function(params) {
   var escaped = {};
   _.each(params, function(value, key) {
-    escaped[sanitize(key).xss()] = sanitize(value).xss();
+    escaped[sanitizer.sanitize(key)] = sanitizer.sanitize(value);
   });
   return escaped;
 };

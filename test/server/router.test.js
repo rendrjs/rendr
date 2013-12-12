@@ -340,13 +340,25 @@ describe("server/router", function() {
       });
     });
 
-    it("should XSS sanitize params", function() {
-      this.req.__defineGetter__('query', function() {
-        return {foo: '<script>alert("foo")</script>'};
+    describe('XSS sanitization', function() {
+      it("sanitize param keys", function() {
+        this.req.__defineGetter__('query', function() {
+          return {'tricky<script>alert("foo")</script>': 'value'};
+        });
+
+        this.router.getParams(this.req).should.eql({
+          'tricky': 'value'
+        });
       });
 
-      this.router.getParams(this.req).should.eql({
-        foo: '[removed]alert&#40;"foo"&#41;[removed]'
+      it("sanitize param values", function() {
+        this.req.__defineGetter__('query', function() {
+          return {foo: '<script>alert("foo")</script>sneaky'};
+        });
+
+        this.router.getParams(this.req).should.eql({
+          foo: 'sneaky'
+        });
       });
     });
   });

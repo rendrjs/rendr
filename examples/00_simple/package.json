@@ -1,6 +1,6 @@
 {
-  "name": "rendr-app-template",
-  "version": "0.2.1",
+  "name": "rendr-example",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -31,5 +31,6 @@
   },
   "engines": {
     "node": ">=0.8"
-  }
+  },
+  "private": true
 }

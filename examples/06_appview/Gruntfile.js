@@ -74,7 +74,6 @@ module.exports = function(grunt) {
         dest: 'public/mergedAssets.js',
         options: {
           debug: true,
-          transform: ['hbsfy'],
           alias: [
             'node_modules/rendr-handlebars/index.js:rendr-handlebars',
           ],

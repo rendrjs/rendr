@@ -32,12 +32,9 @@ ServerRouter.prototype.escapeParams = function(params) {
 ServerRouter.prototype.getParams = function(req) {
   var params = _.clone(req.query || {});
 
-  if (req.route.regexp)
-  {
-    params = req.route.params;
-  }
-  else
-  {
+  if (req.route.regexp) {
+    _.extend(params, req.route.params);
+  } else {
     req.route.keys.forEach(function(routeKey) {
       params[routeKey.name] = req.params[routeKey.name];
     });

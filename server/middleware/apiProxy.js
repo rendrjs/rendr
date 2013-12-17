@@ -20,6 +20,8 @@ function apiProxy(dataAdapter) {
 
     api.path = apiProxy.getApiPath(req.path);
     api.api = apiProxy.getApiName(req.path);
+    api.headers = apiProxy.addXForwardedForHeader(
+      req.headers, req.connection.remoteAddress);
 
     dataAdapter.request(req, api, {
       convertErrorCode: false
@@ -46,4 +48,15 @@ apiProxy.getApiName = function getApiName(path) {
     apiName = path.substr(1, sepIndex - 1);
   }
   return apiName;
+};
+
+apiProxy.addXForwardedForHeader = function (headers, clientIp) {
+  var existingHeader = headers['x-forwarded-for'],
+      newHeaderValue = clientIp;
+
+  if (existingHeader) {
+    newHeaderValue = existingHeader + ', ' + clientIp;
+  }
+
+  return _.extend({}, headers, {'x-forwarded-for': newHeaderValue});
 };

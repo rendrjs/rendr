@@ -10,8 +10,8 @@ describe('apiProxy', function() {
     var dataAdapter, proxy, responseToClient;
 
     beforeEach(function () {
-      dataAdapter = { request: sinon.stub() },
-      proxy = apiProxy(dataAdapter),
+      dataAdapter = { request: sinon.stub() };
+      proxy = apiProxy(dataAdapter);
       responseToClient = { status: sinon.spy(), json: sinon.spy() };
     });
 

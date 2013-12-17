@@ -7,16 +7,16 @@ describe('apiProxy', function() {
 
   describe('middleware', function () {
 
-    var dataAdater, proxy, responseToClient;
+    var dataAdapter, proxy, responseToClient;
 
     beforeEach(function () {
-      dataAdater = { request: sinon.stub() },
-      proxy = apiProxy(dataAdater),
+      dataAdapter = { request: sinon.stub() },
+      proxy = apiProxy(dataAdapter),
       responseToClient = { status: sinon.spy(), json: sinon.spy() };
     });
 
     it('should pass through the status code', function () {
-      dataAdater.request.yields(null, {status: 200}, {});
+      dataAdapter.request.yields(null, {status: 200}, {});
 
       proxy({ path: '/' }, responseToClient);
 
@@ -25,7 +25,7 @@ describe('apiProxy', function() {
 
     it('should pass through the body', function () {
       var body = { what: 'ever' };
-      dataAdater.request.yields(null, {status: 200}, body);
+      dataAdapter.request.yields(null, {status: 200}, body);
 
       proxy({ path: '/' }, responseToClient);
 

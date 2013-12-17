@@ -53,7 +53,6 @@ function apiProxy(dataAdapter) {
     }, function(err, response, body) {
       if (err) return next(err);
 
-      // Pass through statusCode.
       res.status(response.statusCode);
       res.setHeader('set-cookie', prefixSetCookieHeaderWithApiName(response, api));
       res.json(body);

@@ -7,6 +7,32 @@ var _ = require('underscore');
  */
 var separator = '/-/';
 
+function getApiCookiePrefix(apiName) {
+  return (apiName || 'default') + separator
+}
+
+function extractCookiesForApi(req, apiName) {
+  var apiCookiePrefix = getApiCookiePrefix(apiName),
+    incomingCookies = (req.get('cookie') || '').split('; ');
+
+  return incomingCookies
+    .filter(function (cookie) {
+      return apiCookiePrefix === cookie.substr(0, apiCookiePrefix.length);
+    })
+    .map(function (cookie) {
+      return cookie.substr(apiCookiePrefix.length);
+    });
+}
+
+function prefixSetCookieHeaderWithApiName(responseFromApi, api) {
+  var outgoingCookies = responseFromApi.headers['set-cookie'] || [],
+    apiCookiePrefix = getApiCookiePrefix(api.api);
+
+  return outgoingCookies.map(function (cookie) {
+    return apiCookiePrefix + cookie;
+  });
+}
+
 /**
  * Middleware handler for intercepting API routes.
  */
@@ -20,6 +46,7 @@ function apiProxy(dataAdapter) {
 
     api.path = apiProxy.getApiPath(req.path);
     api.api = apiProxy.getApiName(req.path);
+    api.headers = {cookie: extractCookiesForApi(req, api.api)};
 
     dataAdapter.request(req, api, {
       convertErrorCode: false
@@ -28,6 +55,7 @@ function apiProxy(dataAdapter) {
 
       // Pass through statusCode.
       res.status(response.statusCode);
+      res.setHeader('set-cookie', prefixSetCookieHeaderWithApiName(response, api));
       res.json(body);
     });
   };

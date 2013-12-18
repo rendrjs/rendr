@@ -142,6 +142,8 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
     delete api.body;
   }
 
+  // disable global cookie jar
+  api.jar = false;
   return api;
 };
 

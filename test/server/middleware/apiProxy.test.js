@@ -39,45 +39,57 @@ describe('apiProxy', function() {
         var cookiesReturnedByApi = [
             'FooBar=SomeCookieData; path=/',
             'BarFoo=OtherCookieData; path=/'
+          ],
+          expecetedEncodedCookies = [
+            'default/-/FooBar=' + encodeURIComponent('FooBar=SomeCookieData; path=/'),
+            'default/-/BarFoo=' + encodeURIComponent('BarFoo=OtherCookieData; path=/')
           ];
+
 
         dataAdapter.request.yields(null, { headers: { 'set-cookie': cookiesReturnedByApi } });
         proxy(req, responseToClient);
 
         responseToClient.setHeader.should.have.been.calledOnce;
-        responseToClient.setHeader.should.have.been.calledWith('set-cookie', ['default/-/FooBar=SomeCookieData; path=/', 'default/-/BarFoo=OtherCookieData; path=/'])
+        responseToClient.setHeader.should.have.been.calledWith('set-cookie', expecetedEncodedCookies)
       });
 
       it('should pass through prefixed cookies', function () {
-        var cookiesReturnedByApi = [ 'FooBar=SomeCookieData; path=/' ];
+        var cookiesReturnedByApi = [ 'FooBar=SomeCookieData; path=/' ],
+          expecetedEncodedCookies = [
+            'apiName/-/FooBar=' + encodeURIComponent('FooBar=SomeCookieData; path=/')
+          ];
 
         dataAdapter.request.yields(null, { headers: { 'set-cookie': cookiesReturnedByApi } });
         req.path = '/apiName/-/';
         proxy(req, responseToClient);
 
         responseToClient.setHeader.should.have.been.calledOnce;
-        responseToClient.setHeader.should.have.been.calledWith('set-cookie', ['apiName/-/FooBar=SomeCookieData; path=/'])
+        responseToClient.setHeader.should.have.been.calledWith('set-cookie', expecetedEncodedCookies)
       });
 
       it('should pass through the cookies from client to the correct api host', function () {
-        req.path = '/apiName/-/';
-        req.get.withArgs('cookie').returns('apiName/-/FooBar=SomeCookieData; otherApi/-/BarFoo=OtherCookieData');
-        proxy(req, responseToClient);
+        var encodedClientCookies =
+          'apiName/-/FooBar=' + encodeURIComponent('FooBar=SomeCookieData; path=/') +
+          '; ' +
+          'otherApi/-/BarFoo=' + encodeURIComponent('BarFoo=OtherCookieData; path=/');
 
-        dataAdapter.request.should.have.been.calledWithMatch(req, {headers: {cookie: ['FooBar=SomeCookieData']}});
+        req.get.withArgs('cookie').returns(encodedClientCookies);
+
+        req.path = '/apiName/-/';
+        proxy(req, responseToClient);
+        dataAdapter.request.should.have.been.calledWithMatch(req, {headers: {cookie: ['FooBar=SomeCookieData; path=/']}});
 
         req.path = '/otherApi/-/';
         proxy(req, responseToClient);
-
-        dataAdapter.request.should.have.been.calledWithMatch(req, {headers: {cookie: ['BarFoo=OtherCookieData']}});
+        dataAdapter.request.should.have.been.calledWithMatch(req, {headers: {cookie: ['BarFoo=OtherCookieData; path=/']}});
       });
 
       it('should pass through the cookies from client to the default api host', function () {
-        req.get.withArgs('cookie').returns('default/-/FooBar=SomeCookieData');
+        req.get.withArgs('cookie').returns('default/-/FooBar=' + encodeURIComponent('FooBar=SomeCookieData; path=/'));
         proxy(req, responseToClient);
 
         dataAdapter.request.should.have.been.calledOnce;
-        dataAdapter.request.should.have.been.calledWithMatch(req, {headers: {cookie: ['FooBar=SomeCookieData']}})
+        dataAdapter.request.should.have.been.calledWithMatch(req, {headers: {cookie: ['FooBar=SomeCookieData; path=/']}})
       });
     });
   });

@@ -8,28 +8,41 @@ var _ = require('underscore');
 var separator = '/-/';
 
 function getApiCookiePrefix(apiName) {
-  return (apiName || 'default') + separator
+  return (apiName || 'default') + separator;
+}
+
+function extractCookieName(cookieString) {
+  return cookieString.split('=').shift();
+}
+
+function extractCookieValue(cookieString) {
+  return cookieString.split('=').pop();
 }
 
 function extractCookiesForApi(req, apiName) {
-  var apiCookiePrefix = getApiCookiePrefix(apiName),
-    incomingCookies = (req.get('cookie') || '').split('; ');
+  var rawCookieString = req.get('cookie') || '',
+    apiCookies = rawCookieString.split('; '),
+    apiCookiePrefix = getApiCookiePrefix(apiName);
 
-  return incomingCookies
+  return apiCookies
     .filter(function (cookie) {
-      return apiCookiePrefix === cookie.substr(0, apiCookiePrefix.length);
+      var cookieName = extractCookieName(cookie);
+      return cookieName.indexOf(apiCookiePrefix) === 0;
     })
     .map(function (cookie) {
-      return cookie.substr(apiCookiePrefix.length);
+      return decodeURIComponent(extractCookieValue(cookie));
     });
-}
+};
 
-function prefixSetCookieHeaderWithApiName(responseFromApi, api) {
-  var outgoingCookies = responseFromApi.headers['set-cookie'] || [],
-    apiCookiePrefix = getApiCookiePrefix(api.api);
+function encodeApiCookies(responseFromApi, apiName) {
+  var apiCookiePrefix = getApiCookiePrefix(apiName),
+    setCookieHeaders = responseFromApi.headers['set-cookie'] || [];
 
-  return outgoingCookies.map(function (cookie) {
-    return apiCookiePrefix + cookie;
+  return setCookieHeaders.map(function (setCookieHeader) {
+    var cookieName = apiCookiePrefix + extractCookieName(setCookieHeader),
+      cookieValue = encodeURIComponent(setCookieHeader);
+
+    return cookieName + '=' + cookieValue;
   });
 }
 
@@ -54,7 +67,7 @@ function apiProxy(dataAdapter) {
       if (err) return next(err);
 
       res.status(response.statusCode);
-      res.setHeader('set-cookie', prefixSetCookieHeaderWithApiName(response, api));
+      res.setHeader('set-cookie', encodeApiCookies(response, api.api));
       res.json(body);
     });
   };

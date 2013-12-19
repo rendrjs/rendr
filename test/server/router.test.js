@@ -1,16 +1,15 @@
 /*global describe, it, beforeEach */
 
-var Router, config, chai, should, express, _, sinon;
+var chai = require('chai'),
+    should = chai.should(),
+    Router = require('../../server/router'),
+    express = require('express'),
+    _ = require('underscore'),
+    sinon = require('sinon');
 
-chai = require('chai');
 chai.use(require('sinon-chai'));
-should = chai.should();
-Router = require('../../server/router');
-express = require('express');
-_ = require('underscore');
-sinon = require('sinon');
 
-config = {
+var config = {
   paths: {
     entryPath: __dirname + "/../fixtures/"
   }
@@ -30,8 +29,7 @@ describe("server/router", function() {
 
   describe("route", function() {
     it("should add basic route definitions", function() {
-      var route;
-      route = this.router.route("test", "test#index");
+      var route = this.router.route("test", "test#index");
       shouldMatchRoute(route, [
         '/test', {
           controller: 'test',
@@ -41,9 +39,7 @@ describe("server/router", function() {
     });
 
     it("should support leading slash in pattern", function() {
-      var route;
-
-      route = this.router.route("/test", "test#index");
+      var route = this.router.route("/test", "test#index");
       return shouldMatchRoute(route, [
         '/test', {
           controller: 'test',
@@ -53,9 +49,8 @@ describe("server/router", function() {
     });
 
     it("should support RegExp route definitions", function() {
-      var route
-        , routeRegex = /reg[ex]{2}ro(u|t)e?/;
-      route = this.router.route(routeRegex, "test#index");
+      var routeRegex = /reg[ex]{2}ro(u|t)e?/,
+          route = this.router.route(routeRegex, "test#index");
       shouldMatchRoute(route, [
         routeRegex, {
           controller: 'test',
@@ -65,9 +60,7 @@ describe("server/router", function() {
     });
 
     it("should support object as second argument", function() {
-      var route;
-
-      route = this.router.route("/test", {
+      var route = this.router.route("/test", {
         controller: 'test',
         action: 'index',
         role: 'admin'
@@ -82,9 +75,7 @@ describe("server/router", function() {
     });
 
     it("should support string as second argument, object as third argument", function() {
-      var route;
-
-      route = this.router.route("/test", "test#index", {
+      var route = this.router.route("/test", "test#index", {
         role: 'admin'
       });
       shouldMatchRoute(route, [
@@ -382,22 +373,22 @@ describe("server/router", function() {
           res = { render: sinon.spy(), redirect: sinon.spy() },
           handler;
 
-        handler = this.router.getHandler(function (params, callback) {
-          params.should.eql({ id: '1' });
-          this.currentRoute.should.equal(rendrRoute);
-          this.app.should.equal(rendrApp);
-          this.redirectTo.should.be.a('function');
-          callback(null, 'template/path', { some: 'data' });
-        }, this.pattern, rendrRoute);
+      handler = this.router.getHandler(function (params, callback) {
+        params.should.eql({ id: '1' });
+        this.currentRoute.should.equal(rendrRoute);
+        this.app.should.equal(rendrApp);
+        this.redirectTo.should.be.a('function');
+        callback(null, 'template/path', { some: 'data' });
+      }, this.pattern, rendrRoute);
 
-        handler(this.req, res);
+      handler(this.req, res);
 
-        res.render.should.have.been.calledOnce;
-        res.render.should.have.been.calledWith('template/path', {
-          locals: { some: 'data' },
-          app: this.req.rendrApp,
-          req: this.req
-        });
+      res.render.should.have.been.calledOnce;
+      res.render.should.have.been.calledWith('template/path', {
+        locals: { some: 'data' },
+        app: this.req.rendrApp,
+        req: this.req
+      });
     });
 
     describe('redirectTo', function () {
@@ -406,15 +397,15 @@ describe("server/router", function() {
             res = { redirect: sinon.spy() },
             handler;
 
-          handler = this.router.getHandler(function () {
-            this.redirectTo('/some_uri');
-          }, this.pattern, rendrRoute);
+        handler = this.router.getHandler(function () {
+          this.redirectTo('/some_uri');
+        }, this.pattern, rendrRoute);
 
-          handler(this.req, res);
+        handler(this.req, res);
 
-          res.redirect.should.have.been.calledOnce;
-          res.redirect.should.have.been.calledWithExactly('/some_uri');
-          res.redirect.should.have.been.calledOn(res);
+        res.redirect.should.have.been.calledOnce;
+        res.redirect.should.have.been.calledWithExactly('/some_uri');
+        res.redirect.should.have.been.calledOn(res);
       });
 
       it("should redirect to another page using a specific http status code", function () {
@@ -422,15 +413,15 @@ describe("server/router", function() {
             res = { redirect: sinon.spy() },
             handler;
 
-          handler = this.router.getHandler(function () {
-            this.redirectTo('/some_uri', {status: 301});
-          }, this.pattern, rendrRoute);
+        handler = this.router.getHandler(function () {
+          this.redirectTo('/some_uri', {status: 301});
+        }, this.pattern, rendrRoute);
 
-          handler(this.req, res);
+        handler(this.req, res);
 
-          res.redirect.should.have.been.calledOnce;
-          res.redirect.should.have.been.calledWithExactly(301, '/some_uri');
-          res.redirect.should.have.been.calledOn(res);
+        res.redirect.should.have.been.calledOnce;
+        res.redirect.should.have.been.calledWithExactly(301, '/some_uri');
+        res.redirect.should.have.been.calledOn(res);
       });
     });
   });

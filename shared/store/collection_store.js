@@ -1,7 +1,5 @@
-var MemoryStore, Super, _;
-
-_ = require('underscore');
-Super = MemoryStore = require('./memory_store');
+var _ = require('underscore'),
+    Super = require('./memory_store');
 
 module.exports = CollectionStore;
 
@@ -28,15 +26,15 @@ CollectionStore.prototype.set = function(collection, params) {
   return Super.prototype.set.call(this, key, data, null);
 };
 
-/*
-* Returns an array of model ids.
-*/
+/**
+ * Returns an array of model ids.
+ */
 CollectionStore.prototype.get = function(collectionName, params, callback) {
   var _collectionStore = this;
-  /*
-  * Kind of jank-sauce. Always merge in the default
-  * params for the given collection.
-  */
+  /**
+   * Kind of jank-sauce. Always merge in the default
+   * params for the given collection.
+   */
   if (typeof callback == 'function') {
     this.modelUtils.getCollectionConstructor(collectionName, function(Collection) {
       callback(get.call(_collectionStore, collectionName, params, Collection));
@@ -61,8 +59,7 @@ CollectionStore.prototype._formatKey = function(key) {
 };
 
 CollectionStore.prototype._getStoreKey = function(collectionName, params) {
-  var underscored;
-  underscored = this.modelUtils.underscorize(collectionName);
+  var underscored = this.modelUtils.underscorize(collectionName);
   return underscored + ":" + JSON.stringify(sortParams(params));
 }
 

@@ -1,7 +1,7 @@
-var should = require('chai').should()
-  , sinon = require('sinon')
-  , ViewEngine = require('../../server/viewEngine')
-  , BaseView = require('../../shared/base/view');
+var should = require('chai').should(),
+    sinon = require('sinon'),
+    ViewEngine = require('../../server/viewEngine'),
+    BaseView = require('../../shared/base/view');
 
 describe('ViewEngine', function() {
   var app, viewEngine;

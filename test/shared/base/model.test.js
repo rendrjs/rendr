@@ -1,11 +1,8 @@
-var App, BaseModel, modelUtils, should, addClassMapping;
-
-should = require('chai').should();
-BaseModel = require('../../../shared/base/model');
-modelUtils = require('../../../shared/modelUtils');
-App = require('../../../shared/app');
-addClassMapping = require('../../helpers/add_class_mapping')
-
+var should = require('chai').should(),
+    BaseModel = require('../../../shared/base/model'),
+    modelUtils = require('../../../shared/modelUtils'),
+    App = require('../../../shared/app'),
+    addClassMapping = require('../../helpers/add_class_mapping');
 
 describe('BaseModel', function() {
   beforeEach(function() {

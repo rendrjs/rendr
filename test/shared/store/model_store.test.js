@@ -1,15 +1,12 @@
-var BaseModel, ModelStore, ModelUtils, modelUtils, should, _, util, AddClassMapping, addClassMapping;
-
-util = require('util');
-_ = require('underscore');
-should = require('chai').should();
-ModelStore = require('../../../shared/store/model_store');
-BaseModel = require('../../../shared/base/model');
-ModelUtils = require('../../../shared/modelUtils');
-modelUtils = new ModelUtils()
-AddClassMapping = require('../../helpers/add_class_mapping')
-addClassMapping = new AddClassMapping(modelUtils)
-
+var util = require('util'),
+    _ = require('underscore'),
+    should = require('chai').should(),
+    ModelStore = require('../../../shared/store/model_store'),
+    BaseModel = require('../../../shared/base/model'),
+    ModelUtils = require('../../../shared/modelUtils'),
+    modelUtils = new ModelUtils(),
+    AddClassMapping = require('../../helpers/add_class_mapping'),
+    addClassMapping = new AddClassMapping(modelUtils);
 
 function MyModel() {
   MyModel.super_.apply(this, arguments);

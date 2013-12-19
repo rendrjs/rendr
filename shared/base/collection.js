@@ -1,10 +1,9 @@
-var _ = require('underscore')
-  , Backbone = require('backbone')
-  , syncer = require('../syncer')
-  , BaseModel = require('./model')
-  , Super = Backbone.Collection
-  , isServer = (typeof window === 'undefined')
-;
+var _ = require('underscore'),
+    Backbone = require('backbone'),
+    syncer = require('../syncer'),
+    BaseModel = require('./model'),
+    Super = Backbone.Collection,
+    isServer = (typeof window === 'undefined');
 
 if (!isServer) {
   Backbone.$ = window.$ || require('jquery');

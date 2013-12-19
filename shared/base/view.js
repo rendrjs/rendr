@@ -1,14 +1,15 @@
-// Since we make rendr files AMD friendly on app setup stage
-// we need to pretend that this code is pure commonjs
-// means no AMD-style require calls
+/**
+ * Since we make rendr files AMD friendly on app setup stage
+ * we need to pretend that this code is pure commonjs
+ * means no AMD-style require calls
+ */
 var requireAMD = require;
 
-var Backbone, BaseView, _, async;
-
-_ = require('underscore');
-Backbone = require('backbone');
-async = require('async');
-isServer = (typeof window === 'undefined');
+var _ = require('underscore'),
+    Backbone = require('backbone'),
+    async = require('async'),
+    isServer = (typeof window === 'undefined'),
+    BaseView;
 
 if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
@@ -160,7 +161,9 @@ module.exports = BaseView = Backbone.View.extend({
    * Get HTML attributes to add to el.
    */
   getAttributes: function() {
-    var attributes = {}, fetchSummary = {}, modelUtils = this.app.modelUtils;
+    var attributes = {},
+        fetchSummary = {},
+        modelUtils = this.app.modelUtils;
 
     if (this.attributes) {
       _.extend(attributes, _.result(this, 'attributes'));
@@ -218,12 +221,12 @@ module.exports = BaseView = Backbone.View.extend({
    * Turn template into HTML, minus the wrapper element.
    */
   getInnerHtml: function() {
-    var data, template;
+    var template = this.getTemplate(),
+        data;
 
     this._preRender();
     data = this.getTemplateData();
     data = this.decorateTemplateData(data);
-    template = this.getTemplate();
     if (template == null) {
       throw new Error(this.name + ": template \"" + this.getTemplateName() + "\" not found.");
     }
@@ -234,21 +237,20 @@ module.exports = BaseView = Backbone.View.extend({
    * Get the HTML for the view, including the wrapper element.
    */
   getHtml: function() {
-    var attrString, attributes, html, tagName;
+    var html = this.getInnerHtml(),
+        attributes = this.getAttributes(),
+        tagName = _.result(this, "tagName"),
+        attrString;
 
-    html = this.getInnerHtml();
-    attributes = this.getAttributes();
     attrString = _.inject(attributes, function(memo, value, key) {
       return memo += " " + key + "=\"" + _.escape(value) + "\"";
     }, '');
-    tagName = _.result(this, "tagName");
+
     return "<" + tagName + attrString + ">" + html + "</" + tagName + ">";
   },
 
   render: function() {
-    var html;
-
-    html = this.getInnerHtml();
+    var html = this.getInnerHtml();
     this.$el.html(html);
 
     // Because we only set the attributes of the outer element
@@ -265,9 +267,9 @@ module.exports = BaseView = Backbone.View.extend({
    * fetch it based on the parameters passed in.
    */
   fetchLazy: function() {
-    var fetchSpec, params;
+    var params = {},
+        fetchSpec;
 
-    params = {};
     params[this.options.param_name] = this.options.param_value;
     if (this.options.model_id != null) {
       params.id = this.options.model_id;
@@ -361,9 +363,7 @@ module.exports = BaseView = Backbone.View.extend({
    * this is what gets called to bind to the element.
    */
   attach: function(element, parentView) {
-    var $el;
-
-    $el = $(element);
+    var $el = $(element);
     $el.data('view-attached', true);
     this.setElement($el);
 
@@ -471,10 +471,8 @@ BaseView.getView = function(viewName, entryPath, callback) {
 };
 
 BaseView.attach = function(app, parentView, callback) {
-  var scope, list;
-  scope = parentView != null ? parentView.$el : null;
-
-  list = $('[data-view]', scope).toArray();
+  var scope = parentView ? parentView.$el : null,
+      list = $('[data-view]', scope).toArray();
 
   async.map(list, function(el, cb) {
     var $el, options, parsed, viewName;

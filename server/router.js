@@ -1,9 +1,7 @@
-var BaseRouter, ServerRouter, ExpressRouter, sanitizer, _;
-
-_ = require('underscore');
-BaseRouter = require('../shared/base/router');
-ExpressRouter = require('express').Router;
-sanitizer = require('sanitizer');
+var _ = require('underscore'),
+    BaseRouter = require('../shared/base/router'),
+    ExpressRouter = require('express').Router,
+    sanitizer = require('sanitizer');
 
 module.exports = ServerRouter;
 
@@ -47,10 +45,11 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
   var router = this;
 
   return function(req, res, next) {
-    var app, context, params, redirect;
+    var params = router.getParams(req),
+        redirect = router.getRedirect(route, params),
+        app = req.rendrApp,
+        context;
 
-    params = router.getParams(req);
-    redirect = router.getRedirect(route, params);
     /**
      * If `redirect` is present, then do a redirect and return.
      */
@@ -59,7 +58,6 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
       return;
     }
 
-    app = req.rendrApp;
     context = {
       currentRoute: route,
       app: app,
@@ -77,7 +75,8 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
       if (err) return next(err);
 
       var defaults = router.defaultHandlerParams(viewPath, locals, route);
-      viewPath = defaults[0], locals = defaults[1];
+      viewPath = defaults[0];
+      locals = defaults[1];
 
       var viewData = {
         locals: locals || {},

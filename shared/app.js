@@ -3,12 +3,11 @@
  * The client also subclasses it for client-specific stuff.
  */
 
-var Backbone, ClientRouter, Fetcher, ModelUtils, isServer;
-
-Backbone = require('backbone');
-Fetcher = require('./fetcher');
-ModelUtils = require('./modelUtils');
-isServer = (typeof window === 'undefined');
+var Backbone = require('backbone'),
+    Fetcher = require('./fetcher'),
+    ModelUtils = require('./modelUtils'),
+    isServer = (typeof window === 'undefined'),
+    ClientRouter;
 
 if (!isServer) {
   ClientRouter = require('app/router');

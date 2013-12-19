@@ -1,7 +1,5 @@
-var MemoryStore, Super, _;
-
-_ = require('underscore');
-Super = MemoryStore = require('./memory_store');
+var _ = require('underscore'),
+    Super = require('./memory_store');
 
 module.exports = ModelStore;
 
@@ -25,10 +23,10 @@ ModelStore.prototype.set = function(model) {
   }
   key = this._getModelStoreKey(modelName, id);
 
-  /*
-  * We want to merge the model attrs with whatever is already
-  * present in the store.
-  */
+  /**
+   * We want to merge the model attrs with whatever is already
+   * present in the store.
+   */
   existingAttrs = this.get(modelName, id) || {};
   newAttrs = _.extend({}, existingAttrs, model.toJSON());
   return Super.prototype.set.call(this, key, newAttrs, null);

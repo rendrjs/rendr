@@ -1,14 +1,12 @@
-var BaseCollection, BaseModel, CollectionStore, ModelUtils, modelUtils, should, util, AddClassMapping, addClassMapping;
-
-should = require('chai').should();
-util = require('util');
-CollectionStore = require('../../../shared/store/collection_store');
-BaseCollection = require('../../../shared/base/collection');
-BaseModel = require('../../../shared/base/model');
-ModelUtils = require('../../../shared/modelUtils');
-modelUtils = new ModelUtils()
-AddClassMapping = require('../../helpers/add_class_mapping')
-addClassMapping = new AddClassMapping(modelUtils)
+var should = require('chai').should(),
+    util = require('util'),
+    CollectionStore = require('../../../shared/store/collection_store'),
+    BaseCollection = require('../../../shared/base/collection'),
+    BaseModel = require('../../../shared/base/model'),
+    ModelUtils = require('../../../shared/modelUtils'),
+    modelUtils = new ModelUtils(),
+    AddClassMapping = require('../../helpers/add_class_mapping'),
+    addClassMapping = new AddClassMapping(modelUtils);
 
 addClassMapping.add(BaseCollection.name, BaseCollection);
 

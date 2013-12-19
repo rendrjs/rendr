@@ -36,7 +36,11 @@ function extractCookiesForApi(req, apiName) {
 
 function encodeApiCookies(responseFromApi, apiName) {
   var apiCookiePrefix = getApiCookiePrefix(apiName),
-    setCookieHeaders = responseFromApi.headers['set-cookie'] || [];
+    setCookieHeaders = [];
+
+  if (responseFromApi.headers && responseFromApi.headers['set-cookie']) {
+    setCookieHeaders = responseFromApi.headers['set-cookie'];
+  }
 
   return setCookieHeaders.map(function (setCookieHeader) {
     var cookieName = apiCookiePrefix + extractCookieName(setCookieHeader),

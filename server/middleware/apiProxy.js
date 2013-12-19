@@ -7,6 +7,49 @@ var _ = require('underscore');
  */
 var separator = '/-/';
 
+function getApiCookiePrefix(apiName) {
+  return (apiName || 'default') + separator;
+}
+
+function extractCookieName(cookieString) {
+  return cookieString.split('=').shift();
+}
+
+function extractCookieValue(cookieString) {
+  return cookieString.split('=').pop();
+}
+
+function extractCookiesForApi(req, apiName) {
+  var rawCookieString = req.get('cookie') || '',
+    apiCookies = rawCookieString.split('; '),
+    apiCookiePrefix = getApiCookiePrefix(apiName);
+
+  return apiCookies
+    .filter(function (cookie) {
+      var cookieName = extractCookieName(cookie);
+      return cookieName.indexOf(apiCookiePrefix) === 0;
+    })
+    .map(function (cookie) {
+      return decodeURIComponent(extractCookieValue(cookie));
+    });
+};
+
+function encodeApiCookies(responseFromApi, apiName) {
+  var apiCookiePrefix = getApiCookiePrefix(apiName),
+    setCookieHeaders = [];
+
+  if (responseFromApi.headers && responseFromApi.headers['set-cookie']) {
+    setCookieHeaders = responseFromApi.headers['set-cookie'];
+  }
+
+  return setCookieHeaders.map(function (setCookieHeader) {
+    var cookieName = apiCookiePrefix + extractCookieName(setCookieHeader),
+      cookieValue = encodeURIComponent(setCookieHeader);
+
+    return cookieName + '=' + cookieValue;
+  });
+}
+
 /**
  * Middleware handler for intercepting API routes.
  */
@@ -20,14 +63,15 @@ function apiProxy(dataAdapter) {
 
     api.path = apiProxy.getApiPath(req.path);
     api.api = apiProxy.getApiName(req.path);
+    api.headers = {cookie: extractCookiesForApi(req, api.api)};
 
     dataAdapter.request(req, api, {
       convertErrorCode: false
     }, function(err, response, body) {
       if (err) return next(err);
 
-      // Pass through statusCode.
       res.status(response.statusCode);
+      res.setHeader('set-cookie', encodeApiCookies(response, api.api));
       res.json(body);
     });
   };

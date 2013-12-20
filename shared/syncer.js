@@ -4,21 +4,20 @@
  * for fetching data from the API.
  */
 
-var _ = require('underscore')
-  , Backbone = require('backbone')
+var _ = require('underscore'),
+    Backbone = require('backbone'),
 
-  // Pull out params in path, like '/users/:id'.
-  , extractParamNamesRe = /:([a-z_-]+)/ig
+    // Pull out params in path, like '/users/:id'.
+    extractParamNamesRe = /:([a-z_-]+)/ig,
 
-  , methodMap = {
-    'create': 'POST',
-    'update': 'PUT',
-    'delete': 'DELETE',
-    'read': 'GET'
-  }
+    methodMap = {
+      'create': 'POST',
+      'update': 'PUT',
+      'delete': 'DELETE',
+      'read': 'GET'
+    },
 
-  , isServer = (typeof window === 'undefined')
-;
+    isServer = (typeof window === 'undefined');
 
 if (isServer) {
   // hide it from requirejs since it's server only
@@ -40,14 +39,13 @@ function clientSync(method, model, options) {
   error = options.error;
   if (error) {
     options.error = function(xhr) {
-      var body, contentType, resp;
-      body = xhr.responseText;
-      contentType = xhr.getResponseHeader('content-type');
+      var body = xhr.responseText,
+          contentType = xhr.getResponseHeader('content-type'),
+          resp;
       if (contentType && contentType.indexOf('application/json') !== -1) {
         try {
           body = JSON.parse(body);
-        } catch (e) {
-        }
+        } catch (e) {}
       }
       resp = {
         body: body,
@@ -200,12 +198,15 @@ syncer.checkFresh = function checkFresh() {
  * Deeply-compare two objects to see if they differ.
  */
 syncer.objectsDiffer = function objectsDiffer(data1, data2) {
-  var changed, key, keys, value1, value2, _i, _len;
+  var changed = false,
+      keys,
+      key,
+      value1,
+      value2;
 
-  changed = false;
   keys = _.unique(_.keys(data1).concat(_.keys(data2)));
-  for (_i = 0, _len = keys.length; _i < _len; _i++) {
-    key = keys[_i];
+  for (var i = 0, len = keys.length; i < len; i++) {
+    key = keys[i];
     value1 = data1[key];
     value2 = data2[key];
 
@@ -225,15 +226,14 @@ syncer.objectsDiffer = function objectsDiffer(data1, data2) {
  * the model you supply has model.get('id') == 3.
  */
 syncer.interpolateParams = function interpolateParams(model, url, params) {
-  var matches;
+  var matches = url.match(extractParamNamesRe);
 
   params = params || {};
-  matches = url.match(extractParamNamesRe);
+
   if (matches) {
     matches.forEach(function(param) {
-      var property, value;
-
-      property = param.slice(1);
+      var property = param.slice(1),
+          value;
 
       // Is collection? Then use options.
       if (model.length != null) {

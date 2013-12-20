@@ -1,6 +1,6 @@
-var path = require('path')
-  , _ = require('underscore')
-  , layoutTemplates = {};
+var path = require('path'),
+    _ = require('underscore'),
+    layoutTemplates = {};
 
 module.exports = exports = ViewEngine;
 
@@ -55,10 +55,12 @@ ViewEngine.prototype.getLayoutTemplate = function getLayoutTemplate(app, callbac
 };
 
 ViewEngine.prototype.getViewHtml = function getViewHtml(viewPath, locals, app) {
-  var BaseView, View, name, view, basePath;
+  var basePath = path.join('app', 'views'),
+      BaseView = require('../shared/base/view'),
+      name,
+      View,
+      view;
 
-  basePath = path.join('app', 'views');
-  BaseView = require('../shared/base/view');
   locals = _.clone(locals);
 
   // Pass in the app.

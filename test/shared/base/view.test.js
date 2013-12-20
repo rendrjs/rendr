@@ -1,10 +1,8 @@
-var BaseView, should, sinon, ModelUtils, modelUtils;
-
-should = require('chai').should();
-sinon = require('sinon');
-BaseView = require('../../../shared/base/view');
-ModelUtils = require('../../../shared/modelUtils');
-modelUtils = new ModelUtils();
+var should = require('chai').should(),
+    sinon = require('sinon'),
+    BaseView = require('../../../shared/base/view'),
+    ModelUtils = require('../../../shared/modelUtils'),
+    modelUtils = new ModelUtils();
 
 describe('BaseView', function() {
   beforeEach(function() {

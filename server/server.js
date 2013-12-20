@@ -1,9 +1,9 @@
-var _ = require('underscore')
-  , express = require('express')
-  , Router = require('./router')
-  , RestAdapter = require('./data_adapter/rest_adapter')
-  , ViewEngine = require('./viewEngine')
-  , middleware = require('./middleware');
+var _ = require('underscore'),
+    express = require('express'),
+    Router = require('./router'),
+    RestAdapter = require('./data_adapter/rest_adapter'),
+    ViewEngine = require('./viewEngine'),
+    middleware = require('./middleware');
 
 module.exports = Server;
 
@@ -28,15 +28,17 @@ function defaultOptions() {
 
 function Server(options) {
   if (typeof rendr !== 'undefined' && rendr.entryPath) {
-    console.warn("Setting rendr.entryPath is now deprecated. Please pass in entryPath when initializing the rendr server.")
+    console.warn("Setting rendr.entryPath is now deprecated. Please pass in \
+                 entryPath when initializing the rendr server.");
     options.entryPath = rendr.entryPath;
   }
+
   this.options = options || {};
   _.defaults(this.options, defaultOptions());
 
   this.expressApp = express();
 
-  this.dataAdapter = this.options.dataAdapter || new RestAdapter(this.options.dataAdapterConfig);;
+  this.dataAdapter = this.options.dataAdapter || new RestAdapter(this.options.dataAdapterConfig);
 
   this.viewEngine = this.options.viewEngine || new ViewEngine();
 
@@ -76,9 +78,9 @@ function Server(options) {
  * Pass `fn` in order to add custom middleware that should access `req.rendrApp`.
  */
 Server.prototype.configure = function(fn) {
-  var dataAdapter = this.dataAdapter
-    , apiPath = this.options.apiPath
-    , notApiRegExp = new RegExp('^(?!' + apiPath.replace('/', '\\/') + '\\/)');
+  var dataAdapter = this.dataAdapter,
+      apiPath = this.options.apiPath,
+      notApiRegExp = new RegExp('^(?!' + apiPath.replace('/', '\\/') + '\\/)');
 
   this._configured = true;
 
@@ -137,13 +139,12 @@ Server.prototype.configure = function(fn) {
 };
 
 Server.prototype.buildRoutes = function() {
-  var routes, pattern, route, handler;
+  var routes = this.router.buildRoutes();
 
-  routes = this.router.buildRoutes();
   routes.forEach(function(args) {
-    pattern = args[0];
-    route = args[1];
-    handler = args[2];
+    var pattern = args[0],
+        route = args[1],
+        handler = args[2];
 
     // Attach the route to the Express server.
     this.expressApp.get(pattern, handler);

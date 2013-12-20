@@ -1,8 +1,7 @@
-var _ = require('underscore')
-  , Backbone = require('backbone')
-  , BaseView = require('../shared/base/view')
-  , $ = (typeof window !== 'undefined' && window.$) || require('jquery')
-;
+var _ = require('underscore'),
+    Backbone = require('backbone'),
+    BaseView = require('../shared/base/view'),
+    $ = (typeof window !== 'undefined' && window.$) || require('jquery');
 
 Backbone.$ = $;
 

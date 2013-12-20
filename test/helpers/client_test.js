@@ -4,10 +4,8 @@
 //  before(clientTestHelper.before);
 //  after(clientTestHelper.after);
 
-var Backbone, BaseView;
-
-Backbone = require('backbone');
-BaseView = require('../../shared/base/view');
+var Backbone = require('backbone'),
+    BaseView = require('../../shared/base/view');
 
 exports.before = function(){
   this.originalBackbonejQuery = Backbone.$;

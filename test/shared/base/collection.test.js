@@ -1,13 +1,10 @@
-var App, BaseCollection, BaseModel, ModelUtils, should, _, AddClassMapping;
-
-_ = require('underscore');
-should = require('chai').should();
-BaseCollection = require('../../../shared/base/collection');
-BaseModel = require('../../../shared/base/model');
-App = require('../../../shared/app');
-
-ModelUtils = require('../../../shared/modelUtils');
-AddClassMapping = require('../../helpers/add_class_mapping')
+var _ = require('underscore'),
+    should = require('chai').should(),
+    BaseCollection = require('../../../shared/base/collection'),
+    BaseModel = require('../../../shared/base/model'),
+    App = require('../../../shared/app'),
+    ModelUtils = require('../../../shared/modelUtils'),
+    AddClassMapping = require('../../helpers/add_class_mapping');
 
 describe('BaseCollection', function() {
   beforeEach(function() {

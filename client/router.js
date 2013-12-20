@@ -1,23 +1,19 @@
-// Since we make rendr files AMD friendly on app setup stage
-// we need to pretend that this code is pure commonjs
-// means no AMD-style require calls
+/**
+ * Since we make rendr files AMD friendly on app setup stage
+ * we need to pretend that this code is pure commonjs
+ * means no AMD-style require calls
+ */
 var requireAMD = require;
 
-var AppView, Backbone, BaseRouter, BaseView, ClientRouter, extractParamNamesRe, firstRender, plusRe, _, defaultRootPath, $;
-
-_ = require('underscore');
-Backbone = require('backbone');
-BaseRouter = require('../shared/base/router');
-BaseView = require('../shared/base/view');
-$ = (typeof window !== 'undefined' && window.$) || require('jquery');
-
-extractParamNamesRe = /:(\w+)/g;
-
-plusRe = /\+/g;
-
-firstRender = true;
-
-defaultRootPath = '';
+var _ = require('underscore'),
+    Backbone = require('backbone'),
+    BaseRouter = require('../shared/base/router'),
+    BaseView = require('../shared/base/view'),
+    $ = (typeof window !== 'undefined' && window.$) || require('jquery'),
+    extractParamNamesRe = /:(\w+)/g,
+    plusRe = /\+/g,
+    firstRender = true,
+    defaultRootPath = '';
 
 Backbone.$ = $;
 
@@ -40,18 +36,18 @@ ClientRouter.prototype.currentFragment = null;
 
 ClientRouter.prototype.previousFragment = null;
 
-/*
+/**
  * In a controller action, can access the current route
  * definition with `this.currentRoute`.
  */
 ClientRouter.prototype.currentRoute = null;
 
-/*
+/**
  * Instance of Backbone.Router used to manage browser history.
  */
 ClientRouter.prototype._router = null;
 
-/*
+/**
  * We need to reverse the routes in the client because
  * Backbone.History matches in reverse.
  */
@@ -80,7 +76,7 @@ ClientRouter.prototype.initialize = function(options) {
 
 ClientRouter.prototype.postInitialize = noop;
 
-/*
+/**
  * Piggyback on adding new route definition events
  * to also add to Backbone.Router.
  */
@@ -122,7 +118,7 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
       params = router.getParamsHash(pattern, paramsArray, window.location.search);
 
       redirect = router.getRedirect(route, params);
-      /*
+      /**
        * If `redirect` is present, then do a redirect and return.
        */
       if (redirect != null) {
@@ -149,7 +145,7 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
   };
 };
 
-/*
+/**
  * Can be overridden by applications
  * if the initial render is more complicated.
  */
@@ -160,7 +156,7 @@ ClientRouter.prototype.getMainView = function(views) {
   });
 };
 
-/*
+/**
  * Proxy to Backbone.Router.
  */
 ClientRouter.prototype.navigate = function(path, options) {

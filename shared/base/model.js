@@ -1,8 +1,7 @@
-var _ = require('underscore')
-  , Backbone = require('backbone')
-  , syncer = require('../syncer')
-  , isServer = (typeof window === 'undefined')
-;
+var _ = require('underscore'),
+    Backbone = require('backbone'),
+    syncer = require('../syncer'),
+    isServer = (typeof window === 'undefined');
 
 if (!isServer) {
   Backbone.$ = window.$ || require('jquery');

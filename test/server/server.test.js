@@ -1,7 +1,5 @@
-var Server, should;
-
-should = require('chai').should();
-Server = require('../../server/server');
+var should = require('chai').should(),
+    Server = require('../../server/server');
 
 describe("server/server", function() {
 

@@ -1,10 +1,10 @@
-var DataAdapter = require('./index')
-  , utils = require('../utils')
-  , _ = require('underscore')
-  , url = require('url')
-  , request = require('request')
-  , debug = require('debug')('rendr:RestAdapter')
-  , util = require('util');
+var DataAdapter = require('./index'),
+    utils = require('../utils'),
+    _ = require('underscore'),
+    url = require('url'),
+    request = require('request'),
+    debug = require('debug')('rendr:RestAdapter'),
+    util = require('util');
 
 module.exports = RestAdapter;
 
@@ -60,8 +60,8 @@ RestAdapter.prototype.request = function(req, api, options, callback) {
   /**
    * Request timing.
    */
-  var start = new Date().getTime()
-    , end;
+  var start = new Date().getTime(),
+      end;
 
   /**
    * Make the request. The `api` object is passed into the `request` library.
@@ -149,8 +149,8 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
  * Convert 4xx, 5xx responses to be errors.
  */
 RestAdapter.prototype.getErrForResponse = function(res, options) {
-  var status = +res.statusCode
-    , err = null;
+  var status = +res.statusCode,
+      err = null;
 
   if (utils.isErrorStatus(status, options)) {
     err = new Error(status + " status");

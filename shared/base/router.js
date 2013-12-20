@@ -1,8 +1,6 @@
-var Backbone, BaseRouter, noop, _, isServer;
-
-_ = require('underscore');
-Backbone = require('backbone');
-isServer = (typeof window === 'undefined');
+var _ = require('underscore'),
+    Backbone = require('backbone'),
+    isServer = (typeof window === 'undefined');
 
 if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
@@ -52,8 +50,9 @@ BaseRouter.prototype._initOptions = function(options) {
 };
 
 BaseRouter.prototype.getController = function(controllerName) {
-  var controllerDir = this.options.paths.controllerDir
-    , controller, controllerPath;
+  var controllerDir = this.options.paths.controllerDir,
+      controller,
+      controllerPath;
 
   // preload all controllers on the server or in non-AMD env
   // for requirejs return path that will be lazy loaded
@@ -105,8 +104,8 @@ BaseRouter.prototype.getRedirect = function(route, params) {
  * Build route definitions based on the routes file.
  */
 BaseRouter.prototype.buildRoutes = function() {
-  var routeBuilder = require(this.options.paths.routes)
-    , routes = [];
+  var routeBuilder = require(this.options.paths.routes),
+      routes = [];
 
   function captureRoutes() {
     routes.push(_.toArray(arguments));
@@ -140,11 +139,11 @@ BaseRouter.prototype.routes = function() {
  * Adds a single route definition.
  */
 BaseRouter.prototype.route = function(pattern) {
-  var action, definitions, handler, route, routeObj;
-
-  definitions = _.toArray(arguments).slice(1);
-  route = this.parseDefinitions(definitions);
-  action = this.getAction(route);
+  var definitions = _.toArray(arguments).slice(1),
+      route = this.parseDefinitions(definitions),
+      action = this.getAction(route),
+      handler,
+      routeObj;
 
   if (!(pattern instanceof RegExp) && pattern.slice(0, 1) !== '/') {
     pattern = "/" + pattern;
@@ -158,9 +157,8 @@ BaseRouter.prototype.route = function(pattern) {
 };
 
 BaseRouter.prototype.parseDefinitions = function(definitions) {
-  var route;
+  var route = {};
 
-  route = {};
   definitions.forEach(function(element) {
     var parts;
 

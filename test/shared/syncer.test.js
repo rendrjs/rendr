@@ -1,9 +1,9 @@
-var _ = require('underscore')
-  , Backbone = require('backbone')
-  , should = require('chai').should()
-  , syncer = require('../../shared/syncer')
-  , BaseModel = require('../../shared/base/model')
-  , App = require('../../shared/app');
+var _ = require('underscore'),
+    Backbone = require('backbone'),
+    should = require('chai').should(),
+    syncer = require('../../shared/syncer'),
+    BaseModel = require('../../shared/base/model'),
+    App = require('../../shared/app');
 
 describe('syncer', function() {
 

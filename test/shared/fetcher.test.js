@@ -1,24 +1,20 @@
-var App, Listing, Listings, BaseCollection, BaseModel, fetcher, listingResponses,
-  ModelUtils, modelUtils, sinon, chai, sinonChai, should, _, AddClassMapping, addClassMapping;
-
-_ = require('underscore');
-chai = require('chai');
-should = chai.should();
-sinon = require('sinon');
-sinonChai = require('sinon-chai');
-ModelUtils = require('../../shared/modelUtils');
-modelUtils = new ModelUtils()
-AddClassMapping = require('../helpers/add_class_mapping')
-addClassMapping = new AddClassMapping(modelUtils)
-BaseModel = require('../../shared/base/model');
-BaseCollection = require('../../shared/base/collection');
-App = require('../../shared/app');
+var _ = require('underscore'),
+    chai = require('chai'),
+    should = chai.should(),
+    sinon = require('sinon'),
+    sinonChai = require('sinon-chai'),
+    ModelUtils = require('../../shared/modelUtils'),
+    modelUtils = new ModelUtils(),
+    AddClassMapping = require('../helpers/add_class_mapping'),
+    addClassMapping = new AddClassMapping(modelUtils),
+    BaseModel = require('../../shared/base/model'),
+    BaseCollection = require('../../shared/base/collection'),
+    App = require('../../shared/app'),
+    fetcher = null;
 
 chai.use(sinonChai);
 
-fetcher = null;
-
-listingResponses = {
+var listingResponses = {
   basic: {
     name: 'Fetching!'
   },
@@ -28,7 +24,7 @@ listingResponses = {
   }
 };
 
-Listing = BaseModel.extend({
+var Listing = BaseModel.extend({
   jsonKey: 'listing',
 
   fetch: function(options) {
@@ -45,7 +41,7 @@ Listing = BaseModel.extend({
 });
 Listing.id = 'Listing';
 
-Listings = BaseCollection.extend({
+var Listings = BaseCollection.extend({
   model: Listing,
   jsonKey: 'listings',
 

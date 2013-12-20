@@ -1,9 +1,7 @@
-var fs, path;
+var fs = require('fs'),
+    path = require('path');
 
-fs = require('fs');
-path = require('path');
-
-/*
+/**
  * Set up each middleware file in this directory as a property
  * on exports. This means you can require this file and access
  * each middleware like so:

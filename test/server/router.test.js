@@ -410,7 +410,8 @@ describe("server/router", function() {
           rendrRoute = { controller: 'users', action: 'show' },
           res = { render: sinon.spy(), redirect: sinon.spy() },
           regExpExpressRoute = {regexp: true, params: {'0' : '1'}},
-          req = { route: regExpExpressRoute, params: { '0': '1' }, rendrApp: this.req.rendrApp };
+          req = { route: regExpExpressRoute, params: { '0': '1' }, rendrApp: this.req.rendrApp },
+          handler;
 
         handler = this.router.getHandler(function (params, callback) {
           params.should.eql({ '0': '1' });

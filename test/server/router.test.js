@@ -285,7 +285,7 @@ describe("server/router", function() {
 
       resetProperties(this.req, {
         query: {},
-        route: {keys: [], params: {}}
+        route: {keys: [], params: {}, regexp: false},        
       });
       this.router.getParams(this.req).should.eql({});
     });
@@ -295,6 +295,22 @@ describe("server/router", function() {
         return {foo: 'bar', bam: 'baz'};
       });
       this.router.getParams(this.req).should.eql({foo: 'bar', bam: 'baz'});
+    });
+
+    it("should support regex route params", function() {
+      this.req.__defineGetter__('route', function() {
+        return {
+          regexp: true
+        };
+      });
+      this.req.__defineGetter__('params', function() {
+        return {
+          '0': 'zero-value'
+        };
+      });
+      this.router.getParams(this.req).should.eql({
+        '0': 'zero-value'
+      });
     });
 
     it("should support route params", function() {
@@ -361,6 +377,7 @@ describe("server/router", function() {
 
       this.router = new Router(config);
       this.pattern = '/users/:id';
+      this.regExpPattern = '/users/([0-9])';
       this.req = { route: expressRoute, params: params, rendrApp: rendrApp };
     });
 
@@ -386,6 +403,21 @@ describe("server/router", function() {
           app: this.req.rendrApp,
           req: this.req
         });
+    });
+
+    it("should pass regex route groups to the params", function () {
+      var rendrApp = this.req.rendrApp,
+          rendrRoute = { controller: 'users', action: 'show' },
+          res = { render: sinon.spy(), redirect: sinon.spy() },
+          regExpExpressRoute = {regexp: true, params: {'0' : '1'}},
+          req = { route: regExpExpressRoute, params: { '0': '1' }, rendrApp: this.req.rendrApp };
+
+        handler = this.router.getHandler(function (params, callback) {
+          params.should.eql({ '0': '1' });
+        }, this.regExpPattern, rendrRoute);
+
+        handler(req, res);
+
     });
 
     describe('redirectTo', function () {

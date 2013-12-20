@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "grunt compile && mocha --ui bdd --reporter spec ./test/app --recursive --require ./test/helper.js && karma start test/karma.config.js --single-run",
+    "test": "npm run test-unit && npm run test-karma",
+    "test-unit": "mocha --ui bdd --reporter spec ./test/app --recursive --require ./test/helper.js",
+    "test-karma": "grunt compile && karma start test/karma.config.js --single-run",
     "start": "node index.js"
   },
   "dependencies": {

@@ -39,7 +39,7 @@ describe('apiProxy', function() {
       var remoteAddress = '1.1.1.1',
           outgoingHeaders;
 
-      requestFromClient.connection.remoteAddress = remoteAddress;
+      requestFromClient.ip = remoteAddress;
 
       proxy(requestFromClient, responseToClient);
 
@@ -56,7 +56,7 @@ describe('apiProxy', function() {
           outgoingHeaders;
 
       requestFromClient.headers = incomingHeaders;
-      requestFromClient.connection.remoteAddress = remoteAddress;
+      requestFromClient.ip = remoteAddress;
 
       proxy(requestFromClient, responseToClient);
 

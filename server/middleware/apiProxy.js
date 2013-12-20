@@ -21,7 +21,7 @@ function apiProxy(dataAdapter) {
     api.path = apiProxy.getApiPath(req.path);
     api.api = apiProxy.getApiName(req.path);
     api.headers = apiProxy.addXForwardedForHeader(
-      req.headers, req.connection.remoteAddress);
+      req.headers, req.ip);
 
     dataAdapter.request(req, api, {
       convertErrorCode: false

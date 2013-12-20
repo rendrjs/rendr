@@ -5,7 +5,7 @@ var UsersShowView = require('../../../app/views/users/show')
 describe('UsersShowView', function() {
 
   beforeEach(function() {
-    this.app = new App();
+    this.app = new App({rootPath: '/'});
   });
 
   it('should have repos data in getTemplateData', function() {

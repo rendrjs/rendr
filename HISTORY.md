@@ -1,3 +1,70 @@
+# 0.5.0
+## 2013-12-20
+* [breaking] Moved `AppView` to `client/` from `shared/`.
+* [breaking] Added support for AMD (RequireJS), which resulted in many methods
+  becoming asynchronous instead of synchronous (`Fetcher`, `BaseView`,
+  `ModelUtils`, etc.
+* [breaking] Removed global `entryPath`; no longer referencing `rendr` as a
+  global.
+* [breaking] Refactored server code to greatly reduce amount of boilerplate
+  needed to set up a Rendr app. Rendr now owns its own Express app, which can
+  be mounted on existing Express apps as a simple middleware.
+* [breaking] `server/server.js` now exports a class constructor rather than a
+  singleton.
+* [breaking] Removed unused `ServerRouter#stashError()` method.
+* [breaking] `modelUtils` object is now `ModelUtils` class.
+* Added `DataAdapter` base class and fleshed-out `RestAdapter`, which is the
+  default `DataAdapter` used by a Rendr server.
+* More flexibility with placement Rendr app files within an Express project.
+  app, and support for multiple Rendr apps in a single Express app.
+* Support passing `appAttributes` to `initApp` middleware as either object or
+  function, which takes `req` and `res` as arguments.
+* Added `viewing` property to `BaseView` for better introspection of current
+  view state.
+* Fix bug where collection params weren't properly passed to collections upon
+  view hydration.
+* Attach `req` to `App` instance on the server-side.
+* Switched default CommonJS packaging to Browserify from Stitch.
+* Added `examples/` dir, deprecating separate `rendr-app-template` project.
+* Fix bug where resources fetched by the `Fetcher` using spec keys other than
+  `model` or `collection` would be not hydrated properly by `BaseView`.
+* Don't intercept clicked links if 'shift' or 'meta' keys pressed.
+* Make it easier to use custom `AppView` class.
+* Add support for RegExp routes.
+* Only attempt to use `pushState` to redirect if the path matches one of the
+  app's routes.
+* Trigger `action:error` event in `ClientRouter` if there was an error caught
+  while running a controller's action.
+* Allow customizing the app's root path.
+* Added better support for `options.error` callback for `Backbone.sync()` in
+  the client-side.
+* Automatically add `X-Forwarded-For` header in `apiProxy` middleware.
+* Support using functions for `BaseView#id`, `BaseView#className`, and
+  `BaseView#tagName`.
+* Support passing `options.status` to `ServerRouter#redirectTo()`.
+* Use `sanitizer` module instead of un-maintained `validator` module for XSS
+  protection.
+* Update versions of dependencies: `underscore`, `qs`, `request`.
+* Much more unit tests.
+* Added Istanbul code coverage tool.
+
+# 0.4.10
+## 2013-08-02
+* Increment to bump `rendr-handlebars` version.
+
+# 0.4.9
+## 2013-07-27
+* Support multiple layout templates.
+
+# 0.4.8
+## 2013-07-26
+* Use `rendr-handlebars` module instead of `handlebars` module and utilize new
+  `templateAdapter` semantics (thanks @hurrymaplelad).
+* Fix XSS vulnerability in `ServerRouter#escapeParams()`.
+* Fix bug in `ServerRouter#getParams()`.
+* Change `viewEngine` module to be a class constructor `ViewEngine`.
+* Make sure to pass `app` instance to collections in `Fetcher#hydrate()`.
+
 # 0.4.7
 ## 2013-06-27
 * Fix for allowing port in absolute model URL.

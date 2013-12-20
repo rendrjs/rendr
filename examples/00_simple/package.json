@@ -12,7 +12,7 @@
     "underscore": "~1.4.4",
     "async": "~0.1.22",
     "rendr-handlebars": "0.1.0",
-    "rendr": "0.5.0-alpha09"
+    "rendr": "git://github.com/airbnb/rendr#3428df6d669707628067d1877efe0255b85ee206"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

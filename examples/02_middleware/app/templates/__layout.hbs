@@ -36,9 +36,14 @@
     <script src="/mergedAssets.js"></script>
     <script>
     (function() {
-      var App = window.App = new (require('app/app'))({{json appData}});
-      App.bootstrapData({{json bootstrappedData}});
-      App.start();
+      var App = require('app/app'), app;
+
+      app = window.app = new App({{json appData}}, {
+        ClientRouter: require('app/router')
+      });
+
+      app.bootstrapData({{json bootstrappedData}});
+      app.start();
     })();
     </script>
 

@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec ./test --recursive",
-    "coverage": "istanbul cover _mocha -- -R spec ./test --recursive",
-    "postinstall": "node ./scripts/postinstall.js"
+    "coverage": "istanbul cover _mocha -- -R spec ./test --recursive"
   },
   "repository": {
     "type": "git",

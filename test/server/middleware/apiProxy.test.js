@@ -11,7 +11,11 @@ describe('apiProxy', function() {
 
     beforeEach(function () {
       requestToApi = sinon.stub();
-      requestFromClient = { path: '/', headers: {}, connection: {} },
+      requestFromClient = {
+        path: '/',
+        headers: { 'host': 'any.host.name', },
+        connection: {}
+      },
       dataAdater = { request: requestToApi },
       proxy = apiProxy(dataAdater),
       responseToClient = { status: sinon.spy(), json: sinon.spy() };
@@ -66,6 +70,13 @@ describe('apiProxy', function() {
       outgoingHeaders['x-forwarded-for'].should.not.eq(
         incomingHeaders['x-forwarded-for']);
     });
+
+
+   it('should not pass through the host header', function () {
+      proxy(requestFromClient, responseToClient);
+      outgoingHeaders = requestToApi.firstCall.args[1].headers;
+      outgoingHeaders.should.not.contain.key('host');
+   });
 
   });
 

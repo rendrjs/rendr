@@ -26,7 +26,8 @@
     "chai": "~1.8.1",
     "karma": "~0.10.4",
     "karma-chrome-launcher": "~0.1.0",
-    "karma-mocha": "~0.1.0"
+    "karma-mocha": "~0.1.0",
+    "browserify": "~3.14.1"
   },
   "engines": {
     "node": ">=0.8"

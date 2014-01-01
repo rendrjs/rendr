@@ -173,7 +173,7 @@ Fetcher.prototype._retrieveModel = function(spec, callback) {
   var fetcher = this;
 
   // Attempt to fetch from the modelStore based on the idAttribute
-  this.modelUtils.modelIdAttribute(spec.model, function(err, idAttribute) {
+  this.modelUtils.modelIdAttribute(spec.model, function(idAttribute) {
     var modelData = fetcher.modelStore.get(spec.model, spec.params[idAttribute]);
     if (modelData)
       return callback(null, modelData);

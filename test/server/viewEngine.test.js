@@ -3,6 +3,8 @@ var should = require('chai').should(),
     ViewEngine = require('../../server/viewEngine'),
     BaseView = require('../../shared/base/view');
 
+
+var viewAdapter = require('../../shared/viewAdapter')();
 describe('ViewEngine', function() {
   var app, viewEngine;
 
@@ -16,22 +18,23 @@ describe('ViewEngine', function() {
 
     function View () {
       return {
-        getHtml: sinon.stub().returns('contents')
+        getHtml: sinon.stub().callsArgWith(0,'contents')
       };
     }
 
-    sinon.stub(BaseView, 'getView').returns(View);
+    sinon.stub(viewAdapter, 'getView').returns(View);
     app = {
       templateAdapter: {
         getLayout: sinon.stub().yields(null, layoutTemplate)
       },
       toJSON: sinon.stub(),
+      viewAdapter: viewAdapter,
       options: {}
     };
   });
 
   afterEach(function() {
-    BaseView.getView.restore();
+    viewAdapter.getView.restore();
   });
 
   it("should lookup the layout template via the app's templateAdapter", function(done) {

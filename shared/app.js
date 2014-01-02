@@ -51,6 +51,16 @@ module.exports = Backbone.Model.extend({
     this.templateAdapter = require(this.get('templateAdapter'))({entryPath: entryPath});
 
     /**
+     * Initialize the `viewAdapter`, allowing application developers to use whichever
+     * templating system they want.
+     */
+    /* TODO find a cleaner way to handle this. Using this construct keeps
+     * browserify with the right hook for the default case, and still gives the
+     * capability for requiring external modules.
+     */
+    this.viewAdapter = (this.get('viewAdapter') ? require(this.get('viewAdapter')) : require('./viewAdapter'))();
+
+    /**
      * Instantiate the `Fetcher`, which is used on client and server.
      */
     this.fetcher = new Fetcher({

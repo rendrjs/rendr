@@ -7,7 +7,6 @@ var requireAMD = require;
 
 var _ = require('underscore'),
     Backbone = require('backbone'),
-    async = require('async'),
     isServer = (typeof window === 'undefined'),
     BaseView;
 
@@ -236,17 +235,24 @@ module.exports = BaseView = Backbone.View.extend({
   /**
    * Get the HTML for the view, including the wrapper element.
    */
-  getHtml: function() {
+  getHtml: function(callback) {
     var html = this.getInnerHtml(),
         attributes = this.getAttributes(),
         tagName = _.result(this, "tagName"),
-        attrString;
+        attrString,
+        wrappedHtml;
 
     attrString = _.inject(attributes, function(memo, value, key) {
       return memo += " " + key + "=\"" + _.escape(value) + "\"";
     }, '');
 
-    return "<" + tagName + attrString + ">" + html + "</" + tagName + ">";
+    wrappedHtml = "<" + tagName + attrString + ">" + html + "</" + tagName + ">";
+
+    if( typeof callback == 'function' ) {
+      callback(wrappedHtml)
+    } else {
+      return wrappedHtml;
+    }
   },
 
   render: function() {
@@ -419,7 +425,7 @@ module.exports = BaseView = Backbone.View.extend({
     // Remove all child views in case we are re-rendering through
     // manual .render() or 'refresh' being triggered on the view.
     this.removeChildViews();
-    BaseView.attach(this.app, this, function(views) {
+    this.app.viewAdapter.attach(this.app, this, function(views) {
       _baseView.childViews = views;
     });
   },
@@ -443,66 +449,21 @@ module.exports = BaseView = Backbone.View.extend({
     }
     BaseView.__super__.remove.apply(this, arguments);
     this.trigger('remove');
+  },
+
+  renderInside: function(container) {
+    $(container).html(this.el);
+    this.render();
+  }
+},
+// Class properties
+{
+  attachNewInstance: function($el, parentView, options, callback) {
+    var view = new this(options);
+    view.attach($el,parentView);
+    callback(null,view);
   }
 });
-
-/**
- * Class methods
- * -------------
- */
-
-BaseView.getView = function(viewName, entryPath, callback) {
-  var viewPath;
-
-  if (!entryPath) entryPath = '';
-
-  viewPath = entryPath + "app/views/" + viewName;
-  // check for AMD environment
-  if (typeof callback == 'function') {
-    // Only used in AMD environment
-    if (typeof define != 'undefined') {
-      requireAMD([viewPath], callback);
-    } else {
-      callback(require(viewPath));
-    }
-  } else {
-    return require(viewPath);
-  }
-};
-
-BaseView.attach = function(app, parentView, callback) {
-  var scope = parentView ? parentView.$el : null,
-      list = $('[data-view]', scope).toArray();
-
-  async.map(list, function(el, cb) {
-    var $el, options, parsed, viewName;
-    $el = $(el);
-    if (!$el.data('view-attached')) {
-      options = $el.data();
-      viewName = options.view;
-      _.each(options, function(value, key) {
-        if (_.isString(value)) {
-          parsed = _.unescape(value);
-          try {
-            parsed = JSON.parse(parsed);
-          } catch (err) {}
-          options[key] = parsed;
-        }
-      });
-      options.app = app;
-      BaseView.getView(viewName, app.options.entryPath, function(ViewClass) {
-        var view = new ViewClass(options);
-        view.attach($el, parentView);
-        cb(null, view);
-      });
-    } else {
-      cb(null, null);
-    }
-  }, function(err, views) {
-    // no error handling originally
-    callback(_.compact(views));
-  });
-};
 
 /**
  * Noops on the server, because they do DOM stuff.

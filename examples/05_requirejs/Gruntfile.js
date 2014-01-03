@@ -191,6 +191,7 @@ module.exports = function(grunt) {
           baseUrl: './rendr/client',
           cjsTranslate: true,
           paths: {
+            'jquery': '../../../../../assets/vendor/jquery-1.9.1.min',
             'rendr/client': '../..',
             'rendr/shared': '../../../shared'
           },
@@ -200,8 +201,8 @@ module.exports = function(grunt) {
             {name: 'async', location: 'rendr/node_modules/async/lib', main: 'async.js'}
           ],
           modules: [
-            {name: 'rendr/client/app_view', exclude: ['underscore', 'backbone', 'async', 'rendr/shared/base/view']},
-            {name: 'rendr/client/router', exclude: ['underscore', 'backbone', 'rendr/shared/base/router', 'rendr/shared/base/view', 'rendr/client/app_view']}
+            {name: 'rendr/client/app_view', exclude: ['underscore', 'backbone', 'async', 'jquery', 'rendr/shared/base/view']},
+            {name: 'rendr/client/router', exclude: ['underscore', 'backbone', 'jquery', 'rendr/shared/base/router', 'rendr/shared/base/view', 'rendr/client/app_view']}
           ]
         }
       },
@@ -213,6 +214,7 @@ module.exports = function(grunt) {
           baseUrl: './rendr/shared',
           cjsTranslate: true,
           paths: {
+            'jquery': '../../../../../assets/vendor/jquery-1.9.1.min',
             'rendr/shared': '../..',
             'rendr/client': '../../../client',
           },
@@ -225,14 +227,14 @@ module.exports = function(grunt) {
             {name: 'async', location: 'rendr/node_modules/async/lib', main: 'async.js'}
           ],
           modules: [
-            { name: 'rendr/shared/app', exclude: ['backbone', 'rendr/shared/fetcher', 'app/router'] },
-            { name: 'rendr/shared/fetcher', exclude: ['underscore', 'backbone', 'async', 'rendr/shared/modelUtils', 'rendr/shared/store/model_store', 'rendr/shared/store/collection_store'] },
+            { name: 'rendr/shared/app', exclude: ['backbone', 'jquery', 'rendr/shared/fetcher', 'app/router'] },
+            { name: 'rendr/shared/fetcher', exclude: ['underscore', 'backbone', 'async', 'jquery', 'rendr/shared/modelUtils', 'rendr/shared/store/model_store', 'rendr/shared/store/collection_store'] },
             { name: 'rendr/shared/modelUtils', exclude: ['rendr/shared/base/model', 'rendr/shared/base/collection'] },
-            { name: 'rendr/shared/syncer', exclude: ['underscore', 'backbone'] },
-            { name: 'rendr/shared/base/collection', exclude: ['underscore', 'backbone', 'rendr/shared/syncer', 'rendr/shared/base/model'] },
-            { name: 'rendr/shared/base/model', exclude: ['underscore', 'backbone', 'rendr/shared/syncer'] },
-            { name: 'rendr/shared/base/router', exclude: ['underscore', 'backbone'] },
-            { name: 'rendr/shared/base/view', exclude: ['underscore', 'backbone', 'async', 'rendr/shared/modelUtils', 'rendr/shared/base/model', 'rendr/shared/base/collection', 'rendr/shared/syncer'] },
+            { name: 'rendr/shared/syncer', exclude: ['underscore', 'backbone', 'jquery'] },
+            { name: 'rendr/shared/base/collection', exclude: ['underscore', 'backbone', 'jquery', 'rendr/shared/syncer', 'rendr/shared/base/model'] },
+            { name: 'rendr/shared/base/model', exclude: ['underscore', 'backbone', 'jquery', 'rendr/shared/syncer'] },
+            { name: 'rendr/shared/base/router', exclude: ['underscore', 'backbone', 'jquery'] },
+            { name: 'rendr/shared/base/view', exclude: ['underscore', 'backbone', 'async', 'jquery', 'rendr/shared/modelUtils', 'rendr/shared/base/model', 'rendr/shared/base/collection', 'rendr/shared/syncer'] },
             { name: 'rendr/shared/store/collection_store', exclude: ['underscore', 'rendr/shared/store/memory_store', 'rendr/shared/modelUtils', 'rendr/shared/base/collection', 'rendr/shared/base/model', 'rendr/shared/syncer', 'backbone'] },
             { name: 'rendr/shared/store/memory_store' },
             { name: 'rendr/shared/store/model_store', exclude: ['underscore', 'rendr/shared/store/memory_store', 'rendr/shared/modelUtils', 'rendr/shared/base/collection', 'rendr/shared/base/model', 'rendr/shared/syncer', 'backbone'] }

@@ -76,10 +76,16 @@ module.exports = function(options) {
    * Returns nothing, calls callback with an array of attached views
    */
   localExports.attach = function(app, parentView, callback) {
-    var scope = parentView ? parentView.$el : null,
-        list = $('[data-view]', scope).toArray();
+    var $scope = parentView ? parentView.$el : $('body'),
+        _this = this,
+        list;
 
-    var _this = this;
+    // Find all elements with a data-view attribute in $scope that don't have a
+    // parent element with a data-view attribute in $scope
+    list = $scope.find('[data-view]').filter(function(i,el){
+      return $(el).parentsUntil($scope).filter('[data-view]').length == 0
+    }).toArray();
+
     async.map(list, function(el, cb) {
       var $el, options, parsed, viewName;
       $el = $(el);

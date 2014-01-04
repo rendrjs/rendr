@@ -62,12 +62,12 @@ module.exports = BaseView = Backbone.View.extend({
           parse: true
         });
       }
-      options.model_name = options.model_name || this.app.modelUtils.modelName(options.model.constructor);
+      options.model_name = options.model_name || this.app.modelUtils.modelName(options.model);
       options.model_id = options.model.id;
     }
 
     if (options.collection != null) {
-      options.collection_name = options.collection_name || this.app.modelUtils.modelName(options.collection.constructor);
+      options.collection_name = options.collection_name || this.app.modelUtils.modelName(options.collection);
       options.collection_params = options.collection.params;
     }
 

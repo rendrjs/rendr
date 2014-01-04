@@ -6,6 +6,7 @@
 var Backbone = require('backbone'),
     Fetcher = require('./fetcher'),
     ModelUtils = require('./modelUtils'),
+    ViewAdapter = require('./viewAdapter'),
     isServer = (typeof window === 'undefined'),
     ClientRouter;
 
@@ -51,14 +52,9 @@ module.exports = Backbone.Model.extend({
     this.templateAdapter = require(this.get('templateAdapter'))({entryPath: entryPath});
 
     /**
-     * Initialize the `viewAdapter`, allowing application developers to use whichever
-     * templating system they want.
+     * Initialize the `viewAdapter`, which is used client and server.
      */
-    /* TODO find a cleaner way to handle this. Using this construct keeps
-     * browserify with the right hook for the default case, and still gives the
-     * capability for requiring external modules.
-     */
-    this.viewAdapter = (this.get('viewAdapter') ? require(this.get('viewAdapter')) : require('./viewAdapter'))();
+    this.viewAdapter = this.options.viewAdapter || new ViewAdapter();
 
     /**
      * Instantiate the `Fetcher`, which is used on client and server.

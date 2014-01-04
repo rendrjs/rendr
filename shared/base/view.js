@@ -7,7 +7,6 @@ var requireAMD = require;
 
 var _ = require('underscore'),
     Backbone = require('backbone'),
-    async = require('async'),
     isServer = (typeof window === 'undefined'),
     BaseView;
 

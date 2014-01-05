@@ -17,7 +17,7 @@ ModelStore.prototype.set = function(model) {
   var existingAttrs, id, key, modelName, newAttrs;
 
   id = model.get(model.idAttribute);
-  modelName = this.modelUtils.modelName(model.constructor);
+  modelName = this.modelUtils.modelName(model);
   if (modelName == null) {
     throw new Error('Undefined modelName for model');
   }

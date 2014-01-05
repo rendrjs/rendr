@@ -122,7 +122,13 @@ ModelUtils.prototype.underscorize = function(name) {
  * MyClass.id = "MyClass"
  */
 ModelUtils.prototype.modelName = function(modelOrCollectionClass) {
-  return this.underscorize(modelOrCollectionClass.constructor.id || modelOrCollectionClass.id || modelOrCollectionClass.collection.constructor.id || modelOrCollectionClass.constructor.name || modelOrCollectionClass.collection.constructor.name);
+  var modelName = modelOrCollectionClass.constructor.id || modelOrCollectionClass.id || modelOrCollectionClass.constructor.name;
+
+  if (!modelName && this.collection) {
+      modelName = modelOrCollectionClass.collection.constructor.id || modelOrCollectionClass.collection.constructor.name;
+  }
+
+  return this.underscorize(modelName);
 };
 
 ModelUtils.prototype.modelIdAttribute = function(modelName, callback) {

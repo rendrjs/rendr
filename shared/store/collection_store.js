@@ -16,7 +16,7 @@ CollectionStore.prototype.constructor = CollectionStore;
 CollectionStore.prototype.set = function(collection, params) {
   var data, idAttribute, key;
   params = params || collection.params;
-  key = this._getStoreKey(this.modelUtils.modelName(collection.constructor), params);
+  key = this._getStoreKey(this.modelUtils.modelOrCollectionName(collection.constructor), params);
   idAttribute = collection.model.prototype.idAttribute;
   data = {
     ids: collection.pluck(idAttribute),

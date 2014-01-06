@@ -20,7 +20,7 @@ function ModelUtils(entryPath) {
   this._classMap = {};
 }
 
-ModelUtils.prototype.getModel = function(path, attrs, options, callback) {
+ModelUtils.prototype.getModel = function(path, attrs, options, callback, fallbackToBaseModel) {
   var Model;
   attrs = attrs || {};
   options = options || {};
@@ -29,7 +29,15 @@ ModelUtils.prototype.getModel = function(path, attrs, options, callback) {
       callback(new Model(attrs, options));
     });
   } else {
-    Model = this.getModelConstructor(path);
+    try {
+      Model = this.getModelConstructor(path)
+    } catch (e) {
+      if (e.code === 'MODULE_NOT_FOUND' && fallbackToBaseModel) {
+        Model = BaseModel;
+      } else {
+        throw e;
+      }
+    }
     return new Model(attrs, options);
   }
 };
@@ -87,7 +95,7 @@ ModelUtils.prototype.isCollection = function(obj) {
 ModelUtils.prototype.getModelNameForCollectionName = function(collectionName) {
   var Collection;
   Collection = this.getCollectionConstructor(collectionName);
-  return this.modelName(Collection.prototype.model);
+  return this.modelOrCollectionName(Collection.prototype.model);
 };
 
 ModelUtils.uppercaseRe = /([A-Z])/g;
@@ -121,7 +129,7 @@ ModelUtils.prototype.underscorize = function(name) {
  * -> ""
  * MyClass.id = "MyClass"
  */
-ModelUtils.prototype.modelName = function(modelOrCollectionClass) {
+ModelUtils.prototype.modelOrCollectionName = function(modelOrCollectionClass) {
   return this.underscorize(modelOrCollectionClass.id || modelOrCollectionClass.name);
 };
 

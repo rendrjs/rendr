@@ -227,7 +227,7 @@ Fetcher.prototype.fetchFromApi = function(spec, callback) {
       body = resp.body;
       resp.body = typeof body === 'string' ? body.slice(0, 150) : body;
       respOutput = JSON.stringify(resp);
-      err = new Error("ERROR fetching model '" + fetcher.modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
+      err = new Error("ERROR fetching model '" + fetcher.modelUtils.modelOrCollectionName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
       err.status = resp.status;
       err.body = body;
       callback(err);
@@ -237,12 +237,16 @@ Fetcher.prototype.fetchFromApi = function(spec, callback) {
 
 Fetcher.prototype.retrieveModelsForCollectionName = function(collectionName, modelIds) {
   var modelName = this.modelUtils.getModelNameForCollectionName(collectionName);
-  return this.retrieveModels(modelName, modelIds);
+  if (modelName) {
+    return this.retrieveModels(modelName, modelIds);
+  } else {
+    return this.retrieveModels(collectionName, modelIds);
+  }
 };
 
-Fetcher.prototype.retrieveModels = function(modelName, modelIds) {
+Fetcher.prototype.retrieveModels = function(modelOrCollectionName, modelIds) {
   return modelIds.map(function(id) {
-    return this.modelStore.get(modelName, id);
+    return this.modelStore.get(modelOrCollectionName, id);
   }, this);
 };
 
@@ -253,7 +257,7 @@ Fetcher.prototype.summarize = function(modelOrCollection) {
   if (this.modelUtils.isCollection(modelOrCollection)) {
     idAttribute = modelOrCollection.model.prototype.idAttribute;
     summary = {
-      collection: this.modelUtils.modelName(modelOrCollection.constructor),
+      collection: this.modelUtils.modelOrCollectionName(modelOrCollection.constructor),
       ids: modelOrCollection.pluck(idAttribute),
       params: modelOrCollection.params,
       meta: modelOrCollection.meta
@@ -261,7 +265,7 @@ Fetcher.prototype.summarize = function(modelOrCollection) {
   } else if (this.modelUtils.isModel(modelOrCollection)) {
     idAttribute = modelOrCollection.idAttribute;
     summary = {
-      model: this.modelUtils.modelName(modelOrCollection.constructor),
+      model: this.modelUtils.modelOrCollectionName(modelOrCollection.constructor),
       id: modelOrCollection.get(idAttribute)
     };
   }

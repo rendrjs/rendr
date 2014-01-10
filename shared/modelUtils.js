@@ -56,10 +56,14 @@ ModelUtils.prototype.getCollectionConstructor = function(path, callback) {
   return this.fetchConstructor('collection', path, callback);
 };
 
+ModelUtils.prototype.getFullPath = function(type, path) {
+  return this.entryPath + typePath[type] + path;
+};
+
 ModelUtils.prototype.fetchConstructor = function(type, path, callback) {
   path = this.underscorize(path);
 
-  var fullPath = this.entryPath + typePath[type] + path;
+  var fullPath = this.getFullPath(type, path);
 
   if (this._classMap[path]) {
     return (typeof callback == 'function') ? callback(this._classMap[path]) : this._classMap[path];

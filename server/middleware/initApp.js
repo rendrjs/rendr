@@ -24,6 +24,7 @@ module.exports = function(appAttributes, options) {
        * This will only be accessible on the server.
        */
       req: req,
+      res: res,
       entryPath: options.entryPath,
       modelUtils: options.modelUtils
     };

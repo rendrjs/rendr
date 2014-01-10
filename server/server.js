@@ -89,24 +89,6 @@ Server.prototype.configure = function(fn) {
   this._configured = true;
 
   /**
-   * Attach the `dataAdapter` to the `req` so that the `syncer` can access it.
-   */
-  this.expressApp.use(function(req, res, next) {
-    req.dataAdapter = dataAdapter;
-
-    /**
-     * Proxy `res.end` so we can remove the reference to `dataAdapter` to prevent leaks.
-     */
-    var end = res.end;
-    res.end = function(data, encoding) {
-      res.end = end;
-      req.dataAdapter = null;
-      res.end(data, encoding);
-    };
-    next();
-  });
-
-  /**
    * Initialize the Rendr app, accessible at `req.rendrApp`.
    */
   this.expressApp.use(middleware.initApp(this.options.appData, {

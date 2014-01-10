@@ -86,7 +86,7 @@ function serverSync(method, model, options) {
     _.extend(api.query, data);
   }
 
-  this.app.proxyRequest(req, res, api, function(err, response, body) {
+  this.app.proxyRequest(req, res, api, {}, function(err, response, body) {
     var resp;
     if (err) {
       resp = {

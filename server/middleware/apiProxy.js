@@ -21,7 +21,7 @@ function apiProxy(dataAdapter) {
     api.path = apiProxy.getApiPath(req.path);
     api.api = apiProxy.getApiName(req.path);
 
-    middleware.proxyRequest(req, res, api, function(err, response, body) {
+    middleware.proxyRequest(req, res, api, { convertErrorCode: false }, function(err, response, body) {
       if (err) return next(err);
 
       // Pass through statusCode.
@@ -30,11 +30,11 @@ function apiProxy(dataAdapter) {
     });
   };
 
-  middleware.proxyRequest = function proxyRequest(req, res, api, callback) {
+  middleware.proxyRequest = function proxyRequest(req, res, api, options, callback) {
     api.headers = api.headers || {};
     api.headers['x-forwarded-for'] = apiProxy.getXForwardedForHeader(req.headers, req.ip);
 
-    dataAdapter.request(req, api, { convertErrorCode: false }, callback);
+    dataAdapter.request(req, api, options, callback);
   };
 
   return middleware;

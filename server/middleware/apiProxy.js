@@ -31,9 +31,8 @@ function apiProxy(dataAdapter) {
   };
 
   middleware.proxyRequest = function proxyRequest(req, res, api, callback) {
-    api.headers = {
-      'x-forwarded-for': apiProxy.getXForwardedForHeader(req.headers, req.ip)
-    };
+    api.headers = api.headers || {};
+    api.headers['x-forwarded-for'] = apiProxy.getXForwardedForHeader(req.headers, req.ip);
 
     dataAdapter.request(req, api, { convertErrorCode: false }, callback);
   };

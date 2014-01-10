@@ -50,6 +50,10 @@ module.exports = function(appAttributes, options) {
 
     var app = new App(attributes, appOptions);
 
+    if (options.proxyRequest) {
+      app.proxyRequest = options.proxyRequest;
+    }
+
     /**
      * Stash the app instance on the request so can be accessed in other middleware.
      */

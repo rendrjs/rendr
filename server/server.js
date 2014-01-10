@@ -80,7 +80,11 @@ function Server(options) {
 Server.prototype.configure = function(fn) {
   var dataAdapter = this.dataAdapter,
       apiPath = this.options.apiPath,
-      notApiRegExp = new RegExp('^(?!' + apiPath.replace('/', '\\/') + '\\/)');
+      notApiRegExp = new RegExp('^(?!' + apiPath.replace('/', '\\/') + '\\/)'),
+      apiProxyMiddleware;
+
+  this.options.apiProxy = this.options.apiProxy || middleware.apiProxy;
+  apiProxyMiddleware = this.options.apiProxy(dataAdapter);
 
   this._configured = true;
 
@@ -120,8 +124,7 @@ Server.prototype.configure = function(fn) {
   /**
    * Add the API handler.
    */
-  this.options.apiProxy = this.options.apiProxy || middleware.apiProxy;
-  this.expressApp.use(this.options.apiPath, this.options.apiProxy(dataAdapter));
+  this.expressApp.use(this.options.apiPath, apiProxyMiddleware);
 
   /**
    * Add the routes for everything defined in our routes file.

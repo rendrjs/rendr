@@ -1,8 +1,7 @@
 var _ = require('underscore'),
   Backbone = require('backbone'),
   isServer = (typeof window === 'undefined'),
-  isAMDEnvironment = !isServer && (typeof define !== 'undefined'),
-  path = require('path');
+  isAMDEnvironment = !isServer && (typeof define !== 'undefined');
 
 if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
@@ -66,8 +65,8 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
     entryPath = options.paths.entryPath || options.entryPath;
     options.paths = _.defaults(options.paths, {
       entryPath: entryPath,
-      routes: path.join(entryPath, 'app/routes'),
-      controllerDir: path.join(entryPath, 'app/controllers')
+      routes: entryPath + 'app/routes',
+      controllerDir: entryPath + 'app/controllers'
     });
 
     this.options = options;
@@ -75,7 +74,7 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
 
   getControllerPath: function(controllerName) {
     var controllerDir = this.options.paths.controllerDir;
-    return path.join(controllerDir, controllerName + '_controller');
+    return controllerDir + '/' + controllerName + '_controller';
   },
 
   loadController: function(controllerName) {

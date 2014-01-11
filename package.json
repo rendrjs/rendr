@@ -14,7 +14,7 @@
   "dependencies": {
     "underscore": "1.5.2",
     "backbone": "1.0.0",
-    "async":"0.1.22",
+    "async":"~0.2.9",
     "qs": "0.6.6",
     "express": "~3",
     "sanitizer": "~0.1",

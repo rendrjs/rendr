@@ -14,7 +14,8 @@ var requireAMD = require,
  *
  */
 
-module.exports = ViewAdapter = function(){};
+module.exports = ViewAdapter;
+function ViewAdapter() {};
 
 
 /* Public: turn a view's name into a view class
@@ -54,7 +55,8 @@ ViewAdapter.prototype.getView = function(viewName, entryPath, callback) {
  *
  */
 ViewAdapter.prototype._optionsFromElement = function($el) {
-  var options = $el.data();
+  var options = $el.data(),
+      parsed;
   _.each(options, function(value, key) {
     if (_.isString(value)) {
       parsed = _.unescape(value);

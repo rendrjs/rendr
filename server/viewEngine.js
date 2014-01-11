@@ -14,12 +14,12 @@ function ViewEngine(options) {
 }
 
 ViewEngine.prototype.render = function render(viewPath, data, callback) {
-  var app, layoutData;
+  var app;
 
   data.locals = data.locals || {};
   app = data.app;
-  this.getViewHtml( viewPath, data.locals, app, function(body) {
-    layoutData = _.extend({}, data, {
+  this.getViewHtml(viewPath, data.locals, app, function(body) {
+    var layoutData = _.extend({}, data, {
       body: body,
       appData: app.toJSON(),
       bootstrappedData: this.getBootstrappedData(data.locals, app),

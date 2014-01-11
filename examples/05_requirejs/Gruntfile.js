@@ -7,37 +7,6 @@ var path = require('path')
 ;
 
 module.exports = function(grunt) {
-  // workaround, while @jskulski is working on custom paths for the app
-  grunt.registerTask('app_copy', function() {
-    var done = this.async();
-
-    async.series(
-    [ spawn('mkdir', ['-p', 'public/js'])
-    , spawn('cp', ['-rf', 'app', 'public/js'])
-    ], done);
-  });
-
-  // {{{ workaround for requirejs issue
-  // https://github.com/jrburke/requirejs/issues/942
-  grunt.registerTask('rendr_copy', function() {
-    var done = this.async();
-
-    async.series(
-    [ spawn('mkdir', ['-p', 'tmp/rendr'])
-    , spawn('cp', ['-rf', 'node_modules/rendr/client', 'tmp/rendr'])
-    , spawn('cp', ['-rf', 'node_modules/rendr/shared', 'tmp/rendr'])
-    ], done);
-  });
-
-  grunt.registerTask('rendr_clean', function() {
-    var done = this.async();
-
-    async.series(
-    [ spawn('rm', ['-rf', 'tmp/rendr'])
-    ], done);
-  });
-
-  // }}}
 
   // Project configuration.
   grunt.initConfig({
@@ -94,7 +63,7 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: 'app/**/*.js',
-        tasks: ['app_copy', 'handlebars:compile_client'],
+        tasks: ['rendr_requirejs:init_app', 'handlebars:compile_client'],
         options: {
           interrupt: true
         }
@@ -183,64 +152,58 @@ module.exports = function(grunt) {
           ]
         }
       },
-      init_client: {
-        options: {
+
+      init_rendr:
+      {
+        options:
+        {
           optimize: 'none',
-          appDir: 'tmp/rendr/client',
-          dir: 'public/js/rendr/client',
-          baseUrl: './rendr/client',
+          dir: 'public/js',
+          baseUrl: 'assets/js',
           cjsTranslate: true,
-          paths: {
-            'jquery': '../../../../../assets/vendor/jquery-1.9.1.min',
-            'rendr/client': '../..',
-            'rendr/shared': '../../../shared'
+          keepBuildDir: true,
+          paths:
+          {
+            'jquery': 'empty:',
+            'underscore': 'empty:',
+            'backbone': 'empty:',
+            'async': 'empty:',
+            'app/router': 'empty:',
+
+            'rendr/client': '../../node_modules/rendr/client',
+            'rendr/shared': '../../node_modules/rendr/shared',
           },
-          node_modules: [
-            {name: 'underscore', location: 'rendr/node_modules/underscore', main: 'underscore.js'},
-            {name: 'backbone', location: 'rendr/node_modules/backbone', main: 'backbone.js'},
-            {name: 'async', location: 'rendr/node_modules/async/lib', main: 'async.js'}
-          ],
-          modules: [
+          modules:
+          [
             {name: 'rendr/client/app_view', exclude: ['underscore', 'backbone', 'async', 'jquery', 'rendr/shared/base/view']},
-            {name: 'rendr/client/router', exclude: ['underscore', 'backbone', 'jquery', 'rendr/shared/base/router', 'rendr/shared/base/view', 'rendr/client/app_view']}
-          ]
-        }
-      },
-      init_shared: {
-        options: {
-          optimize: 'none',
-          appDir: 'tmp/rendr/shared',
-          dir: 'public/js/rendr/shared',
-          baseUrl: './rendr/shared',
-          cjsTranslate: true,
-          paths: {
-            'jquery': '../../../../../assets/vendor/jquery-1.9.1.min',
-            'rendr/shared': '../..',
-            'rendr/client': '../../../client',
-          },
-          rawText: {
-            'app/router': 'define(["app/router"], function () {});'
-          },
-          node_modules: [
-            {name: 'underscore', location: 'rendr/node_modules/underscore', main: 'underscore.js'},
-            {name: 'backbone', location: 'rendr/node_modules/backbone', main: 'backbone.js'},
-            {name: 'async', location: 'rendr/node_modules/async/lib', main: 'async.js'}
-          ],
-          modules: [
-            { name: 'rendr/shared/app', exclude: ['backbone', 'jquery', 'rendr/shared/fetcher', 'app/router'] },
-            { name: 'rendr/shared/fetcher', exclude: ['underscore', 'backbone', 'async', 'jquery', 'rendr/shared/modelUtils', 'rendr/shared/store/model_store', 'rendr/shared/store/collection_store'] },
+            {name: 'rendr/client/router', exclude: ['underscore', 'backbone', 'jquery', 'rendr/shared/base/router', 'rendr/shared/base/view', 'rendr/client/app_view']},
+
+            { name: 'rendr/shared/app', exclude: ['backbone', 'jquery', 'rendr/shared/fetcher', 'app/router', 'rendr/client/app_view', 'rendr/shared/syncer', 'rendr/shared/base/model', 'rendr/shared/base/collection', 'rendr/shared/modelUtils', 'rendr/shared/base/view'] },
+            { name: 'rendr/shared/fetcher', exclude: ['underscore', 'jquery', 'backbone', 'async', 'rendr/shared/modelUtils', 'rendr/shared/store/model_store', 'rendr/shared/store/collection_store'] },
             { name: 'rendr/shared/modelUtils', exclude: ['rendr/shared/base/model', 'rendr/shared/base/collection'] },
             { name: 'rendr/shared/syncer', exclude: ['underscore', 'backbone', 'jquery'] },
             { name: 'rendr/shared/base/collection', exclude: ['underscore', 'backbone', 'jquery', 'rendr/shared/syncer', 'rendr/shared/base/model'] },
             { name: 'rendr/shared/base/model', exclude: ['underscore', 'backbone', 'jquery', 'rendr/shared/syncer'] },
             { name: 'rendr/shared/base/router', exclude: ['underscore', 'backbone', 'jquery'] },
-            { name: 'rendr/shared/base/view', exclude: ['underscore', 'backbone', 'async', 'jquery', 'rendr/shared/modelUtils', 'rendr/shared/base/model', 'rendr/shared/base/collection', 'rendr/shared/syncer'] },
+            { name: 'rendr/shared/base/view', exclude: ['underscore', 'backbone', 'jquery', 'async', 'rendr/shared/modelUtils', 'rendr/shared/base/model', 'rendr/shared/base/collection', 'rendr/shared/syncer'] },
             { name: 'rendr/shared/store/collection_store', exclude: ['underscore', 'rendr/shared/store/memory_store', 'rendr/shared/modelUtils', 'rendr/shared/base/collection', 'rendr/shared/base/model', 'rendr/shared/syncer', 'backbone'] },
             { name: 'rendr/shared/store/memory_store' },
             { name: 'rendr/shared/store/model_store', exclude: ['underscore', 'rendr/shared/store/memory_store', 'rendr/shared/modelUtils', 'rendr/shared/base/collection', 'rendr/shared/base/model', 'rendr/shared/syncer', 'backbone'] }
           ]
         }
+      },
+
+      init_app:
+      {
+        options:
+        {
+          optimize: 'none',
+          dir: 'public/js/app',
+          baseUrl: 'app',
+          cjsTranslate: true,
+        }
       }
+
     }
   });
 
@@ -250,22 +213,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-rendr-requirejs');
 
-  // get init tasks together
-  grunt.registerTask('init_rendr', [
-    'rendr_requirejs:init_client'
-  , 'rendr_requirejs:init_shared'
-  ]);
 
-
-  grunt.registerTask('init', [
-    'app_copy'
-  , 'rendr_clean'
-  , 'rendr_copy'
-  , 'rendr_requirejs:init_libs'
+  grunt.registerTask('init',
+  [ 'rendr_requirejs:init_libs'
   , 'rendr_requirejs:init_rendr_handlebars'
-  , 'init_rendr'
-  , 'init_rendr' // needed two times as workaround for requirejs bug
-  , 'rendr_clean'
+  , 'rendr_requirejs:init_rendr'
+  , 'rendr_requirejs:init_app'
   ]);
 
 

@@ -36,13 +36,24 @@ describe('BaseRouter', function () {
           }
         },
         {
-          options: { entryPath: 'foobar' },
+          options: { entryPath: 'foobar/' },
           expectedOptions: {
-            entryPath: 'foobar',
+            entryPath: 'foobar/',
             paths: {
-              entryPath: 'foobar',
+              entryPath: 'foobar/',
               routes: 'foobar/app/routes',
               controllerDir: 'foobar/app/controllers'
+            }
+          }
+        },
+        {
+          options: { entryPath: '' },
+          expectedOptions: {
+            entryPath: '',
+            paths: {
+              entryPath: '',
+              routes: 'app/routes',
+              controllerDir: 'app/controllers'
             }
           }
         }

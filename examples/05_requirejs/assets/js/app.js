@@ -2,7 +2,6 @@ require([
   'underscore',
   'handlebars',
   'app/routes',
-  // 'rendr/shared/globals',
   'rendr-handlebars',
   'rendr/shared/modelUtils',
 ], function() {

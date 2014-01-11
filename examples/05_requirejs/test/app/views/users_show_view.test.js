@@ -1,3 +1,4 @@
+var should = require("should");
 var UsersShowView = require('../../../app/views/users/show')
   , App = require('../../../app/app')
 ;

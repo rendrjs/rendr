@@ -63,7 +63,7 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: 'app/**/*.js',
-        tasks: ['rendr_requirejs:init_app', 'handlebars:compile_client'],
+        tasks: ['rendr_requirejs:build_app', 'handlebars:compile_client'],
         options: {
           interrupt: true
         }
@@ -85,13 +85,13 @@ module.exports = function(grunt) {
     },
 
     rendr_requirejs: {
-      init_libs: {
+      build_common: {
         options: {
           optimize: 'none',
-          out: 'public/js/libs.js',
+          out: 'public/js/common.js',
           baseUrl: 'public/js',
           create: true,
-          name: 'libs',
+          name: 'common',
           paths: {
             jquery: '../../assets/vendor/jquery-1.9.1.min',
           },
@@ -130,7 +130,7 @@ module.exports = function(grunt) {
           ]
         }
       },
-      init_rendr_handlebars: {
+      build_rendr_handlebars: {
         options: {
           optimize: 'none',
           out: 'public/js/rendr-handlebars.js',
@@ -153,7 +153,7 @@ module.exports = function(grunt) {
         }
       },
 
-      init_rendr:
+      build_rendr:
       {
         options:
         {
@@ -193,7 +193,7 @@ module.exports = function(grunt) {
         }
       },
 
-      init_app:
+      build_app:
       {
         options:
         {
@@ -207,6 +207,7 @@ module.exports = function(grunt) {
     }
   });
 
+
   grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
@@ -214,14 +215,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-rendr-requirejs');
 
 
-  grunt.registerTask('init',
-  [ 'rendr_requirejs:init_libs'
-  , 'rendr_requirejs:init_rendr_handlebars'
-  , 'rendr_requirejs:init_rendr'
-  , 'rendr_requirejs:init_app'
+  grunt.registerTask('build_world',
+  [ 'rendr_requirejs:build_common'
+  , 'rendr_requirejs:build_rendr_handlebars'
+  , 'rendr_requirejs:build_rendr'
+  , 'rendr_requirejs:build_app'
   ]);
-
-
 
   grunt.registerTask('runNode', function () {
     grunt.util.spawn({
@@ -238,7 +237,7 @@ module.exports = function(grunt) {
   grunt.registerTask('compile', ['handlebars', 'stylus']);
 
   // Run the server and watch for file changes
-  grunt.registerTask('server', ['runNode', 'compile', 'watch']);
+  grunt.registerTask('server', ['build_world', 'runNode', 'compile', 'watch']);
 
   // Default task(s).
   grunt.registerTask('default', ['compile']);

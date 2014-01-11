@@ -14,7 +14,6 @@
     "underscore": "~1.4.4",
     "async": "~0.2.9",
     "rendr-handlebars": "airbnb/rendr-handlebars",
-    "rendr": "airbnb/rendr",
     "amdefine": "~0.1.0"
   },
   "devDependencies": {

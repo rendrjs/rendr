@@ -7,7 +7,9 @@
     "test": "npm run test-unit && npm run test-karma",
     "test-unit": "mocha --ui bdd --reporter spec ./test/app --recursive --require ./test/helper.js",
     "test-karma": "grunt compile && karma start test/karma.config.js --single-run",
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "test -f ../../package.json && npm install ../../ || echo",
+    "postupdate": "test -f ../../package.json && npm install ../../ || echo"
   },
   "dependencies": {
     "express": "~3",

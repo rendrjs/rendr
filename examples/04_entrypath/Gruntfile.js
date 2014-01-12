@@ -80,6 +80,16 @@ module.exports = function(grunt) {
               src: ['**/*.js'],
               dest: 'app/'
             },
+            {
+              cwd: 'node_modules/rendr/client/',
+              src: ['**/*.js'],
+              dest: 'rendr/client/'
+            },
+            {
+              cwd: 'node_modules/rendr/shared/',
+              src: ['**/*.js'],
+              dest: 'rendr/shared/'
+            }
           ],
           shim: {
             jquery: {

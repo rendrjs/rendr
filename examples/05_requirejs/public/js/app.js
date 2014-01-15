@@ -7,11 +7,14 @@ require(
 
   require(
   [ 'app/app'
+  , 'app/router'
   , 'app/templates/compiledTemplates'
-  ], function(App) {
+  ], function(App, AppRouter) {
 
     // global reference
-    var app = window.app = new App(appNS.appData);
+    var app = window.app = new App(appNS.appData, {
+      ClientRouter: AppRouter
+    });
     app.bootstrapData(appNS.bootstrappedData);
     app.start();
   });

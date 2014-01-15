@@ -10,7 +10,6 @@ var Backbone = require('backbone'),
     ClientRouter;
 
 if (!isServer) {
-  ClientRouter = require('app/router');
   Backbone.$ = window.$ || require('jquery');
 }
 
@@ -61,6 +60,7 @@ module.exports = Backbone.Model.extend({
      * Initialize the `ClientRouter` on the client-side.
      */
     if (!isServer) {
+      ClientRouter = this.options.ClientRouter || require('rendr/client/router');
       new ClientRouter({
         app: this,
         entryPath: entryPath,

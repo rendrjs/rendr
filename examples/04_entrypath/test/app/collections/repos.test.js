@@ -1,5 +1,5 @@
 var should = require("should");
-var Repos = require('../../../app/collections/repos');
+var Repos = require('../../../apps/main/app/collections/repos');
 
 describe('Repos', function() {
 

@@ -431,6 +431,7 @@ describe("server/router", function() {
       beforeEach(function () {
         rendrRoute = { controller: 'users', action: 'show' },
         res = { redirect: sinon.spy() };
+        this.req.rendrApp.get = sinon.stub();
       });
 
       function createHandler(options) {
@@ -456,6 +457,18 @@ describe("server/router", function() {
         res.redirect.should.have.been.calledWithExactly(301, '/some_uri');
         res.redirect.should.have.been.calledOn(res);
       });
+
+      it("should redirect to the correct path with a rootPath set", function () {
+        var handler = createHandler();
+        this.req.rendrApp.get.withArgs('rootPath').returns('/myRoot');
+
+        handler(this.req, res);
+
+        res.redirect.should.have.been.calledOnce;
+        res.redirect.should.have.been.calledWithExactly('/myRoot/some_uri');
+        res.redirect.should.have.been.calledOn(res);
+      });
+
     });
   });
 });

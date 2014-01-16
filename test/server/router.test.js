@@ -22,9 +22,10 @@ function shouldMatchRoute(actual, expected) {
 }
 
 describe("server/router", function() {
+  var router;
 
   beforeEach(function() {
-    this.router = new Router(config);
+    router = this.router = new Router(config);
   });
 
   describe("route", function() {
@@ -425,15 +426,21 @@ describe("server/router", function() {
     });
 
     describe('redirectTo', function () {
-      it("should redirect to another page", function () {
-        var rendrRoute = { controller: 'users', action: 'show' },
-            res = { redirect: sinon.spy() },
-            handler;
+      var rendrRoute, res;
 
-        handler = this.router.getHandler(function () {
-          this.redirectTo('/some_uri');
+      beforeEach(function () {
+        rendrRoute = { controller: 'users', action: 'show' },
+        res = { redirect: sinon.spy() };
+      });
+
+      function createHandler(options) {
+        return router.getHandler(function () {
+          this.redirectTo('/some_uri', options);
         }, this.pattern, rendrRoute);
+      }
 
+      it("should redirect to another page", function () {
+        var handler = createHandler();
         handler(this.req, res);
 
         res.redirect.should.have.been.calledOnce;
@@ -442,14 +449,7 @@ describe("server/router", function() {
       });
 
       it("should redirect to another page using a specific http status code", function () {
-        var rendrRoute = { controller: 'users', action: 'show' },
-            res = { redirect: sinon.spy() },
-            handler;
-
-        handler = this.router.getHandler(function () {
-          this.redirectTo('/some_uri', {status: 301});
-        }, this.pattern, rendrRoute);
-
+        var handler = createHandler({status: 301});
         handler(this.req, res);
 
         res.redirect.should.have.been.calledOnce;

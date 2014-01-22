@@ -1,9 +1,14 @@
 var _ = require('underscore'),
     Backbone = require('backbone'),
-    should = require('chai').should(),
+    chai = require('chai'),
+    sinon = require('sinon'),
+    sinonChai = require('sinon-chai'),
+    should = chai.should(),
     syncer = require('../../shared/syncer'),
     BaseModel = require('../../shared/base/model'),
     App = require('../../shared/app');
+
+chai.use(sinonChai);
 
 describe('syncer', function() {
 

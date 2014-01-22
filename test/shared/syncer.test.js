@@ -12,6 +12,86 @@ chai.use(sinonChai);
 
 describe('syncer', function() {
 
+  describe('clientSync', function () {
+    var model, backboneSync, options, syncErrorHandler;
+
+    beforeEach(function () {
+      model = new BaseModel({ id: 0 }, { app: new App() });
+      model.urlRoot = '/listings';
+
+      options = { url: model.url() };
+
+      backboneSync = sinon.stub(Backbone, 'sync');
+      syncErrorHandler = sinon.spy();
+    });
+
+    afterEach(function () {
+      backboneSync.restore();
+    });
+
+    it('should call Backbone.sync', function () {
+      syncer.clientSync.call(model, 'get', model, options);
+
+      backboneSync.should.have.been.calledOnce;
+      backboneSync.should.have.been.calledWithExactly('get', model, options);
+    });
+
+    it('should get the prefixed API url', function () {
+      syncer.clientSync.call(model, 'get', model, options);
+      backboneSync.should.have.been.calledWithExactly('get', model, { url: '/api/-' + model.url() });
+    });
+
+    it('should wrap the error handler', function () {
+      options.error = syncErrorHandler;
+
+      syncer.clientSync.call(model, 'get', model, options);
+
+      syncErrorHandler.should.be.not.equal(options.error);
+      options.error.should.be.a('function');
+      options.error.should.have.length(1);
+    });
+
+    describe('wrappedErrorHandler', function () {
+      var fakeXhr;
+
+      beforeEach(function () {
+        fakeXhr = {
+          responseText: '{"foo": "bar"}',
+          status: 418,
+          getResponseHeader: sinon.stub()
+        };
+        options.error = syncErrorHandler;
+        backboneSync.yieldsTo('error', fakeXhr);
+      });
+
+      it('should call the original error handler with status and body', function () {
+        var expectedResponse = {
+          body: fakeXhr.responseText,
+          status: fakeXhr.status
+        };
+
+        syncer.clientSync.call(model, 'get', model, options);
+
+        syncErrorHandler.should.have.been.calledOnce;
+        syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+      });
+
+      it('should parse the payload if content-type is "application/json"', function () {
+        var expectedResponse = {
+          body: JSON.parse(fakeXhr.responseText),
+          status: fakeXhr.status
+        };
+
+        fakeXhr.getResponseHeader.withArgs('content-type').returns('application/json');
+
+        syncer.clientSync.call(model, 'get', model, options);
+
+        syncErrorHandler.should.have.been.calledOnce;
+        syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+      });
+    });
+  });
+
   describe('interpolateParams', function() {
     beforeEach(function() {
       this.model = new Backbone.Model({

@@ -30,12 +30,8 @@ if (isServer) {
 var syncer = module.exports;
 
 function clientSync(method, model, options) {
-  var data, error;
-  data = _.clone(options.data);
-  options.url = this.getUrl(options.url, true, data);
-  data = addApiParams(method, model, data);
-  options.data = data;
-  options.emulateJSON = true;
+  var error;
+  options.url = this.getUrl(options.url, true);
   error = options.error;
   if (error) {
     options.error = function(xhr) {

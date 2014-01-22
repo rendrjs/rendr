@@ -13,20 +13,15 @@ var separator = '/-/';
 module.exports = apiProxy;
 
 function apiProxy(dataAdapter) {
-  return function(req, res, next) {
+  var middleware = function(req, res, next) {
     var api;
 
     api = _.pick(req, 'query', 'method', 'body');
 
     api.path = apiProxy.getApiPath(req.path);
     api.api = apiProxy.getApiName(req.path);
-    api.headers = {
-      'x-forwarded-for': apiProxy.getXForwardedForHeader(req.headers, req.ip)
-    };
 
-    dataAdapter.request(req, api, {
-      convertErrorCode: false
-    }, function(err, response, body) {
+    middleware.proxyRequest(req, res, api, { convertErrorCode: false }, function(err, response, body) {
       if (err) return next(err);
 
       // Pass through statusCode.
@@ -34,6 +29,15 @@ function apiProxy(dataAdapter) {
       res.json(body);
     });
   };
+
+  middleware.proxyRequest = function proxyRequest(req, res, api, options, callback) {
+    api.headers = api.headers || {};
+    api.headers['x-forwarded-for'] = apiProxy.getXForwardedForHeader(req.headers, req.ip);
+
+    dataAdapter.request(req, api, options, callback);
+  };
+
+  return middleware;
 };
 
 apiProxy.getApiPath = function getApiPath(path) {

@@ -58,7 +58,7 @@ function clientSync(method, model, options) {
 }
 
 function serverSync(method, model, options) {
-  var api, data, urlParts, verb, req;
+  var api, data, urlParts, verb, req, res;
 
   data = _.clone(options.data);
   data = addApiParams(method, model, data);
@@ -66,6 +66,7 @@ function serverSync(method, model, options) {
   verb = methodMap[method];
   urlParts = options.url.split('?');
   req = this.app.req;
+  res = this.app.res;
 
   api = {
     method: verb,
@@ -85,7 +86,7 @@ function serverSync(method, model, options) {
     _.extend(api.query, data);
   }
 
-  req.dataAdapter.request(req, api, function(err, response, body) {
+  this.app.proxyRequest(req, res, api, {}, function(err, response, body) {
     var resp;
     if (err) {
       resp = {

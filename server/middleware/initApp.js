@@ -24,6 +24,7 @@ module.exports = function(appAttributes, options) {
        * This will only be accessible on the server.
        */
       req: req,
+      res: res,
       entryPath: options.entryPath,
       modelUtils: options.modelUtils
     };
@@ -49,6 +50,10 @@ module.exports = function(appAttributes, options) {
     });
 
     var app = new App(attributes, appOptions);
+
+    if (options.proxyRequest) {
+      app.proxyRequest = options.proxyRequest;
+    }
 
     /**
      * Stash the app instance on the request so can be accessed in other middleware.

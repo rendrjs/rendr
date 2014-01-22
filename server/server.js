@@ -80,27 +80,13 @@ function Server(options) {
 Server.prototype.configure = function(fn) {
   var dataAdapter = this.dataAdapter,
       apiPath = this.options.apiPath,
-      notApiRegExp = new RegExp('^(?!' + apiPath.replace('/', '\\/') + '\\/)');
+      notApiRegExp = new RegExp('^(?!' + apiPath.replace('/', '\\/') + '\\/)'),
+      apiProxyMiddleware;
+
+  this.options.apiProxy = this.options.apiProxy || middleware.apiProxy;
+  apiProxyMiddleware = this.options.apiProxy(dataAdapter);
 
   this._configured = true;
-
-  /**
-   * Attach the `dataAdapter` to the `req` so that the `syncer` can access it.
-   */
-  this.expressApp.use(function(req, res, next) {
-    req.dataAdapter = dataAdapter;
-
-    /**
-     * Proxy `res.end` so we can remove the reference to `dataAdapter` to prevent leaks.
-     */
-    var end = res.end;
-    res.end = function(data, encoding) {
-      res.end = end;
-      req.dataAdapter = null;
-      res.end(data, encoding);
-    };
-    next();
-  });
 
   /**
    * Initialize the Rendr app, accessible at `req.rendrApp`.
@@ -108,7 +94,8 @@ Server.prototype.configure = function(fn) {
   this.expressApp.use(middleware.initApp(this.options.appData, {
     apiPath: this.options.apiPath,
     entryPath: this.options.entryPath,
-    modelUtils: this.options.modelUtils
+    modelUtils: this.options.modelUtils,
+    proxyRequest: apiProxyMiddleware.proxyRequest
   }));
 
   /**
@@ -120,8 +107,7 @@ Server.prototype.configure = function(fn) {
   /**
    * Add the API handler.
    */
-  this.options.apiProxy = this.options.apiProxy || middleware.apiProxy;
-  this.expressApp.use(this.options.apiPath, this.options.apiProxy(dataAdapter));
+  this.expressApp.use(this.options.apiPath, apiProxyMiddleware);
 
   /**
    * Add the routes for everything defined in our routes file.

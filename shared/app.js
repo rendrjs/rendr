@@ -44,6 +44,10 @@ module.exports = Backbone.Model.extend({
       this.req = this.options.req;
     }
 
+    if (this.options.res) {
+      this.res = this.options.res;
+    }
+
     /**
      * Initialize the `templateAdapter`, allowing application developers to use whichever
      * templating system they want.

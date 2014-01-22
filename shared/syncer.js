@@ -123,6 +123,7 @@ function addApiParams(method, model, params) {
   return ret;
 }
 
+syncer.clientSync = clientSync;
 syncer.sync = function sync() {
   var syncMethod = isServer ? serverSync : clientSync;
   return syncMethod.apply(this, arguments);

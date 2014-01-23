@@ -86,8 +86,8 @@ module.exports = function(grunt) {
           ],
           shim: {
             jquery: {
-              path: 'assets/vendor/jquery-1.9.1.min.js',
-              exports: '$',
+              path: 'node_modules/jquery/dist/jquery.min.js',
+              exports: '$'
             },
           },
         }

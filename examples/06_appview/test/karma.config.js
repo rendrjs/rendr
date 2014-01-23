@@ -6,7 +6,10 @@ module.exports = function (config) {
       './stitched.js',
       './app/**/*.js'
     ],
-    frameworks: [ 'mocha' ],
-    browsers: [ 'Chrome' ]
+    frameworks: [ 'mocha', 'browserify' ],
+    browsers: [ 'Chrome' ],
+    browserify: {
+      watch: false
+    }
   });
 };

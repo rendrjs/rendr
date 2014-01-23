@@ -5,7 +5,10 @@ module.exports = function (config) {
     files: [
       '../public/testBundle.js'
     ],
-    frameworks: [ 'mocha' ],
-    browsers: [ 'Chrome' ]
+    frameworks: [ 'mocha', 'browserify' ],
+    browsers: [ 'Chrome' ],
+    browserify: {
+      watch: false
+    }
   });
 };

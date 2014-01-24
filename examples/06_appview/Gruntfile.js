@@ -67,30 +67,34 @@ module.exports = function(grunt) {
     },
 
     browserify: {
-      basic: {
-        src: [
-          'app/**/*.js',
+      options: {
+        debug: true,
+        alias: [
+          'node_modules/rendr-handlebars/index.js:rendr-handlebars'
         ],
-        dest: 'public/mergedAssets.js',
-        options: {
-          debug: true,
-          alias: [
-            'node_modules/rendr-handlebars/index.js:rendr-handlebars',
-          ],
-          aliasMappings: [
-            {
-              cwd: 'app/',
-              src: ['**/*.js'],
-              dest: 'app/'
-            },
-          ],
-          shim: {
-            jquery: {
-              path: 'assets/vendor/jquery-1.9.1.min.js',
-              exports: '$',
-            },
-          },
+        aliasMappings: [
+          {
+            cwd: 'app/',
+            src: ['**/*.js'],
+            dest: 'app/'
+          }
+        ],
+        shim: {
+          jquery: {
+            path: 'assets/vendor/jquery-1.9.1.min.js',
+            exports: '$'
+          }
         }
+      },
+      app: {
+        src: [ 'app/**/*.js' ],
+        dest: 'public/mergedAssets.js'
+      },
+      tests: {
+        src: [
+          'test/app/**/*.js'
+        ],
+        dest: 'public/testBundle.js'
       }
     }
   });

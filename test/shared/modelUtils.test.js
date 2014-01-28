@@ -167,6 +167,21 @@ describe('modelUtils', function () {
       });
     });
 
+    it('should return a model or collection constructor from the class map', function () {
+      modelUtils._classMap['model_name'] = Constructor;
+      modelUtils.fetchConstructor('model', 'ModelName').should.equal(Constructor);
+      modelUtils._require.should.not.have.been.called;
+    });
+
+    it('should call the callback with a model or collection constructor from the class map', function (done) {
+      modelUtils._classMap['model_name'] = Constructor;
+      modelUtils.fetchConstructor('model', 'ModelName', function (Model) {
+        Model.should.equal(Constructor);
+        modelUtils._require.should.not.have.been.called;
+        done();
+      });
+    });
+
     it('should return a collection constructor', function () {
       modelUtils.fetchConstructor('collection', 'CollectionName').should.equal(Constructor);
       modelUtils._require.should.have.been.calledOnce;

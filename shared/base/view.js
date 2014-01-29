@@ -25,9 +25,6 @@ module.exports = BaseView = Backbone.View.extend({
 
     this.name = this.name || this.app.modelUtils.underscorize(this.constructor.id || this.constructor.name);
     this.postInitialize();
-    if ((obj = this.model || this.collection) && this.renderOnRefresh) {
-      obj.on('refresh', this.render, this);
-    }
 
     this.render = this.render.bind(this);
   },
@@ -73,6 +70,10 @@ module.exports = BaseView = Backbone.View.extend({
 
     this.model = options.model;
     this.collection = options.collection;
+
+    if ((obj = this.model || this.collection) && this.renderOnRefresh) {
+      obj.on('refresh', this.render, this);
+    }
   },
 
   /**

@@ -163,7 +163,8 @@ module.exports = BaseView = Backbone.View.extend({
   getAttributes: function() {
     var attributes = {},
         fetchSummary = {},
-        modelUtils = this.app.modelUtils;
+        modelUtils = this.app.modelUtils,
+        self = this;
 
     if (this.attributes) {
       _.extend(attributes, _.result(this, 'attributes'));
@@ -205,7 +206,7 @@ module.exports = BaseView = Backbone.View.extend({
             return;
           }
         }
-        if (!_.isObject(value) && !_.include(this.nonAttributeOptions, key)) {
+        if (!_.isObject(value) && !_.include(self.nonAttributeOptions, key)) {
           attributes["data-" + key] = value;
         }
       }

@@ -19,7 +19,11 @@ CollectionStore.prototype.set = function(collection, params) {
   key = this._getStoreKey(this.modelUtils.modelName(collection.constructor), params);
   idAttribute = collection.model.prototype.idAttribute;
   data = {
-    ids: collection.pluck(idAttribute),
+    ids: collection.map(function( model ) {
+      var modelName = modelUtils.modelName(model.constructor),
+        id = model.id;
+      return modelName + ':' + id;
+      }),
     meta: collection.meta,
     params: collection.params
   };

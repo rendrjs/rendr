@@ -236,8 +236,22 @@ Fetcher.prototype.fetchFromApi = function(spec, callback) {
 };
 
 Fetcher.prototype.retrieveModelsForCollectionName = function(collectionName, modelIds) {
-  var modelName = this.modelUtils.getModelNameForCollectionName(collectionName);
-  return this.retrieveModels(modelName, modelIds);
+  var self = this;
+
+  return _.chain( modelIds )
+    .reduce( function ( o, k ){
+      var parts = k.split(':'),
+        modelName = parts[0],
+        modelId = parts[1],
+        list = o[ modelName ] || [];
+        list.push( modelId );
+
+      o[ modelName ] = list;
+      return o;
+    }, {})
+    .reduce( function ( models, modelIds, modelName ) {
+      return models.concat( self.retrieveModels( modelName, modelIds) );
+    }, []).value();
 };
 
 Fetcher.prototype.retrieveModels = function(modelName, modelIds) {

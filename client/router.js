@@ -109,7 +109,7 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
 
     if (firstRender) {
       firstRender = false;
-      BaseView.attach(router.app, null, function(views) {
+      BaseView.attach(router.app, router.appView, function(views) {
         router.currentView = router.getMainView(views);
         router.trigger('action:end', route, true);
       });

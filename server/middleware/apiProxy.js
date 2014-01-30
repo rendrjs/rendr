@@ -32,7 +32,7 @@ function apiProxy(dataAdapter) {
       // Pass through statusCode.
       res.status(response.statusCode);
       res.json(body);
-    });
+    }, res);
   };
 };
 

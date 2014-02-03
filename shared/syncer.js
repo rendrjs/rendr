@@ -32,8 +32,8 @@ var syncer = module.exports;
 function clientSync(method, model, options) {
   var data, error;
   data = _.clone(options.data);
-  options.url = this.getUrl(options.url, true, data);
   data = addApiParams(method, model, data);
+  options.url = this.getUrl(options.url, true, data);
   options.data = data;
   options.emulateJSON = true;
   error = options.error;

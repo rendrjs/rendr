@@ -9,12 +9,12 @@ describe('MemoryStore', function() {
     store = new MemoryStore();
   });
 
-  it("should undefined for missing keys", function() {
+  it('should undefined for missing keys', function() {
     var value = store.get('foobar');
     should.not.exist(value);
   });
 
-  it("should set and get a key + value", function() {
+  it('should set and get a key + value', function() {
     store.set('cached_value', 42);
     store.get('cached_value').should.equal(42);
 
@@ -22,7 +22,7 @@ describe('MemoryStore', function() {
     store.get('cached_value').should.equal('new value');
   });
 
-  it("should be able to clear a key", function() {
+  it('should be able to clear a key', function() {
     var value;
 
     store.set('somethin', 'some value');
@@ -32,7 +32,7 @@ describe('MemoryStore', function() {
     should.not.exist(value);
   });
 
-  it("should be able to expire a key", function() {
+  it('should be able to expire a key', function() {
     var value,
       fakeTimer = sinon.useFakeTimers();
 

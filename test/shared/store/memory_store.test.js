@@ -1,4 +1,5 @@
 var MemoryStore = require('../../../shared/store/memory_store'),
+    sinon = require('sinon'),
     should = require('chai').should();
 
 describe('MemoryStore', function() {
@@ -31,17 +32,18 @@ describe('MemoryStore', function() {
     should.not.exist(value);
   });
 
-  it("should be able to expire a key", function(done) {
-    var value;
+  it("should be able to expire a key", function() {
+    var value,
+      fakeTimer = sinon.useFakeTimers();
 
     store.set('will_expire', '1234', 0.01);
     value = store.get('will_expire');
     value.should.equal('1234');
 
-    setTimeout(function() {
-      value = store.get('will_expire');
-      should.not.exist(value);
-      done();
-    }, 11);
+    fakeTimer.tick(11);
+    value = store.get('will_expire');
+    should.not.exist(value);
+
+    fakeTimer.restore();
   });
 });

@@ -9,7 +9,7 @@ describe('MemoryStore', function() {
     store = new MemoryStore();
   });
 
-  it('should undefined for missing keys', function() {
+  it('should return undefined for missing keys', function() {
     var value = store.get('foobar');
     should.not.exist(value);
   });

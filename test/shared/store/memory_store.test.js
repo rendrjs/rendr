@@ -5,7 +5,7 @@ describe('MemoryStore', function() {
   var store;
 
   beforeEach(function() {
-    store = new MemoryStore;
+    store = new MemoryStore();
   });
 
   it("should undefined for missing keys", function() {

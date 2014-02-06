@@ -3,8 +3,7 @@
 module.exports = function (config) {
   config.set({
     files: [
-      './stitched.js',
-      './app/**/*.js'
+      '../public/testBundle.js'
     ],
     frameworks: [ 'mocha' ],
     browsers: [ 'Chrome' ]

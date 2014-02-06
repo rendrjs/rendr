@@ -82,6 +82,13 @@ module.exports = Backbone.Model.extend({
     this.postInitialize();
   },
 
+  /**
+   * Proxy getView to viewAdapter
+   */
+  getView: function() {
+    return this.viewAdapter.getView.apply(this.viewAdapter,arguments)
+  },
+
   postInitialize: noop,
 
   /**

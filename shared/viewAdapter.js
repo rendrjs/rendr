@@ -54,8 +54,8 @@ ViewAdapter.prototype.getView = function(viewName, entryPath, callback) {
  * Returns an object containing the options.
  *
  */
-ViewAdapter.prototype._optionsFromElement = function($el) {
-  var options = $el.data();
+ViewAdapter.prototype._optionsFromElementData = function(elementData) {
+  var options = _.clone(elementData);
   _.each(options, function(value, key) {
     var parsed;
     if (_.isString(value)) {
@@ -91,7 +91,7 @@ ViewAdapter.prototype.attach = function(app, parentView, callback) {
     var $el, options, viewName;
     $el = $(el);
     if (!$el.data('view-attached')) {
-      options = _this._optionsFromElement($el);
+      options = _this._optionsFromElementData($el.data());
       options.app = app;
 
       viewName = options.view;

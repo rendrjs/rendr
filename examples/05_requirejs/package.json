@@ -14,6 +14,7 @@
     "underscore": "~1.4.4",
     "async": "~0.2.9",
     "rendr-handlebars": "airbnb/rendr-handlebars",
+    "rendr": "airbnb/rendr",
     "amdefine": "~0.1.0"
   },
   "devDependencies": {
@@ -23,7 +24,7 @@
     "grunt-contrib-stylus": "~0.5.0",
     "grunt-contrib-handlebars": "~0.5.11",
     "grunt-contrib-requirejs": "~0.4.1",
-    "grunt-rendr-requirejs": "~0.0.1",
+    "grunt-rendr-requirejs": "~0.1.1",
     "nodemon": "~0.7.6",
     "mocha": "~1.9.0",
     "should": "~1.2.2"

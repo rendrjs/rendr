@@ -122,11 +122,13 @@ module.exports = function(grunt) {
             'handlebars'
           ],
           node_modules: [
+            // underscore, backbone and async may be located under rendr module or as peers to rendr.
+            // grunt-rendr-requirejs will automatically check rendr dependencies and parent folders
             {name: 'requirejs', location: 'requirejs', main: 'require.js'},
-            {name: 'underscore', location: 'rendr/node_modules/underscore', main: 'underscore.js'},
-            {name: 'backbone', location: 'rendr/node_modules/backbone', main: 'backbone.js'},
+            {name: 'underscore', location: 'underscore', main: 'underscore.js'},
+            {name: 'backbone', location: 'backbone', main: 'backbone.js'},
             {name: 'handlebars', location: 'rendr-handlebars/node_modules/handlebars/dist', main: 'handlebars.runtime.js'},
-            {name: 'async', location: 'rendr/node_modules/async/lib', main: 'async.js'}
+            {name: 'async', location: 'async/lib', main: 'async.js'}
           ]
         }
       },
@@ -148,7 +150,7 @@ module.exports = function(grunt) {
           node_modules: [
             {name: 'rendr-handlebars', location: 'rendr-handlebars', main: 'index.js'},
             {name: 'handlebars', location: 'rendr-handlebars/node_modules/handlebars/dist', main: 'handlebars.runtime.js'},
-            {name: 'underscore', location: 'rendr/node_modules/underscore', main: 'underscore.js'}
+            {name: 'underscore', location: 'underscore', main: 'underscore.js'}
           ]
         }
       },

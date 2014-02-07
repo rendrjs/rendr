@@ -57,7 +57,6 @@ function serverSync(method, model, options) {
   var api, data, urlParts, verb, req;
 
   data = _.clone(options.data);
-  data = addApiParams(method, model, data);
   options.url = this.getUrl(options.url, false, data);
   verb = methodMap[method];
   urlParts = options.url.split('?');
@@ -101,22 +100,6 @@ function serverSync(method, model, options) {
       options.success(body);
     }
   });
-}
-
-function addApiParams(method, model, params) {
-  params = params || {};
-  var ret = _.clone(params);
-
-  /**
-   * So, by default Backbone sends all of the model's
-   * attributes if we don't pass any in explicitly.
-   * This gets screwed up because we append the locale
-   * and currency, so let's replicate that behavior.
-   */
-  if (model && _.isEqual(params, {}) && (method === 'create' || method === 'update')) {
-    _.extend(ret, model.toJSON());
-  }
-  return ret;
 }
 
 syncer.clientSync = clientSync;

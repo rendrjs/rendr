@@ -70,7 +70,7 @@ function serverSync(method, model, options) {
   };
 
   if (verb === 'POST' || verb === 'PUT') {
-    api.body = _.omit(model.toJSON(), model.idAttribute);
+    api.body = model.toJSON();
   }
 
   req.dataAdapter.request(req, api, function(err, response, body) {

@@ -55,7 +55,7 @@ describe('syncer', function() {
           path: '/listings/0',
           query: {},
           api: 'foo',
-          body: { foo: 'bar', bar: 'foo' }
+          body: { id: 0, foo: 'bar', bar: 'foo' }
         };
 
         model.set('foo', 'bar');

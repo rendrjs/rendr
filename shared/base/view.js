@@ -51,8 +51,6 @@ module.exports = BaseView = Backbone.View.extend({
    */
   renderOnRefresh: false,
 
-  postInitialize: noop,
-
   parseOptions: function(options) {
     /**
      * Populate `this.options` and alias as `options`.

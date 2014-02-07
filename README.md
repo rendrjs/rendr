@@ -52,11 +52,6 @@ Inherits from `Backbone.View`.
 
 #### Public methods
 
-#### `view.postInitialize()`
-*Environment: shared.*
-
-This is where you put any initialization logic. We've hijacked the default `view.initialize()` to do Rendr-specific initialization stuff.
-
 #### `view.preRender()`
 *Environment: shared.*
 

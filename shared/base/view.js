@@ -18,18 +18,31 @@ if (!isServer) {
 function noop() {}
 
 module.exports = BaseView = Backbone.View.extend({
-  initialize: function(options) {
+  constructor: function(options) {
+    this.cid = _.uniqueId('view');
+    this._configure(options || {});
+    this._ensureElement();
+
     var obj;
 
     this.parseOptions(options);
-
     this.name = this.name || this.app.modelUtils.underscorize(this.constructor.id || this.constructor.name);
-    this.postInitialize();
+
+    this.initialize.apply(this, arguments);
+    this.delegateEvents();
+
     if ((obj = this.model || this.collection) && this.renderOnRefresh) {
       obj.on('refresh', this.render, this);
     }
 
     this.render = this.render.bind(this);
+  },
+
+  initialize: function(options) {
+    if (this.postInitialize) {
+      console.warn('`postInitialize` is deprecated, please use `initialize`');
+      this.postInitialize();
+    }
   },
 
   /**

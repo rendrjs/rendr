@@ -15,14 +15,14 @@ define(function(require) {
     /**
      * Client and server.
      *
-     * `postInitialize` is called on app initialize, both on the client and server.
+     * `initialize` is called on app initialize, both on the client and server.
      * On the server, an app is instantiated once for each request, and in the
      * client, it's instantiated once on page load.
      *
      * This is a good place to initialize any code that needs to be available to
      * app on both client and server.
      */
-    postInitialize: function() {
+    initialize: function() {
       /**
        * Register our Handlebars helpers.
        *

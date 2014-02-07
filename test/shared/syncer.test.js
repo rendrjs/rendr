@@ -81,21 +81,21 @@ describe('syncer', function() {
       });
 
       it('should call Backbone.sync', function () {
-        syncer.clientSync.call(model, 'get', model, options);
+        syncer.clientSync.call(model, 'read', model, options);
 
         backboneSync.should.have.been.calledOnce;
-        backboneSync.should.have.been.calledWithExactly('get', model, options);
+        backboneSync.should.have.been.calledWithExactly('read', model, options);
       });
 
       it('should get the prefixed API url', function () {
-        syncer.clientSync.call(model, 'get', model, options);
-        backboneSync.should.have.been.calledWithExactly('get', model, { url: '/api/-' + model.url() });
+        syncer.clientSync.call(model, 'read', model, options);
+        backboneSync.should.have.been.calledWithExactly('read', model, { url: '/api/-' + model.url() });
       });
 
       it('should wrap the error handler', function () {
         options.error = syncErrorHandler;
 
-        syncer.clientSync.call(model, 'get', model, options);
+        syncer.clientSync.call(model, 'read', model, options);
 
         syncErrorHandler.should.be.not.equal(options.error);
         options.error.should.be.a('function');
@@ -121,7 +121,7 @@ describe('syncer', function() {
             status: fakeXhr.status
           };
 
-          syncer.clientSync.call(model, 'get', model, options);
+          syncer.clientSync.call(model, 'read', model, options);
 
           syncErrorHandler.should.have.been.calledOnce;
           syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
@@ -135,7 +135,7 @@ describe('syncer', function() {
 
           fakeXhr.getResponseHeader.withArgs('content-type').returns('application/json');
 
-          syncer.clientSync.call(model, 'get', model, options);
+          syncer.clientSync.call(model, 'read', model, options);
 
           syncErrorHandler.should.have.been.calledOnce;
           syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);

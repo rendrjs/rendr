@@ -103,6 +103,7 @@ function serverSync(method, model, options) {
 }
 
 syncer.clientSync = clientSync;
+syncer.serverSync = serverSync;
 syncer.sync = function sync() {
   var syncMethod = isServer ? serverSync : clientSync;
   return syncMethod.apply(this, arguments);

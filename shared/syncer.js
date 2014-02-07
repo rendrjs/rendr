@@ -54,10 +54,9 @@ function clientSync(method, model, options) {
 }
 
 function serverSync(method, model, options) {
-  var api, data, urlParts, verb, req;
+  var api, urlParts, verb, req;
 
-  data = _.clone(options.data);
-  options.url = this.getUrl(options.url, false, data);
+  options.url = this.getUrl(options.url, false);
   verb = methodMap[method];
   urlParts = options.url.split('?');
   req = this.app.req;
@@ -70,14 +69,8 @@ function serverSync(method, model, options) {
     body: {}
   };
 
-  /**
-   * Put the data as form data if POST or PUT,
-   * otherwise query string.
-   */
   if (verb === 'POST' || verb === 'PUT') {
-    api.body = data;
-  } else {
-    _.extend(api.query, data);
+    api.body = _.omit(model.toJSON(), model.idAttribute);
   }
 
   req.dataAdapter.request(req, api, function(err, response, body) {

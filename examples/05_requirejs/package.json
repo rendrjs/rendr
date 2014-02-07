@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --ui bdd --reporter spec  ./test --recursive",
-    "start": "node index.js",
-    "postinstall": "npm install ../../",
-    "postupdate": "npm install ../../"
+    "start": "node index.js"
   },
   "dependencies": {
     "express": "~3",

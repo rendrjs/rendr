@@ -19,38 +19,39 @@ Run `npm install` to install dependencies:
 
     $ npm install
 
-Run `grunt init` to prepare rendr for AMD (necessary part until all changes landed to Rendr)
-
-    $ grunt init
-
 Then, use `grunt server` to start up the web server. Grunt will recompile and restart the server when files change.
 
     $ grunt server
 
+    Running "rendr_requirejs:build_common" (rendr_requirejs) task
+    ...
+
+    Running "rendr_requirejs:build_rendr_handlebars" (rendr_requirejs) task
+    ...
+
+    Running "rendr_requirejs:build_rendr" (rendr_requirejs) task
+    ...
+
+    Running "rendr_requirejs:build_app" (rendr_requirejs) task
+
     Running "runNode" task
 
-    Running "handlebars:compile" (handlebars) task
-    11 Dec 17:40:30 - [nodemon] v0.7.10
-    11 Dec 17:40:30 - [nodemon] to restart at any time, enter `rs`
-    11 Dec 17:40:30 - [nodemon] watching: /Users/spike/code/rendr/examples/00_simple
+    Running "handlebars:compile_server" (handlebars) task
+    11 Jan 09:44:56 - [nodemon] v0.7.10
+    11 Jan 09:44:56 - [nodemon] to restart at any time, enter `rs`
+    11 Jan 09:44:56 - [nodemon] watching: /www/examples/05_requirejs
+    11 Jan 09:44:56 - [nodemon] starting `node index.js`
     File "app/templates/compiledTemplates.js" created.
 
-    Running "browserify:basic" (browserify) task
-    11 Dec 17:40:30 - [nodemon] starting `node index.js`
-    connect.multipart() will be removed in connect 3.0
-    visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
-    connect.limit() will be removed in connect 3.0
-    server pid 86724 listening on port 3030 in development mode
-    >> Bundled public/mergedAssets.js
+    Running "handlebars:compile_client" (handlebars) task
+    File "public/js/app/templates/compiledTemplates.js" created.
 
     Running "stylus:compile" (stylus) task
     File public/styles.css created.
 
     Running "watch" task
     Waiting...
-
-    11 Dec 17:40:32 - [nodemon] starting `node index.js`
-    server pid 86728 listening on port 3030 in development mode
+    server pid 21249 listening on port 3030 in development mode
 
 Now, pull up the app in your web browser. It defaults to port `3030`.
 
@@ -94,14 +95,23 @@ Check out the directory structure:
 
 ```js
 // app/routes.js
-module.exports = function(match) {
-  match('',                   'home#index');
-  match('repos',              'repos#index');
-  match('repos/:owner/:name', 'repos#show');
-  match('users'       ,       'users#index');
-  match('users/:login',       'users#show');
-};
 
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
+
+define(function(require)
+{
+
+  return function(match) {
+    match('',                   'home#index');
+    match('repos',              'repos#index');
+    match('repos/:owner/:name', 'repos#show');
+    match('users'       ,       'users#index');
+    match('users/:login',       'users#show');
+  };
+
+});
 ```
 
 ## Controllers
@@ -114,12 +124,19 @@ Here is a very simple controller:
 
 ```js
 // app/controllers/home_controller.js
-module.exports = {
-  index: function(params, callback) {
-    callback(null, 'home_index_view');
-  }
-};
 
+if (typeof define !== 'function') {
+  var define = require('amdefine')(module);
+}
+
+define(function(require) {
+  return {
+    index: function(params, callback) {
+      callback();
+    }
+  };
+
+});
 ```
 
 Every action gets called with two arguments: `params` and `callback`. The `params` object contains both route params and query string params. `callback` is called to kick off view rendering. It has this signature:
@@ -147,19 +164,31 @@ It gets more interesting when we decide to fetch some data. Check out the `repos
 
 ```js
 // app/controllers/repos_controller.js
-module.exports = {
-  // ...
 
-  show: function(params, callback) {
-    var spec = {
-      model: {model: 'Repo', params: params}
-    };
-    this.app.fetch(spec, function(err, result) {
-      callback(err, 'repos_show_view', result);
-    });
-  }
-};
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 
+define(function(require)
+{
+
+  return {
+    // ...
+
+    show: function(params, callback) {
+
+      var spec = {
+        model: {model: 'Repo', params: params}
+      };
+
+      this.app.fetch(spec, function(err, result) {
+        callback(err, result);
+      });
+
+    }
+  };
+
+});
 ```
 
 You see here that we call `this.app.fetch()` to fetch our Repo model. Our controller actions are executed in the context of the router, so we have a few properties and methods available, one of which is `this.app`. This is the instance of our application's App context, which is a sublcass of `rendr/base/app`, which itself is a subclass of `Backbone.Model`. You'll see that we inject `app` into every model, view, collection, and controller; this is how we maintain app context throughout our app.
@@ -175,19 +204,24 @@ A Rendr view is a subclass of `Backbone.View` with some additional methods added
 Creating your own view should look familiar if you've used Backbone:
 
 ```js
-// app/views/home_index_view.js
-var BaseView = require('./base_view');
+// app/views/home/index.js
 
-module.exports = BaseView.extend({
-  className: 'home_index_view',
+if (typeof define !== 'function') {
+  var define = require('amdefine')(module);
+}
 
-  events: {
-    'click p': 'handleClick',
-  },
+define(function(require) {
 
-  handleClick: function() {…}
+  var BaseView = require('../base');
+
+  var exports = BaseView.extend({
+    className: 'home_index_view'
+  });
+  exports.id = 'home/index';
+
+  return exports;
+
 });
-module.exports.id = 'HomeIndexView';
 ```
 
 You can add `className`, `tagName`, `events`, and all of the other `Backbone.View` properties you know and love.
@@ -208,17 +242,28 @@ On the client, `view.render()` is called, which updates the view's DOM element w
 A common need is to run some initialization code that touches the DOM after render, for things like jQuery sliders, special event handling, etc. Rather than overriding the `render()` method, use `postRender()`. The `postRender()` method is executed for every view once after rending, including after initial pageload.
 
 ```js
-// app/views/home_index_view.js
-var BaseView = require('./base_view');
+// app/views/home/index.js
 
-module.exports = BaseView.extend({
-  className: 'home_index_view',
+if (typeof define !== 'function') {
+  var define = require('amdefine')(module);
+}
 
-  postRender: function() {
-    this.$('.slider').slider();
-  }
+define(function(require) {
+
+  var BaseView = require('../base');
+
+  var exports = BaseView.extend({
+    className: 'home_index_view',
+
+    postRender: function() {
+      this.$('.slider').slider();
+    }
+  });
+  exports.id = 'home/index';
+
+  return exports;
+
 });
-module.exports.id = 'HomeIndexView';
 ```
 
 If you have a need to customize the way your views generate HTML, there are a few specific methods you can override.

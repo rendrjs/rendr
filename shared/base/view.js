@@ -183,34 +183,12 @@ module.exports = BaseView = Backbone.View.extend({
     // Add model & collection meta data from options,
     // as well as any non-object option values.
     _.each(this.options, function(value, key) {
-      var id, modelOrCollectionId;
 
-      if (value != null) {
-        if (_.isFunction(value.constructor) && value.constructor.id != null) {
-          modelOrCollectionId = value.constructor.id;
-          if (modelUtils.isModel(value)) {
-            id = value.get(value.idAttribute);
-            if (id == null) {
-              // Bail if there's no ID; someone's using `this.model` in a
-              // non-standard way, and that's okay.
-              return;
-            }
-            // Cast the `id` attribute to string to ensure it's included in attributes.
-            // On the server, it can be i.e. an `ObjectId` from Mongoose.
-            value = id.toString();
-            fetchSummary[key] = {model: modelOrCollectionId, id: value};
-            return;
-          }
-          if (modelUtils.isCollection(value) && value.params != null) {
-            fetchSummary[key] = {collection: modelOrCollectionId, params: value.params};
-            return;
-          }
-        }
         if (!_.isObject(value) && !_.include(nonAttributeOptions, key)) {
           attributes["data-" + key] = value;
         }
-      }
     });
+    fetchSummary = BaseView.extractFetchSummary(modelUtils, this.options);
 
     if (!_.isEmpty(fetchSummary)) {
       attributes['data-fetch_summary'] = JSON.stringify(fetchSummary);
@@ -504,6 +482,39 @@ BaseView.attach = function(app, parentView, callback) {
     callback(_.compact(views));
   });
 };
+
+BaseView.extractFetchSummary = function (modelUtils, options) {
+    var fetchSummary = {};
+
+    _.each(options, function(value, key) {
+        var id, modelOrCollectionId;
+
+        if (value != null) {
+            if (_.isFunction(value.constructor) && value.constructor.id != null) {
+                modelOrCollectionId = value.constructor.id;
+                if (modelUtils.isModel(value)) {
+                    id = value.get(value.idAttribute);
+                    if (id == null) {
+                        // Bail if there's no ID; someone's using `this.model` in a
+                        // non-standard way, and that's okay.
+                        return;
+                    }
+                    // Cast the `id` attribute to string to ensure it's included in attributes.
+                    // On the server, it can be i.e. an `ObjectId` from Mongoose.
+                    value = id.toString();
+                    fetchSummary[key] = {model: modelOrCollectionId, id: value};
+                    return;
+                }
+                if (modelUtils.isCollection(value) && value.params != null) {
+                    fetchSummary[key] = {collection: modelOrCollectionId, params: value.params};
+                    return;
+                }
+            }
+        }
+    });
+
+    return fetchSummary;
+}
 
 /**
  * Noops on the server, because they do DOM stuff.

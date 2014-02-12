@@ -112,11 +112,11 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
       var collectionData, model, modelData, modelOptions;
 
       if (!options.readFromCache) {
-        this.fetchFromApi(spec, cb);
+        this.fetchFromApi(spec, options, cb);
       } else {
         modelData = null;
         modelOptions = {};
-
+        
         // First, see if we have stored the model or collection.
         if (spec.model != null) {
 
@@ -165,7 +165,7 @@ Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, c
     /**
      * Else, fetch anew.
      */
-    this.fetchFromApi(spec, cb);
+    this.fetchFromApi(spec, {}, cb);
   }
 }
 
@@ -173,7 +173,7 @@ Fetcher.prototype._retrieveModel = function(spec, callback) {
   var fetcher = this;
 
   // Attempt to fetch from the modelStore based on the idAttribute
-  this.modelUtils.modelIdAttribute(spec.model, function(idAttribute) {
+  this.modelUtils.modelIdAttribute(spec.model, function(err, idAttribute) {
     var modelData = fetcher.modelStore.get(spec.model, spec.params[idAttribute]);
     if (modelData)
       return callback(null, modelData);
@@ -213,10 +213,11 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
   return false;
 };
 
-Fetcher.prototype.fetchFromApi = function(spec, callback) {
+Fetcher.prototype.fetchFromApi = function(spec, options, callback) {
   var model = this.getModelOrCollectionForSpec(spec),
       fetcher = this;
   model.fetch({
+    headers: options.headers || {},
     data: spec.params,
     success: function(model, body) {
       callback(null, model);

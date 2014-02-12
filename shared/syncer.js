@@ -59,7 +59,7 @@ function clientSync(method, model, options) {
 
 function serverSync(method, model, options) {
   var api, data, urlParts, verb, req;
-
+  
   data = _.clone(options.data);
   data = addApiParams(method, model, data);
   options.url = this.getUrl(options.url, false, data);
@@ -71,6 +71,7 @@ function serverSync(method, model, options) {
     method: verb,
     path: urlParts[0],
     query: qs.parse(urlParts[1]) || {},
+    headers: options.headers || {},
     api: _.result(this, 'api'),
     body: {}
   };

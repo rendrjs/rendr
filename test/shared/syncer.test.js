@@ -1,11 +1,148 @@
 var _ = require('underscore'),
     Backbone = require('backbone'),
-    should = require('chai').should(),
+    chai = require('chai'),
+    sinon = require('sinon'),
+    sinonChai = require('sinon-chai'),
+    should = chai.should(),
     syncer = require('../../shared/syncer'),
     BaseModel = require('../../shared/base/model'),
     App = require('../../shared/app');
 
+chai.use(sinonChai);
+
 describe('syncer', function() {
+
+  describe('sync', function () {
+    var model, options, app;
+
+    beforeEach(function () {
+      app = new App();
+
+      model = new BaseModel({ id: 0 }, { app: app });
+      model.urlRoot = '/listings';
+
+      options = { url: model.url() };
+    });
+
+    describe('serverSync', function () {
+      var request;
+
+      beforeEach(function () {
+        request = sinon.stub();
+        app.req = { dataAdapter: { request: request } };
+
+        model.api = 'foo'
+      });
+
+      it('should send a GET request with the configured dataAdapter', function () {
+        var expectedRequestOptions = {
+          method: 'GET',
+          path: '/listings/0',
+          query: {},
+          api: 'foo',
+          body: {}
+        };
+
+        syncer.serverSync.call(model, 'read', model, options);
+
+        request.should.have.been.calledOnce;
+        request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+      });
+
+      it('should send the correct payload on PUT or POST requests', function () {
+        var expectedRequestOptions = {
+          method: 'PUT',
+          path: '/listings/0',
+          query: {},
+          api: 'foo',
+          body: { id: 0, foo: 'bar', bar: 'foo' }
+        };
+
+        model.set('foo', 'bar');
+        model.set('bar', 'foo');
+
+        syncer.serverSync.call(model, 'update', model, options);
+
+        request.should.have.been.calledOnce;
+        request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+      });
+    });
+
+    describe('clientSync', function () {
+      var backboneSync, syncErrorHandler;
+
+      beforeEach(function () {
+        backboneSync = sinon.stub(Backbone, 'sync');
+        syncErrorHandler = sinon.spy();
+      });
+
+      afterEach(function () {
+        backboneSync.restore();
+      });
+
+      it('should call Backbone.sync', function () {
+        syncer.clientSync.call(model, 'read', model, options);
+
+        backboneSync.should.have.been.calledOnce;
+        backboneSync.should.have.been.calledWithExactly('read', model, options);
+      });
+
+      it('should get the prefixed API url', function () {
+        syncer.clientSync.call(model, 'read', model, options);
+        backboneSync.should.have.been.calledWithExactly('read', model, { url: '/api/-' + model.url() });
+      });
+
+      it('should wrap the error handler', function () {
+        options.error = syncErrorHandler;
+
+        syncer.clientSync.call(model, 'read', model, options);
+
+        syncErrorHandler.should.be.not.equal(options.error);
+        options.error.should.be.a('function');
+        options.error.should.have.length(1);
+      });
+
+      describe('wrappedErrorHandler', function () {
+        var fakeXhr;
+
+        beforeEach(function () {
+          fakeXhr = {
+            responseText: '{"foo": "bar"}',
+            status: 418,
+            getResponseHeader: sinon.stub()
+          };
+          options.error = syncErrorHandler;
+          backboneSync.yieldsTo('error', fakeXhr);
+        });
+
+        it('should call the original error handler with status and body', function () {
+          var expectedResponse = {
+            body: fakeXhr.responseText,
+            status: fakeXhr.status
+          };
+
+          syncer.clientSync.call(model, 'read', model, options);
+
+          syncErrorHandler.should.have.been.calledOnce;
+          syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+        });
+
+        it('should parse the payload if content-type is "application/json"', function () {
+          var expectedResponse = {
+            body: JSON.parse(fakeXhr.responseText),
+            status: fakeXhr.status
+          };
+
+          fakeXhr.getResponseHeader.withArgs('content-type').returns('application/json');
+
+          syncer.clientSync.call(model, 'read', model, options);
+
+          syncErrorHandler.should.have.been.calledOnce;
+          syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+        });
+      });
+    });
+  });
 
   describe('interpolateParams', function() {
     beforeEach(function() {

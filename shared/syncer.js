@@ -30,12 +30,8 @@ if (isServer) {
 var syncer = module.exports;
 
 function clientSync(method, model, options) {
-  var data, error;
-  data = _.clone(options.data);
-  options.url = this.getUrl(options.url, true, data);
-  data = addApiParams(method, model, data);
-  options.data = data;
-  options.emulateJSON = true;
+  var error;
+  options.url = this.getUrl(options.url, true);
   error = options.error;
   if (error) {
     options.error = function(xhr) {
@@ -58,11 +54,9 @@ function clientSync(method, model, options) {
 }
 
 function serverSync(method, model, options) {
-  var api, data, urlParts, verb, req;
+  var api, urlParts, verb, req;
 
-  data = _.clone(options.data);
-  data = addApiParams(method, model, data);
-  options.url = this.getUrl(options.url, false, data);
+  options.url = this.getUrl(options.url, false);
   verb = methodMap[method];
   urlParts = options.url.split('?');
   req = this.app.req;
@@ -75,14 +69,8 @@ function serverSync(method, model, options) {
     body: {}
   };
 
-  /**
-   * Put the data as form data if POST or PUT,
-   * otherwise query string.
-   */
   if (verb === 'POST' || verb === 'PUT') {
-    api.body = data;
-  } else {
-    _.extend(api.query, data);
+    api.body = model.toJSON();
   }
 
   req.dataAdapter.request(req, api, function(err, response, body) {
@@ -107,22 +95,8 @@ function serverSync(method, model, options) {
   });
 }
 
-function addApiParams(method, model, params) {
-  params = params || {};
-  var ret = _.clone(params);
-
-  /**
-   * So, by default Backbone sends all of the model's
-   * attributes if we don't pass any in explicitly.
-   * This gets screwed up because we append the locale
-   * and currency, so let's replicate that behavior.
-   */
-  if (model && _.isEqual(params, {}) && (method === 'create' || method === 'update')) {
-    _.extend(ret, model.toJSON());
-  }
-  return ret;
-}
-
+syncer.clientSync = clientSync;
+syncer.serverSync = serverSync;
 syncer.sync = function sync() {
   var syncMethod = isServer ? serverSync : clientSync;
   return syncMethod.apply(this, arguments);

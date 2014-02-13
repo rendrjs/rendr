@@ -30,6 +30,7 @@ describe('ViewEngine', function() {
 
   afterEach(function() {
     BaseView.getView.restore();
+    viewEngine.clearCachedLayouts();
   });
 
   it("should lookup the layout template via the app's templateAdapter", function(done) {
@@ -44,6 +45,18 @@ describe('ViewEngine', function() {
       html.should.equal('<body>contents</body>');
       done();
     });
+  });
+
+  it('should pass through the error object', function (done) {
+    var error = new Error('some error');
+
+    app.templateAdapter.getLayout.yields(error);
+
+    viewEngine.render('name', {app: app}, function (err) {
+      err.should.be.an.instanceof(Error);
+      err.should.have.property('message', 'some error');
+      done();
+    })
   });
 
   describe('getBootstrappedData', function () {

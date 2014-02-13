@@ -86,7 +86,7 @@ describe('syncer', function() {
         backboneSync.should.have.been.calledOnce;
         // Don't need to verify the options because they will be modified.
         // Test for the modification is lower.
-        backboneSync.should.have.been.calledWith('read', model, options);
+        backboneSync.should.have.been.calledWith('read', model);
       });
 
       it('should get the prefixed API url', function () {

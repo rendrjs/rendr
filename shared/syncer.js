@@ -29,9 +29,9 @@ if (isServer) {
 
 var syncer = module.exports;
 
-function clientSync(method, model, opts) {
+function clientSync(method, model, options) {
   var error;
-  var options = _.clone(opts);
+  options = _.clone(options);
   options.url = this.getUrl(options.url, true);
   error = options.error;
   if (error) {
@@ -54,10 +54,10 @@ function clientSync(method, model, opts) {
   return Backbone.sync(method, model, options);
 }
 
-function serverSync(method, model, opts) {
+function serverSync(method, model, options) {
   var api, urlParts, verb, req;
 
-  var options = _.clone(opts);
+  options = _.clone(options);
   options.url = this.getUrl(options.url, false);
   verb = methodMap[method];
   urlParts = options.url.split('?');

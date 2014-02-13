@@ -59,6 +59,15 @@ describe('ViewEngine', function() {
     })
   });
 
+  it('should cache the layout template functions', function (done) {
+    viewEngine.render('name', {app: app}, function () {
+      viewEngine.render('name', {app: app}, function () {
+        app.templateAdapter.getLayout.should.have.been.calledOnce;
+        done();
+      });
+    });
+  });
+
   describe('getBootstrappedData', function () {
     var Model, Collection;
 

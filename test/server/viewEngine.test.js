@@ -1,7 +1,10 @@
 var should = require('chai').should(),
     sinon = require('sinon'),
     ViewEngine = require('../../server/viewEngine'),
-    BaseView = require('../../shared/base/view');
+    BaseView = require('../../shared/base/view'),
+    BaseModel = require('../../shared/base/model'),
+    BaseCollection = require('../../shared/base/collection'),
+    App = require('../../shared/app');
 
 describe('ViewEngine', function() {
   var app, viewEngine;
@@ -21,13 +24,8 @@ describe('ViewEngine', function() {
     }
 
     sinon.stub(BaseView, 'getView').returns(View);
-    app = {
-      templateAdapter: {
-        getLayout: sinon.stub().yields(null, layoutTemplate)
-      },
-      toJSON: sinon.stub(),
-      options: {}
-    };
+    app = new App();
+    sinon.stub(app.templateAdapter, 'getLayout').yields(null, layoutTemplate);
   });
 
   afterEach(function() {
@@ -45,6 +43,47 @@ describe('ViewEngine', function() {
     viewEngine.render('name', {app: app}, function (err, html) {
       html.should.equal('<body>contents</body>');
       done();
+    });
+  });
+
+  describe('getBootstrappedData', function () {
+    var Model, Collection;
+
+    before(function () {
+      Model = BaseModel.extend({});
+      Model.id = 'Model';
+      Collection = BaseCollection.extend({model: Model});
+      Collection.id = 'Collection';
+
+    });
+
+
+    it('should create bootstrap data from models and collection', function () {
+      var locals = {
+          foo: new  Model({ id: 321, foo: 'bar' }, { app: app }),
+          bar: new Collection([ new Model({ id: 123, foo: 'bar' }, { app: app} ) ], { app: app })
+        },
+        expectedData = {
+          foo: {
+            data: { foo: 'bar', id: 321 },
+            summary: { model: 'model', id: 321 }
+          },
+          bar: {
+            data: [ { foo: 'bar', id: 123 } ],
+            summary: { collection: 'collection', ids: [ 123 ], meta: {}, params: {} }
+          }
+        },
+        data;
+
+      data = viewEngine.getBootstrappedData(locals, app);
+      data.should.deep.equal(expectedData);
+    });
+
+    it('should ignore properties which aren’t a model or collection', function () {
+      var locals = { foo: true, bar: [ 1, 2, 3, 4 ] },
+        data = viewEngine.getBootstrappedData(locals, app);
+
+      data.should.deep.equal({});
     });
   });
 });

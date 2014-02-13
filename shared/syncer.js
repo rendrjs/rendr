@@ -59,7 +59,7 @@ function clientSync(method, model, options) {
 
 function serverSync(method, model, options) {
   var api, data, urlParts, verb, req;
-  
+
   data = _.clone(options.data);
   data = addApiParams(method, model, data);
   options.url = this.getUrl(options.url, false, data);

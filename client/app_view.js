@@ -1,34 +1,38 @@
 var _ = require('underscore'),
-    Backbone = require('backbone'),
-    BaseView = require('../shared/base/view'),
     $ = (typeof window !== 'undefined' && window.$) || require('jquery');
 
-Backbone.$ = $;
+function AppView(options) {
 
-module.exports = BaseView.extend({
-  el: 'body',
+  this.options = options || {};
 
-  initialize: function() {
-    BaseView.prototype.initialize.apply(this, arguments);
+  _.defaults(this.options, {
+    el: 'body',
+    contentEl: '#content'
+  });
 
-    _.defaults(this.options, {
-      contentEl: '#content'
-    });
+  if( options.app != null ) {
+    this.app = this.options.app;
+  }
+  else {
+    throw new Error('options.app expected when creating a new AppView');
+  }
 
-    /**
-     * Grab the element that contains the main view.
-     */
-    this.$content = $(this.options.contentEl);
-    this._bindInterceptClick();
-  },
+  this.postInitialize();
+
+  this.$content = $(this.options.contentEl);
+  this.$el = $(this.options.el);
+  this._bindInterceptClick();
+}
+
+_.extend(AppView.prototype, {
+  postInitialize: function noop() {},
 
   hasPushState: typeof window !== "undefined" && window.history.pushState != null,
 
   render: function() {},
 
   setCurrentView: function(view) {
-    this.$content.html(view.el);
-    view.render();
+    view.renderInside(this.$content);
   },
 
   _bindInterceptClick: function() {
@@ -60,3 +64,5 @@ module.exports = BaseView.extend({
   }
 
 });
+
+module.exports = AppView;

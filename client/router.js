@@ -8,7 +8,6 @@ var requireAMD = require;
 var _ = require('underscore'),
     Backbone = require('backbone'),
     BaseRouter = require('../shared/base/router'),
-    BaseView = require('../shared/base/view'),
     $ = (typeof window !== 'undefined' && window.$) || require('jquery'),
     extractParamNamesRe = /:(\w+)/g,
     plusRe = /\+/g,
@@ -109,7 +108,7 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
 
     if (firstRender) {
       firstRender = false;
-      BaseView.attach(router.app, null, function(views) {
+      router.app.viewAdapter.attach(router.app, null, function(views) {
         router.currentView = router.getMainView(views);
         router.trigger('action:end', route, true);
       });
@@ -150,9 +149,9 @@ ClientRouter.prototype.getHandler = function(action, pattern, route) {
  * if the initial render is more complicated.
  */
 ClientRouter.prototype.getMainView = function(views) {
-  var $content = this.appView.$content;
+  var contentNode = this.appView.$content.get(0);
   return _.find(views, function(view) {
-    return view.$el.parent().is($content);
+    return _.result(view, 'el').parentNode === contentNode;
   });
 };
 
@@ -288,7 +287,7 @@ ClientRouter.prototype.trackAction = function() {
 };
 
 ClientRouter.prototype.getView = function(key, entryPath, callback) {
-  var View = BaseView.getView(key, entryPath, function(View) {
+  var View = this.app.viewAdapter.getView(key, entryPath, function(View) {
     // TODO: Make it function (err, View)
     if (!_.isFunction(View)) {
       throw new Error("View '" + key + "' not found.");

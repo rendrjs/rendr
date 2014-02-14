@@ -6,6 +6,7 @@
 var Backbone = require('backbone'),
     Fetcher = require('./fetcher'),
     ModelUtils = require('./modelUtils'),
+    ViewAdapter = require('./viewAdapter'),
     isServer = (typeof window === 'undefined'),
     ClientRouter;
 
@@ -51,6 +52,11 @@ module.exports = Backbone.Model.extend({
     this.templateAdapter = require(this.get('templateAdapter'))({entryPath: entryPath});
 
     /**
+     * Initialize the `viewAdapter`, which is used client and server.
+     */
+    this.viewAdapter = this.options.viewAdapter || new ViewAdapter();
+
+    /**
      * Instantiate the `Fetcher`, which is used on client and server.
      */
     this.fetcher = new Fetcher({
@@ -74,6 +80,13 @@ module.exports = Backbone.Model.extend({
      * behavior without having to call i.e. `BaseApp.prototype.initialize.apply(this, arguments)`.
      */
     this.postInitialize();
+  },
+
+  /**
+   * Proxy getView to viewAdapter
+   */
+  getView: function() {
+    return this.viewAdapter.getView.apply(this.viewAdapter,arguments)
   },
 
   postInitialize: noop,

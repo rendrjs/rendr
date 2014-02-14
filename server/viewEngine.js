@@ -14,17 +14,19 @@ function ViewEngine(options) {
 }
 
 ViewEngine.prototype.render = function render(viewPath, data, callback) {
-  var app, layoutData;
+  var app;
 
   data.locals = data.locals || {};
   app = data.app;
-  layoutData = _.extend({}, data, {
-    body: this.getViewHtml(viewPath, data.locals, app),
-    appData: app.toJSON(),
-    bootstrappedData: this.getBootstrappedData(data.locals, app),
-    _app: app
-  });
-  this.renderWithLayout(layoutData, app, callback);
+  this.getViewHtml(viewPath, data.locals, app, function(body) {
+    var layoutData = _.extend({}, data, {
+      body: body,
+      appData: app.toJSON(),
+      bootstrappedData: this.getBootstrappedData(data.locals, app),
+      _app: app
+    });
+    this.renderWithLayout(layoutData, app, callback);
+  }.bind(this));
 };
 
 /**
@@ -54,9 +56,8 @@ ViewEngine.prototype.getLayoutTemplate = function getLayoutTemplate(app, callbac
   });
 };
 
-ViewEngine.prototype.getViewHtml = function getViewHtml(viewPath, locals, app) {
+ViewEngine.prototype.getViewHtml = function getViewHtml(viewPath, locals, app, callback) {
   var basePath = path.join('app', 'views'),
-      BaseView = require('../shared/base/view'),
       name,
       View,
       view;
@@ -66,9 +67,10 @@ ViewEngine.prototype.getViewHtml = function getViewHtml(viewPath, locals, app) {
   // Pass in the app.
   locals.app = app;
   name = viewPath.substr(viewPath.indexOf(basePath) + basePath.length + 1);
-  View = BaseView.getView(name, app.options.entryPath);
+  View = app.viewAdapter.getView(name, app.options.entryPath);
   view = new View(locals);
-  return view.getHtml();
+
+  view.getHtml(callback);
 };
 
 ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, app) {

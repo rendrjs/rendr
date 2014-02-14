@@ -84,7 +84,9 @@ describe('syncer', function() {
         syncer.clientSync.call(model, 'read', model, options);
 
         backboneSync.should.have.been.calledOnce;
-        backboneSync.should.have.been.calledWithExactly('read', model, options);
+        // Don't need to verify the options because they will be modified.
+        // Test for the modification is lower.
+        backboneSync.should.have.been.calledWith('read', model);
       });
 
       it('should get the prefixed API url', function () {
@@ -97,9 +99,10 @@ describe('syncer', function() {
 
         syncer.clientSync.call(model, 'read', model, options);
 
-        syncErrorHandler.should.be.not.equal(options.error);
-        options.error.should.be.a('function');
-        options.error.should.have.length(1);
+        var error = backboneSync.lastCall.args[2].error;
+        syncErrorHandler.should.be.not.equal(error);
+        error.should.be.a('function');
+        error.should.have.length(1);
       });
 
       describe('wrappedErrorHandler', function () {

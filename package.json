@@ -1,6 +1,6 @@
 {
   "name": "rendr",
-  "version": "0.5.0-rc1",
+  "version": "0.5.0-rc2",
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {

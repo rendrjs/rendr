@@ -1,7 +1,9 @@
 # 0.5.0
 ## 2013-12-20
+* Fix serverSide redirectTo with rootPath != default.
 * [breaking] Removed use of `options.emulateJSON` and `options.data` in `clientSync`
 * [breaking] Removed `addApiParams` from `syncer`
+* Many more tests.
 * [breaking] Moved `AppView` to `client/` from `shared/`.
 * [breaking] Added support for AMD (RequireJS), which resulted in many methods
   becoming asynchronous instead of synchronous (`Fetcher`, `BaseView`,

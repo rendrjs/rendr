@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "express": "~3",
-    "underscore": "~1.4.4",
+    "underscore": "~1.5.2",
     "async": "~0.2.9",
     "rendr-handlebars": "airbnb/rendr-handlebars",
     "rendr": "airbnb/rendr",

@@ -27,18 +27,20 @@ function defaultOptions() {
 
 
 function Server(options) {
+  this.options = options || {};
+
   if (typeof rendr !== 'undefined' && rendr.entryPath) {
-    console.warn("Setting rendr.entryPath is now deprecated. Please pass in \
-                 entryPath when initializing the rendr server.");
-    options.entryPath = rendr.entryPath;
+    console.warn("Setting rendr.entryPath is now deprecated. Please pass in \nentryPath when initializing the rendr server.");
+    this.options.entryPath = rendr.entryPath;
   }
 
-  this.options = options || {};
   _.defaults(this.options, defaultOptions());
 
   this.expressApp = express();
 
   this.dataAdapter = this.options.dataAdapter || new RestAdapter(this.options.dataAdapterConfig);
+
+  this.initApp = middleware.initApp;
 
   this.viewEngine = this.options.viewEngine || new ViewEngine();
 
@@ -105,7 +107,7 @@ Server.prototype.configure = function(fn) {
   /**
    * Initialize the Rendr app, accessible at `req.rendrApp`.
    */
-  this.expressApp.use(middleware.initApp(this.options.appData, {
+  this.expressApp.use(this.initApp(this.options.appData, {
     apiPath: this.options.apiPath,
     entryPath: this.options.entryPath,
     modelUtils: this.options.modelUtils

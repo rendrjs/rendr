@@ -18,7 +18,16 @@ BaseCollection = Super.extend({
    */
   defaultParams: null,
 
-  initialize: function(models, options) {
+  constructor: function(models, options) {
+    /**
+     * Copied over from the Backbone.Collection constructor
+     */
+    options || (options = {});
+    if (options.url) this.url = options.url;
+    if (options.model) this.model = options.model;
+    if (options.comparator !== void 0) this.comparator = options.comparator;
+    this._reset();
+
     /**
      * Capture the options as instance variable.
      */
@@ -45,6 +54,9 @@ BaseCollection = Super.extend({
       _.extend(this.meta, this.options.meta);
       delete this.options.meta;
     }
+
+    this.initialize.apply(this, arguments);
+    if (models) this.reset(models, _.extend({silent: true}, options));
   },
 
   /**

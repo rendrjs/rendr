@@ -7,9 +7,27 @@ if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
 }
 
+var modelOptions = ['url', 'urlRoot', 'collection'];
+
 var BaseModel = Backbone.Model.extend({
 
-  initialize: function(models, options) {
+  constructor: function(attributes, options) {
+    /**
+     * Copied over from the Backbone.Model constructor
+     */
+    var defaults;
+    var attrs = attributes || {};
+    options || (options = {});
+    this.cid = _.uniqueId('c');
+    this.attributes = {};
+    _.extend(this, _.pick(options, modelOptions));
+    if (options.parse) attrs = this.parse(attrs, options) || {};
+    if (defaults = _.result(this, 'defaults')) {
+      attrs = _.defaults({}, attrs, defaults);
+    }
+    this.set(attrs, options);
+    this.changed = {};
+
     // Capture the options as instance variable.
     this.options = options || {};
 
@@ -21,6 +39,8 @@ var BaseModel = Backbone.Model.extend({
     }
 
     this.on('change', this.store, this);
+
+    this.initialize.apply(this, arguments);
   },
 
   /**

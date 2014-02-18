@@ -4,6 +4,7 @@
  */
 
 var Backbone = require('backbone'),
+    _ = require('underscore'),
     Fetcher = require('./fetcher'),
     ModelUtils = require('./modelUtils'),
     isServer = (typeof window === 'undefined'),
@@ -16,6 +17,8 @@ if (!isServer) {
 
 function noop() {}
 
+var modelOptions = ['url', 'urlRoot', 'collection'];
+
 module.exports = Backbone.Model.extend({
 
   defaults: {
@@ -26,7 +29,23 @@ module.exports = Backbone.Model.extend({
   /**
    * @shared
    */
-  initialize: function(attributes, options) {
+  constructor: function(attributes, options) {
+    /**
+     * Copied over from the Backbone.Model constructor
+     */
+    var defaults;
+    var attrs = attributes || {};
+    options || (options = {});
+    this.cid = _.uniqueId('c');
+    this.attributes = {};
+    _.extend(this, _.pick(options, modelOptions));
+    if (options.parse) attrs = this.parse(attrs, options) || {};
+    if (defaults = _.result(this, 'defaults')) {
+      attrs = _.defaults({}, attrs, defaults);
+    }
+    this.set(attrs, options);
+    this.changed = {};
+
     this.options = options || {};
 
     var entryPath = this.options.entryPath || '';
@@ -69,14 +88,22 @@ module.exports = Backbone.Model.extend({
       });
     }
 
+    this.initialize.apply(this, arguments);
+  },
+
+  /**
+   * @shared
+   */
+  initialize: function(attributes, options) {
     /**
      * Call `postInitialize()`, to make it easy for an application to easily subclass and add custom
      * behavior without having to call i.e. `BaseApp.prototype.initialize.apply(this, arguments)`.
      */
-    this.postInitialize();
+    if (this.postInitialize) {
+      console.warn('`postInitialize` is deprecated, please use `initialize`');
+      this.postInitialize();
+    }
   },
-
-  postInitialize: noop,
 
   /**
    * @shared

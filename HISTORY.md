@@ -17,6 +17,7 @@
   singleton.
 * [breaking] Removed unused `ServerRouter#stashError()` method.
 * [breaking] `modelUtils` object is now `ModelUtils` class.
+* [deprecation] `postInitialize` is not needed anymore. Use `initialize` like in any Backbone app. We're now overriding the constructor instead of `initialize`.
 * Added `DataAdapter` base class and fleshed-out `RestAdapter`, which is the
   default `DataAdapter` used by a Rendr server.
 * More flexibility with placement Rendr app files within an Express project.

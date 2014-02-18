@@ -18,14 +18,23 @@ if (!isServer) {
 function noop() {}
 
 module.exports = BaseView = Backbone.View.extend({
-  initialize: function(options) {
+  constructor: function(options) {
     var obj;
+
+    this.options = options || {};
 
     this.parseOptions(options);
 
     this.name = this.name || this.app.modelUtils.underscorize(this.constructor.id || this.constructor.name);
-    this.postInitialize();
-    if ((obj = this.model || this.collection) && this.renderOnRefresh) {
+
+    Backbone.View.apply(this, arguments);
+
+    if (this.postInitialize) {
+      console.warn('`postInitialize` is deprecated, please use `initialize`');
+      this.postInitialize();
+    }
+
+    if ((obj = this.options.model || this.options.collection) && this.renderOnRefresh) {
       obj.on('refresh', this.render, this);
     }
 
@@ -37,8 +46,6 @@ module.exports = BaseView = Backbone.View.extend({
    * emits a 'refresh' event. Used with 'model|collection.checkFresh()'.
    */
   renderOnRefresh: false,
-
-  postInitialize: noop,
 
   parseOptions: function(options) {
     /**

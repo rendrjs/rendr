@@ -9,16 +9,18 @@ if (!isServer) {
 
 var BaseModel = Backbone.Model.extend({
 
-  initialize: function(models, options) {
+  constructor: function(models, options) {
     // Capture the options as instance variable.
     this.options = options || {};
 
     // Store a reference to the app instance.
     this.app = this.options.app;
 
-    if (!this.app && this.collection) {
-      this.app = this.collection.app;
+    if (!this.app && this.options.collection) {
+      this.app = this.options.collection.app;
     }
+
+    Backbone.Model.apply(this, arguments);
 
     this.on('change', this.store, this);
   },

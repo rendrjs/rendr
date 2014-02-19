@@ -280,7 +280,7 @@ describe('modelUtils', function () {
     });
   });
 
-  describe('modelName', function () {
+  describe('resourceName', function () {
     var ModelConstructor;
 
     beforeEach(function () {
@@ -289,11 +289,11 @@ describe('modelUtils', function () {
 
     it('should return the underscorized model id if it is set', function () {
       ModelConstructor.id = 'modelId';
-      modelUtils.modelName(ModelConstructor).should.equal('model_id');
+      modelUtils.resourceName(ModelConstructor).should.equal('model_id');
     });
 
     it('should return the underscorized constructor name if the id is not set', function () {
-      modelUtils.modelName(ModelConstructor).should.equal('model_name');
+      modelUtils.resourceName(ModelConstructor).should.equal('model_name');
     });
   });
 

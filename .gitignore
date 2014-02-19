@@ -8,8 +8,6 @@ examples/**/compiledTemplates.js
 examples/*/public/mergedAssets.js
 examples/*/public/testBundle.js
 examples/*/public/styles.css
-examples/*/public/js/rendr*
-examples/*/public/js/libs.js
-examples/*/public/js/app
+examples/*/public/js/*
 .DS_Store
 runtime.json

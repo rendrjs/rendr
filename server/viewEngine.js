@@ -84,3 +84,7 @@ ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, 
   });
   return bootstrappedData;
 };
+
+ViewEngine.prototype.clearCachedLayouts = function () {
+  layoutTemplates = {};
+};

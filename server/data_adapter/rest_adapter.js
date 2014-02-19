@@ -2,7 +2,7 @@ var DataAdapter = require('./index'),
     utils = require('../utils'),
     _ = require('underscore'),
     url = require('url'),
-    request = require('request'),
+    request,
     debug = require('debug')('rendr:RestAdapter'),
     util = require('util');
 
@@ -17,6 +17,8 @@ function RestAdapter(options) {
   _.defaults(this.options, {
     userAgent: 'Rendr RestAdapter; Node.js'
   });
+
+  request = this.options.request || require('request');
 }
 
 util.inherits(RestAdapter, DataAdapter);
@@ -112,7 +114,7 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
   }
 
   // Can specify a particular API to use, falling back to default.
-  apiHost = this.options[api.api] || this.options['default'] || this.options || {};
+  apiHost = this.options[api.api] || this.options['default'] || this.options;
 
   urlOpts = _.defaults(
     _.pick(api,     ['protocol', 'port', 'query']),

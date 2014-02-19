@@ -3,8 +3,6 @@
  * we need to pretend that this code is pure commonjs
  * means no AMD-style require calls.
  */
-var requireAMD = require;
-
 var BaseModel = require("./base/model"),
     BaseCollection = require("./base/collection");
 
@@ -64,25 +62,33 @@ ModelUtils.prototype.getCollectionConstructor = function(path, callback) {
   return this.fetchConstructor('collection', path, callback);
 };
 
+ModelUtils.prototype.getFullPath = function(type, path) {
+  return this.entryPath + typePath[type] + path;
+};
+
 ModelUtils.prototype.fetchConstructor = function(type, path, callback) {
   path = this.underscorize(path);
 
-  var fullPath = this.entryPath + typePath[type] + path;
+  var fullPath = this.getFullPath(type, path);
 
   if (this._classMap[path]) {
     return (typeof callback == 'function') ? callback(this._classMap[path]) : this._classMap[path];
   } else if (typeof callback == 'function') {
     // Only used in AMD environment
     if (typeof define != 'undefined') {
-      requireAMD([fullPath], callback);
+      this._requireAMD([fullPath], callback);
     } else {
-      callback(require(fullPath));
+      callback(this._require(fullPath));
     }
     return;
   } else {
-    return require(fullPath);
+    return this._require(fullPath);
   }
 };
+
+ModelUtils.prototype._require = require;
+
+ModelUtils.prototype._requireAMD = require;
 
 ModelUtils.prototype.isModel = function(obj) {
   return obj instanceof BaseModel;

@@ -18,5 +18,5 @@ function DataAdapter(options) {
  * `callback`: Callback.
  */
 DataAdapter.prototype.request = function(req, api, options, callback) {
-  throw new Exception('Implement me!');
+  throw new Error('Implement me!');
 };

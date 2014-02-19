@@ -21,7 +21,7 @@ util.inherits(MyCollection, BaseCollection);
 
 function App() {}
 
-addClassMapping.add(modelUtils.modelOrCollectionName(MyModel), MyModel);
+addClassMapping.add(modelUtils.resourceName(MyModel), MyModel);
 
 describe('ModelStore', function() {
   beforeEach(function() {
@@ -62,7 +62,7 @@ describe('ModelStore', function() {
 
     model = new MyCustomModel(modelAttrs);
     this.store.set(model);
-    result = this.store.get(modelUtils.modelOrCollectionName(MyCustomModel), modelAttrs.login);
+    result = this.store.get(modelUtils.resourceName(MyCustomModel), modelAttrs.login);
     result.should.eql(modelAttrs);
   });
 
@@ -106,7 +106,7 @@ describe('ModelStore', function() {
     }
     util.inherits(MySecondModel, BaseModel);
 
-    addClassMapping.add(modelUtils.modelOrCollectionName(MySecondModel), MySecondModel);
+    addClassMapping.add(modelUtils.resourceName(MySecondModel), MySecondModel);
 
     it('should find a model on custom attributes', function(){
       var model, modelAttrs, result;

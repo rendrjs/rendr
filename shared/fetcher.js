@@ -227,7 +227,7 @@ Fetcher.prototype.fetchFromApi = function(spec, callback) {
       body = resp.body;
       resp.body = typeof body === 'string' ? body.slice(0, 150) : body;
       respOutput = JSON.stringify(resp);
-      err = new Error("ERROR fetching model '" + fetcher.modelUtils.modelOrCollectionName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
+      err = new Error("ERROR fetching model '" + fetcher.modelUtils.resourceName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
       err.status = resp.status;
       err.body = body;
       callback(err);
@@ -257,7 +257,7 @@ Fetcher.prototype.summarize = function(modelOrCollection) {
   if (this.modelUtils.isCollection(modelOrCollection)) {
     idAttribute = modelOrCollection.model.prototype.idAttribute;
     summary = {
-      collection: this.modelUtils.modelOrCollectionName(modelOrCollection.constructor),
+      collection: this.modelUtils.resourceName(modelOrCollection.constructor),
       ids: modelOrCollection.pluck(idAttribute),
       params: modelOrCollection.params,
       meta: modelOrCollection.meta
@@ -265,7 +265,7 @@ Fetcher.prototype.summarize = function(modelOrCollection) {
   } else if (this.modelUtils.isModel(modelOrCollection)) {
     idAttribute = modelOrCollection.idAttribute;
     summary = {
-      model: this.modelUtils.modelOrCollectionName(modelOrCollection.constructor),
+      model: this.modelUtils.resourceName(modelOrCollection.constructor),
       id: modelOrCollection.get(idAttribute)
     };
   }

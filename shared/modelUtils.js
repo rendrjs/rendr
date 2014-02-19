@@ -32,7 +32,7 @@ ModelUtils.prototype.getModel = function(path, attrs, options, callback, fallbac
     try {
       Model = this.getModelConstructor(path)
     } catch (e) {
-      if (e.code === 'MODULE_NOT_FOUND' && fallbackToBaseModel) {
+      if ((e.code === 'MODULE_NOT_FOUND' || e.match(/module '.*' not found/)) && fallbackToBaseModel) {
         Model = BaseModel;
       } else {
         throw e;
@@ -95,7 +95,7 @@ ModelUtils.prototype.isCollection = function(obj) {
 ModelUtils.prototype.getModelNameForCollectionName = function(collectionName) {
   var Collection;
   Collection = this.getCollectionConstructor(collectionName);
-  return this.modelOrCollectionName(Collection.prototype.model);
+  return this.resourceName(Collection.prototype.model);
 };
 
 ModelUtils.uppercaseRe = /([A-Z])/g;
@@ -129,7 +129,7 @@ ModelUtils.prototype.underscorize = function(name) {
  * -> ""
  * MyClass.id = "MyClass"
  */
-ModelUtils.prototype.modelOrCollectionName = function(modelOrCollectionClass) {
+ModelUtils.prototype.resourceName = function(modelOrCollectionClass) {
   return this.underscorize(modelOrCollectionClass.id || modelOrCollectionClass.name);
 };
 

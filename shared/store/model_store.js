@@ -14,41 +14,41 @@ ModelStore.prototype = Object.create(Super.prototype);
 ModelStore.prototype.constructor = ModelStore;
 
 ModelStore.prototype.set = function(model) {
-  var existingAttrs, id, key, modelOrCollectionName, newAttrs, constructor;
+  var existingAttrs, id, key, keyPrefix, newAttrs, constructor;
 
   id = model.get(model.idAttribute);
-  modelOrCollectionName = this.modelUtils.modelOrCollectionName(model.constructor);
-  if (!modelOrCollectionName && model.collection) {
-    modelOrCollectionName = this.modelUtils.modelOrCollectionName(model.collection.constructor);
+  keyPrefix = this.modelUtils.resourceName(model.constructor);
+  if (!keyPrefix && model.collection) {
+    keyPrefix = this.modelUtils.resourceName(model.collection.constructor);
   }
   /**
    * If the model is not named and not part of a named collection,
    * fall back to an empty string to preserve existing behavior.
    */
-  modelOrCollectionName = modelOrCollectionName || '';
-  key = this._getModelStoreKey(modelOrCollectionName, id);
+  keyPrefix = keyPrefix || '';
+  key = this._getModelStoreKey(keyPrefix, id);
 
   /**
    * We want to merge the model attrs with whatever is already
    * present in the store.
    */
-  existingAttrs = this.get(modelOrCollectionName, id) || {};
+  existingAttrs = this.get(keyPrefix, id) || {};
   newAttrs = _.extend({}, existingAttrs, model.toJSON());
   return Super.prototype.set.call(this, key, newAttrs, null);
 };
 
-ModelStore.prototype.get = function(modelOrCollectionName, id, returnModelInstance) {
+ModelStore.prototype.get = function(resourceName, id, returnModelInstance) {
   var key, modelData;
 
   if (returnModelInstance == null) {
     returnModelInstance = false;
   }
-  key = this._getModelStoreKey(modelOrCollectionName, id);
+  key = this._getModelStoreKey(resourceName, id);
 
   modelData = Super.prototype.get.call(this, key);
   if (modelData) {
     if (returnModelInstance) {
-      return this.modelUtils.getModel(modelOrCollectionName, modelData, {
+      return this.modelUtils.getModel(resourceName, modelData, {
         app: this.app
       }, null, true);
     } else {
@@ -57,9 +57,9 @@ ModelStore.prototype.get = function(modelOrCollectionName, id, returnModelInstan
   }
 };
 
-ModelStore.prototype.find = function(modelOrCollectionName, params) {
+ModelStore.prototype.find = function(resourceName, params) {
   var prefix, foundCachedObject, _this, data, foundCachedObjectKey;
-  prefix = this._formatKey(this._keyPrefix(modelOrCollectionName));
+  prefix = this._formatKey(this._keyPrefix(resourceName));
   _this = this;
   // find the cached object that has attributes which are a subset of the params
   foundCachedObject = _.find(this.cache, function(cacheObject, key) {
@@ -94,10 +94,10 @@ function isObjectSubset(potentialSubset, objectToTest) {
   });
 }
 
-ModelStore.prototype._keyPrefix = function(modelOrCollectionName) {
-  return this.modelUtils.underscorize(modelOrCollectionName);
+ModelStore.prototype._keyPrefix = function(resourceName) {
+  return this.modelUtils.underscorize(resourceName);
 }
 
-ModelStore.prototype._getModelStoreKey = function(modelOrCollectionName, id) {
-  return this._keyPrefix(modelOrCollectionName) + ":" + id;
+ModelStore.prototype._getModelStoreKey = function(resourceName, id) {
+  return this._keyPrefix(resourceName) + ":" + id;
 }

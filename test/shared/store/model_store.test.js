@@ -67,33 +67,15 @@ describe('ModelStore', function() {
       foo: 'bar',
       id: 1
     };
-    model = new MyModel(modelAttrs);
+    model = new MyModel(modelAttrs, {app: this.app});
     this.store.set(model);
     resultModel = this.store.get('my_model', 1, true);
     resultModel.should.be.an.instanceOf(BaseModel);
     resultModel.toJSON().should.eql(modelAttrs);
     resultModel.app.should.eql(this.app);
+    resultModel.should.be.equal(model);
   });
 
-  it("should merge model attrs when setting", function() {
-    var finalModelAttrs, firstModelAttrs, model, result, secondModelAttrs;
-
-    firstModelAttrs = {
-      foo: 'bar',
-      id: 1
-    };
-    secondModelAttrs = {
-      bam: 'baz',
-      id: 1
-    };
-    finalModelAttrs = _.extend({}, firstModelAttrs, secondModelAttrs);
-    model = new MyModel(firstModelAttrs);
-    this.store.set(model);
-    model = new MyModel(secondModelAttrs);
-    this.store.set(model);
-    result = this.store.get('my_model', 1);
-    result.should.eql(finalModelAttrs);
-  });
   describe('find', function(){
     function MySecondModel() {
       MySecondModel.super_.apply(this, arguments);

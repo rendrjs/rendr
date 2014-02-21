@@ -21,8 +21,6 @@ var BaseModel = Backbone.Model.extend({
     }
 
     Backbone.Model.apply(this, arguments);
-
-    this.on('change', this.store, this);
   },
 
   /**

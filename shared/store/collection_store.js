@@ -7,61 +7,48 @@ function CollectionStore() {
   Super.apply(this, arguments);
 }
 
-/**
- * Set up inheritance.
- */
-CollectionStore.prototype = Object.create(Super.prototype);
-CollectionStore.prototype.constructor = CollectionStore;
+_.extend(CollectionStore.prototype, Super.prototype, {
+  set: function(collection, params) {
+    var key = this._getStoreKeyForCollection(collection, params);
+    return Super.prototype.set.call(this, key, collection, null);
+  },
 
-CollectionStore.prototype.set = function(collection, params) {
-  var data, idAttribute, key;
-  params = params || collection.params;
-  key = this._getStoreKey(this.modelUtils.modelName(collection.constructor), params);
-  idAttribute = collection.model.prototype.idAttribute;
-  data = {
-    ids: collection.pluck(idAttribute),
-    meta: collection.meta,
-    params: collection.params
-  };
-  return Super.prototype.set.call(this, key, data, null);
-};
+  get: function(collectionName, params, callback) {
+    var self = this,
+      cachedCollection;
 
-/**
- * Returns an array of model ids.
- */
-CollectionStore.prototype.get = function(collectionName, params, callback) {
-  var _collectionStore = this;
-  /**
-   * Kind of jank-sauce. Always merge in the default
-   * params for the given collection.
-   */
-  if (typeof callback == 'function') {
-    this.modelUtils.getCollectionConstructor(collectionName, function(Collection) {
-      callback(get.call(_collectionStore, collectionName, params, Collection));
+    this.mergeParams(collectionName, params, function (mergedParams) {
+      var key = self._getStoreKey(collectionName, mergedParams);
+
+        cachedCollection = Super.prototype.get.call(self, key);
+
+      if (_.isFunction(callback)) {
+        callback(cachedCollection);
+      }
     });
-    return;
-  } else {
-    var Collection = this.modelUtils.getCollectionConstructor(collectionName);
-    return get.call(this, collectionName, params, Collection);
+
+    return cachedCollection;
+  },
+
+  mergeParams: function(collectionName, params, callback) {
+    this.modelUtils.getCollectionConstructor(collectionName, function(Collection) {
+      var mergedParams = _.extend({}, Collection.prototype.defaultParams, params);
+      callback(mergedParams);
+    });
+  },
+
+  _getStoreKeyForCollection: function(collection, params) {
+    var collectionName = this.modelUtils.modelName(collection.constructor);
+
+    params = params || collection.params;
+    return this._getStoreKey(collectionName, params);
+  },
+
+  _getStoreKey: function(collectionName, params) {
+    var underscored = this.modelUtils.underscorize(collectionName);
+    return underscored + ":" + JSON.stringify(sortParams(params));
   }
-
-  function get(collectionName, params, Collection) {
-    var key;
-    params = _.clone(params || {});
-    params = _.defaults(params, Collection.prototype.defaultParams);
-    key = this._getStoreKey(collectionName, params);
-    return Super.prototype.get.call(this, key);
-  }
-};
-
-CollectionStore.prototype._formatKey = function(key) {
-  return Super.prototype._formatKey.call(this, "_cs:" + key);
-};
-
-CollectionStore.prototype._getStoreKey = function(collectionName, params) {
-  var underscored = this.modelUtils.underscorize(collectionName);
-  return underscored + ":" + JSON.stringify(sortParams(params));
-}
+});
 
 function sortParams(params) {
   var sorted = {};

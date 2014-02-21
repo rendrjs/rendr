@@ -167,7 +167,7 @@ describe('BaseCollection', function() {
         storedModel.should.eql(modelAttrs);
       });
       storedCollection = this.app.fetcher.collectionStore.get(this.MyCollection.name, collection.params);
-      storedCollection.ids.should.eql(_.pluck(models, 'id'));
+      _.pluck(storedCollection.models, 'id').should.eql(_.pluck(models, 'id'));
       storedCollection.meta.should.eql(meta);
     });
   });

@@ -1,0 +1,437 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Rendr by rendrjs</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Rendr</h1>
+        <p>Render your Backbone.js apps on the client and the server, using Node.js.</p>
+
+        <p class="view"><a href="https://github.com/rendrjs/rendr">View the Project on GitHub <small>rendrjs/rendr</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/rendrjs/rendr/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/rendrjs/rendr/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/rendrjs/rendr">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><a href="http://travis-ci.org/#!/rendrjs/rendr/builds"><img src="https://secure.travis-ci.org/rendrjs/rendr.png" alt="travis-ci status"></a>
+<a href="https://david-dm.org/rendrjs/rendr"><img src="https://david-dm.org/rendrjs/rendr.png" alt="Dependency Status"></a></p>
+
+<p><img src="http://cl.ly/image/272q3f1u313b/Rendr-logotype.png" width="395" height="100"></p>
+
+<p>Rendr is a small library that allows you to run your <a href="http://backbonejs.org/">Backbone.js</a> apps seamlessly on both the client and the server. Allow your web server to serve fully-formed HTML pages to any deep link of your app, while preserving the snappy feel of a traditional Backbone.js client-side MVC app.</p>
+
+<h2>
+<a name="reporting-problems-and-getting-help" class="anchor" href="#reporting-problems-and-getting-help"><span class="octicon octicon-link"></span></a>Reporting problems and getting help</h2>
+
+<p>Please use the <a href="https://github.com/rendrjs/rendr/issues">issue tracker</a> to report bugs. For support with using
+rendr, try asking in the <a href="https://groups.google.com/forum/#!forum/rendrjs">Google group</a> or join #rendr on
+irc.freenode.org.</p>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>To see how to use Rendr to build a simple web app, check out the <a href="https://github.com/rendrjs/rendr/tree/master/examples">examples</a> directory for a number of different ways to set up a Rendr app.</p>
+
+<p>Check out the <a href="http://nerds.airbnb.com/weve-launched-our-first-nodejs-app-to-product">blog post</a> for a more thorough introduction to Rendr.</p>
+
+<h2>
+<a name="the-premise" class="anchor" href="#the-premise"><span class="octicon octicon-link"></span></a>The Premise</h2>
+
+<p>Our hypothesis is that there has to be a better way to build rich web apps today. In the last few years, we've seen more of the application moved to the client-side, with JavaScript representations of views, templates, and models. This can result in interactive, native-style apps, but it also poses challenges. SEO, performance, and maintainability become issues with splitting up your app into two distinct codebases, often in different languages.</p>
+
+<h2>
+<a name="the-goals" class="anchor" href="#the-goals"><span class="octicon octicon-link"></span></a>The Goals</h2>
+
+<p>Rendr is intended to be a building block along the way to this envisionsed future of web apps that can be run on either side of the wire according to the needs of your application.</p>
+
+<p>Some specific design goals:</p>
+
+<ul>
+<li>Write application logic agnostic to environment</li>
+<li>Minimize <code>if (server) {...} else {...}</code>
+</li>
+<li>Talk to RESTful API</li>
+<li>Library, not a framework</li>
+<li>Hide complexity in library</li>
+<li>No server-side DOM</li>
+<li>Simple Express middleware</li>
+</ul><h2>
+<a name="whats-included" class="anchor" href="#whats-included"><span class="octicon octicon-link"></span></a>What's Included</h2>
+
+<p>Rendr does not attempt to be a fully-fledged, batteries-included application framework. Instead, it follows Backbone's lead by imposing minimal structure, allowing the developer to use the library in the most appropriate way for their application.</p>
+
+<h2>
+<a name="base-classes" class="anchor" href="#base-classes"><span class="octicon octicon-link"></span></a>Base classes</h2>
+
+<h3>
+<a name="baseview" class="anchor" href="#baseview"><span class="octicon octicon-link"></span></a><code>BaseView</code>
+</h3>
+
+<p>Inherits from <code>Backbone.View</code>.</p>
+
+<h4>
+<a name="public-methods" class="anchor" href="#public-methods"><span class="octicon octicon-link"></span></a>Public methods</h4>
+
+<h4>
+<a name="viewinitialize" class="anchor" href="#viewinitialize"><span class="octicon octicon-link"></span></a><code>view.initialize()</code>
+</h4>
+
+<p><em>Environment: shared.</em></p>
+
+<p>This is where you put any initialization logic.</p>
+
+<h4>
+<a name="viewprerender" class="anchor" href="#viewprerender"><span class="octicon octicon-link"></span></a><code>view.preRender()</code>
+</h4>
+
+<p><em>Environment: shared.</em></p>
+
+<h4>
+<a name="viewrender" class="anchor" href="#viewrender"><span class="octicon octicon-link"></span></a><code>view.render()</code>
+</h4>
+
+<p><em>Environment: client.</em></p>
+
+<p>You should never have to override <code>view.render()</code> unless you're doing something really custom. Instead, you should be able to do anything you need using <code>view.postRender()</code>,</p>
+
+<h4>
+<a name="viewpostrender" class="anchor" href="#viewpostrender"><span class="octicon octicon-link"></span></a><code>view.postRender()</code>
+</h4>
+
+<p><em>Environment: client.</em></p>
+
+<p>Here is where you'd put any initialization code that needs to access the DOM. This is a good place for jQuery plugins, sliders, etc.</p>
+
+<h4>
+<a name="viewgettemplatedata" class="anchor" href="#viewgettemplatedata"><span class="octicon octicon-link"></span></a><code>view.getTemplateData()</code>
+</h4>
+
+<p><em>Environment: shared.</em></p>
+
+<p>The default implementation returns something reasonable: essentially <code>view.model.toJSON()</code> or <code>{models: view.collection.toJSON()}</code>. This method is easy to override in order to pass custom data to the template, or to decorate the model data.</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">MyView</span> <span class="o">=</span> <span class="nx">BaseView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">getTemplateData</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Get `super`.</span>
+    <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">BaseView</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getTemplateData</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">({},</span> <span class="nx">data</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">someOtherProperty</span><span class="o">:</span> <span class="s1">'something custom'</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<h4>
+<a name="methods-you-can-override-for-custom-view-behaviors" class="anchor" href="#methods-you-can-override-for-custom-view-behaviors"><span class="octicon octicon-link"></span></a>Methods you can override for custom view behaviors</h4>
+
+<h4>
+<a name="viewgettemplate" class="anchor" href="#viewgettemplate"><span class="octicon octicon-link"></span></a><code>view.getTemplate()</code>
+</h4>
+
+<p><em>Environment: shared.</em></p>
+
+<p>You should never need to touch this, unless you're heavily customizing the view. Return a function that gets executed with a single <code>data</code> object as an argument.</p>
+
+<h4>
+<a name="viewgettemplatename" class="anchor" href="#viewgettemplatename"><span class="octicon octicon-link"></span></a><code>view.getTemplateName()</code>
+</h4>
+
+<p><em>Environment: shared.</em></p>
+
+<p>You'll probably never touch this unless you're heavily customizing the view. This defaults to <code>view.constructor.id</code>. You can return a string to render a different template. This is used by the default implementation of <code>view.getTemplate()</code>.</p>
+
+<h4>
+<a name="viewgetinnerhtml" class="anchor" href="#viewgetinnerhtml"><span class="octicon octicon-link"></span></a><code>view.getInnerHtml()</code>
+</h4>
+
+<p><em>Environment: shared.</em></p>
+
+<h4>
+<a name="viewgethtml" class="anchor" href="#viewgethtml"><span class="octicon octicon-link"></span></a><code>view.getHtml()</code>
+</h4>
+
+<p><em>Environment: shared.</em></p>
+
+<h4>
+<a name="viewgetattributes" class="anchor" href="#viewgetattributes"><span class="octicon octicon-link"></span></a><code>view.getAttributes()</code>
+</h4>
+
+<p><em>Environment: shared.</em></p>
+
+<p>Gets HTML attributes for outer DOM element. Used by <code>view.getHtml()</code>.</p>
+
+<h3>
+<a name="basemodel" class="anchor" href="#basemodel"><span class="octicon octicon-link"></span></a><code>BaseModel</code>
+</h3>
+
+<p>Inherits from <code>Backbone.Model</code>.</p>
+
+<h3>
+<a name="basecollection" class="anchor" href="#basecollection"><span class="octicon octicon-link"></span></a><code>BaseCollection</code>
+</h3>
+
+<p>Inherits from <code>Backbone.Collection</code>.</p>
+
+<h3>
+<a name="baseapp" class="anchor" href="#baseapp"><span class="octicon octicon-link"></span></a><code>BaseApp</code>
+</h3>
+
+<p>Inherits from <code>Backbone.Model</code>.</p>
+
+<h3>
+<a name="baseappview" class="anchor" href="#baseappview"><span class="octicon octicon-link"></span></a><code>BaseAppView</code>
+</h3>
+
+<p>Inherits for <code>BaseView</code>. You can change your main content container from this view by changing the <code>contentEl</code> key in the <code>options</code> object when extending <code>BaseAppView</code></p>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">AppView</span> <span class="o">=</span> <span class="nx">BaseAppView</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
+    <span class="nx">contentEl</span> <span class="o">:</span> <span class="s2">"#mainContent"</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+
+<h3>
+<a name="baserouter" class="anchor" href="#baserouter"><span class="octicon octicon-link"></span></a><code>BaseRouter</code>
+</h3>
+
+<h3>
+<a name="clientrouter" class="anchor" href="#clientrouter"><span class="octicon octicon-link"></span></a><code>ClientRouter</code>
+</h3>
+
+<p>Inherits from <code>BaseRouter</code>.</p>
+
+<h3>
+<a name="serverrouter" class="anchor" href="#serverrouter"><span class="octicon octicon-link"></span></a><code>ServerRouter</code>
+</h3>
+
+<p>Inherits from <code>BaseRouter</code>.</p>
+
+<h2>
+<a name="rendr-options" class="anchor" href="#rendr-options"><span class="octicon octicon-link"></span></a>Rendr Options</h2>
+
+<h3>
+<a name="server-config" class="anchor" href="#server-config"><span class="octicon octicon-link"></span></a>Server Config</h3>
+
+<h4>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h4>
+
+<pre><code>var config = {
+  dataAdapterConfig: {
+    'default': {
+      host: 'api.github.com',
+      protocol: 'https'
+    }
+  },
+
+  apiPath: '/api',
+  appData: { myAttr: 'value'},
+  dataAdapter: myDataAdapterInstance,
+  defaultEngine: 'js',
+  entryPath: process.cwd() + '/myapp'
+  errorHandler: function (err, req, res, next){},
+  notFoundHandler: function (req, res, next){},
+  viewsPath: "/app/views",
+};
+rendr.createServer(config);
+
+</code></pre>
+
+<p>Either a <code>dataAdapter</code> or <code>dataAdapterConfig</code> must be present.</p>
+
+<ul>
+<li><p><code>dataAdapterConfig</code> - This is the standard way of configuring Rendr's built in  DataAdapter.  See <a href="#dataadapter-config">DataAdapter Config</a></p></li>
+<li>
+<p><code>dataAdapter</code> - Allows you to override the default DataAdapter and provide your own.  The <code>dataAdapterConfig</code> will be ignored.</p>
+
+<p><strong>Default:</strong>  <a href="https://github.com/rendrjs/rendr/blob/master/server/data_adapter/rest_adapter.js">RestAdapter</a> which enables Rendr to speak basic REST using HTTP &amp; JSON.  This is good for consuming an     existing RESTful API that exists externally to your Node app.</p>
+</li>
+</ul><hr><ul>
+<li>
+<p><code>apiPath</code> <em>Optional</em> - Root of the API proxy's virtual path. Anything after this root will be followed by a <code>-</code>. Example: <code>/api/-/path/to/resource</code>. Allows the proxy to intercept API routes. Can also be a full path to a remote API <code>http://api.myserver</code></p>
+
+<p><strong>Default:</strong> <code>api</code></p>
+</li>
+<li><p><code>appData</code> <em>Optional</em> - Pass any data that needs to be accessible by the client. Accessible from within your Handlebars context <code>app.attributes.myAttr</code>, and also within your views and models <code>this.app.attributes.myAttr</code>.</p></li>
+<li>
+<p><code>defaultEngine</code> <em>Optional</em> - Tell the ViewEngine to load different file types. Example: <code>coffee</code></p>
+
+<p><strong>Default:</strong> <code>js</code></p>
+</li>
+<li>
+<p><code>entryPath</code> <em>Optional</em> - Root path of your app.</p>
+
+<p><strong>Default:</strong> <code>process.cwd() + '/'</code> - Current working directory of the node process</p>
+</li>
+<li>
+<p><code>errorHandler</code> <em>Optional</em> Callback for <a href="http://expressjs.com/guide.html#error-handling">Express.js errors</a>.</p>
+
+<p><strong>Example</strong> <code>function (err, req, res, next) { }</code></p>
+</li>
+<li>
+<p><code>notFoundHandler</code> <em>Optional</em> - Callback for <a href="http://expressjs.com/guide.html#error-handling">Express.js not found errors</a></p>
+
+<p><strong>Example</strong> <code>function (req, res, next) { }</code></p>
+</li>
+<li>
+<p><code>viewEngine</code> <em>Optional</em> - Provides a way to set a custom <a href="http://expressjs.com/api.html#app.engine">Express.js view engine</a></p>
+
+<p><strong>Default:</strong> <code>new ViewEngine()</code> - Rendr provides a built in <a href="https://github.com/rendrjs/rendr/blob/master/server/viewEngine.js">ViewEngine</a> that hooks to <a href="#template-adapters">Template Adapters</a>.  See <a href="https://github.com/rendrjs/rendr-handlebars">rendr-handlebars</a>.</p>
+</li>
+<li>
+<p><code>viewsPath</code> <em>Optional</em> - Override where your views are stored. Path is relative to <code>entryPath</code>.</p>
+
+<p><strong>Default:</strong> <code>app/views</code></p>
+</li>
+</ul><h3>
+<a name="dataadapter-config" class="anchor" href="#dataadapter-config"><span class="octicon octicon-link"></span></a>DataAdapter Config</h3>
+
+<p>This configuration is passed to the current DataAdapter, which by default is the <a href="https://github.com/rendrjs/rendr/blob/master/server/data_adapter/rest_adapter.js">RestAdapter</a>.</p>
+
+<h4>
+<a name="example-1" class="anchor" href="#example-1"><span class="octicon octicon-link"></span></a>Example</h4>
+
+<p><strong>Simple</strong></p>
+
+<pre><code>var dataAdapterConfig = {
+  host: 'api.github.com',
+  protocol: 'https'
+};
+
+</code></pre>
+
+<p><strong>Multiple</strong></p>
+
+<pre><code>var dataAdapterConfig = {
+  'default': {
+    host: 'api.github.com',
+    protocol: 'https'
+  },
+  'travis-ci': {
+    host: 'api.travis-ci.org',
+    protocol: 'https'
+  }
+};
+
+</code></pre>
+
+<p>Example of how a Backbone model can be configured to select one of the DataAdapter configs.</p>
+
+<p><em>Note: This example assumes you are using the <a href="https://github.com/rendrjs/rendr/blob/master/server/data_adapter/rest_adapter.js">RestAdapter</a>.</em></p>
+
+<pre><code>module.exports = Base.extend({
+  url: '/repos/:owner/:name',
+  api: 'travis-ci'
+});
+module.exports.id = 'Build';
+
+</code></pre>
+
+<h3>
+<a name="adding-middleware-to-rendrs-express" class="anchor" href="#adding-middleware-to-rendrs-express"><span class="octicon octicon-link"></span></a>Adding middleware to Rendr's Express</h3>
+
+<p>You can optionally add any custom middleware that has to access <code>req.rendrApp</code> but should run before
+the Rendr routes by calling configure after createServer.</p>
+
+<pre><code>
+rendr.createServer(config);
+rendr.configure(function(expressApp) {
+
+    expressApp.use(...)
+
+})
+
+</code></pre>
+
+<h3>
+<a name="template-adapters" class="anchor" href="#template-adapters"><span class="octicon octicon-link"></span></a>Template Adapters</h3>
+
+<p>Provides a way for Rendr to utilize custom html template engines.  Rendr's <a href="https://github.com/rendrjs/rendr/blob/master/server/viewEngine.js">ViewEngine</a> will delegate to the <a href="https://github.com/rendrjs/rendr-handlebars/blob/master/index.js">Template Adapter</a>. You can build your own to provide your template engine of choice (i.e. Jade, Underscore templates, etc).</p>
+
+<h4>
+<a name="available-template-adapters" class="anchor" href="#available-template-adapters"><span class="octicon octicon-link"></span></a>Available Template Adapters</h4>
+
+<ul>
+<li><p><a href="https://github.com/rendrjs/rendr-handlebars">rendr-handlebars</a> - <a href="https://github.com/wycats/handlebars.js">Handlebars.js</a> support.  This is the default adapter.</p></li>
+<li><p><a href="https://github.com/modalstudios/rendr-emblem">rendr-emblem</a> - <a href="https://github.com/machty/emblem.js/">Emblem.js</a> with <a href="https://github.com/wycats/handlebars.js">Handlebars.js</a> fallback support.</p></li>
+</ul><h4>
+<a name="using-custom-adapters" class="anchor" href="#using-custom-adapters"><span class="octicon octicon-link"></span></a>Using Custom Adapters</h4>
+
+<p>You can tell Rendr which Template Adapter to use.  This represents the node-module that contains the adapter.</p>
+
+<pre><code>// /app/app.js
+
+module.exports = BaseApp.extend({
+  defaults: {
+    templateAdapter: 'rendr-emblem'
+  }
+
+});
+
+</code></pre>
+
+<h3>
+<a name="express-middleware" class="anchor" href="#express-middleware"><span class="octicon octicon-link"></span></a>Express middleware</h3>
+
+<p>There are a few middleware functions included. Use some or all of these, or use your own.</p>
+
+<h3>
+<a name="initapp" class="anchor" href="#initapp"><span class="octicon octicon-link"></span></a><code>initApp</code>
+</h3>
+
+<h2>
+<a name="whats-not-included" class="anchor" href="#whats-not-included"><span class="octicon octicon-link"></span></a>What's Not Included</h2>
+
+<h3>
+<a name="express-app" class="anchor" href="#express-app"><span class="octicon octicon-link"></span></a>Express app</h3>
+
+<p>Rather than owning your entire Express app, Rendr simply provides some useful middleware that you can mount into your existing Express app.</p>
+
+<h3>
+<a name="asset-pipeline" class="anchor" href="#asset-pipeline"><span class="octicon octicon-link"></span></a>Asset pipeline</h3>
+
+<p>Asset bundling and serving are outside of Rendr's scope. However, it does have some specific requirements for JavaScript packaging to support modules that are accessible in the CommonJS style on both the client and server. The <a href="https://github.com/rendrjs/rendr/tree/master/examples/00_simple">example app</a> uses <a href="https://github.com/sstephenson/stitch">Stitch</a> for this, though you could also do this with other tools, such as <a href="https://github.com/substack/node-browserify">Browserify</a>.</p>
+
+<h2>
+<a name="notes" class="anchor" href="#notes"><span class="octicon octicon-link"></span></a>Notes</h2>
+
+<p>Rendr uses the native ECMAScript 5 methods <code>Array.prototype.map</code>, <code>Function.prototype.bind</code>, <code>Object.create</code>, etc. If you plan to support older browsers, such as IE&lt;=8, you should include the lovely <a href="https://github.com/kriskowal/es5-shim">es5-shim</a> (and es5-sham) libraries as client-side dependencies.</p>
+
+<h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>We'd love to see what the community can come up with! There are no doubt a number of developers who are tackling this same problem, and we can learn from each other. If you have a bug fix or feature proposal, submit a pull request with a clear description of the change, plus tests.</p>
+
+<p>Rendr was originally developed by <a href="https://github.com/braitz">@braitz</a> and <a href="https://github.com/spikebrehm">@spikebrehm</a>, and now has a healthy list of <a href="https://github.com/rendrjs/rendr/graphs/contributors">contributors</a>.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>MIT</p>
+
+<p><a href="https://bitdeli.com/free" title="Bitdeli Badge"><img src="https://d2weczhvl823v0.cloudfront.net/rendrjs/rendr/trend.png" alt="Bitdeli Badge"></a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/rendrjs">rendrjs</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>

@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/airbnb/rendr.git"
+    "url": "git://github.com/rendrjs/rendr.git"
   },
   "dependencies": {
     "underscore": "1.5.2",

@@ -3,7 +3,7 @@
 
 <img src="http://cl.ly/image/272q3f1u313b/Rendr-logotype.png" width="395" height="100">
 
-Rendr is a small library from [Airbnb](https://www.airbnb.com) that allows you to run your [Backbone.js](http://backbonejs.org/) apps seamlessly on both the client and the server. Allow your web server to serve fully-formed HTML pages to any deep link of your app, while preserving the snappy feel of a traditional Backbone.js client-side MVC app.
+Rendr is a small library that allows you to run your [Backbone.js](http://backbonejs.org/) apps seamlessly on both the client and the server. Allow your web server to serve fully-formed HTML pages to any deep link of your app, while preserving the snappy feel of a traditional Backbone.js client-side MVC app.
 
 ## Reporting problems and getting help
 
@@ -331,16 +331,6 @@ Asset bundling and serving are outside of Rendr's scope. However, it does have s
 ## Notes
 
 Rendr uses the native ECMAScript 5 methods `Array.prototype.map`, `Function.prototype.bind`, `Object.create`, etc. If you plan to support older browsers, such as IE<=8, you should include the lovely [es5-shim](https://github.com/kriskowal/es5-shim) (and es5-sham) libraries as client-side dependencies.
-
-## TODO
-
-While we do have it powering a few apps in production here at Airbnb, Rendr is still a prototype. It's a [spike](http://scaledagileframework.com/spikes/); a functional proof-of-concept of a shared client-server architecture based on Backbone. Thus, it carries over a number of design quirks specific to its original use case, and it's not yet very generalized and modular.
-
-Some of the more glaring things to do:
-
-* Support Browserify and streamline module packaging.
-* Support templating solutions other than Handlebars.
-* Pull out routing code into separate module and share it between client and server, to prevent bugs arising from using `Backbone.history` to process routes in the client, and Express to process routes on the server.
 
 ## Contributing
 

@@ -1,0 +1,272 @@
+{
+  "type": "Collection",
+  "typeLabel": "Collection",
+  "order": 1,
+  "properties": {
+    "id": {
+      "type": "number",
+      "typeLabel": "number",
+      "id": "id",
+      "name": "id"
+    },
+    "name": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "name",
+      "name": "name"
+    },
+    "full_name": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "full_name",
+      "name": "full_name"
+    },
+    "owner": {
+      "type": "object",
+      "typeLabel": "object",
+      "id": "owner",
+      "name": "owner"
+    },
+    "private": {
+      "type": "boolean",
+      "typeLabel": "boolean",
+      "id": "private",
+      "name": "private"
+    },
+    "html_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "html_url",
+      "name": "html_url"
+    },
+    "description": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "description",
+      "name": "description"
+    },
+    "fork": {
+      "type": "boolean",
+      "typeLabel": "boolean",
+      "id": "fork",
+      "name": "fork"
+    },
+    "url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "url",
+      "name": "url"
+    },
+    "forks_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "forks_url",
+      "name": "forks_url"
+    },
+    "keys_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "keys_url",
+      "name": "keys_url"
+    },
+    "collaborators_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "collaborators_url",
+      "name": "collaborators_url"
+    },
+    "teams_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "teams_url",
+      "name": "teams_url"
+    },
+    "hooks_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "hooks_url",
+      "name": "hooks_url"
+    },
+    "issue_events_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "issue_events_url",
+      "name": "issue_events_url"
+    },
+    "events_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "events_url",
+      "name": "events_url"
+    },
+    "assignees_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "assignees_url",
+      "name": "assignees_url"
+    },
+    "branches_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "branches_url",
+      "name": "branches_url"
+    },
+    "tags_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "tags_url",
+      "name": "tags_url"
+    },
+    "blobs_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "blobs_url",
+      "name": "blobs_url"
+    },
+    "git_tags_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "git_tags_url",
+      "name": "git_tags_url"
+    },
+    "git_refs_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "git_refs_url",
+      "name": "git_refs_url"
+    },
+    "trees_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "trees_url",
+      "name": "trees_url"
+    },
+    "statuses_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "statuses_url",
+      "name": "statuses_url"
+    },
+    "languages_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "languages_url",
+      "name": "languages_url"
+    },
+    "stargazers_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "stargazers_url",
+      "name": "stargazers_url"
+    },
+    "contributors_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "contributors_url",
+      "name": "contributors_url"
+    },
+    "subscribers_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "subscribers_url",
+      "name": "subscribers_url"
+    },
+    "subscription_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "subscription_url",
+      "name": "subscription_url"
+    },
+    "commits_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "commits_url",
+      "name": "commits_url"
+    },
+    "git_commits_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "git_commits_url",
+      "name": "git_commits_url"
+    },
+    "comments_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "comments_url",
+      "name": "comments_url"
+    },
+    "issue_comment_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "issue_comment_url",
+      "name": "issue_comment_url"
+    },
+    "contents_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "contents_url",
+      "name": "contents_url"
+    },
+    "compare_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "compare_url",
+      "name": "compare_url"
+    },
+    "merges_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "merges_url",
+      "name": "merges_url"
+    },
+    "archive_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "archive_url",
+      "name": "archive_url"
+    },
+    "downloads_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "downloads_url",
+      "name": "downloads_url"
+    },
+    "issues_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "issues_url",
+      "name": "issues_url"
+    },
+    "pulls_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "pulls_url",
+      "name": "pulls_url"
+    },
+    "milestones_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "milestones_url",
+      "name": "milestones_url"
+    },
+    "notifications_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "notifications_url",
+      "name": "notifications_url"
+    },
+    "labels_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "labels_url",
+      "name": "labels_url"
+    },
+    "releases_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "releases_url",
+      "name": "releases_url"
+    }
+  },
+  "path": "/repositories"
+}

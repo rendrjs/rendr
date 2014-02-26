@@ -1,0 +1,21 @@
+{
+  "port": 3030,
+  "dataAdapter": {
+    "default": {
+      "host": "127.0.0.1:2403",
+      "protocol": "http"
+    },
+    "travis-ci": {
+      "host": "api.travis-ci.org",
+      "protocol": "https"
+    }
+  },
+  "session": {
+    "secret": "E6Fk81pDU84mRA5b35O131km8",
+    "store": {
+      "host": "127.0.0.1",
+      "port": 6379,
+      "prefix": "sess"
+    }
+  }
+}

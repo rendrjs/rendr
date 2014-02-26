@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec ./test --recursive",
-    "coverage": "istanbul cover _mocha -- -R spec ./test --recursive"
+    "coverage": "istanbul cover _mocha -- -R spec ./test --recursive",
+    "coveralls": "npm run-script coverage && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,8 @@
     "istanbul": "~0.1.10",
     "jquery": "~1.8.3",
     "rendr-handlebars": "0.2.0",
-    "proxyquire": "0.5.2"
+    "proxyquire": "0.5.2",
+    "coveralls": "^2.8.0"
   },
   "keywords": [
     "Backbone",

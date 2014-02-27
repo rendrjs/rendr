@@ -1,5 +1,6 @@
 [![travis-ci status](https://secure.travis-ci.org/rendrjs/rendr.png)](http://travis-ci.org/#!/rendrjs/rendr/builds)
 [![Dependency Status](https://david-dm.org/rendrjs/rendr.png)](https://david-dm.org/rendrjs/rendr)
+[![Coverage Status](https://coveralls.io/repos/rendrjs/rendr/badge.png)](https://coveralls.io/r/rendrjs/rendr)
 
 <img src="http://cl.ly/image/272q3f1u313b/Rendr-logotype.png" width="395" height="100">
 

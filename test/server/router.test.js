@@ -393,6 +393,24 @@ describe("server/router", function() {
           foo: 'sneaky'
         });
       });
+
+      it("recusively sanitizes nested objects", function() {
+        this.req.__defineGetter__('query', function() {
+          return {
+            nested: {
+              foo: '<script>alert("foo")</script>sneakyfoo',
+              bar: '<script>alert("bar")</script>sneakybar',
+            },
+          };
+        });
+
+        this.router.getParams(this.req).should.eql({
+          nested: {
+            foo: 'sneakyfoo',
+            bar: 'sneakybar',
+          },
+        });
+      });
     });
   });
 

@@ -115,7 +115,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
         this.fetchFromApi(spec, options, cb);
       } else {
         modelData = null;
-        modelOptions = {};
+        modelOptions = options;
 
         // First, see if we have stored the model or collection.
         if (spec.model != null) {
@@ -165,7 +165,7 @@ Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, c
     /**
      * Else, fetch anew.
      */
-    this.fetchFromApi(spec, {}, cb);
+    this.fetchFromApi(spec, modelOptions, cb);
   }
 }
 

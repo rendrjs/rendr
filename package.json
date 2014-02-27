@@ -31,6 +31,9 @@
     "rendr-handlebars": "0.2.0",
     "proxyquire": "0.5.2"
   },
+  "engines": {
+    "node" : "^0.10"
+  },
   "keywords": [
     "Backbone",
     "view",

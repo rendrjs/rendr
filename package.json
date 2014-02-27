@@ -1,6 +1,6 @@
 {
   "name": "rendr",
-  "version": "0.5.0-rc2",
+  "version": "0.5.0",
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/airbnb/rendr.git"
+    "url": "git://github.com/rendrjs/rendr.git"
   },
   "dependencies": {
     "underscore": "1.5.2",
@@ -18,7 +18,7 @@
     "qs": "0.6.6",
     "express": "~3",
     "sanitizer": "~0.1",
-    "request": "~2.30.0",
+    "request": "~2.34.0",
     "debug": "*"
   },
   "devDependencies": {
@@ -28,7 +28,8 @@
     "sinon-chai": "2.4.0",
     "istanbul": "~0.1.10",
     "jquery": "~1.8.3",
-    "rendr-handlebars": "0.2.0-rc1"
+    "rendr-handlebars": "0.2.0",
+    "proxyquire": "0.5.2"
   },
   "keywords": [
     "Backbone",

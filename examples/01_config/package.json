@@ -13,8 +13,8 @@
     "express": "~3",
     "underscore": "~1.5.2",
     "async": "~0.1.22",
-    "rendr-handlebars": "0.2.0-rc2",
-    "rendr": "0.5.0-rc2",
+    "rendr-handlebars": "0.2.0",
+    "rendr": "0.5.0",
     "config": "~0.4.30",
     "js-yaml": "2.x.x"
   },

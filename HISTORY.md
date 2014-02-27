@@ -1,5 +1,6 @@
 # 0.5.0
-## 2013-12-20
+## 2014-02-25
+* [deprecation] use `initialize` instead of `postInitialize`
 * Fix serverSide redirectTo with rootPath != default.
 * [breaking] Removed use of `options.emulateJSON` and `options.data` in `clientSync`
 * [breaking] Removed `addApiParams` from `syncer`

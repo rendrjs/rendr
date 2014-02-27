@@ -83,7 +83,7 @@ function serverSync(method, model, options) {
   if (verb === 'POST' || verb === 'PUT') {
     api.body = data;
   } else {
-    _.extend(api.query, data);
+    api.path = options.url;
   }
 
   req.dataAdapter.request(req, api, function(err, response, body) {

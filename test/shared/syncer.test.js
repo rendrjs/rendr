@@ -39,6 +39,7 @@ describe('syncer', function() {
           method: 'GET',
           path: '/listings/0',
           query: {},
+          headers: {},
           api: 'foo',
           body: {}
         };
@@ -54,6 +55,7 @@ describe('syncer', function() {
           method: 'PUT',
           path: '/listings/0',
           query: {},
+          headers: {},
           api: 'foo',
           body: { id: 0, foo: 'bar', bar: 'foo' }
         };

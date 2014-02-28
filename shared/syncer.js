@@ -67,6 +67,7 @@ function serverSync(method, model, options) {
     method: verb,
     path: urlParts[0],
     query: qs.parse(urlParts[1]) || {},
+    headers: options.headers || {},
     api: _.result(this, 'api'),
     body: {}
   };

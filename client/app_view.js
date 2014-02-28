@@ -8,8 +8,8 @@ Backbone.$ = $;
 module.exports = BaseView.extend({
   el: 'body',
 
-  initialize: function() {
-    BaseView.prototype.initialize.apply(this, arguments);
+  constructor: function() {
+    BaseView.apply(this, arguments);
 
     _.defaults(this.options, {
       contentEl: '#content'

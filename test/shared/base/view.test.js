@@ -1,6 +1,9 @@
 var should = require('chai').should(),
     sinon = require('sinon'),
+    BaseModel = require('../../../shared/base/model'),
+    BaseCollection = require('../../../shared/base/collection'),
     BaseView = require('../../../shared/base/view'),
+    Backbone = require('backbone'),
     ModelUtils = require('../../../shared/modelUtils'),
     modelUtils = new ModelUtils();
 
@@ -137,6 +140,155 @@ describe('BaseView', function() {
       this.topView.viewing = true;
       this.topView._fetchLazyCallback(null, {});
       this.topView.render.should.have.been.called;
+    });
+  });
+
+  describe('extractFetchSummary', function () {
+    var MyView,
+        MyModel,
+        MyCollection,
+        fetchSummary;
+
+    beforeEach(function () {
+      MyModel = BaseModel.extend({});
+      MyModel.id = 'MyModel';
+
+      MyCollection = BaseCollection.extend({});
+      MyCollection.id = 'MyCollection';
+
+      MyView = BaseView.extend({});
+
+      fetchSummary = {};
+    });
+
+    it('should extract model meta data from view options', function () {
+      var myViewInstance,
+          myModelInstance,
+          expectedFetchSummary;
+
+      myModelInstance = {
+        id: 9,
+        name: 'Sunny'
+      };
+
+      myViewInstance = new MyView({
+        app: this.app,
+        myModel: new MyModel(myModelInstance, { app: this.app })
+      });
+
+      expectedFetchSummary = {
+        myModel: {
+          model: 'MyModel',
+          id: "9"
+        }
+      };
+
+      fetchSummary = BaseView.extractFetchSummary(modelUtils, myViewInstance.options);
+      fetchSummary.should.deep.equal(expectedFetchSummary);
+    });
+
+    it('should extract collection meta data from view options', function () {
+      var myViewInstance,
+          expectedFetchSummary;
+
+      myViewInstance = new MyView({
+        app: this.app,
+        myCollection: new MyCollection([], { app: this.app, params: { parameter1: 1 }  })
+      });
+
+      expectedFetchSummary = {
+        myCollection: {
+          collection: 'MyCollection',
+          params: { parameter1: 1 }
+        }
+      };
+
+      fetchSummary = BaseView.extractFetchSummary(modelUtils, myViewInstance.options);
+      fetchSummary.should.deep.equal(expectedFetchSummary);
+    });
+
+    it('should still work with multiple models and collections', function () {
+      var myViewInstance,
+          myModelInstance,
+          expectedFetchSummary;
+
+      myModelInstance = {
+        id: 9,
+        name: 'Sunny'
+      };
+
+      myViewInstance = new MyView({
+        app: this.app,
+        myModel: new MyModel(myModelInstance, { app: this.app }),
+        myOtherModel: new MyModel(myModelInstance, { app: this.app }),
+        myCollection: new MyCollection([], { app: this.app, params: { parameter1: 1 }  }),
+        myOtherCollection: new MyCollection([], { app: this.app, params: { parameter2: 2 }  })
+      });
+
+      expectedFetchSummary = {
+        myModel: {
+          model: 'MyModel',
+          id: "9"
+        },
+        myOtherModel: {
+          model: 'MyModel',
+          id: "9"
+        },
+        myCollection: {
+          collection: 'MyCollection',
+          params: { parameter1: 1 }
+        },
+        myOtherCollection: {
+          collection: 'MyCollection',
+          params: { parameter2: 2 }
+        }
+      };
+
+      fetchSummary = BaseView.extractFetchSummary(modelUtils, myViewInstance.options);
+      fetchSummary.should.deep.equal(expectedFetchSummary);
+    });
+
+    it('should ignore the model if its instance has no id set', function () {
+      var myViewInstance,
+          myModelInstanceWithoutId,
+          expectedFetchSummary;
+
+      myModelInstanceWithoutId = {
+        name: 'Sunny'
+      };
+
+      myViewInstance = new MyView({
+        app: this.app,
+        myModel: new MyModel(myModelInstanceWithoutId, { app: this.app })
+      });
+
+      expectedFetchSummary = {};
+
+      fetchSummary = BaseView.extractFetchSummary(modelUtils, myViewInstance.options);
+      fetchSummary.should.deep.equal(expectedFetchSummary);
+    });
+
+    it('should ignore non-rendr objects', function () {
+      var myViewInstance,
+          MyBackboneModel,
+          MyBackboneCollection,
+          expectedFetchSummary;
+
+      MyBackboneModel = Backbone.Model.extend({});
+      MyBackboneCollection = Backbone.Collection.extend({});
+
+      myViewInstance = new MyView({
+        app: this.app,
+        myBackboneModel: new MyBackboneModel({ id: 1, name: 'Sunny' }, { app: this.app }),
+        myBackboneCollection: new MyBackboneCollection({ model: MyBackboneModel }, { app: this.app }),
+        myPlainJavaScriptObject: { id: 1, name: 'Sunny' },
+        myJavaScriptNumber: 1
+      });
+
+      expectedFetchSummary = {};
+
+      fetchSummary = BaseView.extractFetchSummary(modelUtils, myViewInstance.options);
+      fetchSummary.should.deep.equal(expectedFetchSummary);
     });
   });
 });

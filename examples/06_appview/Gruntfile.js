@@ -120,7 +120,7 @@ module.exports = function(grunt) {
   grunt.registerTask('compile', ['handlebars', 'browserify', 'stylus']);
 
   // Run the server and watch for file changes
-  grunt.registerTask('server', ['runNode', 'compile', 'watch']);
+  grunt.registerTask('server', ['compile', 'runNode', 'watch']);
 
   // Default task(s).
   grunt.registerTask('default', ['compile']);

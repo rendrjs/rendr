@@ -239,7 +239,7 @@ module.exports = function(grunt) {
   grunt.registerTask('compile', ['handlebars', 'stylus']);
 
   // Run the server and watch for file changes
-  grunt.registerTask('server', ['build_world', 'runNode', 'compile', 'watch']);
+  grunt.registerTask('server', ['build_world', 'compile', 'runNode', 'watch']);
 
   // Default task(s).
   grunt.registerTask('default', ['compile']);

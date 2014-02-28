@@ -5,14 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "grunt compile && mocha --ui bdd --reporter spec ./test/app --recursive && karma start test/karma.config.js --single-run",
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "test -f ../../package.json && npm install ../../ || echo",
+    "postupdate": "test -f ../../package.json && npm install ../../ || echo"
   },
   "dependencies": {
     "express": "~3",
-    "underscore": "~1.4.4",
+    "underscore": "~1.5.2",
     "async": "~0.1.22",
-    "rendr-handlebars": "0.2.0-rc1",
-    "rendr": "0.5.0-rc1"
+    "rendr-handlebars": "0.2.0",
+    "rendr": "0.5.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

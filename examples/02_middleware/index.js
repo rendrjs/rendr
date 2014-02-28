@@ -37,7 +37,7 @@ app.use(mw.addLocaleToRequest());
  * values that are not request-specific.
  */
 app.use(function(req, res, next) {
-  res.locals.repoUrl = 'https://github.com/airbnb/rendr';
+  res.locals.repoUrl = 'https://github.com/rendrjs/rendr';
   next();
 });
 

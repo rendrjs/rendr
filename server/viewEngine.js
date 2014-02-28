@@ -42,8 +42,6 @@ ViewEngine.prototype.renderWithLayout = function renderWithLayout(locals, app, c
  * Cache layout template function.
  */
 ViewEngine.prototype.getLayoutTemplate = function getLayoutTemplate(app, callback) {
-  var layoutPath;
-
   if (layoutTemplates[app.options.entryPath]) {
     return callback(null, layoutTemplates[app.options.entryPath]);
   }
@@ -83,4 +81,8 @@ ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, 
     }
   });
   return bootstrappedData;
+};
+
+ViewEngine.prototype.clearCachedLayouts = function () {
+  layoutTemplates = {};
 };

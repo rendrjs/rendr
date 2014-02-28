@@ -18,7 +18,7 @@ BaseCollection = Super.extend({
    */
   defaultParams: null,
 
-  initialize: function(models, options) {
+  constructor: function(models, options) {
     /**
      * Capture the options as instance variable.
      */
@@ -45,6 +45,8 @@ BaseCollection = Super.extend({
       _.extend(this.meta, this.options.meta);
       delete this.options.meta;
     }
+
+    Super.apply(this, arguments);
   },
 
   /**

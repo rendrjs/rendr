@@ -33,6 +33,9 @@
     "proxyquire": "0.5.2",
     "coveralls": "2.8.0"
   },
+  "engines": {
+    "node" : "^0.10"
+  },
   "keywords": [
     "Backbone",
     "view",

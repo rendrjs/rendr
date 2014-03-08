@@ -112,10 +112,11 @@ describe('RestAdapter', function() {
     it('should set the url property if path contains a protocol', function () {
       var api = {
         path: 'http://www.example.com',
+        query: { abc: 123 },
         body: {}
       };
 
-      restAdapter.apiDefaults(api).should.have.property('url', 'http://www.example.com');
+      restAdapter.apiDefaults(api).should.have.property('url', 'http://www.example.com?abc=123');
     });
 
     it('should use the default api if no other is configured', function () {

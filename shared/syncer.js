@@ -60,11 +60,13 @@ function serverSync(method, model, options) {
   options = _.clone(options);
   options.url = this.getUrl(options.url, false);
   verb = methodMap[method];
+  urlParts = options.url.split('?');
   req = this.app.req;
 
   api = {
     method: verb,
-    path: options.url,
+    path: urlParts[0],
+    query: qs.parse(urlParts[1]) || {},
     api: _.result(this, 'api'),
     body: {}
   };

@@ -109,7 +109,7 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
 
   // If path contains a protocol, assume it's a URL.
   if (api.path && ~api.path.indexOf('://')) {
-    api.url = api.path;
+    api.url = url.format({ pathname: api.path, query: api.query });
     delete api.path;
   }
 

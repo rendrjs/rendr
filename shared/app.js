@@ -68,7 +68,8 @@ module.exports = Backbone.Model.extend({
         app: this,
         entryPath: entryPath,
         appViewClass: this.getAppViewClass(),
-        rootPath: attributes.rootPath
+        rootPath: attributes.rootPath,
+        viewOptions : options.viewOptions
       });
     }
 

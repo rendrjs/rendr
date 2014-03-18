@@ -53,6 +53,8 @@ module.exports = Backbone.Model.extend({
     var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter;
     this.templateAdapter = require(templateAdapterModule)({entryPath: entryPath});
 
+    Backbone.Model.apply(this, arguments);
+
     /**
      * Instantiate the `Fetcher`, which is used on client and server.
      */
@@ -71,8 +73,6 @@ module.exports = Backbone.Model.extend({
         rootPath: attributes.rootPath
       });
     }
-
-    Backbone.Model.apply(this, arguments);
 
     if (this.postInitialize) {
       console.warn('`postInitialize` is deprecated, please use `initialize`');

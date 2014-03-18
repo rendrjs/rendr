@@ -323,6 +323,8 @@ Fetcher.prototype.hydrate = function(summaries, options, callback) {
         }
 
         results[name] = collection;
+
+        cb(null);
       });
     }
   }, function(err) {

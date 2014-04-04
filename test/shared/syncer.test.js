@@ -21,7 +21,10 @@ describe('syncer', function() {
       model = new BaseModel({ id: 0 }, { app: app });
       model.urlRoot = '/listings';
 
-      options = { url: model.url() };
+      options = { 
+        url: model.url(), 
+        headers: { foo: 'bar' } 
+      };
     });
 
     describe('serverSync', function () {
@@ -39,6 +42,7 @@ describe('syncer', function() {
           method: 'GET',
           path: '/listings/0',
           query: {},
+          headers: { foo: 'bar' },
           api: 'foo',
           body: {}
         };
@@ -54,6 +58,7 @@ describe('syncer', function() {
           method: 'PUT',
           path: '/listings/0',
           query: {},
+          headers: { foo: 'bar' },
           api: 'foo',
           body: { id: 0, foo: 'bar', bar: 'foo' }
         };
@@ -90,8 +95,13 @@ describe('syncer', function() {
       });
 
       it('should get the prefixed API url', function () {
+        var expectedOptions = {
+          url: '/api/-' + model.url(),
+          headers: { foo: 'bar' }
+        };
+
         syncer.clientSync.call(model, 'read', model, options);
-        backboneSync.should.have.been.calledWithExactly('read', model, { url: '/api/-' + model.url() });
+        backboneSync.should.have.been.calledWithExactly('read', model, expectedOptions);
       });
 
       it('should wrap the error handler', function () {

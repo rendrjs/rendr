@@ -112,7 +112,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
       var collectionData, model, modelData, modelOptions;
 
       if (!options.readFromCache) {
-        this.fetchFromApi(spec, cb);
+        this.fetchFromApi(spec, options, cb);
       } else {
         modelData = null;
         modelOptions = {};
@@ -121,7 +121,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
         if (spec.model != null) {
 
           this._retrieveModel(spec, function(err, modelData) {
-            this._retrieveModelData(spec, modelData, modelOptions, cb);
+            this._retrieveModelData(spec, modelData, modelOptions, options, cb);
           }.bind(this));
 
         } else if (spec.collection != null) {
@@ -134,7 +134,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
                 params: collectionData.params
               };
             }
-            this._retrieveModelData(spec, modelData, modelOptions, cb);
+            this._retrieveModelData(spec, modelData, modelOptions, options, cb);
           }.bind(this));
 
         }
@@ -145,7 +145,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
   async.parallel(batchedRequests, callback);
 };
 
-Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, cb) {
+Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, options, cb) {
 
   // If we found the model/collection in the store, then return that.
   if (!this.needsFetch(modelData, spec)) {
@@ -165,7 +165,7 @@ Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, c
     /**
      * Else, fetch anew.
      */
-    this.fetchFromApi(spec, cb);
+    this.fetchFromApi(spec, options, cb);
   }
 }
 
@@ -213,10 +213,11 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
   return false;
 };
 
-Fetcher.prototype.fetchFromApi = function(spec, callback) {
+Fetcher.prototype.fetchFromApi = function(spec, options, callback) {
   var model = this.getModelOrCollectionForSpec(spec),
       fetcher = this;
   model.fetch({
+    headers: options.headers || {},
     data: spec.params,
     success: function(model, body) {
       callback(null, model);

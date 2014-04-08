@@ -21,6 +21,9 @@ var BaseModel = Backbone.Model.extend({
     }
 
     Backbone.Model.apply(this, arguments);
+
+    this.store();
+    this.on('change:' + this.idAttribute, this.store, this);
   },
 
   /**
@@ -38,7 +41,9 @@ var BaseModel = Backbone.Model.extend({
    * Instance method to store in the modelStore.
    */
   store: function() {
-    this.app.fetcher.modelStore.set(this);
+    if (this.id !== undefined && this.app && this.app.fetcher) {
+      this.app.fetcher.modelStore.set(this);
+    }
   }
 });
 

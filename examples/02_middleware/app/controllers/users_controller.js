@@ -12,7 +12,7 @@ module.exports = {
 
   show: function(params, callback) {
     var spec = {
-      model: {model: 'User', params: params},
+      model: {model: 'User', params: params, ensureKeys: ['public_repos']},
       repos: {collection: 'Repos', params: {user: params.login}}
     };
     this.app.fetch(spec, function(err, result) {

@@ -332,9 +332,11 @@ module.exports = BaseView = Backbone.View.extend({
         app: this.app
       }, function(err, results) {
         this.parseOptions(results);
+        this.trigger('postHydrate');
         callback(err);
       }.bind(this));
     } else {
+      this.trigger('postHydrate');
       callback(null);
     }
   },

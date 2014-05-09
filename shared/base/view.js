@@ -21,7 +21,7 @@ module.exports = BaseView = Backbone.View.extend({
   constructor: function(options) {
     var obj;
 
-    this.options = options || {};
+    this.options = _.extend( this.options || {}, options || {} );
 
     this.parseOptions(options);
 

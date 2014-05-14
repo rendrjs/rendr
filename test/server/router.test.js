@@ -5,7 +5,8 @@ var chai = require('chai'),
     Router = require('../../server/router'),
     express = require('express'),
     _ = require('underscore'),
-    sinon = require('sinon');
+    sinon = require('sinon'),
+    ReadableStream = require('stream').Readable;
 
 chai.use(require('sinon-chai'));
 
@@ -483,7 +484,7 @@ describe("server/router", function() {
           next = sinon.stub();
           action = sinon.stub().yields();
           middleware = this.router.getHandler(action, this.pattern, {});
-          res = { set: sinon.spy(), type: sinon.stub(), end: sinon.spy(), render: sinon.stub() };
+          res = { set: sinon.spy(), type: sinon.stub(), end: sinon.spy(), render: sinon.stub(), pipe: sinon.stub() };
           res.render.yields();
           res.type.returns(res);
           getHeadersForRoute = sinon.stub(this.router, 'getHeadersForRoute').returns({ 'Content-Type': 'image/jpeg' });
@@ -496,21 +497,6 @@ describe("server/router", function() {
           res.set.should.have.been.calledWithExactly({ 'Content-Type': 'image/jpeg' });
         });
 
-        it('should set the type to html', function () {
-          middleware(this.req, res);
-
-          res.type.should.have.been.calledOnce;
-          res.type.should.have.been.calledWithExactly('html');
-        });
-
-        it('should call end with the html output', function () {
-          res.render.yields(null, '<b>foo</b>');
-          middleware(this.req, res);
-
-          res.end.should.have.been.calledOnce;
-          res.end.should.have.been.calledWithExactly('<b>foo</b>');
-        });
-
         it('should pass through an error', function () {
           var error = new Error();
           res.render.yields(error);
@@ -519,6 +505,42 @@ describe("server/router", function() {
           next.should.have.been.calledOnce;
           next.should.have.been.calledWithExactly(error);
         });
+
+        describe('a streaming response', function(){
+          var stream;
+
+          beforeEach(function(){
+            stream = ReadableStream();
+            stream.pipe = sinon.stub();
+          });
+
+          it('should pipe the stream through the res object', function(){
+            res.render.yields(null, stream);
+            middleware(this.req, res);
+
+            stream.pipe.should.have.been.calledOnce;
+            stream.pipe.should.have.been.calledWithExactly(res);
+          })
+        });
+
+        describe('a non-streaming response', function(){
+
+          it('should set the type to html', function () {
+            middleware(this.req, res);
+
+            res.type.should.have.been.calledOnce;
+            res.type.should.have.been.calledWithExactly('html');
+          });
+
+          it('should call end with the html output', function () {
+            res.render.yields(null, '<b>foo</b>');
+            middleware(this.req, res);
+
+            res.end.should.have.been.calledOnce;
+            res.end.should.have.been.calledWithExactly('<b>foo</b>');
+          });
+        })
+        
       });
     });
 

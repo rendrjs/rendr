@@ -99,7 +99,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
         if (err) return next(err);
         res.set(router.getHeadersForRoute(route));
 
-        if (html instanceof ReadableStream) {
+        if (ReadableStream && html instanceof ReadableStream) {
           html.pipe(res);
         } else {
           res.type('html').end(html);

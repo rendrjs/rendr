@@ -507,20 +507,21 @@ describe("server/router", function() {
         });
 
         describe('a streaming response', function(){
-          var stream;
+          it('should pipe the stream through the res object if streams2 available', function(){
 
-          beforeEach(function(){
-            stream = ReadableStream();
+            if (!ReadableStream) { return; }
+
+            var stream = ReadableStream();
             stream.pipe = sinon.stub();
-          });
 
-          it('should pipe the stream through the res object', function(){
             res.render.yields(null, stream);
             middleware(this.req, res);
 
             stream.pipe.should.have.been.calledOnce;
             stream.pipe.should.have.been.calledWithExactly(res);
-          })
+          });
+
+          
         });
 
         describe('a non-streaming response', function(){

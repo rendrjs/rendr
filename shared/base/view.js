@@ -188,12 +188,8 @@ module.exports = BaseView = Backbone.View.extend({
         if (_.isFunction(value.constructor) && value.constructor.id != null) {
           modelOrCollectionId = value.constructor.id;
           if (modelUtils.isModel(value)) {
-            id = value.get(value.idAttribute);
-            if (id == null) {
-              // Bail if there's no ID; someone's using `this.model` in a
-              // non-standard way, and that's okay.
-              return;
-            }
+            id = value.get(value.idAttribute) || '';
+
             // Cast the `id` attribute to string to ensure it's included in attributes.
             // On the server, it can be i.e. an `ObjectId` from Mongoose.
             value = id.toString();

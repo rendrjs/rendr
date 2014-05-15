@@ -201,6 +201,28 @@ describe('fetcher', function() {
       });
     });
 
+    it('should be able to hydrate a new model', function () {
+      var fetchSummary, hydrated, listing, rawListing, results;
+
+      results = {
+        listing: new Listing(rawListing, {
+          app: this.app
+        })
+      };
+      fetchSummary = {
+        listing: {
+          model: 'listing'
+        }
+      };
+
+      fetcher.storeResults(results);
+      fetcher.hydrate(fetchSummary, function(err, hydrated) {
+        listing = hydrated.listing;
+        listing.should.be.an.instanceOf(Listing);
+        listing.toJSON().should.eql({});
+      });
+    });
+
     it("should be able to store and hydrate a collection", function() {
       var fetchSummary, hydrated, listings, params, rawListings, results;
 

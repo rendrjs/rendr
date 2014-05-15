@@ -309,8 +309,14 @@ Fetcher.prototype.hydrate = function(summaries, options, callback) {
     if (summary.model != null) {
       results[name] = fetcher.modelStore.get(summary.model, summary.id, true);
 
-      if ((results[name] != null) && (options.app != null)) {
-        results[name].app = options.app;
+      if (options.app != null) {
+        if (results[name] != null) {
+          results[name].app = options.app;
+        } else {
+          if (summary.model && !summary.id) {
+            results[name] = options.app.modelUtils.getModel(summary.model, undefined, options)
+          }
+        }
       }
 
       cb(null);

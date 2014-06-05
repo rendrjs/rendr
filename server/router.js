@@ -69,6 +69,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
 
     context = {
       currentRoute: route,
+      router: this,
       app: app,
       redirectTo: function(uri, options) {
         uri = (app.get('rootPath') || '') + uri;

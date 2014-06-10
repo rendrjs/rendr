@@ -107,5 +107,27 @@ describe('ViewEngine', function() {
 
       data.should.deep.equal({});
     });
+
+    it('should create a flat bootstrap object if a model has a nested model', function () {
+        var bar = new Model({ id: 123 }),
+            locals = {
+              foo: new Model({ id: 321, bar: bar }, { app: app })
+            },
+            expectedData = {
+              foo: {
+                data: { bar: bar, id: 321 },
+                summary: { model: 'model', id: 321 }
+              },
+              bar: {
+                data: { id: 123 },
+                summary: { model: 'model', id: 123 }
+              }
+            },
+            data;
+
+        data = viewEngine.getBootstrappedData(locals, app);
+        data.should.deep.equal(expectedData)
+    });
+
   });
 });

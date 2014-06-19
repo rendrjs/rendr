@@ -175,17 +175,18 @@ describe('fetcher', function() {
       fetcher.collectionStore.clear();
     });
 
-    it("should be able store and hydrate a model", function() {
-      var fetchSummary, hydrated, listing, rawListing, results;
+    it("should be able store and hydrate a model", function(done) {
+      var fetchSummary, listing, listing, rawListing, results;
 
       rawListing = {
         id: 9,
         name: 'Sunny'
       };
+      listing = new Listing(rawListing, {
+        app: this.app
+      });
       results = {
-        listing: new Listing(rawListing, {
-          app: this.app
-        })
+        listing: listing
       };
       fetchSummary = {
         listing: {
@@ -195,14 +196,13 @@ describe('fetcher', function() {
       };
       fetcher.storeResults(results);
       fetcher.hydrate(fetchSummary, function(err, hydrated) {
-        listing = hydrated.listing;
-        listing.should.be.an.instanceOf(Listing);
-        listing.toJSON().should.eql(rawListing);
+        hydrated.listing.should.equal(listing);
+        done();
       });
     });
 
-    it("should be able to store and hydrate a collection", function() {
-      var fetchSummary, hydrated, listings, params, rawListings, results;
+    it("should be able to store and hydrate a collection", function(done) {
+      var fetchSummary, listings, params, rawListings, results;
 
       rawListings = [
         {
@@ -219,11 +219,12 @@ describe('fetcher', function() {
       params = {
         items_per_page: 99
       };
+      listings = new Listings(rawListings, {
+        params: params,
+        app: this.app
+      });
       results = {
-        listings: new Listings(rawListings, {
-          params: params,
-          app: this.app
-        })
+        listings: listings
       };
       fetchSummary = {
         listings: {
@@ -234,21 +235,15 @@ describe('fetcher', function() {
       };
       fetcher.storeResults(results);
       fetcher.hydrate(fetchSummary, function(err, hydrated) {
-        listings = hydrated.listings;
-        listings.should.be.an.instanceOf(Listings);
-        listings.toJSON().should.eql(rawListings);
-        listings.params.should.eql(params);
+        hydrated.listings.should.equal(listings);
         should.not.exist(fetcher.collectionStore.get('Listings', {}));
-        fetcher.collectionStore.get('Listings', params).should.eql({
-          ids: listings.pluck('id'),
-          meta: {},
-          params: params
-        });
+        fetcher.collectionStore.get('Listings', params).should.eql(listings);
+        done();
       });
     });
 
-    it("should be able to hydrate multiple objects at once", function() {
-      var fetchSummary, hydrated, listing, listings, rawListing, rawListings, results;
+    it("should be able to hydrate multiple objects at once", function(done) {
+      var fetchSummary, listing, listings, rawListing, rawListings, results;
 
       rawListing = {
         id: 9,
@@ -266,13 +261,15 @@ describe('fetcher', function() {
           name: 'Tall'
         }
       ];
+      listing = new Listing(rawListing, {
+        app: this.app
+      });
+      listings = new Listings(rawListings, {
+        app: this.app
+      });
       results = {
-        listing: new Listing(rawListing, {
-          app: this.app
-        }),
-        listings: new Listings(rawListings, {
-          app: this.app
-        })
+        listing: listing,
+        listings: listings
       };
       fetchSummary = {
         listing: {
@@ -286,17 +283,14 @@ describe('fetcher', function() {
       };
       fetcher.storeResults(results);
       fetcher.hydrate(fetchSummary, function(err, hydrated) {
-        listing = hydrated.listing;
-        listing.should.be.an.instanceOf(Listing);
-        listing.toJSON().should.deep.equal(rawListing);
-        listings = hydrated.listings;
-        listings.should.be.an.instanceOf(Listings);
-        listings.toJSON().should.deep.equal(rawListings);
+        hydrated.listing.should.equal(listing);
+        hydrated.listings.should.equal(listings);
+        done();
       });
     });
 
-    it("should inject the app instance", function() {
-      var app, listing1, model, results, summaries;
+    it("should inject the app instance", function(done) {
+      var app, listing1, model, summaries;
 
       listing1 = new Listing({
         id: 1
@@ -314,6 +308,7 @@ describe('fetcher', function() {
       fetcher.hydrate(summaries, {app: app}, function(err, results) {
         model = results.model;
         model.app.should.eql(app);
+        done();
       });
     });
   });

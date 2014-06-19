@@ -14,7 +14,7 @@ describe('BaseModel', function() {
     addClassMapping(this.MyModel.id, this.MyModel);
   });
 
-  it("should update modelStore when values change", function() {
+  it("should store the model on initialization", function () {
     var attrs, model, stored;
 
     attrs = {
@@ -25,18 +25,28 @@ describe('BaseModel', function() {
       app: this.app
     });
     stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
-    should.not.exist(stored);
-    this.app.fetcher.modelStore.set(model);
-    stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
-    stored.should.eql(attrs);
+    stored.should.deep.eql(attrs);
+  });
 
-    // Change an attribute, make sure the store gets updated.
-    attrs.status = 'accepted';
-    model.set({
-      status: attrs.status
+  it("should update modelStore when id attribute changes", function() {
+    var attrs, model, stored;
+
+    attrs = {
+      id: 9,
+      status: 'pending'
+    };
+    model = new this.MyModel(attrs, {
+      app: this.app
     });
     stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
-    stored.should.eql(attrs);
+    stored.should.deep.eql(attrs);
+
+    attrs.id = 10;
+    model.set({
+      id: attrs.id
+    });
+    stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
+    stored.should.deep.eql(attrs);
 
     // Add an attribute, make sure the store gets updated.
     attrs.name = 'Bobert';
@@ -44,7 +54,7 @@ describe('BaseModel', function() {
       name: attrs.name
     });
     stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
-    stored.should.eql(attrs);
+    stored.should.deep.eql(attrs);
   });
 
   describe('store', function() {

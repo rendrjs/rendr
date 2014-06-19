@@ -56,7 +56,10 @@ ClientRouter.prototype.reverseRoutes = true;
 ClientRouter.prototype.initialize = function(options) {
   this.app = options.app;
 
-  var AppView = this.options.appViewClass;
+  var AppView = this.options.appViewClass,
+      options = _.defaults(options.viewOptions || {}, {
+        app: this.app
+      });
 
   // We do this here so that it's available in AppView initialization.
   this.app.router = this;
@@ -65,9 +68,7 @@ ClientRouter.prototype.initialize = function(options) {
   this.on('action:start', this.trackAction, this);
   this.app.on('reload', this.renderView, this);
 
-  this.appView = new AppView({
-    app: this.app
-  });
+  this.appView = new AppView(options);
 
   this.appView.render();
   this.buildRoutes();

@@ -118,7 +118,7 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
 
   urlOpts = _.defaults(
     _.pick(api,     ['protocol', 'port', 'query']),
-    _.pick(apiHost, ['protocol', 'port', 'host'])
+    _.pick(apiHost, ['protocol', 'port', 'host', 'hostname'])
   );
   urlOpts.pathname = api.path || api.pathname;
 

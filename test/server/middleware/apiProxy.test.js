@@ -18,7 +18,11 @@ describe('apiProxy', function() {
       },
       dataAdater = { request: requestToApi },
       proxy = apiProxy(dataAdater),
-      responseToClient = { status: sinon.spy(), json: sinon.spy() };
+      responseToClient = {
+        status: sinon.spy(),
+        json: sinon.spy(),
+        jsonp: sinon.spy()
+      };
     });
 
     it('should pass through the status code', function () {
@@ -37,6 +41,16 @@ describe('apiProxy', function() {
 
       responseToClient.json.should.have.been.calledOnce;
       responseToClient.json.should.have.been.calledWith(body);
+    });
+
+    it('should allow jsonp responses', function () {
+      var body = { what: 'ever' };
+      dataAdater.request.yields(null, {jsonp: true, status: 200}, body);
+
+      proxy(requestFromClient, responseToClient);
+
+      responseToClient.jsonp.should.have.been.calledOnce;
+      responseToClient.jsonp.should.have.been.calledWith(body);
     });
 
     it('should add an x-forwarded-for header to the request', function () {

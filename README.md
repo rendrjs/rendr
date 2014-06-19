@@ -18,7 +18,7 @@ irc.freenode.org.
 
 ## Getting Started
 
-To see how to use Rendr to build a simple web app, check out the [examples](https://github.com/rendrjs/rendr/tree/master/examples) directory for a number of different ways to set up a Rendr app.
+To see how to use Rendr to build a simple web app, check out the [examples](https://github.com/rendrjs/rendr-examples) repository for a number of different ways to set up a Rendr app.
 
 Check out the [blog post](http://nerds.airbnb.com/weve-launched-our-first-nodejs-app-to-product) for a more thorough introduction to Rendr.
 

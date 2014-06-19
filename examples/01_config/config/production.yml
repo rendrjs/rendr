@@ -1,4 +1,0 @@
-# Config settings for NODE_ENV=production
-
-server:
-  port: 80

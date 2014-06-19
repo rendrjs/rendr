@@ -82,7 +82,7 @@ ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, 
 
       if (app.modelUtils.isModel(modelOrCollection)) {
         _.each(modelOrCollection.attributes, function (value, key) {
-          if (app.modelUtils.isModel(value)) {
+          if (app.modelUtils.isModel(value) || app.modelUtils.isCollection(value)) {
             var tempObject = {};
             tempObject[key] = value;
 

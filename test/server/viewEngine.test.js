@@ -126,7 +126,35 @@ describe('ViewEngine', function() {
             data;
 
         data = viewEngine.getBootstrappedData(locals, app);
-        data.should.deep.equal(expectedData)
+        data.should.deep.equal(expectedData);
+    });
+
+    it('should create a flat bootstrap object if a model has a nested collection', function () {
+        var foo = new  Model({ id: 321, foo: 'foo' }, { app: app }),
+            baz = new Collection([foo], { app: app }),
+            bar = new  Model({ id: 123, foo: 'bar', items: baz }, { app: app }),
+            locals = {
+              foo: foo,
+              bar: bar
+            },
+            expectedData = {
+                foo: {
+                  data: { foo: 'foo', id: 321 },
+                  summary: { model: 'model', id: 321 }
+                },
+                bar: {
+                  data: { foo: 'bar', id: 123, items: baz },
+                  summary: { model: 'model', id: 123 }
+                },
+                items: {
+                  data: [ { foo: 'foo', id: 321 } ],
+                  summary: { collection: 'collection', ids: [ 321 ], meta: {}, params: {} }
+                }
+            },
+            data;
+
+        data = viewEngine.getBootstrappedData(locals, app);
+        data.should.deep.equal(expectedData);
     });
 
   });

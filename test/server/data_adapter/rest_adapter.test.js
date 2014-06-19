@@ -128,6 +128,43 @@ describe('RestAdapter', function() {
       restAdapter.apiDefaults({body: {}}).should.have.property('url', 'https://example.com');
     });
 
+    it('should handle hostname and port', function () {
+      restAdapter.options.default = {
+        protocol: 'https',
+        hostname: 'google.org',
+        port: 1337,
+      };
+
+      var api = {
+        path: '/v1/dogs',
+        query: {
+          size: 'small'
+        },
+        body: {}
+      };
+
+      restAdapter.apiDefaults(api).should.have.property('url',
+        'https://google.org:1337/v1/dogs?size=small');
+    });
+
+    it('should handle host and port', function () {
+      restAdapter.options.default = {
+        protocol: 'https',
+        host: 'google.org:1337',
+      };
+
+      var api = {
+        path: '/v1/dogs',
+        query: {
+          size: 'small'
+        },
+        body: {}
+      };
+
+      restAdapter.apiDefaults(api).should.have.property('url',
+        'https://google.org:1337/v1/dogs?size=small');
+    });
+
     it('should use the configured api', function () {
       var api = {
           api: 'myCustomApi',
@@ -150,11 +187,11 @@ describe('RestAdapter', function() {
           api: 'myCustomApi',
           body: {}
         },
-        expectedUrl = 'https://myCustomHost?foo=bar',
+        expectedUrl = 'https://myCustomHost:3001?foo=bar',
         result;
 
       restAdapter.options.myCustomApi = {
-        host: 'myCustomHost',
+        hostname: 'myCustomHost',
         protocol: 'http',
         port: 3000
       };

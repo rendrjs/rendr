@@ -86,7 +86,7 @@ ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, 
             var tempObject = {};
             tempObject[key] = value;
 
-            _.extend(bootstrappedData, scope.getBootstrappedData(tempObject, app));
+            _.defaults(bootstrappedData, scope.getBootstrappedData(tempObject, app));
           }
         })
       }

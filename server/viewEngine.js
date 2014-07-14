@@ -80,16 +80,17 @@ ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, 
         data: modelOrCollection.toJSON()
       };
 
-      if (app.modelUtils.isModel(modelOrCollection)) {
-        _.each(modelOrCollection.attributes, function (value, key) {
-          if (app.modelUtils.isModel(value) || app.modelUtils.isCollection(value)) {
-            var tempObject = {};
-            tempObject[key] = value;
 
-            _.defaults(bootstrappedData, scope.getBootstrappedData(tempObject, app));
-          }
-        })
-      }
+      var list = (app.modelUtils.isModel(modelOrCollection)) ? modelOrCollection.attributes: modelOrCollection.models;
+      _.each(list, function (value, key) {
+        if (app.modelUtils.isModel(value) || app.modelUtils.isCollection(value)) {
+          var tempObject = {},
+              key = (key !== value.cid && isNaN(parseInt(key))) ? key : value.cid;
+
+          tempObject[key] = value;
+          _.defaults(bootstrappedData, scope.getBootstrappedData(tempObject, app));
+        }
+      })
     }
   });
   return bootstrappedData;

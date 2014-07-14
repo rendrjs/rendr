@@ -97,6 +97,11 @@ describe('ViewEngine', function() {
         },
         data;
 
+      expectedData[locals.bar.models[0].cid] = {
+        data: { foo: 'bar', id: 123 },
+        summary: { model: 'model', id: 123 }
+      }
+
       data = viewEngine.getBootstrappedData(locals, app);
       data.should.deep.equal(expectedData);
     });
@@ -152,6 +157,11 @@ describe('ViewEngine', function() {
                 }
             },
             data;
+
+        expectedData[baz.models[0].cid] = {
+          data: { foo: 'foo', id: 321 },
+          summary: { model: 'model', id: 321 }
+        };
 
         data = viewEngine.getBootstrappedData(locals, app);
         data.should.deep.equal(expectedData);

@@ -121,6 +121,27 @@ describe('ViewEngine', function() {
       data.should.deep.equal(expectedData);
     });
 
+    it('should escape bootstrapped data from nested models', function() {
+      var bar = new Model({id: 322, foo: '<blah>'});
+      var locals = {
+        foo: new Model({ id: 321, foo: '<bar>', bar: bar }, { app: app })
+        },
+        expectedData = {
+          bar: {
+            data: { foo: '&lt;blah&gt;', id: 322 },
+            summary: { model: 'model', id: 322 }
+          },
+          foo: {
+            data: { foo: '&lt;bar&gt;', id: 321, bar: bar },
+            summary: { model: 'model', id: 321 }
+          },
+        },
+        data;
+
+      data = viewEngine.getBootstrappedData(locals, app);
+      data.should.deep.equal(expectedData);
+    });
+
     it('should ignore properties which aren’t a model or collection', function () {
       var locals = { foo: true, bar: [ 1, 2, 3, 4 ] },
         data = viewEngine.getBootstrappedData(locals, app);

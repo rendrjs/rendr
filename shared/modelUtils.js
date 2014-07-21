@@ -139,31 +139,30 @@ ModelUtils.prototype.modelIdAttribute = function(modelName, callback) {
   });
 };
 
-ModelUtils.prototype.deepEscape = function(modelOrCollection) {
+ModelUtils.prototype.deepApply = function(modelOrCollection, fn, seen) {
+  // Keep track of objects we've seen in order to handle cycles
+  seen = seen || [];
+  if(_.contains(seen, modelOrCollection)) {
+    return modelOrCollection;
+  }
+
+  seen.push(modelOrCollection);
+
   _.each(modelOrCollection, function(value, key) {
     if(_.isString(value)) {
-      modelOrCollection[key] = sanitizer.escape(value);
+      modelOrCollection[key] = fn(value);
     } else if (_.isObject(value)) {
-      _.each(modelOrCollection[key], function(innerValue, innerKey) {
-        if(_.isString(innerValue)) {
-          modelOrCollection[key][innerKey] = sanitizer.escape(innerValue);
-        }
-      });
+      modelOrCollection[key] = this.deepApply(value, fn, seen);
     }
-  });
+  }.bind(this));
+
   return modelOrCollection;
 };
+
+ModelUtils.prototype.deepEscape = function(modelOrCollection) {
+  return this.deepApply(modelOrCollection, sanitizer.escape);
+};
+
 ModelUtils.prototype.deepUnescape = function(modelOrCollection) {
-  _.each(modelOrCollection, function(value, key) {
-    if(_.isString(value)) {
-      modelOrCollection[key] = sanitizer.unescapeEntities(value);
-    } else if (_.isObject(value)) {
-      _.each(modelOrCollection[key], function(innerValue, innerKey) {
-        if(_.isString(innerValue)) {
-          modelOrCollection[key][innerKey] = sanitizer.unescapeEntities(innerValue);
-        }
-      });
-    }
-  });
-  return modelOrCollection;
+  return this.deepApply(modelOrCollection, sanitizer.unescapeEntities);
 };

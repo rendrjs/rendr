@@ -69,7 +69,7 @@ ViewEngine.prototype.getViewHtml = function getViewHtml(viewPath, locals, app) {
   return view.getHtml();
 };
 
-ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, app) {
+ViewEngine.prototype._getBootstrappedData = function _getBootstrappedData(locals, app) {
   var bootstrappedData = {},
       scope = this;
 
@@ -77,7 +77,7 @@ ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, 
     if (app.modelUtils.isModel(modelOrCollection) || app.modelUtils.isCollection(modelOrCollection)) {
       bootstrappedData[name] = {
         summary: app.fetcher.summarize(modelOrCollection),
-        data: app.modelUtils.deepEscape(modelOrCollection.toJSON())
+        data: modelOrCollection.toJSON()
       };
 
       if (app.modelUtils.isModel(modelOrCollection)) {
@@ -86,13 +86,18 @@ ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, 
             var tempObject = {};
             tempObject[key] = value;
 
-            _.defaults(bootstrappedData, scope.getBootstrappedData(tempObject, app));
+            _.defaults(bootstrappedData, scope._getBootstrappedData(tempObject, app));
           }
         })
       }
     }
   });
   return bootstrappedData;
+};
+
+ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, app) {
+  var data = this._getBootstrappedData(locals, app);
+  return app.modelUtils.deepEscape(data);
 };
 
 ViewEngine.prototype.clearCachedLayouts = function () {

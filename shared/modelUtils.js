@@ -5,6 +5,8 @@
  */
 var BaseModel = require("./base/model"),
     BaseCollection = require("./base/collection");
+    sanitizer = require("sanitizer");
+    _ = require("underscore");
 
 var typePath = {
   model: "app/models/",
@@ -135,4 +137,33 @@ ModelUtils.prototype.modelIdAttribute = function(modelName, callback) {
   this.getModelConstructor(modelName, function(constructor) {
     callback(constructor.prototype.idAttribute);
   });
+};
+
+ModelUtils.prototype.deepEscape = function(modelOrCollection) {
+  _.each(modelOrCollection, function(value, key) {
+    if(_.isString(value)) {
+      modelOrCollection[key] = sanitizer.escape(value);
+    } else if (_.isObject(value)) {
+      _.each(modelOrCollection[key], function(innerValue, innerKey) {
+        if(_.isString(innerValue)) {
+          modelOrCollection[key][innerKey] = sanitizer.escape(innerValue);
+        }
+      });
+    }
+  });
+  return modelOrCollection;
+};
+ModelUtils.prototype.deepUnescape = function(modelOrCollection) {
+  _.each(modelOrCollection, function(value, key) {
+    if(_.isString(value)) {
+      modelOrCollection[key] = sanitizer.unescapeEntities(value);
+    } else if (_.isObject(value)) {
+      _.each(modelOrCollection[key], function(innerValue, innerKey) {
+        if(_.isString(innerValue)) {
+          modelOrCollection[key][innerKey] = sanitizer.unescapeEntities(innerValue);
+        }
+      });
+    }
+  });
+  return modelOrCollection;
 };

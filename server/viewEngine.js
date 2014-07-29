@@ -85,7 +85,7 @@ ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, 
       _.each(list, function (value, key) {
         if (app.modelUtils.isModel(value) || app.modelUtils.isCollection(value)) {
           var tempObject = {},
-              key = (key !== value.cid && isNaN(parseInt(key))) ? key : value.cid;
+              key = app.modelUtils.modelName(value.constructor) + ':' + value.id
 
           tempObject[key] = value;
           _.defaults(bootstrappedData, scope.getBootstrappedData(tempObject, app));

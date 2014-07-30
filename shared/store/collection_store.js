@@ -30,6 +30,15 @@ _.extend(CollectionStore.prototype, Super.prototype, {
     return cachedCollection;
   },
 
+  clear: function(collectionName, params) {
+    if (collectionName && params) {
+      var key = this._getStoreKey(collectionName, params);
+      return Super.prototype.clear.call(this, key);      
+    } else {
+      return Super.prototype.clear.call(this, null);
+    }
+  },
+
   mergeParams: function(collectionName, params, callback) {
     this.modelUtils.getCollectionConstructor(collectionName, function(Collection) {
       var mergedParams = _.extend({}, Collection.prototype.defaultParams, params);

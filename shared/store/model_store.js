@@ -38,6 +38,15 @@ _.extend(ModelStore.prototype, Super.prototype, {
     }
   },
 
+  clear: function(modelName, id) {
+    if (modelName && id) {
+      var key = this._getModelStoreKey(modelName, id);
+      return Super.prototype.clear.call(this, key);      
+    } else {
+      return Super.prototype.clear.call(this, null);
+    }
+  },
+
   find: function(modelName, params) {
     var prefix = this._formatKey(this._keyPrefix(modelName)),
       keys = Object.keys(this.cache),

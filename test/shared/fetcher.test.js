@@ -112,8 +112,8 @@ describe('fetcher', function() {
   });
 
   describe('buildOptions', function () {
-     it('should merge the app with custom options', function () {
-       fetcher.buildOptions().should.be.deep.equal({app: this.app});
+     it('should merge the app and parse with custom options', function () {
+       fetcher.buildOptions().should.be.deep.equal({app: this.app, parse: true});
      });
 
     it('should append specified additional options', function () {

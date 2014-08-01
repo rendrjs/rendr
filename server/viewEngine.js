@@ -70,8 +70,7 @@ ViewEngine.prototype.getViewHtml = function getViewHtml(viewPath, locals, app) {
 };
 
 ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, app) {
-  var bootstrappedData = {},
-      scope = this;
+  var bootstrappedData = {};
 
   _.each(locals, function(modelOrCollection, name) {
     if (app.modelUtils.isModel(modelOrCollection) || app.modelUtils.isCollection(modelOrCollection)) {
@@ -79,17 +78,6 @@ ViewEngine.prototype.getBootstrappedData = function getBootstrappedData(locals, 
         summary: app.fetcher.summarize(modelOrCollection),
         data: modelOrCollection.toJSON()
       };
-
-      if (app.modelUtils.isModel(modelOrCollection)) {
-        _.each(modelOrCollection.attributes, function (value, key) {
-          if (app.modelUtils.isModel(value) || app.modelUtils.isCollection(value)) {
-            var tempObject = {};
-            tempObject[key] = value;
-
-            _.defaults(bootstrappedData, scope.getBootstrappedData(tempObject, app));
-          }
-        })
-      }
     }
   });
   return bootstrappedData;

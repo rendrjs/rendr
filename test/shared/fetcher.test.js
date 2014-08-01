@@ -117,11 +117,11 @@ describe('fetcher', function() {
      });
 
     it('should append specified additional options', function () {
-      fetcher.buildOptions({foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app});
+      fetcher.buildOptions({foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app, parse: true});
     });
 
     it('should merge specified params with specified options that are empty', function () {
-      fetcher.buildOptions(null, {foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app});
+      fetcher.buildOptions(null, {foo: 'bar'}).should.be.deep.equal({foo: 'bar', app: this.app, parse: true});
     });
 
     it('should merge specified params with the specified options', function () {
@@ -129,6 +129,7 @@ describe('fetcher', function() {
         params = {anyParam: 'paramValue'},
         expected = {
           app: this.app,
+          parse: true,
           anyOption: 'withValue',
           anyParam: 'paramValue'
         };

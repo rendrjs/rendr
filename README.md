@@ -125,9 +125,9 @@ Inherits from `Backbone.Model`.
 
 ### `BaseAppView`
 
-Inherits for `BaseView`. You can change your main content container from this view by changing the `contentEl` key in the `options` object when extending `BaseAppView`
+Inherits from `BaseView`. You can change your main content container from this view by changing the `contentEl` key in the `options` object when extending `BaseAppView`
 
-```javascript
+```js
 var AppView = BaseAppView.extend({
   options : {
     contentEl : "#mainContent"
@@ -153,7 +153,7 @@ Inherits from `BaseRouter`.
 
 ####Example
 
-```
+```js
 var config = {
   dataAdapterConfig: {
     'default': {
@@ -230,7 +230,7 @@ This configuration is passed to the current DataAdapter, which by default is the
 
 **Simple**
 
-```
+```js
 var dataAdapterConfig = {
   host: 'api.github.com',
   protocol: 'https'
@@ -240,7 +240,7 @@ var dataAdapterConfig = {
 
 **Multiple**
 
-```
+```js
 var dataAdapterConfig = {
   'default': {
     host: 'api.github.com',
@@ -258,14 +258,14 @@ Example of how a Backbone model can be configured to select one of the DataAdapt
 
 *Note: This example assumes you are using the [RestAdapter](https://github.com/rendrjs/rendr/blob/master/server/data_adapter/rest_adapter.js).*
 
-````
+```js
 module.exports = Base.extend({
   url: '/repos/:owner/:name',
   api: 'travis-ci'
 });
 module.exports.id = 'Build';
 
-````
+```
 
 ### Adding middleware to Rendr's Express
 
@@ -273,7 +273,7 @@ module.exports.id = 'Build';
 You can optionally add any custom middleware that has to access `req.rendrApp` but should run before
 the Rendr routes by calling configure after createServer.
 
-```
+```js
 
 rendr.createServer(config);
 rendr.configure(function(expressApp) {

@@ -22,12 +22,22 @@ ServerRouter.prototype.constructor = ServerRouter;
 ServerRouter.prototype.escapeParams = function(params) {
   var escaped = {};
   _.each(params, function(value, key) {
-    escaped[sanitizer.sanitize(key)] = sanitizer.sanitize(value);
-  });
+    if (_.isObject(value)) {
+      escaped[sanitizer.sanitize(key)] = this.escapeParams(value);
+    } else {
+      escaped[sanitizer.sanitize(key)] = sanitizer.sanitize(value);
+    }
+  }, this);
   return escaped;
 };
 
 ServerRouter.prototype.getParams = function(req) {
+  if (!_.isArray(req.params)) {
+    // Express 4
+    return this.escapeParams(_.extend({}, req.query, req.params));
+  }
+
+  // Express 3
   var params = _.clone(req.query || {});
 
   if (req.route.regexp) {

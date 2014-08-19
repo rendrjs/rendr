@@ -112,10 +112,11 @@ describe('RestAdapter', function() {
     it('should set the url property if path contains a protocol', function () {
       var api = {
         path: 'http://www.example.com',
+        query: { abc: 123 },
         body: {}
       };
 
-      restAdapter.apiDefaults(api).should.have.property('url', 'http://www.example.com');
+      restAdapter.apiDefaults(api).should.have.property('url', 'http://www.example.com?abc=123');
     });
 
     it('should use the default api if no other is configured', function () {
@@ -125,6 +126,43 @@ describe('RestAdapter', function() {
       };
 
       restAdapter.apiDefaults({body: {}}).should.have.property('url', 'https://example.com');
+    });
+
+    it('should handle hostname and port', function () {
+      restAdapter.options.default = {
+        protocol: 'https',
+        hostname: 'google.org',
+        port: 1337,
+      };
+
+      var api = {
+        path: '/v1/dogs',
+        query: {
+          size: 'small'
+        },
+        body: {}
+      };
+
+      restAdapter.apiDefaults(api).should.have.property('url',
+        'https://google.org:1337/v1/dogs?size=small');
+    });
+
+    it('should handle host and port', function () {
+      restAdapter.options.default = {
+        protocol: 'https',
+        host: 'google.org:1337',
+      };
+
+      var api = {
+        path: '/v1/dogs',
+        query: {
+          size: 'small'
+        },
+        body: {}
+      };
+
+      restAdapter.apiDefaults(api).should.have.property('url',
+        'https://google.org:1337/v1/dogs?size=small');
     });
 
     it('should use the configured api', function () {
@@ -149,11 +187,11 @@ describe('RestAdapter', function() {
           api: 'myCustomApi',
           body: {}
         },
-        expectedUrl = 'https://myCustomHost?foo=bar',
+        expectedUrl = 'https://myCustomHost:3001?foo=bar',
         result;
 
       restAdapter.options.myCustomApi = {
-        host: 'myCustomHost',
+        hostname: 'myCustomHost',
         protocol: 'http',
         port: 3000
       };

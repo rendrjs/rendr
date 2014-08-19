@@ -47,6 +47,8 @@ BaseCollection = Super.extend({
     }
 
     Super.apply(this, arguments);
+
+    this.store();
   },
 
   /**
@@ -109,10 +111,12 @@ BaseCollection = Super.extend({
    * Instance method to store the collection and its models.
    */
   store: function() {
-    this.each(function(model) {
-      model.store();
-    });
-    this.app.fetcher.collectionStore.set(this);
+    if (this.app && this.app.fetcher) {
+      this.each(function(model) {
+        model.store();
+      });
+      this.app.fetcher.collectionStore.set(this);
+    }
   }
 });
 

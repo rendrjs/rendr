@@ -5,20 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha -R spec ./test --recursive",
-    "coverage": "istanbul cover _mocha -- -R spec ./test --recursive"
+    "coverage": "istanbul cover _mocha -- -R spec ./test --recursive",
+    "coveralls": "npm run-script coverage && cat ./coverage/lcov.info | coveralls"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/rendrjs/rendr.git"
   },
   "dependencies": {
-    "underscore": "1.5.2",
-    "backbone": "1.0.0",
-    "async":"~0.2.9",
+    "underscore": "~1.6.0",
+    "backbone": "1.1.2",
+    "async": "~0.9.0",
     "qs": "0.6.6",
     "express": "~3",
     "sanitizer": "~0.1",
-    "request": "~2.34.0",
+    "request": "~2.36.0",
     "debug": "*"
   },
   "devDependencies": {
@@ -29,7 +30,8 @@
     "istanbul": "~0.1.10",
     "jquery": "~1.8.3",
     "rendr-handlebars": "0.2.0",
-    "proxyquire": "0.5.2"
+    "proxyquire": "0.5.2",
+    "coveralls": "2.8.0"
   },
   "keywords": [
     "Backbone",

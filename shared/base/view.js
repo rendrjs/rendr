@@ -9,10 +9,12 @@ var _ = require('underscore'),
     Backbone = require('backbone'),
     async = require('async'),
     isServer = (typeof window === 'undefined'),
-    BaseView;
+    BaseView,
+    $;
 
 if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
+  $ = Backbone.$;
 }
 
 function noop() {}
@@ -21,7 +23,7 @@ module.exports = BaseView = Backbone.View.extend({
   constructor: function(options) {
     var obj;
 
-    this.options = options || {};
+    this.options = _.extend( this.options || {}, options || {} );
 
     this.parseOptions(options);
 
@@ -321,24 +323,6 @@ module.exports = BaseView = Backbone.View.extend({
    */
   postRender: noop,
 
-  /**
-   * Hydrate this view with the data it needs, if being attached
-   * to pre-exisitng DOM.
-   */
-  hydrate: function(callback) {
-    var fetchSummary = this.options.fetch_summary;
-    if (!_.isEmpty(fetchSummary)) {
-      this.app.fetcher.hydrate(fetchSummary, {
-        app: this.app
-      }, function(err, results) {
-        this.parseOptions(results);
-        callback(err);
-      }.bind(this));
-    } else {
-      callback(null);
-    }
-  },
-
   setLoading: function(loading) {
     this.$el.toggleClass('loading', loading);
     this.trigger('loading', loading);
@@ -364,31 +348,25 @@ module.exports = BaseView = Backbone.View.extend({
     this.viewing = true;
 
     /**
-     * Hydrate looks if there is a model or collection associated
-     * with this view, and tries to load it from memory.
+     * Call preRender() so we can access things setup by @hydrate()
+     * (like @model) in i.e. @getTemplateData().
      */
-    this.hydrate(function(err) {
-      /**
-       * Call preRender() so we can access things setup by @hydrate()
-       * (like @model) in i.e. @getTemplateData().
-       */
-      this._preRender();
+    this._preRender();
 
-      /**
-       * We have to call postRender() so client-only things happen,
-       * i.e. initialize slideshows, etc.
-       */
-      this._postRender();
+    /**
+     * We have to call postRender() so client-only things happen,
+     * i.e. initialize slideshows, etc.
+     */
+    this._postRender();
 
-      /**
-       * If the view says it should try to be lazy loaded, and it doesn't
-       * have a model or collection, then do so.
-       */
-      if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
-        this.fetchLazy();
-      }
-      this.trigger('attach');
-    }.bind(this));
+    /**
+     * If the view says it should try to be lazy loaded, and it doesn't
+     * have a model or collection, then do so.
+     */
+    if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
+      this.fetchLazy();
+    }
+    this.trigger('attach');
 
   },
 
@@ -456,30 +434,44 @@ BaseView.getView = function(viewName, entryPath, callback) {
   }
 };
 
+BaseView.getViewOptions = function ($el) {
+  var parsed,
+    options = $el.data();
+
+  _.each(options, function(value, key) {
+    if (_.isString(value)) {
+      parsed = _.unescape(value);
+      try {
+        parsed = JSON.parse(parsed);
+      } catch (err) {}
+      options[key] = parsed;
+    }
+  });
+
+  return options;
+};
+
 BaseView.attach = function(app, parentView, callback) {
   var scope = parentView ? parentView.$el : null,
       list = $('[data-view]', scope).toArray();
 
   async.map(list, function(el, cb) {
-    var $el, options, parsed, viewName;
+    var $el, options, viewName, fetchSummary;
     $el = $(el);
     if (!$el.data('view-attached')) {
-      options = $el.data();
-      viewName = options.view;
-      _.each(options, function(value, key) {
-        if (_.isString(value)) {
-          parsed = _.unescape(value);
-          try {
-            parsed = JSON.parse(parsed);
-          } catch (err) {}
-          options[key] = parsed;
-        }
-      });
+      options = BaseView.getViewOptions($el);
       options.app = app;
-      BaseView.getView(viewName, app.options.entryPath, function(ViewClass) {
-        var view = new ViewClass(options);
-        view.attach($el, parentView);
-        cb(null, view);
+
+      viewName = options.view;
+
+      fetchSummary = options.fetch_summary || {};
+      app.fetcher.hydrate(fetchSummary, { app: app }, function (err, results) {
+        options = _.extend(options, results);
+        BaseView.getView(viewName, app.options.entryPath, function(ViewClass) {
+          var view = new ViewClass(options);
+          view.attach($el, parentView);
+          cb(null, view);
+        });
       });
     } else {
       cb(null, null);

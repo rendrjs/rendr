@@ -1,15 +1,28 @@
 var _ = require('underscore'),
-    should = require('chai').should(),
+    chai = require('chai'),
+    sinon = require('sinon'),
+    sinonChai = require('sinon-chai'),
     BaseCollection = require('../../../shared/base/collection'),
     BaseModel = require('../../../shared/base/model'),
     App = require('../../../shared/app'),
     ModelUtils = require('../../../shared/modelUtils'),
     AddClassMapping = require('../../helpers/add_class_mapping');
 
+chai.should();
+chai.use(sinonChai);
+
 describe('BaseCollection', function() {
   beforeEach(function() {
     this.app = new App();
     this.addClassMapping = new AddClassMapping(this.app.modelUtils)
+  });
+
+  it('should store the collection on initialization', function () {
+    sinon.spy(BaseCollection.prototype, 'store');
+    var collection = new BaseCollection();
+    BaseCollection.prototype.store.should.have.been.calledOnce;
+    BaseCollection.prototype.store.should.have.been.calledOn(collection);
+    BaseCollection.prototype.store.restore();
   });
 
   describe('parse', function() {
@@ -167,7 +180,7 @@ describe('BaseCollection', function() {
         storedModel.should.eql(modelAttrs);
       });
       storedCollection = this.app.fetcher.collectionStore.get(this.MyCollection.name, collection.params);
-      storedCollection.ids.should.eql(_.pluck(models, 'id'));
+      _.pluck(storedCollection.models, 'id').should.eql(_.pluck(models, 'id'));
       storedCollection.meta.should.eql(meta);
     });
   });

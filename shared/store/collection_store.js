@@ -31,7 +31,7 @@ _.extend(CollectionStore.prototype, Super.prototype, {
   },
 
   clear: function(collectionName, params) {
-    if (collectionName && params) {
+    if ((collectionName !== null)  && !_.isUndefined(collectionName) && params) {
       var key = this._getStoreKey(collectionName, params);
       return Super.prototype.clear.call(this, key);      
     } else {

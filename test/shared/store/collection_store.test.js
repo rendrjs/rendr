@@ -149,4 +149,97 @@ describe('CollectionStore', function() {
     should.exist(results);
     results.should.be.equal(collection);
   });
+
+  it("should allow clearing out of the store by params", function() {
+
+    var collection0, collection10, models0, models10, params0, params10, results0, results10;
+
+    models0 = [
+      {
+        foo: 'bar',
+        id: 1
+      }, {
+        foo: 'bot',
+        id: 2
+      }
+    ];
+    models10 = [
+      {
+        foo: 'bar',
+        id: 11
+      }, {
+        foo: 'bot',
+        id: 12
+      }
+    ];
+    params0 = {
+      offset: 0
+    };
+    collection0 = new BaseCollection(models0, {params: params0});
+    this.store.set(collection0, params0);
+    params10 = {offset: 10};
+    collection10 = new BaseCollection(models10, {params: params10});
+    this.store.set(collection10, params10);
+    this.store.clear(collection0.constructor.name, params0);
+    results0 = this.store.get(collection0.constructor.name, params0);
+    should.not.exist(results0);
+    results10 = this.store.get(collection10.constructor.name, params10);
+    should.exist(results10);
+  });  
+
+  it("should allow clearing out of the store", function() {
+
+    var collection0, collection10, models0, models10, params0, params10, results0, results10;
+
+    models0 = [
+      {
+        foo: 'bar',
+        id: 1
+      }, {
+        foo: 'bot',
+        id: 2
+      }
+    ];
+    models10 = [
+      {
+        foo: 'bar',
+        id: 11
+      }, {
+        foo: 'bot',
+        id: 12
+      }
+    ];
+    params0 = {
+      offset: 0
+    };
+    params10 = {offset: 10};    
+    collection0 = new BaseCollection(models0, {params: params0});
+    collection10 = new BaseCollection(models10, {params: params10});
+
+    this.store.set(collection0, params0);
+    this.store.set(collection10, params10);
+    results0 = this.store.get(collection0.constructor.name, params0);
+    results10 = this.store.get(collection10.constructor.name, params10);
+    should.exist(results0);
+    should.exist(results10);
+    this.store.clear(collection0.constructor.name);
+    results0 = this.store.get(collection0.constructor.name, params0);
+    results10 = this.store.get(collection10.constructor.name, params10);
+    should.not.exist(results0);
+    should.not.exist(results10);
+
+    this.store.set(collection0, params0);
+    this.store.set(collection10, params10);
+    results0 = this.store.get(collection0.constructor.name, params0);
+    results10 = this.store.get(collection10.constructor.name, params10);
+    should.exist(results0);
+    should.exist(results10);
+    this.store.clear();
+    results0 = this.store.get(collection0.constructor.name, params0);
+    results10 = this.store.get(collection10.constructor.name, params10);
+    should.not.exist(results0);
+    should.not.exist(results10);
+
+  });  
+
 });

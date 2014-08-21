@@ -76,6 +76,51 @@ describe('ModelStore', function() {
     resultModel.should.be.equal(model);
   });
 
+  it("should allow clearing out of the store by id", function() {
+    var model, modelAttrs, resultModel;
+
+    modelAttrs = {
+      foo: 'foo',
+      id: 1
+    };
+    
+    model = new MyModel(modelAttrs, {app: this.app});
+    this.store.set(model);
+    resultModel = this.store.get('my_model', 1, true);
+    should.exist(resultModel);
+    this.store.clear(modelAttrs.id);
+    resultModel = this.store.get('my_model', 1, true);
+    should.not.exist(resultModel);
+  });  
+
+  it("should allow clearing out the store", function() {
+      var model, modelAttrs, resultModel;
+
+    modelAttrs = {
+      foo: 'foo',
+      id: 1
+    };
+    modelAttrs2 = {
+      foo: 'bar',
+      id: 2
+    };
+    
+    model = new MyModel(modelAttrs, {app: this.app});
+    this.store.set(model);
+    model = new MyModel(modelAttrs2, {app: this.app});
+    this.store.set(model);
+
+    resultModel = this.store.get('my_model', 1, true);
+    should.exist(resultModel);
+    resultModel = this.store.get('my_model', 2, true);
+    should.exist(resultModel);
+    this.store.clear();
+    resultModel = this.store.get('my_model', 1, true);
+    should.not.exist(resultModel);
+    resultModel = this.store.get('my_model', 2, true);    
+    should.not.exist(resultModel);
+  });    
+
   describe('find', function(){
     function MySecondModel() {
       MySecondModel.super_.apply(this, arguments);

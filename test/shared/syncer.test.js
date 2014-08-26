@@ -21,9 +21,10 @@ describe('syncer', function() {
       model = new BaseModel({ id: 0 }, { app: app });
       model.urlRoot = '/listings';
 
-      options = { 
-        url: model.url(), 
-        headers: { foo: 'bar' } 
+      options = {
+        url: model.url(),
+        headers: { foo: 'bar' },
+        data: { baz: 'quux' }
       };
     });
 
@@ -41,7 +42,7 @@ describe('syncer', function() {
         var expectedRequestOptions = {
           method: 'GET',
           path: '/listings/0',
-          query: {},
+          query: { baz: 'quux' },
           headers: { foo: 'bar' },
           api: 'foo',
           body: {}
@@ -57,7 +58,7 @@ describe('syncer', function() {
         var expectedRequestOptions = {
           method: 'PUT',
           path: '/listings/0',
-          query: {},
+          query: { baz: 'quux' },
           headers: { foo: 'bar' },
           api: 'foo',
           body: { id: 0, foo: 'bar', bar: 'foo' }
@@ -97,7 +98,8 @@ describe('syncer', function() {
       it('should get the prefixed API url', function () {
         var expectedOptions = {
           url: '/api/-' + model.url(),
-          headers: { foo: 'bar' }
+          headers: { foo: 'bar' },
+          data: { baz: 'quux' }
         };
 
         syncer.clientSync.call(model, 'read', model, options);

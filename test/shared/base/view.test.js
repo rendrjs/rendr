@@ -56,6 +56,7 @@ describe('BaseView', function() {
 
       spy.should.have.been.called
       spy.should.have.been.calledWith(_.omit(data, 'model'))
+      view.model.should.equal(data.model)
     });
 
     it('does not pass the collection if it is set', function() {
@@ -64,6 +65,7 @@ describe('BaseView', function() {
 
       spy.should.have.been.called
       spy.should.have.been.calledWith(_.omit(data, 'collection'))
+      view.collection.should.equal(data.collection)
     });
   });
 

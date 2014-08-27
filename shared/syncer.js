@@ -64,6 +64,10 @@ function serverSync(method, model, options) {
   req = this.app.req;
   queryStr = urlParts[1] || '';
   if (!_.isEmpty(options.data)) queryStr += '&' + qs.stringify(options.data);
+  /**
+   * if queryStr is initially an empty string, leading '&' will still get parsed correctly by qs.parse below.
+   * e.g.  qs.parse('&baz=quux') => { baz: quux }
+   */
 
   api = {
     method: verb,

@@ -17,8 +17,7 @@ if (!isServer) {
 module.exports = Backbone.Model.extend({
 
   defaults: {
-    loading: false,
-    templateAdapter: 'rendr-handlebars'
+    loading: false
   },
 
   /**
@@ -49,9 +48,12 @@ module.exports = Backbone.Model.extend({
      *
      * We can't use `this.get('templateAdapter')` here because `Backbone.Model`'s
      * constructor has not yet been called.
+     *
+     * In order to support more packagers, instead of setting `templateAdapter`,
+     * you should override the `getTemplateAdapterModule` method.
      */
-    var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter;
-    this.templateAdapter = require(templateAdapterModule)({entryPath: entryPath});
+    var templateAdapterModule = this.getTemplateAdapterModule(attributes.templateAdapter)
+    this.templateAdapter = templateAdapterModule({entryPath: entryPath});
 
     /**
      * Instantiate the `Fetcher`, which is used on client and server.
@@ -92,6 +94,17 @@ module.exports = Backbone.Model.extend({
    */
   getAppViewClass: function () {
     return require('../client/app_view');
+  },
+
+  /**
+   * @shared
+   */
+  getTemplateAdapterModule: function(moduleName) {
+    if (!moduleName || moduleName === 'rendr-handlebars') {
+      return require('rendr-handlebars');
+    } else {
+      return require(moduleName);
+    }
   },
 
   /**

@@ -32,6 +32,7 @@ var syncer = module.exports;
 function clientSync(method, model, options) {
   var error;
   options = _.clone(options);
+  options.data = _.clone(options.data);
   options.url = this.getUrl(options.url, true, options.data);
   error = options.error;
   if (error) {
@@ -58,6 +59,7 @@ function serverSync(method, model, options) {
   var api, urlParts, verb, req, queryStr;
 
   options = _.clone(options);
+  options.data = _.clone(options.data);
   options.url = this.getUrl(options.url, false, options.data);
   verb = methodMap[method];
   urlParts = options.url.split('?');

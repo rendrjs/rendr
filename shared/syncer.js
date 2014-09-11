@@ -32,8 +32,7 @@ var syncer = module.exports;
 function clientSync(method, model, options) {
   var error;
   options = _.clone(options);
-  options.data = _.clone(options.data);
-  options.url = this.getUrl(options.url, true, options.data);
+  options.url = this.getUrl(options.url, true);
   error = options.error;
   if (error) {
     options.error = function(xhr) {
@@ -56,25 +55,18 @@ function clientSync(method, model, options) {
 }
 
 function serverSync(method, model, options) {
-  var api, urlParts, verb, req, queryStr;
+  var api, urlParts, verb, req;
 
   options = _.clone(options);
-  options.data = _.clone(options.data);
-  options.url = this.getUrl(options.url, false, options.data);
+  options.url = this.getUrl(options.url, false);
   verb = methodMap[method];
   urlParts = options.url.split('?');
   req = this.app.req;
-  queryStr = urlParts[1] || '';
-  if (!_.isEmpty(options.data)) queryStr += '&' + qs.stringify(options.data);
-  /**
-   * if queryStr is initially an empty string, leading '&' will still get parsed correctly by qs.parse below.
-   * e.g.  qs.parse('&baz=quux') => { baz: quux }
-   */
 
   api = {
     method: verb,
     path: urlParts[0],
-    query: qs.parse(queryStr),
+    query: qs.parse(urlParts[1]) || {},
     headers: options.headers || {},
     api: _.result(this, 'api'),
     body: {}
@@ -237,10 +229,5 @@ syncer.interpolateParams = function interpolateParams(model, url, params) {
       delete params[property];
     });
   }
-  /**
-   * Separate deletion of idAttribute from params hash necessary if using urlRoot in the model
-   * so we don't get urls like: /v1/threads/1234?id=1234
-   */
-  delete params[model.idAttribute]
   return url;
 };

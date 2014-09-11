@@ -37,7 +37,7 @@ describe('syncer', function() {
         it('should not directly modify the same object in memory as the model/collection params', function () {
           model.params = options.data; // mimics the line in the base collection 'fetch' method
           syncer.clientSync.call(model, 'read', model, options);
-          JSON.stringify(model.params).should.equal('{"baz":{"quux":"doh"}}')
+          model.params.should.deep.equal({ baz: { quux: 'doh' } })
         });
       });
 
@@ -188,7 +188,7 @@ describe('syncer', function() {
         it('should not directly modify the same object in memory as the model/collection params', function () {
           model.params = options.data; // to mimic the line in the base collection 'fetch' method
           syncer.clientSync.call(model, 'read', model, options);
-          JSON.stringify(model.params).should.equal('{"baz":{"quux":"doh"}}')
+          model.params.should.deep.equal({ baz: { quux: 'doh' } })
         });
 
         it('should not create an options.data property if it is initially undefined', function () {

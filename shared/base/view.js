@@ -66,21 +66,7 @@ module.exports = BaseView = Backbone.View.extend({
       this.parentView = options.parentView;
     }
 
-    if (options.model != null) {
-      if (!(options.model instanceof Backbone.Model) && options.model_name) {
-        options.model = this.app.modelUtils.getModel(options.model_name, options.model, {
-          parse: true
-        });
-      }
-      options.model_name = options.model_name || this.app.modelUtils.modelName(options.model.constructor);
-      options.model_id = options.model.id;
-    }
-
-    if (options.collection != null) {
-      options.collection_name = options.collection_name || this.app.modelUtils.modelName(options.collection.constructor);
-      options.collection_params = options.collection.params;
-    }
-
+    BaseView.parseModelAndCollection(this.app.modelUtils, options);
     this.model = options.model;
     this.collection = options.collection;
   },
@@ -329,23 +315,48 @@ module.exports = BaseView = Backbone.View.extend({
     this.trigger('loading', loading);
   },
 
+  attachOrRender: function(element, parentView) {
+    var $el = $(element);
+    $el.data('view-attached', true);
+
+    this.parentView = parentView;
+    this.viewing = true;
+
+    if ($el.data('render')) {
+      $el.replaceWith(this.$el);
+
+      if (this.options.lazy === true) {
+        // TODO move this up a level and remove it from attach
+        this.fetchLazy();
+      } else {
+        this.render();
+      }
+
+    } else {
+      this.attach($el, parentView);
+    }
+  },
+
   /**
    * When HTML is already present (rendered by server),
    * this is what gets called to bind to the element.
    */
   attach: function(element, parentView) {
     var $el = $(element);
+    // TODO - can this be removed?
     $el.data('view-attached', true);
     this.setElement($el);
 
     /**
      * Store a reference to the parent view.
      */
+    // TODO - can this be removed?
     this.parentView = parentView;
 
     /**
      * When the view is attached, flip viewing to true
      */
+    // TODO - can this be removed?
     this.viewing = true;
 
     /**
@@ -364,9 +375,11 @@ module.exports = BaseView = Backbone.View.extend({
      * If the view says it should try to be lazy loaded, and it doesn't
      * have a model or collection, then do so.
      */
+    // TODO - can this be moved up to attachOrRender?
     if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
       this.fetchLazy();
     }
+
     this.trigger('attach');
 
   },
@@ -470,7 +483,8 @@ BaseView.attach = function(app, parentView, callback) {
         options = _.extend(options, results);
         BaseView.getView(viewName, app.options.entryPath, function(ViewClass) {
           var view = new ViewClass(options);
-          view.attach($el, parentView);
+          view.parentView = parentView;
+          view.attachOrRender($el);
           cb(null, view);
         });
       });
@@ -481,6 +495,25 @@ BaseView.attach = function(app, parentView, callback) {
     // no error handling originally
     callback(_.compact(views));
   });
+};
+
+BaseView.parseModelAndCollection = function(modelUtils, options) {
+  if (options.model != null) {
+    if (!(options.model instanceof Backbone.Model) && options.model_name) {
+      options.model = modelUtils.getModel(options.model_name, options.model, {
+        parse: true
+      });
+    }
+    options.model_name = options.model_name || modelUtils.modelName(options.model.constructor);
+    options.model_id = options.model.id;
+  }
+
+  if (options.collection != null) {
+    options.collection_name = options.collection_name || modelUtils.modelName(options.collection.constructor);
+    options.collection_params = options.collection.params;
+  }
+
+  return options;
 };
 
 BaseView.extractFetchSummary = function (modelUtils, options) {

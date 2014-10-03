@@ -145,6 +145,63 @@ describe('BaseView', function() {
     });
   });
 
+  describe('parseOptions', function () {
+    var view;
+
+    beforeEach(function () {
+      this.View = BaseView.extend({
+        id: 'aViewId',
+        className: 'aClassName',
+        name: 'A View Name'
+      });
+
+      view = new this.View({app: this.app});
+    });
+
+    it('sets the app and parentView on the view object', function () {
+      view.app = undefined;
+      view.parseOptions({ app: this.app, parentView: 'test' });
+      view.app.should.deep.equal(this.app);
+      view.parentView.should.equal('test');
+    });
+
+    it('should invoke parseModelAndCollection', function () {
+      var spy = sinon.spy(BaseView, 'parseModelAndCollection');
+      view.parseOptions({ app: this.app });
+      spy.should.have.been.called.once;
+      BaseView.parseModelAndCollection.restore()
+    });
+
+    it('sets the model and collection to the view instance', function () {
+      var MyModel,
+          MyColleciton;
+
+      MyModel = BaseModel.extend({});
+      MyModel.id = 'MyModel';
+
+      MyCollection = BaseCollection.extend({});
+      MyCollection.id = 'MyCollection';
+
+      var myModel = new MyModel(),
+          myCollection = new MyCollection();
+
+      var options = {
+        model: myModel,
+        collection: myCollection
+      };
+
+      view.parseOptions(options);
+      view.model.should.deep.equal(myModel);
+      view.collection.should.deep.equal(myCollection);
+    });
+
+    it('adds any extra attributes directly to the views options', function () {
+      var options = { app: this.app, test: 'test' };
+      view.parseOptions(options);
+      view.options.should.deep.equal(options);
+    });
+  });
+
   describe('_fetchLazyCallback', function() {
     beforeEach(function() {
       this.app = {

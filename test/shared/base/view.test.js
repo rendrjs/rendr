@@ -232,6 +232,84 @@ describe('BaseView', function() {
     });
   });
 
+  describe('parseModelAndCollection', function () {
+    context('there is a model', function () {
+      var MyModel = BaseModel.extend({}),
+          modelData = { id: 101, name: 'test' },
+          model;
+
+      MyModel.id = 'MyModel';
+
+      context('is an instance of a model', function () {
+        beforeEach(function() {
+          model = new MyModel(modelData, { app: this.app });
+        });
+
+        it('should add model_name and model_id attributes', function () {
+          var result = BaseView.parseModelAndCollection(modelUtils, { model: model });
+
+          result.should.deep.equal({
+            model_name: 'my_model',
+            model_id: 101,
+            model: model
+          });
+        });
+      });
+
+      context('contains data to build model', function () {
+        var modelInstance;
+
+        beforeEach(function() {
+          modelInstance = new MyModel(modelData, { app: this.app });
+          sinon.stub(modelUtils, 'getModel').returns(modelInstance)
+        });
+
+        afterEach(function() {
+          modelUtils.getModel.restore();
+        });
+
+        it('it should create an instance of the model', function () {
+          var result = BaseView.parseModelAndCollection(modelUtils, { model: modelData, model_name: 'my_model' });
+
+          result.should.deep.equal({
+            model_name: 'my_model',
+            model_id: 101,
+            model: modelInstance
+          });
+        });
+      });
+
+    });
+
+    context('there is a collection', function () {
+      var MyCollection = BaseCollection.extend({}),
+          collection;
+      MyCollection.id = 'MyCollection';
+
+      context ('it is an instance of a collection', function () {
+        beforeEach(function () {
+          collection = new MyCollection([], {
+            app: this.app,
+            params: { test: 'test' }
+          });
+        });
+
+        it('adds collection_name and collection_params', function () {
+          var result = BaseView.parseModelAndCollection(modelUtils, {
+            collection: collection
+          });
+
+          result.should.deep.equal({
+            collection_name: 'my_collection',
+            collection_params: { test: 'test' },
+            collection: collection
+          });
+        });
+      });
+
+    });
+  });
+
   describe('extractFetchSummary', function () {
     var MyView,
         MyModel,

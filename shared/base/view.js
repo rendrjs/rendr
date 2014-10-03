@@ -508,6 +508,7 @@ BaseView.parseModelAndCollection = function(modelUtils, options) {
     options.model_id = options.model.id;
   }
 
+  // TODO - check to see if it's an instance of the collection, if not create one
   if (options.collection != null) {
     options.collection_name = options.collection_name || modelUtils.modelName(options.collection.constructor);
     options.collection_params = options.collection.params;

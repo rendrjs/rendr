@@ -1,14 +1,16 @@
 var App = require('../../shared/app'),
-    AppView = require('../../client/app_view'),
     should = require('chai').should(),
     expect = require('chai').expect,
     clientTestHelper = require('../helpers/client_test'),
-    $ = require('jquery');
+    $ = require('jquery'),
+    AppView;
 
 describe('AppView', function() {
   before(clientTestHelper.before);
 
   beforeEach(function() {
+    AppView = require('../../client/app_view');
+
     this.app = new App();
     this.appView = new AppView({app: this.app});
     this.appView.hasPushState = true;

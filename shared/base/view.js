@@ -321,19 +321,16 @@ module.exports = BaseView = Backbone.View.extend({
 
     this.parentView = parentView;
     this.viewing = true;
+    this.setElement($el);
+
+    if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
+      return this.fetchLazy();
+    }
 
     if ($el.data('render')) {
-      $el.replaceWith(this.$el);
-
-      if (this.options.lazy === true) {
-        // TODO move this up a level and remove it from attach
-        this.fetchLazy();
-      } else {
-        this.render();
-      }
-
+      this.render();
     } else {
-      this.attach($el, parentView);
+      this.attach();
     }
   },
 
@@ -341,24 +338,7 @@ module.exports = BaseView = Backbone.View.extend({
    * When HTML is already present (rendered by server),
    * this is what gets called to bind to the element.
    */
-  attach: function(element, parentView) {
-    var $el = $(element);
-    // TODO - can this be removed?
-    $el.data('view-attached', true);
-    this.setElement($el);
-
-    /**
-     * Store a reference to the parent view.
-     */
-    // TODO - can this be removed?
-    this.parentView = parentView;
-
-    /**
-     * When the view is attached, flip viewing to true
-     */
-    // TODO - can this be removed?
-    this.viewing = true;
-
+  attach: function() {
     /**
      * Call preRender() so we can access things setup by @hydrate()
      * (like @model) in i.e. @getTemplateData().
@@ -371,17 +351,7 @@ module.exports = BaseView = Backbone.View.extend({
      */
     this._postRender();
 
-    /**
-     * If the view says it should try to be lazy loaded, and it doesn't
-     * have a model or collection, then do so.
-     */
-    // TODO - can this be moved up to attachOrRender?
-    if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
-      this.fetchLazy();
-    }
-
     this.trigger('attach');
-
   },
 
   /**

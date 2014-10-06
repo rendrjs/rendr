@@ -317,7 +317,7 @@ module.exports = BaseView = Backbone.View.extend({
 
   attachOrRender: function(element, parentView) {
     var $el = $(element);
-    $el.data('view-attached', true);
+    $el.attr('data-view-attached', true);
 
     this.parentView = parentView;
     this.viewing = true;

@@ -10,11 +10,10 @@ var _ = require('underscore'),
     async = require('async'),
     isServer = (typeof window === 'undefined'),
     BaseView,
-    $;
+    $ = (typeof window !== 'undefined' && window.$) || require('jquery');
 
 if (!isServer) {
-  Backbone.$ = window.$ || require('jquery');
-  $ = Backbone.$;
+  Backbone.$ = $;
 }
 
 function noop() {}

@@ -302,75 +302,129 @@ describe("server/router", function() {
 
       resetProperties(this.req, {
         query: {},
+        params: null,
         route: {keys: [], params: {}, regexp: false},
       });
       this.router.getParams(this.req).should.eql({});
     });
 
-    it("should return basic query params", function() {
-      this.req.__defineGetter__('query', function() {
-        return {foo: 'bar', bam: 'baz'};
+    context("running under Express 4", function () {
+      it("should return basic query params", function() {
+        this.req.__defineGetter__('query', function() {
+          return {foo: 'bar', bam: 'baz'};
+        });
+        this.router.getParams(this.req).should.eql({foo: 'bar', bam: 'baz'});
       });
-      this.router.getParams(this.req).should.eql({foo: 'bar', bam: 'baz'});
+
+      it("should support route params", function() {
+        this.req.__defineGetter__('route', function() {
+          return {
+            keys: [{name: 'id'}, {name: 'login'}],
+          };
+        });
+        this.req.__defineGetter__('params', function() {
+          return {
+            'id': 'id-value',
+            'login': 'login-value'
+          };
+        });
+        this.router.getParams(this.req).should.eql({
+          id: 'id-value',
+          login: 'login-value'
+        });
+      });
+
+      it("should support both together", function() {
+        this.req.__defineGetter__('query', function() {
+          return {foo: 'bar', bam: 'baz'};
+        });
+
+        this.req.__defineGetter__('route', function() {
+          return {
+            keys: [{name: 'id'}, {name: 'login'}],
+          };
+        });
+        this.req.__defineGetter__('params', function() {
+          return {
+            'id': 'id-value',
+            'login': 'login-value'
+          };
+        });
+
+        this.router.getParams(this.req).should.eql({
+          foo: 'bar',
+          bam: 'baz',
+          id: 'id-value',
+          login: 'login-value'
+        });
+      });
     });
 
-    it("should support regex route params", function() {
-      this.req.__defineGetter__('route', function() {
-        return {
-          regexp: true
-        };
+    context("running under Express 3", function () {
+      it("should return basic query params", function() {
+        this.req.__defineGetter__('query', function() {
+          return {foo: 'bar', bam: 'baz'};
+        });
+        this.router.getParams(this.req).should.eql({foo: 'bar', bam: 'baz'});
       });
-      this.req.__defineGetter__('params', function() {
-        return {
+
+      it("should support regex route params", function() {
+        this.req.__defineGetter__('route', function() {
+          return {
+            regexp: true
+          };
+        });
+        this.req.__defineGetter__('params', function() {
+          return ['zero-value'];
+        });
+        this.router.getParams(this.req).should.eql({
           '0': 'zero-value'
-        };
+        });
       });
-      this.router.getParams(this.req).should.eql({
-        '0': 'zero-value'
-      });
-    });
 
-    it("should support route params", function() {
-      this.req.__defineGetter__('route', function() {
-        return {
-          keys: [{name: 'id'}, {name: 'login'}],
-        };
-      });
-      this.req.__defineGetter__('params', function() {
-        return {
+      it("should support route params", function() {
+        this.req.__defineGetter__('route', function() {
+          return {
+            keys: [{name: 'id'}, {name: 'login'}],
+          };
+        });
+        this.req.__defineGetter__('params', function() {
+          var ret = [];
+          ret.id = 'id-value';
+          ret.login = 'login-value';
+          return ret;
+        });
+        this.router.getParams(this.req).should.eql({
           id: 'id-value',
           login: 'login-value'
-        }
-      });
-      this.router.getParams(this.req).should.eql({
-        id: 'id-value',
-        login: 'login-value'
-      });
-    });
-
-    it("should support both together", function() {
-      this.req.__defineGetter__('query', function() {
-        return {foo: 'bar', bam: 'baz'};
+        });
       });
 
-      this.req.__defineGetter__('route', function() {
-        return {
-          keys: [{name: 'id'}, {name: 'login'}],
-        };
-      });
-      this.req.__defineGetter__('params', function() {
-        return {
+      it("should support both together", function() {
+        this.req.__defineGetter__('query', function() {
+          return {foo: 'bar', bam: 'baz'};
+        });
+
+        this.req.__defineGetter__('route', function() {
+          return {
+            keys: [{name: 'id'}, {name: 'login'}],
+          };
+        });
+        this.req.__defineGetter__('params', function() {
+          var ret = [];
+          ret.id = 'id-value';
+          ret.login = 'login-value';
+          return ret;
+        });
+
+        this.router.getParams(this.req).should.eql({
+          foo: 'bar',
+          bam: 'baz',
           id: 'id-value',
           login: 'login-value'
-        }
+        });
       });
 
-      this.router.getParams(this.req).should.eql({
-        foo: 'bar',
-        bam: 'baz',
-        id: 'id-value',
-        login: 'login-value'
-      });
     });
 
     describe('XSS sanitization', function() {

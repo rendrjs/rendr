@@ -90,6 +90,7 @@ ViewEngine.prototype._getBootstrappedData = function _getBootstrappedData(locals
           }
         })
       }
+
     }
   });
   return bootstrappedData;

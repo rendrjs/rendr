@@ -22,9 +22,9 @@ describe('Base/View', function () {
       this.$el = $('<div/>');
       this.parentView = new BaseView({ app: this.app });
 
-      this.attachStub = sinon.stub(this.subject, 'attach').returns();
-      this.renderStub = sinon.stub(this.subject, 'render').returns();
-      this.lazyStub = sinon.stub(this.subject, 'fetchLazy').returns();
+      sinon.stub(this.subject, 'attach');
+      sinon.stub(this.subject, 'render');
+      sinon.stub(this.subject, 'fetchLazy');
     });
 
     afterEach(function () {
@@ -54,8 +54,8 @@ describe('Base/View', function () {
         it('should call fetchLazy', function () {
           this.subject.attachOrRender(this.$el, this.parentView);
 
-          expect(this.lazyStub).to.have.been.called;
-          expect(this.renderStub).to.not.have.been.called;
+          expect(this.subject.fetchLazy).to.have.been.called;
+          expect(this.subject.render).to.not.have.been.called;
         });
       });
 
@@ -63,8 +63,8 @@ describe('Base/View', function () {
         it('should call render', function () {
           this.subject.attachOrRender(this.$el, this.parentView);
 
-          expect(this.renderStub).to.have.been.called;
-          expect(this.attachStub).to.not.have.been.called;
+          expect(this.subject.render).to.have.been.called;
+          expect(this.subject.attach).to.not.have.been.called;
         });
       });
     });
@@ -72,7 +72,7 @@ describe('Base/View', function () {
     context('default case', function () {
       it('should call attach', function () {
         this.subject.attachOrRender(this.$el, this.parentView);
-        expect(this.attachStub).to.have.been.called;
+        expect(this.subject.attach).to.have.been.called;
       });
     });
   });

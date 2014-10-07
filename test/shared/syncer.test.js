@@ -13,63 +13,158 @@ chai.use(sinonChai);
 describe('syncer', function() {
 
   describe('sync', function () {
-    var model, options, app;
+    var model, options, app, request;
 
     beforeEach(function () {
+      request = sinon.stub();
       app = new App();
+      app.req = { dataAdapter: { request: request } };
 
       model = new BaseModel({ id: 0 }, { app: app });
-      model.urlRoot = '/listings';
-
-      options = { 
-        url: model.url(), 
-        headers: { foo: 'bar' } 
+      model.api = 'foo'
+      options = {
+        headers: { foo: 'bar' },
+        data: { baz: { quux: 'doh' } }
       };
     });
 
     describe('serverSync', function () {
-      var request;
+      describe('options.data', function () {
+        beforeEach(function () {
+          model.urlRoot = '/:baz/listings';
+        });
 
-      beforeEach(function () {
-        request = sinon.stub();
-        app.req = { dataAdapter: { request: request } };
-
-        model.api = 'foo'
+        it('should not directly modify the same object in memory as the model/collection params', function () {
+          model.params = options.data; // mimics the line in the base collection 'fetch' method
+          syncer.clientSync.call(model, 'read', model, options);
+          model.params.should.deep.equal({ baz: { quux: 'doh' } })
+        });
       });
 
-      it('should send a GET request with the configured dataAdapter', function () {
-        var expectedRequestOptions = {
-          method: 'GET',
-          path: '/listings/0',
-          query: {},
-          headers: { foo: 'bar' },
-          api: 'foo',
-          body: {}
-        };
+      context('when urlRoot is used on the model', function () {
+        beforeEach(function () {
+          model.urlRoot = '/listings';
+        });
 
-        syncer.serverSync.call(model, 'read', model, options);
+        it('should send a GET request with the configured dataAdapter', function () {
+          var expectedRequestOptions = {
+            method: 'GET',
+            path: '/listings/0',
+            query: { baz: { quux: 'doh' } },
+            headers: { foo: 'bar' },
+            api: 'foo',
+            body: {}
+          };
 
-        request.should.have.been.calledOnce;
-        request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+          syncer.serverSync.call(model, 'read', model, options);
+
+          request.should.have.been.calledOnce;
+          request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+        });
+
+        it('should send the correct payload on PUT or POST requests', function () {
+          var expectedRequestOptions = {
+            method: 'PUT',
+            path: '/listings/0',
+            query: { baz: { quux: 'doh' } },
+            headers: { foo: 'bar' },
+            api: 'foo',
+            body: { id: 0, foo: 'bar', bar: 'foo' }
+          };
+
+          model.set('foo', 'bar');
+          model.set('bar', 'foo');
+
+          syncer.serverSync.call(model, 'update', model, options);
+
+          request.should.have.been.calledOnce;
+          request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+        });
       });
 
-      it('should send the correct payload on PUT or POST requests', function () {
-        var expectedRequestOptions = {
-          method: 'PUT',
-          path: '/listings/0',
-          query: {},
-          headers: { foo: 'bar' },
-          api: 'foo',
-          body: { id: 0, foo: 'bar', bar: 'foo' }
-        };
+      context('when url is explicitly defined on the model', function () {
+        context('when the url does not include query params', function () {
+          beforeEach(function () {
+            model.url = '/listings/:id';
+          });
 
-        model.set('foo', 'bar');
-        model.set('bar', 'foo');
+          it('should send a GET request with the configured dataAdapter', function () {
+            var expectedRequestOptions = {
+              method: 'GET',
+              path: '/listings/0',
+              query: { baz: { quux: 'doh' } },
+              headers: { foo: 'bar' },
+              api: 'foo',
+              body: {}
+            };
 
-        syncer.serverSync.call(model, 'update', model, options);
+            syncer.serverSync.call(model, 'read', model, options);
 
-        request.should.have.been.calledOnce;
-        request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+            request.should.have.been.calledOnce;
+            request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+          });
+
+          it('should send the correct payload on PUT or POST requests', function () {
+            var expectedRequestOptions = {
+              method: 'PUT',
+              path: '/listings/0',
+              query: { baz: { quux: 'doh' } },
+              headers: { foo: 'bar' },
+              api: 'foo',
+              body: { id: 0, foo: 'bar', bar: 'foo' }
+            };
+
+            model.set('foo', 'bar');
+            model.set('bar', 'foo');
+
+            syncer.serverSync.call(model, 'update', model, options);
+
+            request.should.have.been.calledOnce;
+            request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+          });
+        });
+
+        context('when the url includes query params', function () {
+          beforeEach(function () {
+            model.url = '/listings?context=show';
+          });
+
+          it('should send a GET request with the configured dataAdapter', function () {
+            var expectedRequestOptions = {
+              method: 'GET',
+              path: '/listings',
+              query: { baz: { quux: 'doh' }, context: 'show' },
+              headers: { foo: 'bar' },
+              api: 'foo',
+              body: {}
+            };
+
+            syncer.serverSync.call(model, 'read', model, options);
+
+            request.should.have.been.calledOnce;
+            request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+          });
+
+          it('should send the correct payload on PUT or POST requests', function () {
+            var expectedRequestOptions = {
+              method: 'PUT',
+              path: '/listings',
+              query: { baz: { quux: 'doh' }, context: 'show' },
+              headers: { foo: 'bar' },
+              api: 'foo',
+              body: { id: 0, foo: 'bar', bar: 'foo' }
+            };
+
+            model.set('foo', 'bar');
+            model.set('bar', 'foo');
+
+            syncer.serverSync.call(model, 'update', model, options);
+
+            request.should.have.been.calledOnce;
+            request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+          });
+        });
+
       });
     });
 
@@ -85,73 +180,210 @@ describe('syncer', function() {
         backboneSync.restore();
       });
 
-      it('should call Backbone.sync', function () {
-        syncer.clientSync.call(model, 'read', model, options);
-
-        backboneSync.should.have.been.calledOnce;
-        // Don't need to verify the options because they will be modified.
-        // Test for the modification is lower.
-        backboneSync.should.have.been.calledWith('read', model);
-      });
-
-      it('should get the prefixed API url', function () {
-        var expectedOptions = {
-          url: '/api/-' + model.url(),
-          headers: { foo: 'bar' }
-        };
-
-        syncer.clientSync.call(model, 'read', model, options);
-        backboneSync.should.have.been.calledWithExactly('read', model, expectedOptions);
-      });
-
-      it('should wrap the error handler', function () {
-        options.error = syncErrorHandler;
-
-        syncer.clientSync.call(model, 'read', model, options);
-
-        var error = backboneSync.lastCall.args[2].error;
-        syncErrorHandler.should.be.not.equal(error);
-        error.should.be.a('function');
-        error.should.have.length(1);
-      });
-
-      describe('wrappedErrorHandler', function () {
-        var fakeXhr;
-
+      describe('options.data', function () {
         beforeEach(function () {
-          fakeXhr = {
-            responseText: '{"foo": "bar"}',
-            status: 418,
-            getResponseHeader: sinon.stub()
+          model.urlRoot = '/:baz/listings';
+        });
+
+        it('should not directly modify the same object in memory as the model/collection params', function () {
+          model.params = options.data; // to mimic the line in the base collection 'fetch' method
+          syncer.clientSync.call(model, 'read', model, options);
+          model.params.should.deep.equal({ baz: { quux: 'doh' } })
+        });
+
+        it('should not create an options.data property if it is initially undefined', function () {
+          // Important because Backbone.sync uses Backbone.ajax(_.extend(params, options)), so if
+          // options.hasOwnProperty('data') === true, it will override params.data even if options.data is undefined
+          var firstInvocation, lastArgument;
+          delete options.data;
+          syncer.clientSync.call(model, 'read', model, options);
+          firstInvocation = _.first(backboneSync.args);
+          optionsArg = _.last(firstInvocation);
+
+          optionsArg.hasOwnProperty('data').should.be.false
+        });
+      });
+
+      context('when urlRoot is used on the model', function () {
+        beforeEach(function () {
+          model.urlRoot = '/listings';
+        });
+
+        it('should call Backbone.sync', function () {
+          syncer.clientSync.call(model, 'read', model, options);
+
+          backboneSync.should.have.been.calledOnce;
+          // Don't need to verify the options because they will be modified.
+          // Test for the modification is lower.
+          backboneSync.should.have.been.calledWith('read', model);
+        });
+
+        it('should get the prefixed API url', function () {
+          var expectedOptions = {
+            url: '/api/' + model.api + '/-' + model.url(),
+            headers: { foo: 'bar' },
+            data: { baz: { quux: 'doh' } }
           };
+
+          syncer.clientSync.call(model, 'read', model, options);
+          backboneSync.should.have.been.calledWithExactly('read', model, expectedOptions);
+        });
+
+        it('should wrap the error handler', function () {
           options.error = syncErrorHandler;
-          backboneSync.yieldsTo('error', fakeXhr);
-        });
-
-        it('should call the original error handler with status and body', function () {
-          var expectedResponse = {
-            body: fakeXhr.responseText,
-            status: fakeXhr.status
-          };
 
           syncer.clientSync.call(model, 'read', model, options);
 
-          syncErrorHandler.should.have.been.calledOnce;
-          syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+          var error = backboneSync.lastCall.args[2].error;
+          syncErrorHandler.should.be.not.equal(error);
+          error.should.be.a('function');
+          error.should.have.length(1);
         });
 
-        it('should parse the payload if content-type is "application/json"', function () {
-          var expectedResponse = {
-            body: JSON.parse(fakeXhr.responseText),
-            status: fakeXhr.status
-          };
+        describe('wrappedErrorHandler', function () {
+          var fakeXhr;
 
-          fakeXhr.getResponseHeader.withArgs('content-type').returns('application/json');
+          beforeEach(function () {
+            fakeXhr = {
+              responseText: '{"foo": "bar"}',
+              status: 418,
+              getResponseHeader: sinon.stub()
+            };
+            options.error = syncErrorHandler;
+            backboneSync.yieldsTo('error', fakeXhr);
+          });
 
-          syncer.clientSync.call(model, 'read', model, options);
+          it('should call the original error handler with status and body', function () {
+            var expectedResponse = {
+              body: fakeXhr.responseText,
+              status: fakeXhr.status
+            };
 
-          syncErrorHandler.should.have.been.calledOnce;
-          syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+            syncer.clientSync.call(model, 'read', model, options);
+
+            syncErrorHandler.should.have.been.calledOnce;
+            syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+          });
+
+          it('should parse the payload if content-type is "application/json"', function () {
+            var expectedResponse = {
+              body: JSON.parse(fakeXhr.responseText),
+              status: fakeXhr.status
+            };
+
+            fakeXhr.getResponseHeader.withArgs('content-type').returns('application/json');
+
+            syncer.clientSync.call(model, 'read', model, options);
+
+            syncErrorHandler.should.have.been.calledOnce;
+            syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+          });
+        });
+      });
+
+      context('when url is explicitly defined on the model', function () {
+        context('when the url does not include query params', function () {
+          beforeEach(function () {
+            model.url = '/listings/:id';
+          });
+
+          it('should call Backbone.sync', function () {
+            syncer.clientSync.call(model, 'read', model, options);
+
+            backboneSync.should.have.been.calledOnce;
+            // Don't need to verify the options because they will be modified.
+            // Test for the modification is lower.
+            backboneSync.should.have.been.calledWith('read', model);
+          });
+
+          it('should get the prefixed API url', function () {
+            var expectedOptions = {
+              url: '/api/' + model.api + '/-' +
+                syncer.interpolateParams(model, model.url, { id: model[model.idAttribute] }),
+              headers: { foo: 'bar' },
+              data: { baz: { quux: 'doh' } }
+            };
+
+            syncer.clientSync.call(model, 'read', model, options);
+            backboneSync.should.have.been.calledWithExactly('read', model, expectedOptions);
+          });
+
+          it('should wrap the error handler', function () {
+            options.error = syncErrorHandler;
+
+            syncer.clientSync.call(model, 'read', model, options);
+
+            var error = backboneSync.lastCall.args[2].error;
+            syncErrorHandler.should.be.not.equal(error);
+            error.should.be.a('function');
+            error.should.have.length(1);
+          });
+
+          describe('wrappedErrorHandler', function () {
+            var fakeXhr;
+
+            beforeEach(function () {
+              fakeXhr = {
+                responseText: '{"foo": "bar"}',
+                status: 418,
+                getResponseHeader: sinon.stub()
+              };
+              options.error = syncErrorHandler;
+              backboneSync.yieldsTo('error', fakeXhr);
+            });
+
+            it('should call the original error handler with status and body', function () {
+              var expectedResponse = {
+                body: fakeXhr.responseText,
+                status: fakeXhr.status
+              };
+
+              syncer.clientSync.call(model, 'read', model, options);
+
+              syncErrorHandler.should.have.been.calledOnce;
+              syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+            });
+
+            it('should parse the payload if content-type is "application/json"', function () {
+              var expectedResponse = {
+                body: JSON.parse(fakeXhr.responseText),
+                status: fakeXhr.status
+              };
+
+              fakeXhr.getResponseHeader.withArgs('content-type').returns('application/json');
+
+              syncer.clientSync.call(model, 'read', model, options);
+
+              syncErrorHandler.should.have.been.calledOnce;
+              syncErrorHandler.should.have.been.calledWithExactly(expectedResponse);
+            });
+          });
+        });
+
+        context('when the url includes query params', function () {
+          beforeEach(function () {
+            model.url = '/listings?context=show';
+          });
+
+          it('should call Backbone.sync', function () {
+            syncer.clientSync.call(model, 'read', model, options);
+
+            backboneSync.should.have.been.calledOnce;
+            // Don't need to verify the options because they will be modified.
+            // Test for the modification is lower.
+            backboneSync.should.have.been.calledWith('read', model);
+          });
+
+          it('should get the prefixed API url', function () {
+            var expectedOptions = {
+              url: '/api/' + model.api + '/-' + model.url,
+              headers: { foo: 'bar' },
+              data: { baz: { quux: 'doh' } }
+            };
+
+            syncer.clientSync.call(model, 'read', model, options);
+            backboneSync.should.have.been.calledWithExactly('read', model, expectedOptions);
+          });
         });
       });
     });

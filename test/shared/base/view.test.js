@@ -1,5 +1,6 @@
 var should = require('chai').should(),
     sinon = require('sinon'),
+    _ = require('underscore'),
     BaseModel = require('../../../shared/base/model'),
     BaseCollection = require('../../../shared/base/collection'),
     BaseView = require('../../../shared/base/view'),
@@ -35,6 +36,37 @@ describe('BaseView', function() {
     topView.childViews.push(anotherBottomView);
     childViews = topView.getChildViewsByName('my_bottom_view');
     childViews.should.have.length(2);
+  });
+
+  describe('constructor', function() {
+    var spy, data, view;
+
+    beforeEach(function() {
+      spy = sinon.spy(Backbone, 'View');
+      data = { app: this.app, el: '#test' };
+    });
+
+    afterEach(function() {
+      Backbone.View.restore();
+    })
+
+    it('does not pass the model if it is set', function() {
+      data.model = 'a'
+      view = new BaseView(data)
+
+      spy.should.have.been.called
+      spy.should.have.been.calledWith(_.omit(data, 'model'))
+      view.model.should.equal(data.model)
+    });
+
+    it('does not pass the collection if it is set', function() {
+      data.collection = 'a'
+      view = new BaseView(data)
+
+      spy.should.have.been.called
+      spy.should.have.been.calledWith(_.omit(data, 'collection'))
+      view.collection.should.equal(data.collection)
+    });
   });
 
   describe('getTemplate', function() {

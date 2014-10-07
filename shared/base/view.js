@@ -66,7 +66,7 @@ module.exports = BaseView = Backbone.View.extend({
       this.parentView = options.parentView;
     }
 
-    BaseView.parseModelAndCollection(this.app.modelUtils, options);
+    options = BaseView.parseModelAndCollection(this.app.modelUtils, options);
     this.model = options.model;
     this.collection = options.collection;
   },
@@ -453,8 +453,7 @@ BaseView.attach = function(app, parentView, callback) {
         options = _.extend(options, results);
         BaseView.getView(viewName, app.options.entryPath, function(ViewClass) {
           var view = new ViewClass(options);
-          view.parentView = parentView;
-          view.attachOrRender($el);
+          view.attachOrRender($el, parentView);
           cb(null, view);
         });
       });
@@ -478,7 +477,6 @@ BaseView.parseModelAndCollection = function(modelUtils, options) {
     options.model_id = options.model.id;
   }
 
-  // TODO - check to see if it's an instance of the collection, if not create one
   if (options.collection != null) {
     options.collection_name = options.collection_name || modelUtils.modelName(options.collection.constructor);
     options.collection_params = options.collection.params;

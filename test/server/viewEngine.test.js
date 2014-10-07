@@ -1,16 +1,15 @@
 var should = require('chai').should(),
     sinon = require('sinon'),
-    ViewEngine = require('../../server/viewEngine'),
-    BaseView = require('../../shared/base/view'),
     BaseModel = require('../../shared/base/model'),
     BaseCollection = require('../../shared/base/collection'),
+    ViewEngine = require('../../server/viewEngine'),
     App = require('../../shared/app');
 
 describe('ViewEngine', function() {
-  var app, viewEngine;
+  var app, viewEngine, BaseView;
 
   beforeEach(function() {
-
+    BaseView = require('../../shared/base/view');
     viewEngine = new ViewEngine;
 
     function layoutTemplate(locals) {

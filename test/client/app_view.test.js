@@ -8,6 +8,7 @@ var App = require('../../shared/app'),
 describe('AppView', function() {
   before(function () {
     clientTestHelper.before.call(this);
+    delete require.cache;
     AppView = require('../../client/app_view');
   });
 

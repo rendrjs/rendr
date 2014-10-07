@@ -6,11 +6,12 @@ var App = require('../../shared/app'),
     AppView;
 
 describe('AppView', function() {
-  before(clientTestHelper.before);
+  before(function () {
+    clientTestHelper.before.call(this);
+    AppView = require('../../client/app_view');
+  });
 
   beforeEach(function() {
-    AppView = require('../../client/app_view');
-
     this.app = new App();
     this.appView = new AppView({app: this.app});
     this.appView.hasPushState = true;

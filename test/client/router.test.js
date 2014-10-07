@@ -1,16 +1,17 @@
 var should = require('chai').should(),
     App = require('../../shared/app'),
-    clientTestHelper = require('../helpers/client_test'),
-    AppViewClass,
-    BaseView,
-    Router,
-    routerConfig;
+    clientTestHelper = require('../helpers/client_test');
 
 describe("client/router", function() {
+  var routerConfig,
+      BaseView,
+      Router,
+      AppViewClass;
 
-  before(clientTestHelper.before);
   before(function () {
-    AppViewClass = require('../../client/app_view'),
+    clientTestHelper.before.call(this);
+
+    AppViewClass = require('../../client/app_view');
     routerConfig = {
       app: new App({}, {}),
       appViewClass: AppViewClass,
@@ -18,7 +19,6 @@ describe("client/router", function() {
         entryPath: __dirname + "/../fixtures/"
       }
     };
-
   });
 
   after(clientTestHelper.after);

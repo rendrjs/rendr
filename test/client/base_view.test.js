@@ -7,12 +7,14 @@ var App = require('../../shared/app'),
 describe('Base/View', function () {
   var BaseView;
 
-  before(clientTestHelper.before);
+  before(function () {
+    clientTestHelper.before.apply(this, arguments);
+    BaseView = require('../../shared/base/view');
+  });
+
   after(clientTestHelper.after);
 
   beforeEach(function () {
-    BaseView = require('../../shared/base/view');
-
     this.app = new App();
     this.subject = new BaseView({ app: this.app });
   });

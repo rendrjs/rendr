@@ -1,5 +1,4 @@
 var App = require('../../shared/app'),
-    should = require('chai').should(),
     expect = require('chai').expect,
     clientTestHelper = require('../helpers/client_test'),
     sinon = require('sinon'),

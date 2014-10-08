@@ -327,10 +327,8 @@ module.exports = BaseView = Backbone.View.extend({
     }
 
     if ($el.data('render')) {
-      $el.replaceWith(this.render().$el);
-      $el.attr('data-view-attached', true);
-      this.setElement($el);
-
+      $el.replaceWith(this.$el);
+      this.render();
     } else {
       $el.attr('data-view-attached', true);
       this.setElement($el);

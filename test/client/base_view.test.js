@@ -25,7 +25,7 @@ describe('Base/View', function () {
       this.parentView = new BaseView({ app: this.app });
 
       sinon.stub(this.subject, 'attach');
-      sinon.stub(this.subject, 'render');
+      sinon.stub(this.subject, 'render').returns({ $el: '<div></div>' });
       sinon.stub(this.subject, 'fetchLazy');
     });
 

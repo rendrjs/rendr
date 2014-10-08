@@ -317,19 +317,23 @@ module.exports = BaseView = Backbone.View.extend({
 
   attachOrRender: function(element, parentView) {
     var $el = $(element);
-    $el.attr('data-view-attached', true);
 
     this.parentView = parentView;
     this.viewing = true;
-    this.setElement($el);
 
     if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
+      this.setElement($el);
       return this.fetchLazy();
     }
 
     if ($el.data('render')) {
-      this.render();
+      $el.replaceWith(this.render().$el);
+      $el.attr('data-view-attached', true);
+      this.setElement($el);
+
     } else {
+      $el.attr('data-view-attached', true);
+      this.setElement($el);
       this.attach();
     }
   },

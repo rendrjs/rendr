@@ -245,10 +245,16 @@ module.exports = BaseView = Backbone.View.extend({
     var params = {},
         fetchSpec;
 
-    params[this.options.param_name] = this.options.param_value;
+    if (this.options.fetch_params) {
+      params = this.options.fetch_params;
+    } else if (this.options.param_name) {
+      params[this.options.param_name] = this.options.param_value;
+    }
+
     if (this.options.model_id != null) {
       params.id = this.options.model_id;
     }
+
     if (this.options.model_name != null) {
       fetchSpec = {
         model: {

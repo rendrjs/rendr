@@ -19,6 +19,10 @@ describe('Base/View', function () {
   beforeEach(function () {
     this.app = new App();
     this.subject = new BaseView({ app: this.app });
+
+    this.fetchSpec = function () {
+      return this.subject.app.fetch.args[0][0];
+    };
   });
 
   describe('fetchLazy', function () {
@@ -51,9 +55,7 @@ describe('Base/View', function () {
 
       it('should use the object as the parameters for a model', function () {
         this.subject.fetchLazy();
-        var fetchSpec = this.subject.app.fetch.args[0][0];
-
-        expect(fetchSpec.model).to.deep.equal({
+        expect(this.fetchSpec().model).to.deep.equal({
           model: 'TestModel',
           params: params
         });
@@ -63,9 +65,7 @@ describe('Base/View', function () {
         this.subject.options.model_name = null;
 
         this.subject.fetchLazy();
-        var fetchSpec = this.subject.app.fetch.args[0][0];
-
-        expect(fetchSpec.collection).to.deep.equal({
+        expect(this.fetchSpec().collection).to.deep.equal({
           collection: 'TestCollection',
           params: params
         });
@@ -92,9 +92,7 @@ describe('Base/View', function () {
         this.subject.options.model_name = 'TestModel';
         this.subject.fetchLazy();
 
-        var fetchSpec = this.subject.app.fetch.args[0][0];
-
-        expect(fetchSpec.model).to.deep.equal({
+        expect(this.fetchSpec().model).to.deep.equal({
           model: 'TestModel',
           params: { test: 'param' }
         });
@@ -104,9 +102,7 @@ describe('Base/View', function () {
         this.subject.options.collection_name = 'TestCollection';
         this.subject.fetchLazy();
 
-        var fetchSpec = this.subject.app.fetch.args[0][0];
-
-        expect(fetchSpec.collection).to.deep.equal({
+        expect(this.fetchSpec().collection).to.deep.equal({
           collection: 'TestCollection',
           params: { test: 'param' }
         });
@@ -126,9 +122,7 @@ describe('Base/View', function () {
       it('should set the id parameter for a model', function () {
         this.subject.fetchLazy();
 
-        var fetchSpec = this.subject.app.fetch.args[0][0];
-
-        expect(fetchSpec.model).to.deep.equal({
+        expect(this.fetchSpec().model).to.deep.equal({
           model: 'MyModel',
           params: { id: 1 }
         });

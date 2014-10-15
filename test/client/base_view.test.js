@@ -32,6 +32,11 @@ describe('Base/View', function () {
       this.subject.options.collection_name = 'TestCollection';
     });
 
+    afterEach(function () {
+      this.app.fetch.restore();
+      this.subject.setLoading.restore();
+    });
+
     it('sets loading to true and calls fetch', function () {
       this.subject.fetchLazy();
       expect(this.subject.setLoading).to.have.been.calledWith(true);
@@ -64,6 +69,11 @@ describe('Base/View', function () {
           collection: 'TestCollection',
           params: params
         });
+      });
+
+      it('should throw an error if passed a non-object', function () {
+        this.subject.options.fetch_params = 'test';
+        expect(this.subject.fetchLazy).to.throw(Error);
       });
 
     });

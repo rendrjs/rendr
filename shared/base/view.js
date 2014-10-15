@@ -246,6 +246,10 @@ module.exports = BaseView = Backbone.View.extend({
         fetchSpec;
 
     if (this.options.fetch_params) {
+      if (!_.isObject(this.options.fetch_params)) {
+        throw new Error('fetch_params must be an object for lazy loaded views')
+      }
+
       params = this.options.fetch_params;
     } else if (this.options.param_name) {
       params[this.options.param_name] = this.options.param_value;

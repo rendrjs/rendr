@@ -332,6 +332,7 @@ module.exports = BaseView = Backbone.View.extend({
     this.viewing = true;
 
     if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
+      $el.attr('data-view-attached', true);
       this.setElement($el);
       return this.fetchLazy();
     }

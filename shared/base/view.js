@@ -472,7 +472,8 @@ BaseView.parseModelAndCollection = function(modelUtils, options) {
   if (options.model != null) {
     if (!(options.model instanceof Backbone.Model) && options.model_name) {
       options.model = modelUtils.getModel(options.model_name, options.model, {
-        parse: true
+        parse: true,
+        app: options.app
       });
     }
     options.model_name = options.model_name || modelUtils.modelName(options.model.constructor);

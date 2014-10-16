@@ -257,24 +257,27 @@ describe('BaseView', function() {
       });
 
       context('contains data to build model', function () {
-        var modelInstance;
+        var modelInstance,
+            modelUtilsMock;
 
         beforeEach(function() {
           modelInstance = new MyModel(modelData, { app: this.app });
-          sinon.stub(modelUtils, 'getModel').returns(modelInstance)
+          modelUtilsMock = sinon.mock(modelUtils);
+          modelUtilsMock.expects("getModel").withArgs('MyModel', modelData, { parse: true, app: this.app }).returns(modelInstance);
         });
 
         afterEach(function() {
-          modelUtils.getModel.restore();
+          modelUtilsMock.restore();
         });
 
         it('it should create an instance of the model', function () {
-          var result = BaseView.parseModelAndCollection(modelUtils, { model: modelData, model_name: 'my_model' });
+          var result = BaseView.parseModelAndCollection(modelUtils, { model: modelData, model_name: 'MyModel', app: this.app });
 
           result.should.deep.equal({
-            model_name: 'my_model',
+            model_name: 'MyModel',
             model_id: 101,
-            model: modelInstance
+            model: modelInstance,
+            app: this.app
           });
         });
       });

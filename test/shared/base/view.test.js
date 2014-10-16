@@ -280,6 +280,10 @@ describe('BaseView', function() {
             app: this.app
           });
         });
+
+        it('it should throw if not passed app as an option', function () {
+          BaseView.parseModelAndCollection.bind(modelUtils, { model: modelData, model_name: 'MyModel' }).should.Throw;
+        });
       });
 
     });

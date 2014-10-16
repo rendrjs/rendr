@@ -471,6 +471,8 @@ BaseView.attach = function(app, parentView, callback) {
 BaseView.parseModelAndCollection = function(modelUtils, options) {
   if (options.model != null) {
     if (!(options.model instanceof Backbone.Model) && options.model_name) {
+      if (!options.app) throw new Error("options.app required for creating a Model")
+
       options.model = modelUtils.getModel(options.model_name, options.model, {
         parse: true,
         app: options.app

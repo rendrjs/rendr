@@ -245,10 +245,20 @@ module.exports = BaseView = Backbone.View.extend({
     var params = {},
         fetchSpec;
 
-    params[this.options.param_name] = this.options.param_value;
+    if (this.options.fetch_params) {
+      if (!_.isObject(this.options.fetch_params)) {
+        throw new Error('fetch_params must be an object for lazy loaded views')
+      }
+
+      params = this.options.fetch_params;
+    } else if (this.options.param_name) {
+      params[this.options.param_name] = this.options.param_value;
+    }
+
     if (this.options.model_id != null) {
       params.id = this.options.model_id;
     }
+
     if (this.options.model_name != null) {
       fetchSpec = {
         model: {
@@ -264,7 +274,10 @@ module.exports = BaseView = Backbone.View.extend({
         }
       };
     }
+
     this.setLoading(true);
+
+    this._preRender();
     this.app.fetch(fetchSpec, this._fetchLazyCallback.bind(this));
   },
 
@@ -322,7 +335,9 @@ module.exports = BaseView = Backbone.View.extend({
     this.viewing = true;
 
     if (this.options.lazy === true && this.options.collection == null && this.options.model == null) {
+      $el.attr('data-view-attached', true);
       this.setElement($el);
+
       return this.fetchLazy();
     }
 

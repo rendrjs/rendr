@@ -2,6 +2,8 @@ var App = require('../../shared/app'),
     expect = require('chai').expect,
     clientTestHelper = require('../helpers/client_test'),
     sinon = require('sinon'),
+    Model = require('../../shared/base/model')
+    Collection = require('../../shared/base/collection')
     $ = require('jquery');
 
 describe('Base/View', function () {
@@ -17,6 +19,116 @@ describe('Base/View', function () {
   beforeEach(function () {
     this.app = new App();
     this.subject = new BaseView({ app: this.app });
+
+    this.fetchSpec = function () {
+      return this.subject.app.fetch.args[0][0];
+    };
+  });
+
+  describe('fetchLazy', function () {
+    var params;
+
+    beforeEach(function () {
+      sinon.stub(this.subject, 'setLoading');
+      sinon.stub(this.app, 'fetch');
+
+      this.subject.options.model_name = 'TestModel';
+      this.subject.options.collection_name = 'TestCollection';
+    });
+
+    afterEach(function () {
+      this.app.fetch.restore();
+      this.subject.setLoading.restore();
+    });
+
+    it('sets loading to true and calls fetch', function () {
+      this.subject.fetchLazy();
+      expect(this.subject.setLoading).to.have.been.calledWith(true);
+      expect(this.subject.app.fetch).to.have.been.called;
+    });
+
+    context('it has fetch_params', function () {
+      beforeEach(function() {
+        params = { test: 'param' };
+        this.subject.options.fetch_params = params;
+      });
+
+      it('should use the object as the parameters for a model', function () {
+        this.subject.fetchLazy();
+        expect(this.fetchSpec().model).to.deep.equal({
+          model: 'TestModel',
+          params: params
+        });
+      });
+
+      it('should use the object as the parameters for a collection', function () {
+        this.subject.options.model_name = null;
+
+        this.subject.fetchLazy();
+        expect(this.fetchSpec().collection).to.deep.equal({
+          collection: 'TestCollection',
+          params: params
+        });
+      });
+
+      it('should throw an error if passed a non-object', function () {
+        this.subject.options.fetch_params = 'test';
+        expect(this.subject.fetchLazy).to.throw(Error);
+      });
+
+    });
+
+    context('it has param_name and param_value', function () {
+      beforeEach(function () {
+        params = {
+          param_name: 'test',
+          param_value: 'param'
+        };
+
+        this.subject.options = params;
+      });
+
+      it('should use the correct parameters for a model', function () {
+        this.subject.options.model_name = 'TestModel';
+        this.subject.fetchLazy();
+
+        expect(this.fetchSpec().model).to.deep.equal({
+          model: 'TestModel',
+          params: { test: 'param' }
+        });
+      });
+
+      it('should use the correct parameters for a collection', function () {
+        this.subject.options.collection_name = 'TestCollection';
+        this.subject.fetchLazy();
+
+        expect(this.fetchSpec().collection).to.deep.equal({
+          collection: 'TestCollection',
+          params: { test: 'param' }
+        });
+      });
+    });
+
+    context('there is a model_id', function () {
+      beforeEach(function () {
+        params = {
+          model_name: 'MyModel',
+          model_id: 1
+        }
+
+        this.subject.options = params;
+      });
+
+      it('should set the id parameter for a model', function () {
+        this.subject.fetchLazy();
+
+        expect(this.fetchSpec().model).to.deep.equal({
+          model: 'MyModel',
+          params: { id: 1 }
+        });
+      });
+
+    });
   });
 
   describe('attachOrRender', function () {

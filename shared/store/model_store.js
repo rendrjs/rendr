@@ -21,21 +21,11 @@ _.extend(ModelStore.prototype, Super.prototype, {
     return Super.prototype.set.call(this, key, model, null);
   },
 
-  get: function(modelName, id, returnModelInstance) {
+  get: function(modelName, id) {
     var key, model;
 
-    if (returnModelInstance == null) {
-      returnModelInstance = false;
-    }
     key = this._getModelStoreKey(modelName, id);
-    model = Super.prototype.get.call(this, key);
-    if (model) {
-      if (returnModelInstance) {
-        return model;
-      } else {
-        return model.toJSON();
-      }
-    }
+    return Super.prototype.get.call(this, key);
   },
 
   find: function(modelName, params) {
@@ -54,7 +44,7 @@ _.extend(ModelStore.prototype, Super.prototype, {
     });
 
     if (foundKey) {
-      return this.cache[foundKey].value.toJSON();
+      return this.cache[foundKey].value;
     }
   },
 

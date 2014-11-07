@@ -175,9 +175,11 @@ describe('BaseCollection', function() {
         app: this.app
       });
       collection.store();
+      var i = 0;
       models.forEach(function(modelAttrs) {
         var storedModel = _this.app.fetcher.modelStore.get(collection.model.name, modelAttrs.id);
-        storedModel.should.eql(modelAttrs);
+        storedModel.should.eql(collection.models[i]);
+        i++;
       });
       storedCollection = this.app.fetcher.collectionStore.get(this.MyCollection.name, collection.params);
       _.pluck(storedCollection.models, 'id').should.eql(_.pluck(models, 'id'));

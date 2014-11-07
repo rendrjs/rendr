@@ -121,6 +121,7 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
         if (spec.model != null) {
 
           this._retrieveModel(spec, function(err, modelData) {
+            if (this.modelUtils.isModel(modelData)) { return cb(null, modelData); }
             this._retrieveModelData(spec, modelData, modelOptions, options, cb);
           }.bind(this));
 
@@ -308,7 +309,7 @@ Fetcher.prototype.hydrate = function(summaries, options, callback) {
   async.forEach(_.keys(summaries), function(name, cb) {
     var summary = summaries[name];
     if (summary.model != null) {
-      results[name] = fetcher.modelStore.get(summary.model, summary.id, true);
+      results[name] = fetcher.modelStore.get(summary.model, summary.id);
 
       if ((results[name] != null) && (options.app != null)) {
         results[name].app = options.app;

@@ -120,9 +120,8 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
         // First, see if we have stored the model or collection.
         if (spec.model != null) {
 
-          this._retrieveModel(spec, function(err, modelData) {
-            if (this.modelUtils.isModel(modelData)) { return cb(null, modelData); }
-            this._retrieveModelData(spec, modelData, modelOptions, options, cb);
+          this._retrieveModel(spec, function(err, model) {
+            this._retrieveModelData(spec, model, modelOptions, options, cb);
           }.bind(this));
 
         } else if (spec.collection != null) {
@@ -146,12 +145,10 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
   async.parallel(batchedRequests, callback);
 };
 
-Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, options, cb) {
+Fetcher.prototype._retrieveModelData = function(spec, model, modelOptions, options, cb) {
 
   // If we found the model/collection in the store, then return that.
-  if (!this.needsFetch(modelData, spec)) {
-    model = this.getModelOrCollectionForSpec(spec, modelData, modelOptions);
-
+  if (!this.needsFetch(model, spec)) {
     /**
      * If 'checkFresh' is set (and we're in the client), then before we
      * return the cached object we fire off a fetch, compare the results,
@@ -161,6 +158,7 @@ Fetcher.prototype._retrieveModelData = function(spec, modelData, modelOptions, o
       model.checkFresh();
       this.didCheckFresh(spec);
     }
+
     cb(null, model);
   } else {
     /**
@@ -188,9 +186,9 @@ Fetcher.prototype._retrieveModel = function(spec, callback) {
   });
 };
 
-Fetcher.prototype.needsFetch = function(modelData, spec) {
-  if (modelData == null) return true;
-  if (this.isMissingKeys(modelData, spec.ensureKeys)) return true;
+Fetcher.prototype.needsFetch = function(model, spec) {
+  if (model == null) return true;
+  if (this.isMissingKeys(model.attributes, spec.ensureKeys)) return true;
   if (spec.needsFetch === true) return true;
   if (typeof spec.needsFetch === 'function' && spec.needsFetch(modelData)) return true;
   return false;
@@ -202,9 +200,11 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
   if (keys == null) {
     return false;
   }
+
   if (!_.isArray(keys)) {
     keys = [keys];
   }
+
   for (var i = 0, len = keys.length; i < len; i++) {
     key = keys[i];
     if (modelData[key] == null) {
@@ -217,6 +217,7 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
 Fetcher.prototype.fetchFromApi = function(spec, options, callback) {
   var model = this.getModelOrCollectionForSpec(spec),
       fetcher = this;
+
   model.fetch({
     headers: options.headers || {},
     data: spec.params,

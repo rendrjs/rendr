@@ -501,11 +501,12 @@ describe('fetcher', function() {
               ensureKeys: ['city']
             }
           };
+
           fetcher.fetch(fetchSpec, {
             readFromCache: true
           }, function(err, results) {
             if (err) return done(err);
-            results.model.should.eql(model);
+            results.model.toJSON().should.eql(getModelResponse('full', 1));
             done();
           });
         });

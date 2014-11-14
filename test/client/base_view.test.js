@@ -200,6 +200,10 @@ describe('Base/View', function () {
       expect(this.subject.getTemplateData()).to.deep.equal(this.subject.options);
     });
 
+    it('should make a copy of the options', function () {
+      expect(this.subject.getTemplateData()).to.not.equal(this.subject.options);
+    });
+
     context('there is a model', function () {
       beforeEach(function () {
         this.subject.model = new Model({
@@ -231,7 +235,6 @@ describe('Base/View', function () {
 
       var collectionMeta = { page: 1 },
           collectionParams = { locale: 'en' };
-
 
       beforeEach(function () {
         this.subject.collection = new Collection([collectionModel]);

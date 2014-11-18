@@ -127,9 +127,9 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
 
           this.collectionStore.get(spec.collection, spec.params, function(collection) {
             if (collection) {
-              modelData = this.retrieveModelsForCollectionName(spec.collection, _.pluck(collection.models, 'id'));
+              model = this.retrieveModelsForCollectionName(spec.collection, _.pluck(collection.models, 'id'));
             }
-            this._retrieveModelData(spec, modelData, options, cb);
+            this._retrieveModelData(spec, model, options, cb);
           }.bind(this));
 
         }

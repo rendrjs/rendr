@@ -638,6 +638,23 @@ describe('fetcher', function() {
     });
   });
 
+  describe('retrieveModels', function() {
+    var modelAttrs;
+
+    beforeEach(function () {
+      modelAttrs = { id: 1 };
+
+      this.expectedModel = new Listing(modelAttrs)
+      fetcher.modelStore.set(this.expectedModel);
+    });
+
+    it('should return the models from the given ids', function () {
+      // it should be the exact same model
+      this.expectedModel.should.equal(fetcher.retrieveModels('Listing', [1])[0])
+      this.expectedModel.should.deep.equal(fetcher.retrieveModels('Listing', [1])[0])
+    });
+  });
+
   describe('checkFresh', function() {
     describe('didCheckFresh', function() {
       beforeEach(function() {

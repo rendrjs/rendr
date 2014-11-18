@@ -204,6 +204,13 @@ describe('Base/View', function () {
       expect(this.subject.getTemplateData()).to.not.equal(this.subject.options);
     });
 
+    it('should remove app from the templateData', function() {
+      this.subject.options.app = this.app;
+      expect(this.subject.getTemplateData()).to.deep.equal({
+        test: 'test'
+      });
+    });
+
     context('there is a model', function () {
       beforeEach(function () {
         this.subject.model = new Model({
@@ -225,6 +232,15 @@ describe('Base/View', function () {
           test: 'test'
         });
       });
+
+      it('should remove the model from the options', function() {
+        this.subject.options.model = this.subject.model;
+
+        expect(this.subject.getTemplateData()).to.deep.equal({
+          myOption: 'test',
+          test: 'test'
+        });
+      });
     });
 
     context('there is a collection', function () {
@@ -243,6 +259,17 @@ describe('Base/View', function () {
       });
 
       it('should return the models, collection meta information, and params with the options', function () {
+        expect(this.subject.getTemplateData()).to.deep.equal({
+          models: [collectionModel],
+          meta: collectionMeta,
+          params: collectionParams,
+          test: 'test'
+        });
+      });
+
+      it('should remove "collection" from the options', function() {
+        this.subject.options.collection = this.subject.collection;
+
         expect(this.subject.getTemplateData()).to.deep.equal({
           models: [collectionModel],
           meta: collectionMeta,

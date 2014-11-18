@@ -109,27 +109,23 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
 
   _.each(fetchSpecs, function(spec, name) {
     batchedRequests[name] = function(cb) {
-      var modelData;
+      var model;
 
       if (!options.readFromCache) {
         this.fetchFromApi(spec, options, cb);
       } else {
-        modelData = null;
+        model = null;
 
         // First, see if we have stored the model or collection.
         if (spec.model != null) {
 
           this._retrieveModel(spec, function(err, model) {
-            this._retrieveModelData(spec, model, options, cb);
+            this._refreshData(spec, model, options, cb);
           }.bind(this));
 
         } else if (spec.collection != null) {
-
           this.collectionStore.get(spec.collection, spec.params, function(collection) {
-            if (collection) {
-              model = this.retrieveModelsForCollectionName(spec.collection, _.pluck(collection.models, 'id'));
-            }
-            this._retrieveModelData(spec, model, options, cb);
+            this._refreshData(spec, collection, options, cb);
           }.bind(this));
 
         }
@@ -140,21 +136,21 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
   async.parallel(batchedRequests, callback);
 };
 
-Fetcher.prototype._retrieveModelData = function(spec, model, options, cb) {
+Fetcher.prototype._refreshData = function(spec, modelOrCollection, options, cb) {
 
   // If we found the model/collection in the store, then return that.
-  if (!this.needsFetch(model, spec)) {
+  if (!this.needsFetch(modelOrCollection, spec)) {
     /**
      * If 'checkFresh' is set (and we're in the client), then before we
      * return the cached object we fire off a fetch, compare the results,
      * and if the data is different, we trigger a 'refresh' event.
      */
     if (spec.checkFresh && !isServer && this.shouldCheckFresh(spec)) {
-      model.checkFresh();
+      modelOrCollection.checkFresh();
       this.didCheckFresh(spec);
     }
 
-    cb(null, model);
+    cb(null, modelOrCollection);
   } else {
     /**
      * Else, fetch anew.
@@ -180,11 +176,15 @@ Fetcher.prototype._retrieveModel = function(spec, callback) {
   });
 };
 
-Fetcher.prototype.needsFetch = function(model, spec) {
-  if (model == null) return true;
-  if (this.isMissingKeys(model.attributes, spec.ensureKeys)) return true;
+Fetcher.prototype.needsFetch = function(modelOrCollection, spec) {
+  if (modelOrCollection == null) return true;
+
+  if (this.modelUtils.isModel(modelOrCollection) && this.isMissingKeys(modelOrCollection.attributes, spec.ensureKeys)) {
+    return true;
+  }
+
   if (spec.needsFetch === true) return true;
-  if (typeof spec.needsFetch === 'function' && spec.needsFetch(modelData)) return true;
+  if (typeof spec.needsFetch === 'function' && spec.needsFetch(modelOrCollection)) return true;
   return false;
 };
 

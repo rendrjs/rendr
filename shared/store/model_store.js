@@ -16,7 +16,11 @@ _.extend(ModelStore.prototype, Super.prototype, {
     if (modelName == null) {
       throw new Error('Undefined modelName for model');
     }
+
     key = this._getModelStoreKey(modelName, id);
+
+    // Make sure we have a fully parsed model before we store the attributes
+    model.parse(model.attributes);
 
     return Super.prototype.set.call(this, key, model, null);
   },

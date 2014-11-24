@@ -1,6 +1,7 @@
 var util = require('util'),
     _ = require('underscore'),
     should = require('chai').should(),
+    sinon = require('sinon'),
     ModelStore = require('../../../shared/store/model_store'),
     BaseModel = require('../../../shared/base/model'),
     ModelUtils = require('../../../shared/modelUtils'),
@@ -33,10 +34,16 @@ describe('ModelStore', function() {
       foo: 'bar',
       id: 1
     };
+
     model = new MyModel(modelAttrs);
+    sinon.spy(model, 'parse');
+
     this.store.set(model);
     result = this.store.get('my_model', 1);
+
     result.should.eql(model);
+    model.parse.should.have.been.called;
+    model.parse.restore();
   });
 
   it("should support custom idAttribute", function() {

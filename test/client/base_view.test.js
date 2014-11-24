@@ -190,4 +190,95 @@ describe('Base/View', function () {
       });
     });
   });
+
+  describe('getTemplateData', function () {
+    beforeEach(function() {
+      this.subject.options = { test: 'test' };
+    });
+
+    it('should just return the options', function () {
+      expect(this.subject.getTemplateData()).to.deep.equal(this.subject.options);
+    });
+
+    it('should make a copy of the options', function () {
+      expect(this.subject.getTemplateData()).to.not.equal(this.subject.options);
+    });
+
+    it('should remove app from the templateData', function() {
+      this.subject.options.app = this.app;
+      expect(this.subject.getTemplateData()).to.deep.equal({
+        test: 'test'
+      });
+    });
+
+    context('there is a model', function () {
+      beforeEach(function () {
+        this.subject.model = new Model({
+          myOption: 'test'
+        });
+      });
+
+      it('should apply the options to the model data', function () {
+        expect(this.subject.getTemplateData()).to.deep.equal({
+          myOption: 'test',
+          test: 'test'
+        });
+      });
+
+      it('should override the model attribute if it is the same as the option on the view', function() {
+        this.subject.options.myOption = 'helloWorld';
+        expect(this.subject.getTemplateData()).to.deep.equal({
+          myOption: 'helloWorld',
+          test: 'test'
+        });
+      });
+
+      it('should remove the model from the options', function() {
+        this.subject.options.model = this.subject.model;
+
+        expect(this.subject.getTemplateData()).to.deep.equal({
+          myOption: 'test',
+          test: 'test'
+        });
+      });
+    });
+
+    context('there is a collection', function () {
+      var collectionModel = {
+        id: 1,
+        myOption: 'test'
+      };
+
+      var collectionMeta = { page: 1 },
+          collectionParams = { locale: 'en' };
+
+      beforeEach(function () {
+        this.subject.collection = new Collection([collectionModel]);
+        this.subject.collection.meta = collectionMeta;
+        this.subject.collection.params = collectionParams;
+      });
+
+      it('should return the models, collection meta information, and params with the options', function () {
+        expect(this.subject.getTemplateData()).to.deep.equal({
+          models: [collectionModel],
+          meta: collectionMeta,
+          params: collectionParams,
+          test: 'test'
+        });
+      });
+
+      it('should remove "collection" from the options', function() {
+        this.subject.options.collection = this.subject.collection;
+
+        expect(this.subject.getTemplateData()).to.deep.equal({
+          models: [collectionModel],
+          meta: collectionMeta,
+          params: collectionParams,
+          test: 'test'
+        });
+      });
+    });
+
+  });
+
 });

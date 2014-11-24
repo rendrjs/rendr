@@ -106,17 +106,21 @@ module.exports = BaseView = Backbone.View.extend({
    * Try to return proper data if model or collection is available.
    */
   getTemplateData: function() {
+    var retVal, parsedOptions;
+
     if (this.model) {
-      return this.model.toJSON();
+      retVal = this.model.toJSON();
     } else if (this.collection) {
-      return {
+      retVal = {
         models: this.collection.toJSON(),
         meta: this.collection.meta,
         params: this.collection.params
       };
-    } else {
-      return _.clone(this.options);
     }
+
+    // Remove options that are duplicates in the templates
+    parsedOptions = _.omit(this.options, ['model', 'collection', 'app']);
+    return _.extend({}, retVal, parsedOptions);
   },
 
   /**

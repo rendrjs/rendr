@@ -150,96 +150,72 @@ describe('CollectionStore', function() {
     results.should.be.equal(collection);
   });
 
-  it("should allow clearing out of the store by params", function() {
+  context("there is data to be cleared", function() {
+    var collection, collection2, models, models2, params, params2, resultsCollection;
 
-    var collection0, collection10, models0, models10, params0, params10, results0, results10;
+    beforeEach(function() {
+      models = [
+        {
+          foo: 'bar',
+          id: 1
+        }, {
+          foo: 'bot',
+          id: 2
+        }
+      ];        
+      models2 = [
+        {
+          foo: 'bar',
+          id: 11
+        }, {
+          foo: 'bot',
+          id: 12
+        }
+      ];
+      params = {
+        offset: 0
+      };
+      params2 = {offset: 10};
+      collection = new BaseCollection(models, {params: params});
+      collection2 = new BaseCollection(models2, {params: params2});        
+    });
 
-    models0 = [
-      {
-        foo: 'bar',
-        id: 1
-      }, {
-        foo: 'bot',
-        id: 2
-      }
-    ];
-    models10 = [
-      {
-        foo: 'bar',
-        id: 11
-      }, {
-        foo: 'bot',
-        id: 12
-      }
-    ];
-    params0 = {
-      offset: 0
-    };
-    collection0 = new BaseCollection(models0, {params: params0});
-    this.store.set(collection0, params0);
-    params10 = {offset: 10};
-    collection10 = new BaseCollection(models10, {params: params10});
-    this.store.set(collection10, params10);
-    this.store.clear(collection0.constructor.name, params0);
-    results0 = this.store.get(collection0.constructor.name, params0);
-    should.not.exist(results0);
-    results10 = this.store.get(collection10.constructor.name, params10);
-    should.exist(results10);
-  });  
+    it("should allow clearing out of the store by params", function() {
+      this.store.set(collection, params);
+      this.store.set(collection2, params2);
+      this.store.clear(collection.constructor.name, params);
+      resultsCollection = this.store.get(collection.constructor.name, params);
+      should.not.exist(resultsCollection);
+      resultsCollection = this.store.get(collection2.constructor.name, params2);
+      should.exist(resultsCollection);
+    });  
 
-  it("should allow clearing out of the store", function() {
+    it("should allow clearing out of the store", function() {
+      this.store.set(collection, params);
+      this.store.set(collection2, params2);
+      resultsCollection = this.store.get(collection.constructor.name, params);
+      should.exist(resultsCollection);
+      resultsCollection = this.store.get(collection2.constructor.name, params2);
+      should.exist(resultsCollection);
 
-    var collection0, collection10, models0, models10, params0, params10, results0, results10;
+      this.store.clear(collection.constructor.name);
+      resultsCollection = this.store.get(collection.constructor.name, params);
+      should.not.exist(resultsCollection);
+      resultsCollection = this.store.get(collection2.constructor.name, params2);
+      should.not.exist(resultsCollection);
 
-    models0 = [
-      {
-        foo: 'bar',
-        id: 1
-      }, {
-        foo: 'bot',
-        id: 2
-      }
-    ];
-    models10 = [
-      {
-        foo: 'bar',
-        id: 11
-      }, {
-        foo: 'bot',
-        id: 12
-      }
-    ];
-    params0 = {
-      offset: 0
-    };
-    params10 = {offset: 10};    
-    collection0 = new BaseCollection(models0, {params: params0});
-    collection10 = new BaseCollection(models10, {params: params10});
+      this.store.set(collection, params);
+      this.store.set(collection2, params2);
+      resultsCollection = this.store.get(collection.constructor.name, params);
+      should.exist(resultsCollection);
+      resultsCollection = this.store.get(collection2.constructor.name, params2);
+      should.exist(resultsCollection);
 
-    this.store.set(collection0, params0);
-    this.store.set(collection10, params10);
-    results0 = this.store.get(collection0.constructor.name, params0);
-    results10 = this.store.get(collection10.constructor.name, params10);
-    should.exist(results0);
-    should.exist(results10);
-    this.store.clear(collection0.constructor.name);
-    results0 = this.store.get(collection0.constructor.name, params0);
-    results10 = this.store.get(collection10.constructor.name, params10);
-    should.not.exist(results0);
-    should.not.exist(results10);
-
-    this.store.set(collection0, params0);
-    this.store.set(collection10, params10);
-    results0 = this.store.get(collection0.constructor.name, params0);
-    results10 = this.store.get(collection10.constructor.name, params10);
-    should.exist(results0);
-    should.exist(results10);
-    this.store.clear();
-    results0 = this.store.get(collection0.constructor.name, params0);
-    results10 = this.store.get(collection10.constructor.name, params10);
-    should.not.exist(results0);
-    should.not.exist(results10);
-
-  });  
-
+      this.store.clear();
+      resultsCollection = this.store.get(collection.constructor.name, params);
+      should.not.exist(resultsCollection);
+      resultsCollection = this.store.get(collection2.constructor.name, params2);
+      should.not.exist(resultsCollection);
+    });
+  });
 });

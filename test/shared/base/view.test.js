@@ -1,5 +1,6 @@
 var should = require('chai').should(),
     sinon = require('sinon'),
+    _ = require('underscore'),
     BaseModel = require('../../../shared/base/model'),
     BaseCollection = require('../../../shared/base/collection'),
     BaseView = require('../../../shared/base/view'),
@@ -35,6 +36,37 @@ describe('BaseView', function() {
     topView.childViews.push(anotherBottomView);
     childViews = topView.getChildViewsByName('my_bottom_view');
     childViews.should.have.length(2);
+  });
+
+  describe('constructor', function() {
+    var spy, data, view;
+
+    beforeEach(function() {
+      spy = sinon.spy(Backbone, 'View');
+      data = { app: this.app, el: '#test' };
+    });
+
+    afterEach(function() {
+      Backbone.View.restore();
+    })
+
+    it('does not pass the model if it is set', function() {
+      data.model = 'a'
+      view = new BaseView(data)
+
+      spy.should.have.been.called
+      spy.should.have.been.calledWith(_.omit(data, 'model'))
+      view.model.should.equal(data.model)
+    });
+
+    it('does not pass the collection if it is set', function() {
+      data.collection = 'a'
+      view = new BaseView(data)
+
+      spy.should.have.been.called
+      spy.should.have.been.calledWith(_.omit(data, 'collection'))
+      view.collection.should.equal(data.collection)
+    });
   });
 
   describe('getTemplate', function() {
@@ -113,6 +145,63 @@ describe('BaseView', function() {
     });
   });
 
+  describe('parseOptions', function () {
+    var view;
+
+    beforeEach(function () {
+      this.View = BaseView.extend({
+        id: 'aViewId',
+        className: 'aClassName',
+        name: 'A View Name'
+      });
+
+      view = new this.View({app: this.app});
+    });
+
+    it('sets the app and parentView on the view object', function () {
+      view.app = undefined;
+      view.parseOptions({ app: this.app, parentView: 'test' });
+      view.app.should.deep.equal(this.app);
+      view.parentView.should.equal('test');
+    });
+
+    it('should invoke parseModelAndCollection', function () {
+      var spy = sinon.spy(BaseView, 'parseModelAndCollection');
+      view.parseOptions({ app: this.app });
+      spy.should.have.been.called.once;
+      BaseView.parseModelAndCollection.restore()
+    });
+
+    it('sets the model and collection to the view instance', function () {
+      var MyModel,
+          MyColleciton;
+
+      MyModel = BaseModel.extend({});
+      MyModel.id = 'MyModel';
+
+      MyCollection = BaseCollection.extend({});
+      MyCollection.id = 'MyCollection';
+
+      var myModel = new MyModel(),
+          myCollection = new MyCollection();
+
+      var options = {
+        model: myModel,
+        collection: myCollection
+      };
+
+      view.parseOptions(options);
+      view.model.should.deep.equal(myModel);
+      view.collection.should.deep.equal(myCollection);
+    });
+
+    it('adds any extra attributes directly to the views options', function () {
+      var options = { app: this.app, test: 'test' };
+      view.parseOptions(options);
+      view.options.should.deep.equal(options);
+    });
+  });
+
   describe('_fetchLazyCallback', function() {
     beforeEach(function() {
       this.app = {
@@ -140,6 +229,87 @@ describe('BaseView', function() {
       this.topView.viewing = true;
       this.topView._fetchLazyCallback(null, {});
       this.topView.render.should.have.been.called;
+    });
+  });
+
+  describe('parseModelAndCollection', function () {
+    context('there is a model', function () {
+      var MyModel = BaseModel.extend({}),
+          modelData = { id: 101, name: 'test' },
+          model;
+
+      MyModel.id = 'MyModel';
+
+      context('is an instance of a model', function () {
+        beforeEach(function() {
+          model = new MyModel(modelData, { app: this.app });
+        });
+
+        it('should add model_name and model_id attributes', function () {
+          var result = BaseView.parseModelAndCollection(modelUtils, { model: model });
+
+          result.should.deep.equal({
+            model_name: 'my_model',
+            model_id: 101,
+            model: model
+          });
+        });
+      });
+
+      context('contains data to build model', function () {
+        var modelInstance,
+            modelUtilsMock;
+
+        beforeEach(function() {
+          modelInstance = new MyModel(modelData, { app: this.app });
+          modelUtilsMock = sinon.mock(modelUtils);
+          modelUtilsMock.expects("getModel").withArgs('MyModel', modelData, { parse: true, app: this.app }).returns(modelInstance);
+        });
+
+        afterEach(function() {
+          modelUtilsMock.restore();
+        });
+
+        it('it should create an instance of the model', function () {
+          var result = BaseView.parseModelAndCollection(modelUtils, { model: modelData, model_name: 'MyModel', app: this.app });
+
+          result.should.deep.equal({
+            model_name: 'MyModel',
+            model_id: 101,
+            model: modelInstance,
+            app: this.app
+          });
+        });
+      });
+
+    });
+
+    context('there is a collection', function () {
+      var MyCollection = BaseCollection.extend({}),
+          collection;
+      MyCollection.id = 'MyCollection';
+
+      context ('it is an instance of a collection', function () {
+        beforeEach(function () {
+          collection = new MyCollection([], {
+            app: this.app,
+            params: { test: 'test' }
+          });
+        });
+
+        it('adds collection_name and collection_params', function () {
+          var result = BaseView.parseModelAndCollection(modelUtils, {
+            collection: collection
+          });
+
+          result.should.deep.equal({
+            collection_name: 'my_collection',
+            collection_params: { test: 'test' },
+            collection: collection
+          });
+        });
+      });
+
     });
   });
 

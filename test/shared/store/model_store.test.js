@@ -1,6 +1,7 @@
 var util = require('util'),
     _ = require('underscore'),
     should = require('chai').should(),
+    sinon = require('sinon'),
     ModelStore = require('../../../shared/store/model_store'),
     BaseModel = require('../../../shared/base/model'),
     ModelUtils = require('../../../shared/modelUtils'),
@@ -27,6 +28,25 @@ describe('ModelStore', function() {
     });
   });
 
+  it("should get and set the values for a model", function() {
+    var model, modelAttrs, result;
+
+    modelAttrs = {
+      foo: 'bar',
+      id: 1
+    };
+
+    model = new MyModel(modelAttrs);
+    sinon.spy(model, 'parse');
+
+    this.store.set(model);
+    result = this.store.get('my_model', 1);
+
+    result.should.eql(model);
+    model.parse.should.have.been.called;
+    model.parse.restore();
+  });
+
   it("should support custom idAttribute", function() {
     var modelAttrs;
 
@@ -45,7 +65,7 @@ describe('ModelStore', function() {
     model = new MyCustomModel(modelAttrs);
     this.store.set(model);
     result = this.store.get(modelUtils.modelName(MyCustomModel), modelAttrs.login);
-    result.should.eql(modelAttrs);
+    result.should.eql(model);
   });
 
   context("there is a model with id", function () {
@@ -65,7 +85,7 @@ describe('ModelStore', function() {
 
       this.store.set(model);
       resultModel = this.store.get('my_model', defaultModelAttrs.id);
-      resultModel.should.eql(defaultModelAttrs);
+      resultModel.should.eql(model);
     });
 
     it("should support returning a model instance", function() {
@@ -101,7 +121,7 @@ describe('ModelStore', function() {
       it('should find a model on custom attributes', function(){
         this.store.set(model);
         resultModel = this.store.find('my_model', {foo: 'bar'});
-        resultModel.should.eql(defaultModelAttrs);
+        resultModel.should.eql(model);
       });
 
       it('should skip different models, even when they match the query', function(){       

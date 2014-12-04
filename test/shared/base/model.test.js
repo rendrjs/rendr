@@ -25,7 +25,7 @@ describe('BaseModel', function() {
       app: this.app
     });
     stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
-    stored.should.deep.eql(attrs);
+    stored.should.deep.eql(model);
   });
 
   it("should update modelStore when id attribute changes", function() {
@@ -39,14 +39,14 @@ describe('BaseModel', function() {
       app: this.app
     });
     stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
-    stored.should.deep.eql(attrs);
+    stored.should.deep.eql(model);
 
     attrs.id = 10;
     model.set({
       id: attrs.id
     });
     stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
-    stored.should.deep.eql(attrs);
+    stored.should.deep.eql(model);
 
     // Add an attribute, make sure the store gets updated.
     attrs.name = 'Bobert';
@@ -54,7 +54,7 @@ describe('BaseModel', function() {
       name: attrs.name
     });
     stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
-    stored.should.deep.eql(attrs);
+    stored.should.deep.eql(model);
   });
 
   describe('store', function() {
@@ -70,7 +70,7 @@ describe('BaseModel', function() {
       });
       model.store();
       stored = this.app.fetcher.modelStore.get(this.MyModel.id, model.id);
-      stored.should.eql(attrs);
+      stored.should.eql(model);
     });
   });
 

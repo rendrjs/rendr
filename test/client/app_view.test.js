@@ -1,12 +1,16 @@
 var App = require('../../shared/app'),
-    AppView = require('../../client/app_view'),
     should = require('chai').should(),
     expect = require('chai').expect,
     clientTestHelper = require('../helpers/client_test'),
-    $ = require('jquery');
+    $ = require('jquery'),
+    AppView;
 
 describe('AppView', function() {
-  before(clientTestHelper.before);
+  before(function () {
+    clientTestHelper.before.call(this);
+    delete require.cache;
+    AppView = require('../../client/app_view');
+  });
 
   beforeEach(function() {
     this.app = new App();

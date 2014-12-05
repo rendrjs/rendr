@@ -1,5 +1,6 @@
 var _ = require('underscore'),
     Backbone = require('backbone'),
+    jquery = require('jquery'),
     chai = require('chai'),
     sinon = require('sinon'),
     sinonChai = require('sinon-chai'),
@@ -16,6 +17,9 @@ describe('syncer', function() {
     var model, options, app, request;
 
     beforeEach(function () {
+      this.backboneAjax = Backbone.ajax;
+      Backbone.ajax = jquery.ajax;
+
       request = sinon.stub();
       app = new App();
       app.req = { dataAdapter: { request: request } };
@@ -26,6 +30,10 @@ describe('syncer', function() {
         headers: { foo: 'bar' },
         data: { baz: { quux: 'doh' } }
       };
+    });
+
+    afterEach(function () {
+      Backbone.ajax = this.backboneAjax;
     });
 
     describe('serverSync', function () {

@@ -461,6 +461,7 @@ describe('fetcher', function() {
           collection: 'Listings'
         }
       };
+
       fetcher.fetch(fetchSpec, {
         writeToCache: true
       }, function(err, results) {
@@ -469,7 +470,10 @@ describe('fetcher', function() {
         results.collection.toJSON().should.eql(buildCollectionResponse());
 
         // Make sure that the basic version is stored in modelStore.
-        fetcher.modelStore.get('Listing', 1).should.eql(getModelResponse('basic', 1));
+        var model = results.collection.get(1)
+        var storedModel = fetcher.modelStore.get('Listing', 1);
+
+        storedModel.should.eql(model);
 
         // Then, fetch the single model, which should be cached.
         fetchSpec = {
@@ -485,7 +489,7 @@ describe('fetcher', function() {
           readFromCache: true
         }, function(err, results) {
           if (err) return done(err);
-          results.model.toJSON().should.eql(getModelResponse('basic', 1));
+          results.model.should.eql(model);
 
           // Finally, fetch the single model, but specifiy that certain key must be present.
           fetchSpec = {
@@ -497,6 +501,7 @@ describe('fetcher', function() {
               ensureKeys: ['city']
             }
           };
+
           fetcher.fetch(fetchSpec, {
             readFromCache: true
           }, function(err, results) {
@@ -630,6 +635,23 @@ describe('fetcher', function() {
       summary.ids.should.eql([1, 2]);
       summary.params.should.eql(params);
       summary.meta.should.eql(meta);
+    });
+  });
+
+  describe('retrieveModels', function() {
+    var modelAttrs;
+
+    beforeEach(function () {
+      modelAttrs = { id: 1 };
+
+      this.expectedModel = new Listing(modelAttrs)
+      fetcher.modelStore.set(this.expectedModel);
+    });
+
+    it('should return the models from the given ids', function () {
+      // it should be the exact same model
+      this.expectedModel.should.equal(fetcher.retrieveModels('Listing', [1])[0])
+      this.expectedModel.should.deep.equal(fetcher.retrieveModels('Listing', [1])[0])
     });
   });
 

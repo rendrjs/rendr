@@ -14,6 +14,11 @@ function MyModel() {
 }
 util.inherits(MyModel, BaseModel);
 
+function MyModel2() {
+  MyModel2.super_.apply(this, arguments);
+}
+util.inherits(MyModel2, BaseModel);
+
 function App() {}
 
 addClassMapping.add(modelUtils.modelName(MyModel), MyModel);
@@ -105,7 +110,7 @@ describe('ModelStore', function() {
       this.store.set(model);
       resultModel = this.store.get('my_model', defaultModelAttrs.id, true);
       should.exist(resultModel);
-      this.store.clear(defaultModelAttrs.id);
+      this.store.clear('my_model', defaultModelAttrs.id);
       resultModel = this.store.get('my_model', defaultModelAttrs.id, true);
       should.not.exist(resultModel);
     });  
@@ -130,7 +135,7 @@ describe('ModelStore', function() {
         resultModel = this.store.find('my_model', {foo: 'bar'});
         should.equal(resultModel, undefined);
       });    
-    });    
+    });
     context("more than one model", function () {
       var defaultModelAttrs2, model2;
 
@@ -156,7 +161,35 @@ describe('ModelStore', function() {
         should.not.exist(resultModel);
         resultModel = this.store.get('my_model', defaultModelAttrs2.id, true);    
         should.not.exist(resultModel);
-      });    
+      });          
+    });
+    context("more than one type of model", function () {
+      var defaultModelAttrs2, model2;
+
+      beforeEach(function() {
+        defaultModelAttrs2 = {
+          foo: 'bar2',
+          id: 2
+        };
+        model2 = new MyModel2(defaultModelAttrs2, { app: this.app });
+      });
+
+      it("should be able to be clear one full model from the store", function() {
+
+        this.store.set(model);
+        this.store.set(model2);
+
+        resultModel = this.store.get('my_model', defaultModelAttrs.id, true);
+        should.exist(resultModel);
+        resultModel = this.store.get('my_model2', defaultModelAttrs2.id, true);
+        should.exist(resultModel);
+
+        this.store.clear('my_model');
+        resultModel = this.store.get('my_model', defaultModelAttrs.id, true);
+        should.not.exist(resultModel);
+        resultModel = this.store.get('my_model2', defaultModelAttrs2.id, true);    
+        should.exist(resultModel);
+      });
     });
   });
 });

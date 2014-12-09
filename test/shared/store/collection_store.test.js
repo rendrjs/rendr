@@ -151,7 +151,8 @@ describe('CollectionStore', function() {
   });
 
   context("there is data to be cleared", function() {
-    var collection, collection2, models, models2, params, params2, resultsCollection;
+    var collection, collection2, anotherCollection, models, models2, modelsAnother,
+      params, params2, resultsCollection;
 
     beforeEach(function() {
       models = [
@@ -171,6 +172,15 @@ describe('CollectionStore', function() {
           foo: 'bot',
           id: 12
         }
+      ];        
+      modelsAnother = [
+        {
+          foo: 'bee',
+          id: 111
+        }, {
+          foo: 'hum',
+          id: 112
+        }
       ];
       params = {
         offset: 0
@@ -178,6 +188,13 @@ describe('CollectionStore', function() {
       params2 = {offset: 10};
       collection = new BaseCollection(models, {params: params});
       collection2 = new BaseCollection(models2, {params: params2});        
+
+      function AnotherCollection() {
+        AnotherCollection.super_.apply(this, arguments);
+      }
+      util.inherits(AnotherCollection, BaseCollection);
+
+      anotherCollection = new AnotherCollection(modelsAnother, {params: params });      
     });
 
     it("should allow clearing out of the store by params", function() {
@@ -190,9 +207,11 @@ describe('CollectionStore', function() {
       should.exist(resultsCollection);
     });  
 
-    it("should allow clearing out of the store", function() {
+    it("should allow clearing a collection out of the store", function() {
       this.store.set(collection, params);
       this.store.set(collection2, params2);
+      this.store.set(anotherCollection, params);
+
       resultsCollection = this.store.get(collection.constructor.name, params);
       should.exist(resultsCollection);
       resultsCollection = this.store.get(collection2.constructor.name, params2);
@@ -203,19 +222,21 @@ describe('CollectionStore', function() {
       should.not.exist(resultsCollection);
       resultsCollection = this.store.get(collection2.constructor.name, params2);
       should.not.exist(resultsCollection);
+      this.store.cache.should.not.be.empty;
+    });
 
+
+    it("should allow clearing out the store", function() {
       this.store.set(collection, params);
       this.store.set(collection2, params2);
-      resultsCollection = this.store.get(collection.constructor.name, params);
-      should.exist(resultsCollection);
-      resultsCollection = this.store.get(collection2.constructor.name, params2);
-      should.exist(resultsCollection);
+      this.store.set(anotherCollection, params);
 
       this.store.clear();
       resultsCollection = this.store.get(collection.constructor.name, params);
       should.not.exist(resultsCollection);
       resultsCollection = this.store.get(collection2.constructor.name, params2);
       should.not.exist(resultsCollection);
+      this.store.cache.should.be.empty;
     });
   });
 });

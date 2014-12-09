@@ -35,7 +35,15 @@ _.extend(ModelStore.prototype, Super.prototype, {
   clear: function(modelName, id) {
     if (modelName && id) {
       var key = this._getModelStoreKey(modelName, id);
-      return Super.prototype.clear.call(this, key);      
+      return Super.prototype.clear.call(this, key);
+    } else if (modelName && !id) {
+      var cachedItems = this._getCachedItemsByModel(modelName),
+        self = this,
+        modelStoreKey;
+       _.each(cachedItems, function (item) {
+          modelStoreKey = self._getModelStoreKey(modelName, item.value.id);
+          Super.prototype.clear.call(self, modelStoreKey);
+        });
     } else {
       return Super.prototype.clear.call(this, null);
     }
@@ -59,6 +67,13 @@ _.extend(ModelStore.prototype, Super.prototype, {
     if (foundKey) {
       return this.cache[foundKey].value;
     }
+  },
+
+  _getCachedItemsByModel:function(modelName) {
+    var prefix = this._formatKey(this._keyPrefix(modelName));
+    return _.filter(this.cache, function(val, key) {
+      return startsWith(key, prefix);
+    });
   },
 
   _formatKey: function(key) {

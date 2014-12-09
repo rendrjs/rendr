@@ -31,9 +31,17 @@ _.extend(CollectionStore.prototype, Super.prototype, {
   },
 
   clear: function(collectionName, params) {
-    if ((collectionName !== null)  && !_.isUndefined(collectionName) && params) {
+    if (!_.isUndefined(collectionName) && params) {
       var key = this._getStoreKey(collectionName, params);
       return Super.prototype.clear.call(this, key);      
+    } else if (!_.isUndefined(collectionName) && !params) {
+      var cachedItems = this._getCachedItemsByCollection(collectionName),
+        self = this,
+        storeKey;
+       _.each(cachedItems, function (item) {
+          storeKey = self._getStoreKey(collectionName, item.value.params);
+          Super.prototype.clear.call(self, storeKey);
+        });
     } else {
       return Super.prototype.clear.call(this, null);
     }
@@ -43,6 +51,14 @@ _.extend(CollectionStore.prototype, Super.prototype, {
     this.modelUtils.getCollectionConstructor(collectionName, function(Collection) {
       var mergedParams = _.extend({}, Collection.prototype.defaultParams, params);
       callback(mergedParams);
+    });
+  },
+
+  _getCachedItemsByCollection:function(collectionName) {
+    var prefix = this._formatKey(this.modelUtils.underscorize(collectionName));
+
+    return _.filter(this.cache, function(val, key) {
+      return startsWith(key, prefix);
     });
   },
 
@@ -65,4 +81,8 @@ function sortParams(params) {
     sorted[key] = params[key];
   });
   return sorted;
+}
+
+function startsWith(string, prefix) {
+  return string.slice(0, prefix.length) == prefix;
 }

@@ -32,6 +32,23 @@ _.extend(ModelStore.prototype, Super.prototype, {
     return Super.prototype.get.call(this, key);
   },
 
+  clear: function(modelName, id) {
+    if (modelName && id) {
+      var key = this._getModelStoreKey(modelName, id);
+      return Super.prototype.clear.call(this, key);
+    } else if (modelName && !id) {
+      var cachedItems = this._getCachedItemsByModel(modelName),
+        self = this,
+        modelStoreKey;
+       _.each(cachedItems, function (item) {
+          modelStoreKey = self._getModelStoreKey(modelName, item.value.id);
+          Super.prototype.clear.call(self, modelStoreKey);
+        });
+    } else {
+      return Super.prototype.clear.call(this, null);
+    }
+  },
+
   find: function(modelName, params) {
     var prefix = this._formatKey(this._keyPrefix(modelName)),
       keys = Object.keys(this.cache),
@@ -50,6 +67,13 @@ _.extend(ModelStore.prototype, Super.prototype, {
     if (foundKey) {
       return this.cache[foundKey].value;
     }
+  },
+
+  _getCachedItemsByModel:function(modelName) {
+    var prefix = this._formatKey(this._keyPrefix(modelName));
+    return _.filter(this.cache, function(val, key) {
+      return startsWith(key, prefix);
+    });
   },
 
   _formatKey: function(key) {

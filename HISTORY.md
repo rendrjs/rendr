@@ -1,3 +1,17 @@
+# 0.5.1
+## 2014-12-11
+* Changed how views are attached to the document, now calls the `render` method when given the appropriate flag.
+* Added tests around base/view.js
+* Added a `clear` method to the model and collection stores
+* Fixed model collection from the store, will no longer create new instances of the model
+* Added the ability to pass a JSON object to `fetch_params` when lazy loading views. This way we can pass multiple parameters to those models / collections.
+* Upgraded `qs` dependency
+* Fixed query string attribute when loading collections, now will properly send data on client and server.
+* Fix in the view's parse options to not override the model / collection attribute after they've been re-inflated.
+* Added fix for the `parse` method to allow for sub-models / sub-collections
+* Upgrade to Backbone 1.1.2
+* Added support for nested params in ServerRouter
+
 # 0.5.0
 ## 2014-02-25
 * [deprecation] use `initialize` instead of `postInitialize`

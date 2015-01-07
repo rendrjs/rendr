@@ -500,8 +500,15 @@ BaseView.parseModelAndCollection = function(modelUtils, options) {
   }
 
   if (options.collection != null) {
+    if (!(options.collection instanceof Backbone.Collection) && options.collection_name) {
+      options.collection = modelUtils.getCollection(options.collection_name, options.collection, {
+        parse: true,
+        app: options.app,
+        params: options.collection_params
+      });
+    }
     options.collection_name = options.collection_name || modelUtils.modelName(options.collection.constructor);
-    options.collection_params = options.collection.params;
+    options.collection_params = options.collection_params || options.collection.params;
   }
 
   return options;

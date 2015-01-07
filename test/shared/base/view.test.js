@@ -286,14 +286,15 @@ describe('BaseView', function() {
 
     context('there is a collection', function () {
       var MyCollection = BaseCollection.extend({}),
-          collection;
+          collection,
+          params = { test: 'test' };
       MyCollection.id = 'MyCollection';
 
       context ('it is an instance of a collection', function () {
         beforeEach(function () {
           collection = new MyCollection([], {
             app: this.app,
-            params: { test: 'test' }
+            params: params
           });
         });
 
@@ -310,6 +311,30 @@ describe('BaseView', function() {
         });
       });
 
+      context('contains an array of model data to build a collection', function () {
+        var modelUtilsMock;
+
+        beforeEach(function() {
+          collection = new MyCollection([], { app: this.app, params: { test: 'test' } });
+          modelUtilsMock = sinon.mock(modelUtils);
+          modelUtilsMock.expects("getCollection").withArgs('MyCollection', [], { parse: true, app: this.app, params: params }).returns(collection);
+        });
+
+        afterEach(function() {
+          modelUtilsMock.restore();
+        });
+
+        it('it should create an instance of the collection', function () {
+          var result = BaseView.parseModelAndCollection(modelUtils, { collection: [], collection_name: 'MyCollection', app: this.app, collection_params: params });
+
+          result.should.deep.equal({
+            collection_name: 'MyCollection',
+            collection_params: params,
+            collection: collection,
+            app: this.app
+          });
+        });
+      });
     });
   });
 

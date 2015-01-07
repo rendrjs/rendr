@@ -165,10 +165,10 @@ describe('BaseView', function() {
       view.parentView.should.equal('test');
     });
 
-    it('should invoke parseModelAndCollection', function () {
+    it('should invoke parseModelAndCollection with the parse option', function () {
       var spy = sinon.spy(BaseView, 'parseModelAndCollection');
       view.parseOptions({ app: this.app });
-      spy.should.have.been.called.once;
+      spy.should.have.been.calledWith(this.app.modelUtils, { app: this.app, parse: true }).once;
       BaseView.parseModelAndCollection.restore()
     });
 
@@ -271,13 +271,14 @@ describe('BaseView', function() {
         });
 
         it('it should create an instance of the model', function () {
-          var result = BaseView.parseModelAndCollection(modelUtils, { model: modelData, model_name: 'MyModel', app: this.app });
+          var result = BaseView.parseModelAndCollection(modelUtils, { model: modelData, model_name: 'MyModel', app: this.app, parse: true });
 
           result.should.deep.equal({
             model_name: 'MyModel',
             model_id: 101,
             model: modelInstance,
-            app: this.app
+            app: this.app,
+            parse: true
           });
         });
       });
@@ -325,13 +326,14 @@ describe('BaseView', function() {
         });
 
         it('it should create an instance of the collection', function () {
-          var result = BaseView.parseModelAndCollection(modelUtils, { collection: [], collection_name: 'MyCollection', app: this.app, collection_params: params });
+          var result = BaseView.parseModelAndCollection(modelUtils, { collection: [], collection_name: 'MyCollection', app: this.app, collection_params: params, parse: true });
 
           result.should.deep.equal({
             collection_name: 'MyCollection',
             collection_params: params,
             collection: collection,
-            app: this.app
+            app: this.app,
+            parse: true
           });
         });
       });

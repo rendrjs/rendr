@@ -1,4 +1,6 @@
-var should = require('chai').should(),
+var chai = require('chai')
+    should = chai.should(),
+    expect = chai.expect,
     sinon = require('sinon'),
     _ = require('underscore'),
     BaseModel = require('../../../shared/base/model'),
@@ -199,6 +201,23 @@ describe('BaseView', function() {
       var options = { app: this.app, test: 'test' };
       view.parseOptions(options);
       view.options.should.deep.equal(options);
+    });
+
+    it('adds a refresh listener if rendrOnRefresh is set', function () {
+      var model = new BaseModel(),
+          options = { model: model };
+
+      view.renderOnRefresh = true;
+      view.parseOptions(options);
+      view.model._events.refresh.should.not.be.undefined;
+    });
+
+    it('no refresh listener if rendrOnRefresh is set to false', function () {
+      var model = new BaseModel(),
+          options = { model: model };
+
+      view.parseOptions(options);
+      expect(view.model._events.refresh).to.be.undefined;
     });
   });
 

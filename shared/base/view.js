@@ -21,12 +21,9 @@ function noop() {}
 
 module.exports = BaseView = Backbone.View.extend({
   constructor: function(options) {
-    var obj;
-
     this.options = _.extend( this.options || {}, options || {} );
 
     this.parseOptions(options);
-
     this.name = this.name || this.app.modelUtils.underscorize(this.constructor.id || this.constructor.name);
 
     // parseOptions deals w/ models and collections, but the BaseView will override those changes
@@ -35,10 +32,6 @@ module.exports = BaseView = Backbone.View.extend({
     if (this.postInitialize) {
       console.warn('`postInitialize` is deprecated, please use `initialize`');
       this.postInitialize();
-    }
-
-    if ((obj = this.options.model || this.options.collection) && this.renderOnRefresh) {
-      obj.on('refresh', this.render, this);
     }
 
     this.render = this.render.bind(this);
@@ -54,6 +47,7 @@ module.exports = BaseView = Backbone.View.extend({
     /**
      * Populate `this.options` and alias as `options`.
      */
+    var obj;
     options = _.extend(this.options, options || {});
 
     if (options.app != null) {
@@ -69,6 +63,10 @@ module.exports = BaseView = Backbone.View.extend({
     options = BaseView.parseModelAndCollection(this.app.modelUtils, options);
     this.model = options.model;
     this.collection = options.collection;
+
+    if ((obj = this.model || this.collection) && this.renderOnRefresh) {
+      obj.on('refresh', this.render, this);
+    }
   },
 
   /**

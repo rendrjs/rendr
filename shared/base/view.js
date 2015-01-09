@@ -60,7 +60,7 @@ module.exports = BaseView = Backbone.View.extend({
       this.parentView = options.parentView;
     }
 
-    options = BaseView.parseModelAndCollection(this.app.modelUtils, options);
+    options = BaseView.parseModelAndCollection(this.app.modelUtils, _.extend({ parse: true }, options));
     this.model = options.model;
     this.collection = options.collection;
 
@@ -489,7 +489,7 @@ BaseView.parseModelAndCollection = function(modelUtils, options) {
   if (options.model != null) {
     if (!(options.model instanceof Backbone.Model) && options.model_name) {
       options.model = modelUtils.getModel(options.model_name, options.model, {
-        parse: true,
+        parse: !!options.parse,
         app: options.app
       });
     }
@@ -500,7 +500,7 @@ BaseView.parseModelAndCollection = function(modelUtils, options) {
   if (options.collection != null) {
     if (!(options.collection instanceof Backbone.Collection) && options.collection_name) {
       options.collection = modelUtils.getCollection(options.collection_name, options.collection, {
-        parse: true,
+        parse: !!options.parse,
         app: options.app,
         params: options.collection_params
       });

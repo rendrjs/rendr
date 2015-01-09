@@ -203,7 +203,7 @@ describe('BaseView', function() {
       view.options.should.deep.equal(options);
     });
 
-    it('adds a refresh listener if rendrOnRefresh is set', function () {
+    it('adds a refresh listener if renderOnRefresh is set', function () {
       var model = new BaseModel(),
           options = { model: model };
 
@@ -212,7 +212,7 @@ describe('BaseView', function() {
       view.model._events.refresh.should.not.be.undefined;
     });
 
-    it('no refresh listener if rendrOnRefresh is set to false', function () {
+    it('no refresh listener if renderOnRefresh is set to false', function () {
       var model = new BaseModel(),
           options = { model: model };
 

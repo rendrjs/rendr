@@ -125,9 +125,9 @@ Inherits from `Backbone.Model`.
 
 ### `BaseAppView`
 
-Inherits for `BaseView`. You can change your main content container from this view by changing the `contentEl` key in the `options` object when extending `BaseAppView`
+Inherits from `BaseView`. You can change your main content container from this view by changing the `contentEl` key in the `options` object when extending `BaseAppView`
 
-```javascript
+```js
 var AppView = BaseAppView.extend({
   options : {
     contentEl : "#mainContent"
@@ -230,7 +230,7 @@ This configuration is passed to the current DataAdapter, which by default is the
 
 **Simple**
 
-```
+```js
 var dataAdapterConfig = {
   host: 'api.github.com',
   protocol: 'https'
@@ -240,7 +240,7 @@ var dataAdapterConfig = {
 
 **Multiple**
 
-```
+```js
 var dataAdapterConfig = {
   'default': {
     host: 'api.github.com',
@@ -258,14 +258,13 @@ Example of how a Backbone model can be configured to select one of the DataAdapt
 
 *Note: This example assumes you are using the [RestAdapter](https://github.com/rendrjs/rendr/blob/master/server/data_adapter/rest_adapter.js).*
 
-````
+```js
 module.exports = Base.extend({
   url: '/repos/:owner/:name',
   api: 'travis-ci'
 });
 module.exports.id = 'Build';
-
-````
+```
 
 ### Adding middleware to Rendr's Express
 
@@ -273,15 +272,13 @@ module.exports.id = 'Build';
 You can optionally add any custom middleware that has to access `req.rendrApp` but should run before
 the Rendr routes by calling configure after createServer.
 
-```
-
+```js
 rendr.createServer(config);
 rendr.configure(function(expressApp) {
 
     expressApp.use(...)
 
 })
-
 ```
 
 ### Template Adapters
@@ -299,7 +296,7 @@ Provides a way for Rendr to utilize custom html template engines.  Rendr's [View
 
 You can tell Rendr which Template Adapter to use.  This represents the node-module that contains the adapter.
 
-````
+```js
 // /app/app.js
 
 module.exports = BaseApp.extend({
@@ -309,7 +306,7 @@ module.exports = BaseApp.extend({
 
 });
 
-````
+```
 
 
 ### Express middleware

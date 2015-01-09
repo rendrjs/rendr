@@ -491,7 +491,7 @@ BaseView.parseModelAndCollection = function(modelUtils, options) {
   if (options.model != null) {
     if (!(options.model instanceof Backbone.Model) && options.model_name) {
       options.model = modelUtils.getModel(options.model_name, options.model, {
-        parse: options.parse,
+        parse: !!options.parse,
         app: options.app
       });
     }
@@ -502,7 +502,7 @@ BaseView.parseModelAndCollection = function(modelUtils, options) {
   if (options.collection != null) {
     if (!(options.collection instanceof Backbone.Collection) && options.collection_name) {
       options.collection = modelUtils.getCollection(options.collection_name, options.collection, {
-        parse: options.parse,
+        parse: !!options.parse,
         app: options.app,
         params: options.collection_params
       });

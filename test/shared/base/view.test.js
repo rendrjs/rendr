@@ -281,8 +281,14 @@ describe('BaseView', function() {
             parse: true
           });
         });
-      });
 
+        context('options do not contain parse: true', function () {
+          it('it should not pass parse: true to modelUtils', function () {
+            modelUtilsMock.expects("getModel").withArgs('MyModel', modelData, { parse: false, app: this.app }).returns(modelInstance);
+            BaseView.parseModelAndCollection(modelUtils, { model: modelData, model_name: 'MyModel', app: this.app });
+          });
+        });
+      });
     });
 
     context('there is a collection', function () {
@@ -334,6 +340,13 @@ describe('BaseView', function() {
             collection: collection,
             app: this.app,
             parse: true
+          });
+        });
+
+        context('options do not contain parse: true', function () {
+          it('it should not pass parse: true to modelUtils', function () {
+            modelUtilsMock.expects("getCollection").withArgs('MyCollection', [], { parse: false, app: this.app, params: params }).returns(collection);
+            BaseView.parseModelAndCollection(modelUtils, { collection: [], collection_name: 'MyCollection', app: this.app, collection_params: params });
           });
         });
       });

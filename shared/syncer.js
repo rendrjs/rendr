@@ -52,7 +52,7 @@ function clientSync(method, model, options) {
       };
       error(resp);
     }
-  };
+  }
   return Backbone.sync(method, model, options);
 }
 

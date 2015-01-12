@@ -254,7 +254,8 @@ ClientRouter.prototype.getRenderCallback = function(route) {
     }
 
     var defaults = this.defaultHandlerParams(viewPath, locals, route);
-    viewPath = defaults[0], locals = defaults[1];
+    viewPath = defaults[0];
+    locals = defaults[1];
 
     locals = locals || {};
     _.extend(locals, { fetch_summary: BaseView.extractFetchSummary(this.app.modelUtils, locals) });

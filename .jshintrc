@@ -1,0 +1,11 @@
+{
+  "undef": true,
+  "eqnull": true,
+  "asi": true,
+  "expr" : true,
+  "node": true,
+  "browser": true,
+  "globals": {
+    "rendr": false
+  }
+}

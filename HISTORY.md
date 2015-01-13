@@ -1,5 +1,5 @@
 # 0.5.2
-## 2014-01-9
+## 2015-01-9
 * parseModelAndCollection optionally parses sub-models / sub-collections
 * fix for the re-rendering the view on a `refresh` event when the view is hydrated
 * upgrade to dev dependency for rendr-handlebars to 0.2.2

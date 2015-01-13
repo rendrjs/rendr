@@ -38,7 +38,7 @@ function apiProxy(dataAdapter) {
       }
     });
   };
-};
+}
 
 apiProxy.getApiPath = function getApiPath(path) {
   var sepIndex = path.indexOf(separator),

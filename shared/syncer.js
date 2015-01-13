@@ -24,7 +24,8 @@ if (isServer) {
   var serverOnly_qs = 'qs';
   var qs = require(serverOnly_qs);
 } else {
-  Backbone.$ = window.$ || require('jquery');
+  var $ = window.$ || require('jquery');
+  Backbone.$ = $;
 }
 
 var syncer = module.exports;
@@ -51,7 +52,7 @@ function clientSync(method, model, options) {
       };
       error(resp);
     }
-  };
+  }
   return Backbone.sync(method, model, options);
 }
 

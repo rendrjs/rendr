@@ -9,7 +9,7 @@ if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
 }
 
-BaseCollection = Super.extend({
+var BaseCollection = Super.extend({
 
   model: BaseModel,
 

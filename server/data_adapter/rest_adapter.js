@@ -4,7 +4,8 @@ var DataAdapter = require('./index'),
     url = require('url'),
     request,
     debug = require('debug')('rendr:RestAdapter'),
-    util = require('util');
+    util = require('util'),
+    qs = require('qs2');
 
 module.exports = RestAdapter;
 
@@ -109,7 +110,7 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
 
   // If path contains a protocol, assume it's a URL.
   if (api.path && ~api.path.indexOf('://')) {
-    api.url = url.format({ pathname: api.path, query: api.query });
+    api.url = url.format({ pathname: api.path });
     delete api.path;
   }
 
@@ -117,9 +118,10 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
   apiHost = this.options[api.api] || this.options['default'] || this.options;
 
   urlOpts = _.defaults(
-    _.pick(api,     ['protocol', 'port', 'query']),
+    _.pick(api,     ['protocol', 'port']),
     _.pick(apiHost, ['protocol', 'port', 'host', 'hostname'])
   );
+
   urlOpts.pathname = api.path || api.pathname;
 
   _.defaults(api, {
@@ -127,6 +129,10 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
     url: url.format(urlOpts),
     headers: {}
   });
+
+  if (api.query) {
+    api.url += '?' + qs.stringify(api.query);
+  }
 
   // Add a default UserAgent, so some servers don't reject our request.
   if (api.headers['User-Agent'] == null) {

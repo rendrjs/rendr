@@ -201,6 +201,22 @@ describe('RestAdapter', function() {
       result.should.have.property('port', 3001);
     });
 
+    it('should use bracketed array queries', function() {
+      restAdapter.options.default = {
+        protocol: 'http',
+        host: 'example.com'
+      };
+
+      var api = {
+        path: '/v1/cats',
+        query: { q: [1, 3] },
+        body: {}
+      };
+
+      restAdapter.apiDefaults(api).should.have.property('url',
+        'http://example.com/v1/cats?q[]=1&q[]=3');
+    });
+
     it('should use a custom user agent', function () {
       var api = { headers: { 'User-Agent': 'custom user agent' }, body: {} };
 

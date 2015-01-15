@@ -21,7 +21,7 @@ var _ = require('underscore'),
 
 if (isServer) {
   // hide it from requirejs since it's server only
-  var serverOnly_qs = 'qs';
+  var serverOnly_qs = 'qs2';
   var qs = require(serverOnly_qs);
 } else {
   var $ = window.$ || require('jquery');

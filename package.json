@@ -18,9 +18,9 @@
     "debug": "*",
     "express": "~3",
     "qs2": "~0.6.6",
-    "request": "~2.40.0",
+    "request": "~2.51.0",
     "sanitizer": "~0.1",
-    "underscore": "~1.6.0"
+    "underscore": "~1.7.0"
   },
   "devDependencies": {
     "chai": "1.8.1",

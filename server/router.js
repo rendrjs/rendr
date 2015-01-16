@@ -123,24 +123,3 @@ ServerRouter.prototype.getHeadersForRoute = function(definition) {
   }
   return headers;
 };
-
-/**
- * Return the route definition based on a URL, according to the routes file.
- * This should match the way Express matches routes on the server, and our
- * ClientRouter matches routes on the client.
- */
-ServerRouter.prototype.match = function(pathToMatch) {
-  var matchedRoute;
-
-  if (~pathToMatch.indexOf('://')) {
-    throw new Error('Cannot match full URL: "' + pathToMatch + '". Use pathname instead.');
-  }
-
-  // Ensure leading slash
-  if (pathToMatch[0] !== '/') {
-    pathToMatch = '/' + pathToMatch;
-  }
-
-  matchedRoute = this._expressRouter.match('get', pathToMatch);
-  return matchedRoute ? this.routesByPath[matchedRoute.path] : null;
-};

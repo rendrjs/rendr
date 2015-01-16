@@ -32,24 +32,7 @@ ServerRouter.prototype.escapeParams = function(params) {
 };
 
 ServerRouter.prototype.getParams = function(req) {
-  if (!_.isArray(req.params)) {
-    // Express 4
-    return this.escapeParams(_.extend({}, req.query, req.params));
-  }
-
-  // Express 3
-  var params = _.clone(req.query || {});
-
-  if (req.route.regexp) {
-    _.extend(params, req.params);
-  } else {
-    req.route.keys.forEach(function(routeKey) {
-      params[routeKey.name] = req.params[routeKey.name];
-    });
-  }
-
-  params = this.escapeParams(params);
-  return params;
+  return this.escapeParams(_.extend({}, req.query, req.params));
 };
 
 /**

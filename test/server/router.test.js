@@ -202,100 +202,6 @@ describe("server/router", function() {
     });
   });
 
-  describe("match", function() {
-    it('should throw if an url is given', function () {
-      var url = 'http://www.example.com',
-        expectedErrorMessage = 'Cannot match full URL: "' + url + '". Use pathname instead.',
-        match = this.router.match.bind(this, url);
-
-      match.should.throw(Error, expectedErrorMessage);
-    });
-
-    it("should return the route info for a matched path, no leading slash", function() {
-      var route;
-
-      this.router.route("/users/:id", "users#show");
-      route = this.router.match('users/1234');
-      shouldMatchRoute(route, [
-        '/users/:id', {
-          controller: 'users',
-          action: 'show'
-        }
-      ]);
-    });
-
-    it("should return the route info for a matched path, with leading slash", function() {
-      var route;
-
-      this.router.route("/users/:id", "users#show");
-      route = this.router.match('/users/1234');
-      shouldMatchRoute(route, [
-        '/users/:id', {
-          controller: 'users',
-          action: 'show'
-        }
-      ]);
-    });
-
-    it("should return null if no match", function() {
-      should.not.exist(this.router.match('abcd1234xyz'));
-    });
-
-    it("should match in the right order", function() {
-      var route;
-
-      this.router.route("/users/login", "users#login");
-      this.router.route("/users/:id", "users#show");
-      route = this.router.match('users/thisisaparam');
-      shouldMatchRoute(route, [
-        '/users/:id', {
-          controller: 'users',
-          action: 'show'
-        }
-      ]);
-      route = this.router.match('users/login');
-      shouldMatchRoute(route, [
-        '/users/login', {
-          controller: 'users',
-          action: 'login'
-        }
-      ]);
-    });
-
-    it("should match regexp routes", function() {
-      var route;
-
-      this.router.route(/^\/regexp\/(foo|bar)/, "test#regexp");
-
-      route = this.router.match('/regexp/food');
-      shouldMatchRoute(route, [
-        /^\/regexp\/(foo|bar)/, {
-          controller: 'test',
-          action: 'regexp'
-        }
-      ]);
-
-      route = this.router.match('/regexp/bart');
-      shouldMatchRoute(route, [
-        /^\/regexp\/(foo|bar)/, {
-          controller: 'test',
-          action: 'regexp'
-        }
-      ]);
-
-      // No leading slash.
-      route = this.router.match('regexp/foodie');
-      shouldMatchRoute(route, [
-        /^\/regexp\/(foo|bar)/, {
-          controller: 'test',
-          action: 'regexp'
-        }
-      ]);
-
-      should.not.exist(this.router.match('/regexp/b'));
-    });
-  });
-
   describe("getParams", function() {
     beforeEach(function() {
       this.req = express.request;
@@ -308,123 +214,55 @@ describe("server/router", function() {
       this.router.getParams(this.req).should.eql({});
     });
 
-    context("running under Express 4", function () {
-      it("should return basic query params", function() {
-        this.req.__defineGetter__('query', function() {
-          return {foo: 'bar', bam: 'baz'};
-        });
-        this.router.getParams(this.req).should.eql({foo: 'bar', bam: 'baz'});
+    it("should return basic query params", function() {
+      this.req.__defineGetter__('query', function() {
+        return {foo: 'bar', bam: 'baz'};
       });
 
-      it("should support route params", function() {
-        this.req.__defineGetter__('route', function() {
-          return {
-            keys: [{name: 'id'}, {name: 'login'}],
-          };
-        });
-        this.req.__defineGetter__('params', function() {
-          return {
-            'id': 'id-value',
-            'login': 'login-value'
-          };
-        });
-        this.router.getParams(this.req).should.eql({
-          id: 'id-value',
-          login: 'login-value'
-        });
+      this.router.getParams(this.req).should.eql({foo: 'bar', bam: 'baz'});
+    });
+
+    it("should support route params", function() {
+      this.req.__defineGetter__('route', function() {
+        return {
+          keys: [{name: 'id'}, {name: 'login'}],
+        };
       });
-
-      it("should support both together", function() {
-        this.req.__defineGetter__('query', function() {
-          return {foo: 'bar', bam: 'baz'};
-        });
-
-        this.req.__defineGetter__('route', function() {
-          return {
-            keys: [{name: 'id'}, {name: 'login'}],
-          };
-        });
-        this.req.__defineGetter__('params', function() {
-          return {
-            'id': 'id-value',
-            'login': 'login-value'
-          };
-        });
-
-        this.router.getParams(this.req).should.eql({
-          foo: 'bar',
-          bam: 'baz',
-          id: 'id-value',
-          login: 'login-value'
-        });
+      this.req.__defineGetter__('params', function() {
+        return {
+          'id': 'id-value',
+          'login': 'login-value'
+        };
+      });
+      this.router.getParams(this.req).should.eql({
+        id: 'id-value',
+        login: 'login-value'
       });
     });
 
-    context("running under Express 3", function () {
-      it("should return basic query params", function() {
-        this.req.__defineGetter__('query', function() {
-          return {foo: 'bar', bam: 'baz'};
-        });
-        this.router.getParams(this.req).should.eql({foo: 'bar', bam: 'baz'});
+    it("should support both together", function() {
+      this.req.__defineGetter__('query', function() {
+        return {foo: 'bar', bam: 'baz'};
       });
 
-      it("should support regex route params", function() {
-        this.req.__defineGetter__('route', function() {
-          return {
-            regexp: true
-          };
-        });
-        this.req.__defineGetter__('params', function() {
-          return ['zero-value'];
-        });
-        this.router.getParams(this.req).should.eql({
-          '0': 'zero-value'
-        });
+      this.req.__defineGetter__('route', function() {
+        return {
+          keys: [{name: 'id'}, {name: 'login'}],
+        };
+      });
+      this.req.__defineGetter__('params', function() {
+        return {
+          'id': 'id-value',
+          'login': 'login-value'
+        };
       });
 
-      it("should support route params", function() {
-        this.req.__defineGetter__('route', function() {
-          return {
-            keys: [{name: 'id'}, {name: 'login'}],
-          };
-        });
-        this.req.__defineGetter__('params', function() {
-          var ret = [];
-          ret.id = 'id-value';
-          ret.login = 'login-value';
-          return ret;
-        });
-        this.router.getParams(this.req).should.eql({
-          id: 'id-value',
-          login: 'login-value'
-        });
+      this.router.getParams(this.req).should.eql({
+        foo: 'bar',
+        bam: 'baz',
+        id: 'id-value',
+        login: 'login-value'
       });
-
-      it("should support both together", function() {
-        this.req.__defineGetter__('query', function() {
-          return {foo: 'bar', bam: 'baz'};
-        });
-
-        this.req.__defineGetter__('route', function() {
-          return {
-            keys: [{name: 'id'}, {name: 'login'}],
-          };
-        });
-        this.req.__defineGetter__('params', function() {
-          var ret = [];
-          ret.id = 'id-value';
-          ret.login = 'login-value';
-          return ret;
-        });
-
-        this.router.getParams(this.req).should.eql({
-          foo: 'bar',
-          bam: 'baz',
-          id: 'id-value',
-          login: 'login-value'
-        });
-      });
-
     });
 
     describe('XSS sanitization', function() {

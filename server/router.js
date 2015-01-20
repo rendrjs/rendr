@@ -32,24 +32,7 @@ ServerRouter.prototype.escapeParams = function(params) {
 };
 
 ServerRouter.prototype.getParams = function(req) {
-  if (!_.isArray(req.params)) {
-    // Express 4
-    return this.escapeParams(_.extend({}, req.query, req.params));
-  }
-
-  // Express 3
-  var params = _.clone(req.query || {});
-
-  if (req.route.regexp) {
-    _.extend(params, req.params);
-  } else {
-    req.route.keys.forEach(function(routeKey) {
-      params[routeKey.name] = req.params[routeKey.name];
-    });
-  }
-
-  params = this.escapeParams(params);
-  return params;
+  return this.escapeParams(_.extend({}, req.query, req.params));
 };
 
 /**
@@ -122,25 +105,4 @@ ServerRouter.prototype.getHeadersForRoute = function(definition) {
     headers['Cache-Control'] = "public, max-age=" + definition.maxAge;
   }
   return headers;
-};
-
-/**
- * Return the route definition based on a URL, according to the routes file.
- * This should match the way Express matches routes on the server, and our
- * ClientRouter matches routes on the client.
- */
-ServerRouter.prototype.match = function(pathToMatch) {
-  var matchedRoute;
-
-  if (~pathToMatch.indexOf('://')) {
-    throw new Error('Cannot match full URL: "' + pathToMatch + '". Use pathname instead.');
-  }
-
-  // Ensure leading slash
-  if (pathToMatch[0] !== '/') {
-    pathToMatch = '/' + pathToMatch;
-  }
-
-  matchedRoute = this._expressRouter.match('get', pathToMatch);
-  return matchedRoute ? this.routesByPath[matchedRoute.path] : null;
 };

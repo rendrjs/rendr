@@ -398,6 +398,11 @@ module.exports = BaseView = Backbone.View.extend({
   },
 
   remove: function() {
+    // Remove reference to this view from its parentView
+    if (this.parentView && this.parentView.childViews) {
+      this.parentView.childViews = _.without(this.parentView.childViews, this);
+    }
+
     this.removeChildViews();
     this.childViews = null;
     this.parentView = null;

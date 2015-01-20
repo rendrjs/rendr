@@ -520,4 +520,43 @@ describe('BaseView', function() {
       fetchSummary.should.deep.equal(expectedFetchSummary);
     });
   });
+
+  describe('remove', function () {
+    beforeEach(function() {
+      this.app = {
+        modelUtils: modelUtils,
+        router: {
+          currentView: null
+        }
+      };
+    });
+
+    it('should remove the reference to this view from its parentView', function () {
+      var bottomView, childViews, topView;
+
+      topView = new this.MyTopView({app: this.app});
+      topView.childViews = [];
+      bottomView = new this.MyBottomView({app: this.app});
+      bottomView.$el = $('<div>');
+      bottomView.parentView = topView;
+      topView.childViews.push(bottomView);
+      childViews = topView.getChildViewsByName('my_bottom_view');
+      childViews.should.have.length(1);
+      bottomView.remove()
+      childViews = topView.getChildViewsByName('my_bottom_view');
+      childViews.should.be.empty;
+    });
+
+    it('should not error when removing the currentView', function () {
+      var bottomView, childViews, topView;
+
+      topView = new this.MyTopView({app: this.app});
+      this.app.router.currentView = topView
+      topView.$el = $('<div>');
+      topView.childViews = [];
+
+      expect(topView.remove.bind(topView)).to.not.throw(Error)
+    });
+
+  });
 });

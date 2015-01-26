@@ -12,6 +12,8 @@ if (!isServer) {
 var BaseCollection = Super.extend({
 
   model: BaseModel,
+  params: undefined,
+  meta: undefined,
 
   /**
    * Provide the ability to set default params for every 'fetch' call.

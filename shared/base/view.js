@@ -37,12 +37,6 @@ module.exports = BaseView = Backbone.View.extend({
     this.render = this.render.bind(this);
   },
 
-  /**
-   * Whether or not to re-render this view when the model or collection
-   * emits a 'refresh' event. Used with 'model|collection.checkFresh()'.
-   */
-  renderOnRefresh: false,
-
   parseOptions: function(options) {
     /**
      * Populate `this.options` and alias as `options`.
@@ -63,10 +57,6 @@ module.exports = BaseView = Backbone.View.extend({
     options = BaseView.parseModelAndCollection(this.app.modelUtils, _.extend({ parse: true }, options));
     this.model = options.model;
     this.collection = options.collection;
-
-    if ((obj = this.model || this.collection) && this.renderOnRefresh) {
-      obj.on('refresh', this.render, this);
-    }
   },
 
   /**

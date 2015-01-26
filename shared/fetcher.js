@@ -64,42 +64,6 @@ Fetcher.prototype.getModelForSpec = function(spec, attributes, options, callback
   return this.modelUtils.getModel(spec.model, attributes, modelOptions, callback);
 };
 
-/**
- * Used to hold timestamps of when 'checkFresh()' was called on a model/collection.
- * We use this to throttle it in 'shouldCheckFresh()'.
- */
-Fetcher.prototype.checkedFreshTimestamps = {};
-
-/**
- * Only once every ten seconds. Smarter?
- */
-Fetcher.prototype.checkedFreshRate = 10000;
-
-Fetcher.prototype.shouldCheckFresh = function(spec) {
-  var key = this.checkedFreshKey(spec),
-      timestamp = this.checkedFreshTimestamps[key];
-  if (!timestamp) {
-    return true;
-  }
-  if (new Date().getTime() - timestamp > this.checkedFreshRate) {
-    return true;
-  }
-  return false;
-};
-
-Fetcher.prototype.didCheckFresh = function(spec) {
-  var key = this.checkedFreshKey(spec);
-  this.checkedFreshTimestamps[key] = new Date().getTime();
-};
-
-Fetcher.prototype.checkedFreshKey = function(spec) {
-  var meta;
-  meta = {
-    name: spec.model || spec.collection,
-    params: spec.params
-  };
-  return JSON.stringify(meta);
-};
 
 /**
  * map fetchSpecs to models and fetch data in parallel
@@ -140,16 +104,6 @@ Fetcher.prototype._refreshData = function(spec, modelOrCollection, options, cb) 
 
   // If we found the model/collection in the store, then return that.
   if (!this.needsFetch(modelOrCollection, spec)) {
-    /**
-     * If 'checkFresh' is set (and we're in the client), then before we
-     * return the cached object we fire off a fetch, compare the results,
-     * and if the data is different, we trigger a 'refresh' event.
-     */
-    if (spec.checkFresh && !isServer && this.shouldCheckFresh(spec)) {
-      modelOrCollection.checkFresh();
-      this.didCheckFresh(spec);
-    }
-
     cb(null, modelOrCollection);
   } else {
     /**

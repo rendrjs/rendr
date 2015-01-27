@@ -17,8 +17,6 @@ if (!isServer) {
   $ = Backbone.$;
 }
 
-function noop() {}
-
 module.exports = BaseView = Backbone.View.extend({
   constructor: function(options) {
     this.options = _.extend( this.options || {}, options || {} );
@@ -308,12 +306,12 @@ module.exports = BaseView = Backbone.View.extend({
   /**
    * To be overridden by subclasses.
    */
-  preRender: noop,
+  preRender: _.noop,
 
   /**
    * To be overridden by subclasses.
    */
-  postRender: noop,
+  postRender: _.noop,
 
   setLoading: function(loading) {
     this.$el.toggleClass('loading', loading);
@@ -544,6 +542,6 @@ BaseView.extractFetchSummary = function (modelUtils, options) {
  * Noops on the server, because they do DOM stuff.
  */
 if (typeof window === 'undefined') {
-  BaseView.prototype._ensureElement = noop;
-  BaseView.prototype.delegateEvents = noop;
+  BaseView.prototype._ensureElement = _.noop;
+  BaseView.prototype.delegateEvents = _.noop;
 }

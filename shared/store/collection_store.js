@@ -21,8 +21,7 @@ _.extend(CollectionStore.prototype, Super.prototype, {
 
     this.mergeParams(collectionName, params, function (mergedParams) {
       var key = self._getStoreKey(collectionName, mergedParams);
-
-        cachedCollection = Super.prototype.get.call(self, key);
+      cachedCollection = Super.prototype.get.call(self, key);
 
       if (_.isFunction(callback)) {
         callback(cachedCollection);

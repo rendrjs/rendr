@@ -8,6 +8,8 @@ function ModelStore() {
 }
 
 _.extend(ModelStore.prototype, Super.prototype, {
+  expireSeconds: null,
+
   set: function(model) {
     var key, modelName;
 
@@ -21,7 +23,7 @@ _.extend(ModelStore.prototype, Super.prototype, {
     // Make sure we have a fully parsed model before we store the attributes
     model.parse(model.attributes);
 
-    return Super.prototype.set.call(this, key, model, null);
+    return Super.prototype.set.call(this, key, model, this.expireSeconds);
   },
 
   get: function(modelName, id) {
@@ -39,7 +41,7 @@ _.extend(ModelStore.prototype, Super.prototype, {
       var cachedItems = this._getCachedItemsByModel(modelName),
         self = this,
         modelStoreKey;
-       _.each(cachedItems, function (item) {
+        _.each(cachedItems, function (item) {
           modelStoreKey = self._getModelStoreKey(modelName, item.value.id);
           Super.prototype.clear.call(self, modelStoreKey);
         });

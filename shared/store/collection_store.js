@@ -8,9 +8,11 @@ function CollectionStore() {
 }
 
 _.extend(CollectionStore.prototype, Super.prototype, {
+  expireSeconds: null,
+
   set: function(collection, params) {
     var key = this._getStoreKeyForCollection(collection, params);
-    return Super.prototype.set.call(this, key, collection, null);
+    return Super.prototype.set.call(this, key, collection, this.expireSeconds);
   },
 
   get: function(collectionName, params, callback) {

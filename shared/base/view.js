@@ -27,11 +27,6 @@ module.exports = BaseView = Backbone.View.extend({
     // parseOptions deals w/ models and collections, but the BaseView will override those changes
     Backbone.View.call(this, _.omit(options, ['model', 'collection']));
 
-    if (this.postInitialize) {
-      console.warn('`postInitialize` is deprecated, please use `initialize`');
-      this.postInitialize();
-    }
-
     this.render = this.render.bind(this);
   },
 

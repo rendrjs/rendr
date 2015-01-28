@@ -79,11 +79,6 @@ module.exports = Backbone.Model.extend({
     }
 
     Backbone.Model.apply(this, arguments);
-
-    if (this.postInitialize) {
-      console.warn('`postInitialize` is deprecated, please use `initialize`');
-      this.postInitialize();
-    }
   },
 
   /**

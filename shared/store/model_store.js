@@ -9,15 +9,14 @@ function ModelStore() {
 
 _.extend(ModelStore.prototype, Super.prototype, {
   set: function(model) {
-    var id, key, modelName;
+    var key, modelName;
 
-    id = model.get(model.idAttribute);
     modelName = this.modelUtils.modelName(model.constructor);
     if (modelName == null) {
       throw new Error('Undefined modelName for model');
     }
 
-    key = this._getModelStoreKey(modelName, id);
+    key = this._getModelStoreKey(modelName, model.id);
 
     // Make sure we have a fully parsed model before we store the attributes
     model.parse(model.attributes);

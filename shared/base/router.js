@@ -150,12 +150,12 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
    * Method passed to routes file to build up routes definition.
    * Adds a single route definition.
    */
-  route: function(pattern) {
-    var realAction, action, definitions, handler, route, routeObj;
+  route: function(pattern, controller, options) {
+    var realAction, action, handler, route, routeObj;
 
-    definitions = _.toArray(arguments).slice(1);
-    route = parseRouteDefinitions(definitions);
+    route = parseRouteDefinitions([controller, options]);
     realAction = this.getAction(route);
+
     if (isServer) {
       action = realAction;
     } else {
@@ -177,8 +177,10 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
 
     handler = this.getHandler(action, pattern, route);
     routeObj = [pattern, route, handler];
+
     this._routes.push(routeObj);
     this.trigger('route:add', routeObj);
+
     return routeObj;
   },
 

@@ -8,8 +8,6 @@ if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
 }
 
-function noop() {}
-
 function stringRouteDefinitionToObject(element) {
   var parts = element.split('#');
   return {
@@ -55,7 +53,7 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
 
   reverseRoutes: false,
 
-  initialize: noop,
+  initialize: _.noop,
 
   _initOptions: function(options) {
     var entryPath;
@@ -203,7 +201,7 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
   /**
    * This is the method that renders the request.
    */
-  getHandler: noop
+  getHandler: _.noop
 });
 
 module.exports = BaseRouter;

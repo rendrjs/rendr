@@ -210,10 +210,9 @@ Fetcher.prototype.summarize = function(modelOrCollection) {
       meta: modelOrCollection.meta
     };
   } else if (this.modelUtils.isModel(modelOrCollection)) {
-    idAttribute = modelOrCollection.idAttribute;
     summary = {
       model: this.modelUtils.modelName(modelOrCollection.constructor),
-      id: modelOrCollection.get(idAttribute)
+      id: modelOrCollection.id
     };
   }
   return summary;

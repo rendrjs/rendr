@@ -32,7 +32,6 @@ function BaseRouter(options) {
   this.route = this.route.bind(this);
   this._routes = [];
   this._initOptions(options);
-  this.initialize(options);
 }
 
 _.extend(BaseRouter.prototype, Backbone.Events, {

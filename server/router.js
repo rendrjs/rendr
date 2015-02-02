@@ -5,12 +5,13 @@ var _ = require('underscore'),
 
 module.exports = ServerRouter;
 
-function ServerRouter() {
+function ServerRouter(options) {
   this._expressRouter = new ExpressRouter();
   this.routesByPath = {};
   this.on('route:add', this.addExpressRoute, this);
 
   BaseRouter.apply(this, arguments);
+  this.initialize(options);
 }
 
 /**

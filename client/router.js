@@ -17,8 +17,6 @@ var _ = require('underscore'),
 
 Backbone.$ = $;
 
-function noop() {}
-
 module.exports = ClientRouter;
 
 function ClientRouter(options) {
@@ -74,7 +72,7 @@ ClientRouter.prototype.initialize = function(options) {
   this.postInitialize();
 };
 
-ClientRouter.prototype.postInitialize = noop;
+ClientRouter.prototype.postInitialize = _.noop;
 
 /**
  * Piggyback on adding new route definition events

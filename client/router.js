@@ -17,13 +17,30 @@ var _ = require('underscore'),
 
 Backbone.$ = $;
 
-function noop() {}
-
 module.exports = ClientRouter;
 
 function ClientRouter(options) {
   this._router = new Backbone.Router();
   BaseRouter.apply(this, arguments);
+
+  this.app = options.app;
+
+  var AppView = this.options.appViewClass;
+
+  // We do this here so that it's available in AppView initialization.
+  this.app.router = this;
+
+  this.on('route:add', this.addBackboneRoute, this);
+  this.on('action:start', this.trackAction, this);
+  this.app.on('reload', this.renderView, this);
+
+  this.appView = new AppView({
+    app: this.app
+  });
+
+  this.appView.render();
+  this.buildRoutes();
+  this.initialize(options);
 }
 
 /**
@@ -53,28 +70,7 @@ ClientRouter.prototype._router = null;
  */
 ClientRouter.prototype.reverseRoutes = true;
 
-ClientRouter.prototype.initialize = function(options) {
-  this.app = options.app;
-
-  var AppView = this.options.appViewClass;
-
-  // We do this here so that it's available in AppView initialization.
-  this.app.router = this;
-
-  this.on('route:add', this.addBackboneRoute, this);
-  this.on('action:start', this.trackAction, this);
-  this.app.on('reload', this.renderView, this);
-
-  this.appView = new AppView({
-    app: this.app
-  });
-
-  this.appView.render();
-  this.buildRoutes();
-  this.postInitialize();
-};
-
-ClientRouter.prototype.postInitialize = noop;
+ClientRouter.prototype.initialize = _.noop;
 
 /**
  * Piggyback on adding new route definition events

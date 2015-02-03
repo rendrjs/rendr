@@ -14,16 +14,6 @@ describe('BaseApp', function() {
       app.initialize.should.have.been.called;
     });
 
-    it('calls `postInitialize` if present', function() {
-      var MyApp = App.extend({
-        postInitialize: sinon.spy()
-      });
-
-      var app = new MyApp();
-
-      app.postInitialize.should.have.been.called;
-    });
-
     it('can access `this.templateAdapter` in `initialize`', function() {
       var MyApp = App.extend({
         initialize: function() {

@@ -21,6 +21,12 @@ module.exports = Backbone.Model.extend({
     templateAdapter: 'rendr-handlebars'
   },
 
+  // Set keys to undefined so runtime V8 is happier
+  templateAdapter: undefined,
+  req: undefined,
+  modelUtils: undefined,
+  fetcher: undefined,
+
   /**
    * @shared
    */
@@ -73,11 +79,6 @@ module.exports = Backbone.Model.extend({
     }
 
     Backbone.Model.apply(this, arguments);
-
-    if (this.postInitialize) {
-      console.warn('`postInitialize` is deprecated, please use `initialize`');
-      this.postInitialize();
-    }
   },
 
   /**

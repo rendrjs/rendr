@@ -8,21 +8,22 @@ function ModelStore() {
 }
 
 _.extend(ModelStore.prototype, Super.prototype, {
-  set: function(model) {
-    var id, key, modelName;
+  expireSeconds: null,
 
-    id = model.get(model.idAttribute);
+  set: function(model) {
+    var key, modelName;
+
     modelName = this.modelUtils.modelName(model.constructor);
     if (modelName == null) {
       throw new Error('Undefined modelName for model');
     }
 
-    key = this._getModelStoreKey(modelName, id);
+    key = this._getModelStoreKey(modelName, model.id);
 
     // Make sure we have a fully parsed model before we store the attributes
     model.parse(model.attributes);
 
-    return Super.prototype.set.call(this, key, model, null);
+    return Super.prototype.set.call(this, key, model, this.expireSeconds);
   },
 
   get: function(modelName, id) {
@@ -40,7 +41,7 @@ _.extend(ModelStore.prototype, Super.prototype, {
       var cachedItems = this._getCachedItemsByModel(modelName),
         self = this,
         modelStoreKey;
-       _.each(cachedItems, function (item) {
+        _.each(cachedItems, function (item) {
           modelStoreKey = self._getModelStoreKey(modelName, item.value.id);
           Super.prototype.clear.call(self, modelStoreKey);
         });

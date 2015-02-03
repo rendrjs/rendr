@@ -9,7 +9,7 @@ if (!isServer) {
 
 var BaseModel = Backbone.Model.extend({
 
-  constructor: function(models, options) {
+  constructor: function(attributes, options) {
     // Capture the options as instance variable.
     this.options = options || {};
 

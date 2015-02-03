@@ -19,7 +19,7 @@
     "errorhandler": "~1.3.2",
     "express": "~4.11.0",
     "qs2": "~0.6.6",
-    "request": "~2.51.0",
+    "request": "^2.53.0",
     "sanitizer": "~0.1",
     "underscore": "~1.7.0"
   },

@@ -1,6 +1,6 @@
-module.exports = function(match) {
-  match('users/login', 'users#login');
-  match('users/:id', 'users#show');
-  match('test', 'test#index');
-  match(/^\/regexp\/(foo|bar)/, 'test#regexp');
+module.exports = function(addRoute) {
+  addRoute('users/login', 'users#login');
+  addRoute('users/:id', 'users#show');
+  addRoute('test', 'test#index');
+  addRoute(/^\/regexp\/(foo|bar)/, 'test#regexp');
 };

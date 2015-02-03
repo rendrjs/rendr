@@ -202,23 +202,6 @@ describe('BaseView', function() {
       view.parseOptions(options);
       view.options.should.deep.equal(options);
     });
-
-    it('adds a refresh listener if renderOnRefresh is set', function () {
-      var model = new BaseModel(),
-          options = { model: model };
-
-      view.renderOnRefresh = true;
-      view.parseOptions(options);
-      view.model._events.refresh.should.not.be.undefined;
-    });
-
-    it('no refresh listener if renderOnRefresh is set to false', function () {
-      var model = new BaseModel(),
-          options = { model: model };
-
-      view.parseOptions(options);
-      expect(view.model._events.refresh).to.be.undefined;
-    });
   });
 
   describe('_fetchLazyCallback', function() {

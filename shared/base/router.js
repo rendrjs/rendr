@@ -8,8 +8,6 @@ if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
 }
 
-function noop() {}
-
 function stringRouteDefinitionToObject(element) {
   var parts = element.split('#');
   return {
@@ -34,7 +32,6 @@ function BaseRouter(options) {
   this.route = this.route.bind(this);
   this._routes = [];
   this._initOptions(options);
-  this.initialize(options);
 }
 
 _.extend(BaseRouter.prototype, Backbone.Events, {
@@ -55,7 +52,7 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
 
   reverseRoutes: false,
 
-  initialize: noop,
+  initialize: _.noop,
 
   _initOptions: function(options) {
     var entryPath;
@@ -152,12 +149,12 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
    * Method passed to routes file to build up routes definition.
    * Adds a single route definition.
    */
-  route: function(pattern) {
-    var realAction, action, definitions, handler, route, routeObj;
+  route: function(pattern, controller, options) {
+    var realAction, action, handler, route, routeObj;
 
-    definitions = _.toArray(arguments).slice(1);
-    route = parseRouteDefinitions(definitions);
+    route = parseRouteDefinitions([controller, options]);
     realAction = this.getAction(route);
+
     if (isServer) {
       action = realAction;
     } else {
@@ -179,8 +176,10 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
 
     handler = this.getHandler(action, pattern, route);
     routeObj = [pattern, route, handler];
+
     this._routes.push(routeObj);
     this.trigger('route:add', routeObj);
+
     return routeObj;
   },
 
@@ -203,7 +202,7 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
   /**
    * This is the method that renders the request.
    */
-  getHandler: noop
+  getHandler: _.noop
 });
 
 module.exports = BaseRouter;

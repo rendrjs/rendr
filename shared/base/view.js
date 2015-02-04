@@ -9,12 +9,10 @@ var _ = require('underscore'),
     Backbone = require('backbone'),
     async = require('async'),
     isServer = (typeof window === 'undefined'),
-    BaseView,
-    $;
+    BaseView;
 
 if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
-  $ = Backbone.$;
 }
 
 module.exports = BaseView = Backbone.View.extend({
@@ -314,7 +312,7 @@ module.exports = BaseView = Backbone.View.extend({
   },
 
   attachOrRender: function(element, parentView) {
-    var $el = $(element);
+    var $el = Backbone.$(element);
 
     this.parentView = parentView;
     this.viewing = true;

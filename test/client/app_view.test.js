@@ -2,7 +2,7 @@ var App = require('../../shared/app'),
     should = require('chai').should(),
     expect = require('chai').expect,
     clientTestHelper = require('../helpers/client_test'),
-    $ = require('jquery'),
+    $ = require('jquery')(require('jsdom').jsdom().parentWindow),
     AppView;
 
 describe('AppView', function() {

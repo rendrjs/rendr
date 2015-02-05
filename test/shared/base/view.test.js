@@ -8,7 +8,11 @@ var chai = require('chai')
     BaseView = require('../../../shared/base/view'),
     Backbone = require('backbone'),
     ModelUtils = require('../../../shared/modelUtils'),
-    modelUtils = new ModelUtils();
+    modelUtils = new ModelUtils(),
+    window = require('jsdom').jsdom().parentWindow,
+    $ = require('jquery')(window);
+
+Backbone.$ = $;
 
 describe('BaseView', function() {
   beforeEach(function() {
@@ -508,9 +512,7 @@ describe('BaseView', function() {
     beforeEach(function() {
       this.app = {
         modelUtils: modelUtils,
-        router: {
-          currentView: null
-        }
+        router: { currentView: null }
       };
     });
 

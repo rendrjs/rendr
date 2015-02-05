@@ -1,9 +1,12 @@
 var _ = require('underscore'),
     Backbone = require('backbone'),
     BaseView = require('../shared/base/view'),
-    $ = (typeof window !== 'undefined' && window.$) || require('jquery');
+    isServer = (typeof window === 'undefined');
 
-Backbone.$ = $;
+
+if (!isServer) {
+  Backbone.$ = window.$ || require('jquery');
+}
 
 module.exports = BaseView.extend({
   el: 'body',
@@ -18,7 +21,7 @@ module.exports = BaseView.extend({
     /**
      * Grab the element that contains the main view.
      */
-    this.$content = $(this.options.contentEl);
+    this.$content = Backbone.$(this.options.contentEl);
     this._bindInterceptClick();
   },
 
@@ -40,7 +43,7 @@ module.exports = BaseView.extend({
      * We want the actual value of the attribute, rather than the
      * full URL, so we use jQuery instead of just e.currentTarget.href
      */
-    var href = $(e.currentTarget).attr('href');
+    var href = Backbone.$(e.currentTarget).attr('href');
     if (this.shouldInterceptClick(href, e.currentTarget, e)) {
       e.preventDefault();
       this.app.router.redirectTo(href);

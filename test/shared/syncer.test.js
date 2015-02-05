@@ -1,6 +1,6 @@
 var _ = require('underscore'),
     Backbone = require('backbone'),
-    jquery = require('jquery'),
+    jquery = require('jquery')(require("jsdom").jsdom().parentWindow),
     chai = require('chai'),
     sinon = require('sinon'),
     sinonChai = require('sinon-chai'),

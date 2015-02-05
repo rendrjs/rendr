@@ -2,9 +2,8 @@ var App = require('../../shared/app'),
     expect = require('chai').expect,
     clientTestHelper = require('../helpers/client_test'),
     sinon = require('sinon'),
-    Model = require('../../shared/base/model')
-    Collection = require('../../shared/base/collection')
-    $ = require('jquery');
+    Model = require('../../shared/base/model'),
+    Collection = require('../../shared/base/collection');
 
 describe('Base/View', function () {
   var BaseView;
@@ -133,7 +132,7 @@ describe('Base/View', function () {
 
   describe('attachOrRender', function () {
     beforeEach(function () {
-      this.$el = $('<div/>');
+      this.$el = global.window.$('<div/>');
       this.parentView = new BaseView({ app: this.app });
 
       sinon.stub(this.subject, 'attach');
@@ -157,7 +156,7 @@ describe('Base/View', function () {
 
     context('element has data-render true', function () {
       beforeEach(function () {
-        this.$el = $('<div/>', { 'data-render': true });
+        this.$el = global.window.$('<div/>', { 'data-render': true });
       });
 
       context('is lazy loaded', function () {

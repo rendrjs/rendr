@@ -9,9 +9,12 @@ var Backbone = require('backbone'),
     basePath = basePath.splice(0, basePath.length-2).join('/');
 
 exports.before = function(){
-  global.window = {
-    $: require('jquery').create(),
-    history: { pushState: function () {;} }
+  global.window = require('jsdom').jsdom().parentWindow;
+
+  global.window.test = true;
+  global.window.$ = require('jquery')(global.window);
+  global.window.history = {
+    pushState: function () {;}
   };
 
   // Make sure we are not getting a cached version because it might not hvae the window object

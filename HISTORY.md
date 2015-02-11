@@ -1,3 +1,22 @@
+# 1.0.0
+## 2015-02-11
+* upgrade to express 4.11.0
+  * added `errorhandler` instead of using the express.errorHandler that is deprecated
+* *breaking* dropped node 0.8 support
+* *breaking* dropped express 3.x support
+* added support for node 0.12
+* removed noop definition in favor of _.noop
+* *breaking* removed postInitialization callbacks
+* fixed issue with collection where a re-fetch call will override parameters with an empty object
+* v8 runtime optimizations
+* fixed the way view keeps track of it's childViews
+* updated all devDependencies
+* updated request to use latest version - security fix
+* added .jshint
+* moved from `qs` to `qs2` to support `q[]=1&q[]=2` parameters for arrays by default
+* *breaking* removed `match` function from the server
+* *breaking* removed `checkFresh` - changed to use `expireSeconds` for the store so the store can check instead
+
 # 0.5.2
 ## 2015-01-9
 * parseModelAndCollection optionally parses sub-models / sub-collections

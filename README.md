@@ -6,6 +6,10 @@
 
 Rendr is a small library that allows you to run your [Backbone.js](http://backbonejs.org/) apps seamlessly on both the client and the server. Allow your web server to serve fully-formed HTML pages to any deep link of your app, while preserving the snappy feel of a traditional Backbone.js client-side MVC app.
 
+## Documentation
+
+The documentation website is: [rendrjs.github.io](http://rendrjs.github.io).  If you have any feedback or changes for the documentation please create an [issue](https://github.com/rendrjs/rendrjs.github.io/issues).  The documentation is easy to submit changes to as well!  Simply create a fork and use the Github Markdown editor to make and preview any changes, then open just open a Pull Request.
+
 ## Reporting problems and getting help
 
 Please use the [issue tracker][issues] to report bugs. For support with using

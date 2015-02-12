@@ -130,7 +130,7 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
     headers: {}
   });
 
-  if (api.query) {
+  if (api.query && !_.isEmpty(api.query)) {
     api.url += '?' + qs.stringify(api.query);
   }
 

@@ -217,6 +217,16 @@ describe('RestAdapter', function() {
         'http://example.com/v1/cats?q[]=1&q[]=3');
     });
 
+    it('should not add an extra ? if the query is an empty object', function () {
+      restAdapter.options.default = {
+        host: 'example.com',
+        protocol: 'https',
+        query: {}
+      };
+
+      restAdapter.apiDefaults({body: {}}).should.have.property('url', 'https://example.com');
+    });
+
     it('should use a custom user agent', function () {
       var api = { headers: { 'User-Agent': 'custom user agent' }, body: {} };
 

@@ -654,4 +654,19 @@ describe('fetcher', function() {
       this.expectedModel.should.deep.equal(fetcher.retrieveModels('Listing', [1])[0])
     });
   });
+
+  describe('getCollectionForSpec', function () {
+    var spec, params;
+
+    beforeEach(function () {
+      params = { name: 'test' }
+      spec = { collection: 'Listings', params: params };
+    });
+
+    it('the options should include a `params` attribute for the collection store', function () {
+      var result = fetcher.getCollectionForSpec(spec);
+      expect(result.params).to.deep.equal(params);
+      expect(result.options.params).to.deep.equal(params);
+    });
+  });
 });

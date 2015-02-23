@@ -47,7 +47,7 @@ Fetcher.prototype.getModelOrCollectionForSpec = function(spec, attrsOrModels, op
  * Returns an instance of Collection.
  */
 Fetcher.prototype.getCollectionForSpec = function(spec, models, options, callback) {
-  var collectionOptions = this.buildOptions(options, spec.params);
+  var collectionOptions = this.buildOptions(options, _.extend({params: spec.params}, spec.params));
   models = models || [];
   return this.modelUtils.getCollection(spec.collection, models, collectionOptions, callback);
 };

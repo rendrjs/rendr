@@ -442,11 +442,11 @@ BaseView.getViewOptions = function ($el) {
 
 BaseView.attach = function(app, parentView, callback) {
   var scope = parentView ? parentView.$el : null,
-      list = $('[data-view]', scope).toArray();
+      list = Backbone.$('[data-view]', scope).toArray();
 
   async.map(list, function(el, cb) {
     var $el, options, viewName, fetchSummary;
-    $el = $(el);
+    $el = Backbone.$(el);
     if (!$el.data('view-attached')) {
       options = BaseView.getViewOptions($el);
       options.app = app;

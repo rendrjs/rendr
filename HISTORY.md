@@ -1,3 +1,15 @@
+# 1.0.1
+## 2015-02-26
+* upgrade dependencies
+ * express
+ * underscore
+ * rendr-handlebars
+ * chai
+ * sinon-chai
+* fix a few cases where `window.$` was being accessed instead of `Backbone.$`
+* fix for collection store when lazy-loading a collection (two collections were in the store, now only one)
+* fix for restAdapter that was putting `?` when req.query was an empty object
+
 # 1.0.0
 ## 2015-02-11
 * upgrade to express 4.11.0

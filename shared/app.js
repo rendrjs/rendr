@@ -6,11 +6,9 @@
 var Backbone = require('backbone'),
     Fetcher = require('./fetcher'),
     ModelUtils = require('./modelUtils'),
-    isServer = (typeof window === 'undefined'),
-    ClientRouter;
+    isServer = (typeof window === 'undefined');
 
 if (!isServer) {
-  ClientRouter = require('app/router');
   Backbone.$ = window.$ || require('jquery');
 }
 
@@ -74,6 +72,8 @@ module.exports = Backbone.Model.extend({
      * Initialize the `ClientRouter` on the client-side.
      */
     if (!isServer) {
+      var ClientRouter = attributes.ClientRouter || require('app/router');
+
       new ClientRouter({
         app: this,
         entryPath: entryPath,

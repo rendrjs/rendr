@@ -56,8 +56,12 @@ module.exports = Backbone.Model.extend({
      * We can't use `this.get('templateAdapter')` here because `Backbone.Model`'s
      * constructor has not yet been called.
      */
-    var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter;
-    this.templateAdapter = require(templateAdapterModule)({entryPath: entryPath});
+    if (attributes.templateAdapterInstance) {
+      this.templateAdapter = attributes.templateAdapterInstance;
+    } else {
+      var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter;
+      this.templateAdapter = require(templateAdapterModule)({entryPath: entryPath});
+    }
 
     /**
      * Instantiate the `Fetcher`, which is used on client and server.

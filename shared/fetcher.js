@@ -235,9 +235,8 @@ Fetcher.prototype.bootstrapData = function(modelMap, callback) {
       cb(null);
     });
   }, function(err) {
-    fetcher.storeResults(results);
     if (_.isFunction(callback)) {
-      callback();
+      callback(results);
     }
   });
 };

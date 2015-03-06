@@ -224,7 +224,7 @@ Fetcher.prototype.storeResults = function(results) {
   });
 };
 
-Fetcher.prototype.bootstrapData = function(modelMap) {
+Fetcher.prototype.bootstrapData = function(modelMap, callback) {
   var results = {},
       fetcher = this;
 
@@ -236,6 +236,9 @@ Fetcher.prototype.bootstrapData = function(modelMap) {
     });
   }, function(err) {
     fetcher.storeResults(results);
+    if (_.isFunction(callback)) {
+      callback();
+    }
   });
 };
 

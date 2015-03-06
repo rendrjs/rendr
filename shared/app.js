@@ -98,8 +98,8 @@ module.exports = Backbone.Model.extend({
   /**
    * @client
    */
-  bootstrapData: function(modelMap) {
-    this.fetcher.bootstrapData(modelMap);
+  bootstrapData: function(modelMap, callback) {
+    this.fetcher.bootstrapData(modelMap, callback);
   },
 
   /**

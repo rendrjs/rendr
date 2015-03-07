@@ -638,6 +638,28 @@ describe('fetcher', function() {
     });
   });
 
+  describe('bootstrapData', function() {
+    var attr, listingModel, bootstrapMockData;
+
+    beforeEach(function () {
+      attr = {id: 1, name: 'foobar', location: 'San Francisco'};
+      listingModel = new Listing(attr, {app: this.app});
+      bootstrapMockData = {'model':{'summary':{'model':'user','id':'1'},'data':{'name':'foobar', 'location': 'San Francisco'}}};
+    });
+
+    it('should call the callback function', function (done) {
+      var getModelOrCollectionForSpecSpy = sinon.spy(fetcher, 'getModelOrCollectionForSpec');
+
+      var bootstrapData = fetcher.bootstrapData(bootstrapMockData, function(results) {
+        results.should.be.an('object');
+        results.should.have.property('model');
+        results['model'].attributes.should.deep.equal(bootstrapMockData.model.data);
+        done();
+      });
+    });
+
+  });
+
   describe('retrieveModels', function() {
     var modelAttrs;
 

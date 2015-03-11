@@ -1,7 +1,11 @@
 var BaseRouter = require('../../../shared/base/router'),
   sinon = require('sinon'),
   chai = require('chai'),
-  should = chai.should();
+  should = chai.should(),
+  clientTestHelper = require('../../helpers/client_test'),
+  basePath = __dirname.split('/');
+
+  basePath = basePath.splice(0, basePath.length - 3).join('/');
 
 chai.use(require('sinon-chai'));
 
@@ -162,4 +166,71 @@ describe('BaseRouter', function () {
       });
     });
   });
+
+  describe('route client instance', function() {
+    var router;
+
+    beforeEach(function() {
+      clientTestHelper.before.call(this);
+
+      // Make sure we are not getting a cached version because it might not hvae the window object
+      delete require.cache[basePath + '/shared/base/router.js'];
+
+      var BaseRouter = require('../../../shared/base/router');
+      router = new BaseRouter({entryPath: 'MyAppRootPath/'});
+    });
+
+    after(clientTestHelper.after);
+
+    describe('route', function() {
+      var getHandler, handler, getAction, controllerPath;
+
+      beforeEach(function() {
+        controllerPath = 'controllers/home';
+        handler = sinon.spy();
+        getHandler = sinon.stub(router, 'getHandler').returns(handler);
+
+        sinon.stub(router, 'getAction').returns(controllerPath);
+
+      });
+
+      after(function() {
+        router._requireAMD.restore();
+      });
+
+      it('for AMD version: should trigger an event, pass the correct route object and load the right controller', function() {
+        BaseRouter.setAMDEnvironment(true);
+
+        var trigger = sinon.stub(router, 'trigger');
+
+        var callback = sinon.spy();
+
+        var requireSpy = sinon.spy();
+
+        var requireAMD = sinon.stub(router, '_requireAMD').returns(requireSpy);
+
+        router.route('/home', 'home#index');
+
+        var getHandlerCall = getHandler.getCall(0);
+
+        // call action function
+        getHandlerCall.callArgWith(0, {}, callback);
+
+        // controller file path
+        requireAMD.getCall(0).args[0][0].should.be.equal('controllers/home');
+
+        trigger.should.have.been.calledOnce;
+        trigger.should.have.been.calledWithExactly('route:add', [
+          '/home',
+          { controller: 'home', action: 'index' },
+          handler
+        ]);
+
+        BaseRouter.setAMDEnvironment(false);
+      });
+
+    });
+
+  });
+
 });

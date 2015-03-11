@@ -8,6 +8,7 @@ if (!isServer) {
   Backbone.$ = window.$ || require('jquery');
 }
 
+
 function stringRouteDefinitionToObject(element) {
   var parts = element.split('#');
   return {
@@ -150,7 +151,7 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
    * Adds a single route definition.
    */
   route: function(pattern, controller, options) {
-    var realAction, action, handler, route, routeObj;
+    var realAction, action, handler, route, routeObj, self = this;
 
     route = parseRouteDefinitions([controller, options]);
     realAction = this.getAction(route);
@@ -166,7 +167,21 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
             callback.apply(this, arguments);
           }
         }
-        realAction.call(this, params, next);
+        // in AMD environment realAction is the string containing path to the controller
+        // which will be loaded async (might be preloaded)
+        // Only used in AMD environment
+        if (typeof realAction === 'string') {
+          self._requireAMD([realAction], function(controller) {
+            // check we have everything we need
+            if (typeof controller[route.action] != 'function') {
+              throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
+            }
+            controller[route.action].call(this, params, next);
+          });
+        }
+        else {
+          realAction.call(this, params, next);
+        }
       }
     }
 
@@ -182,6 +197,11 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
 
     return routeObj;
   },
+
+  /**
+   * exposing for mocking in test
+   */
+  _requireAMD: require,
 
   /**
    * Support omitting view path; default it to ":controller/:action".

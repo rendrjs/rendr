@@ -151,7 +151,7 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
    * Adds a single route definition.
    */
   route: function(pattern, controller, options) {
-    var realAction, action, handler, route, routeObj, self = this;
+    var realAction, action, handler, route, routeObj, routerContext = this;
 
     route = parseRouteDefinitions([controller, options]);
     realAction = this.getAction(route);
@@ -160,27 +160,28 @@ _.extend(BaseRouter.prototype, Backbone.Events, {
       action = realAction;
     } else {
       action = function(params, callback) {
+        var self = this;
         var myLoadNumber = ++loadNumber;
         function next() {
           // To prevent race conditions we ensure that no future requests have been processed in the mean time.
           if (myLoadNumber === loadNumber) {
-            callback.apply(this, arguments);
+            callback.apply(self, arguments);
           }
         }
         // in AMD environment realAction is the string containing path to the controller
         // which will be loaded async (might be preloaded)
         // Only used in AMD environment
         if (typeof realAction === 'string') {
-          self._requireAMD([realAction], function(controller) {
+          routerContext._requireAMD([realAction], function(controller) {
             // check we have everything we need
             if (typeof controller[route.action] != 'function') {
               throw new Error("Missing action \"" + route.action + "\" for controller \"" + route.controller + "\"");
             }
-            controller[route.action].call(this, params, next);
+            controller[route.action].call(self, params, next);
           });
         }
         else {
-          realAction.call(this, params, next);
+          realAction.call(self, params, next);
         }
       }
     }

@@ -183,41 +183,41 @@ describe('BaseRouter', function () {
     after(clientTestHelper.after);
 
     describe('route', function() {
-      var getHandler, handler, getAction, controllerPath;
+      var getHandler, handler, getAction, controllerPath, requireAMD, actionCallback, requireSpy;
 
       beforeEach(function() {
+        BaseRouter.setAMDEnvironment(true);
         controllerPath = 'controllers/home';
         handler = sinon.spy();
         getHandler = sinon.stub(router, 'getHandler').returns(handler);
 
+        actionCallback = sinon.spy();
+        requireSpy = sinon.spy();
+
         sinon.stub(router, 'getAction').returns(controllerPath);
+
+        sinon.stub(router, '_requireAMD').returns(requireSpy);
 
       });
 
       after(function() {
         router._requireAMD.restore();
+        router.getAction.restore();
+        BaseRouter.setAMDEnvironment(false);
       });
 
       it('for AMD version: should trigger an event, pass the correct route object and load the right controller', function() {
-        BaseRouter.setAMDEnvironment(true);
-
         var trigger = sinon.stub(router, 'trigger');
-
-        var callback = sinon.spy();
-
-        var requireSpy = sinon.spy();
-
-        var requireAMD = sinon.stub(router, '_requireAMD').returns(requireSpy);
 
         router.route('/home', 'home#index');
 
         var getHandlerCall = getHandler.getCall(0);
 
         // call action function
-        getHandlerCall.callArgWith(0, {}, callback);
+        getHandlerCall.callArgWith(0, {}, actionCallback);
 
         // controller file path
-        requireAMD.getCall(0).args[0][0].should.be.equal('controllers/home');
+        router._requireAMD.getCall(0).args[0][0].should.be.equal('controllers/home');
 
         trigger.should.have.been.calledOnce;
         trigger.should.have.been.calledWithExactly('route:add', [
@@ -225,8 +225,28 @@ describe('BaseRouter', function () {
           { controller: 'home', action: 'index' },
           handler
         ]);
+      });
 
-        BaseRouter.setAMDEnvironment(false);
+      it('call router method with the right context', function() {
+        var homeController = {index: function() {}};
+        var controllerSpy = sinon.stub(homeController);
+
+        var context = {name: 'foo'};
+
+        router.route.call(context, '/home', 'home#index');
+
+        var getHandlerCall = getHandler.getCall(0);
+
+        // call action function with the right context
+        getHandlerCall.args[0].call(context, {}, actionCallback);
+
+        var requireAMDCall = router._requireAMD.getCall(0);
+
+       requireAMDCall.callArgWith(1, controllerSpy);
+
+       // check the controller is called with the right context
+       controllerSpy.index.should.have.been.calledOn(context);
+
       });
 
     });

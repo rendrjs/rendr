@@ -396,7 +396,7 @@ describe("server/router", function() {
         });
 
         it('should set supplied status code if status code is given', function () {
-          middleware = this.router.getHandler(action, this.pattern, { controller: 'foo', action: 'index', status: 404 });
+          middleware = this.router.getHandler(action, this.pattern, { status: 404 });
           middleware(this.req, res);
 
           res.status.should.have.been.calledOnce;
@@ -404,7 +404,7 @@ describe("server/router", function() {
         });
 
         it('should set default status code if status code is not given', function () {
-          middleware = this.router.getHandler(action, this.pattern, { controller: 'foo', action: 'index' });
+          middleware = this.router.getHandler(action, this.pattern, {});
           middleware(this.req, res);
 
           res.status.should.have.been.calledOnce;

@@ -97,6 +97,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
       res.render(viewPath, viewData, function(err, html) {
         if (err) return next(err);
         res.set(router.getHeadersForRoute(route));
+        res.status(route.status || 200);
         res.type('html').end(html);
       });
     });

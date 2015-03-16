@@ -375,7 +375,7 @@ describe("server/router", function() {
           next = sinon.stub();
           action = sinon.stub().yields();
           middleware = this.router.getHandler(action, this.pattern, {});
-          res = { set: sinon.spy(), type: sinon.stub(), end: sinon.spy(), render: sinon.stub() };
+          res = { set: sinon.spy(), type: sinon.stub(), end: sinon.spy(), render: sinon.stub(), status: sinon.spy() };
           res.render.yields();
           res.type.returns(res);
           getHeadersForRoute = sinon.stub(this.router, 'getHeadersForRoute').returns({ 'Content-Type': 'image/jpeg' });
@@ -393,6 +393,22 @@ describe("server/router", function() {
 
           res.type.should.have.been.calledOnce;
           res.type.should.have.been.calledWithExactly('html');
+        });
+
+        it('should set supplied status code if status code is given', function () {
+          middleware = this.router.getHandler(action, this.pattern, { status: 404 });
+          middleware(this.req, res);
+
+          res.status.should.have.been.calledOnce;
+          res.status.should.have.been.calledWithExactly(404);
+        });
+
+        it('should set default status code if status code is not given', function () {
+          middleware = this.router.getHandler(action, this.pattern, {});
+          middleware(this.req, res);
+
+          res.status.should.have.been.calledOnce;
+          res.status.should.have.been.calledWithExactly(200);
         });
 
         it('should call end with the html output', function () {

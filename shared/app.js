@@ -55,7 +55,7 @@ module.exports = Backbone.Model.extend({
      * We can't use `this.get('templateAdapter')` here because `Backbone.Model`'s
      * constructor has not yet been called.
      */
-    if (options.templateAdapterInstance) {
+    if (this.options.templateAdapterInstance) {
       this.templateAdapter = options.templateAdapterInstance;
     } else {
       var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter;
@@ -73,7 +73,7 @@ module.exports = Backbone.Model.extend({
      * Initialize the `ClientRouter` on the client-side.
      */
     if (!isServer) {
-      var ClientRouter = options.ClientRouter || require(defaultRouterModule);
+      var ClientRouter = this.options.ClientRouter || require(defaultRouterModule);
 
       new ClientRouter({
         app: this,

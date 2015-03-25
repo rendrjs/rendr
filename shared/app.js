@@ -7,10 +7,9 @@ var Backbone = require('backbone'),
     Fetcher = require('./fetcher'),
     ModelUtils = require('./modelUtils'),
     isServer = (typeof window === 'undefined'),
-    ClientRouter;
+    defaultRouterModule = 'app/router';
 
 if (!isServer) {
-  ClientRouter = require('app/router');
   Backbone.$ = window.$ || require('jquery');
 }
 
@@ -56,8 +55,12 @@ module.exports = Backbone.Model.extend({
      * We can't use `this.get('templateAdapter')` here because `Backbone.Model`'s
      * constructor has not yet been called.
      */
-    var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter;
-    this.templateAdapter = require(templateAdapterModule)({entryPath: entryPath});
+    if (this.options.templateAdapterInstance) {
+      this.templateAdapter = options.templateAdapterInstance;
+    } else {
+      var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter;
+      this.templateAdapter = require(templateAdapterModule)({entryPath: entryPath});
+    }
 
     /**
      * Instantiate the `Fetcher`, which is used on client and server.
@@ -70,6 +73,8 @@ module.exports = Backbone.Model.extend({
      * Initialize the `ClientRouter` on the client-side.
      */
     if (!isServer) {
+      var ClientRouter = this.options.ClientRouter || require(defaultRouterModule);
+
       new ClientRouter({
         app: this,
         entryPath: entryPath,

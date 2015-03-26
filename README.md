@@ -207,12 +207,12 @@ Either a ``dataAdapter`` or ``dataAdapterConfig`` must be present.
 
     **Default:** ``process.cwd() + '/'`` - Current working directory of the node process
 
-- ``errorHandler`` *Optional* Callback for [Express.js errors](http://expressjs.com/guide.html#error-handling).
+- ``errorHandler`` *Optional* Callback for [Express.js errors](http://expressjs.com/guide/error-handling).
 
    **Example** ``function (err, req, res, next) { }``
 
 
-- ``notFoundHandler`` *Optional* - Callback for [Express.js not found errors](http://expressjs.com/guide.html#error-handling)
+- ``notFoundHandler`` *Optional* - Callback for [Express.js not found errors](http://expressjs.com/guide/error-handling)
 
    **Example** ``function (req, res, next) { }``
 

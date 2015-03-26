@@ -73,7 +73,7 @@ module.exports = Backbone.Model.extend({
      * Initialize the `ClientRouter` on the client-side.
      */
     if (!isServer) {
-      var ClientRouter = this.options.ClientRouter || require(defaultRouterModule);
+      var ClientRouter = this.options.ClientRouter || this.modelUtils._requireAMD(defaultRouterModule);
 
       new ClientRouter({
         app: this,

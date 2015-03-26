@@ -1,3 +1,10 @@
+# 1.0.2
+## 2015-03-26
+* Fixes / Updates to make Rendr work with require.js
+* added ability to pass in template adapter instance
+ * move towards pulling the view layer out
+ * allows watchify / browserify to rebuild single files rather than the entire package
+
 # 1.0.1
 ## 2015-02-26
 * upgrade dependencies

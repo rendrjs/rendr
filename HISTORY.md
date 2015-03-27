@@ -1,3 +1,7 @@
+# 1.0.3
+## 2015-03-27
+* Bug fix for Require.js  Needs to statically analyze the include in shared/app.js for the router.
+
 # 1.0.2
 ## 2015-03-26
 * Fixes / Updates to make Rendr work with require.js

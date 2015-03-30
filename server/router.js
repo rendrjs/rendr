@@ -1,7 +1,8 @@
 var _ = require('underscore'),
     BaseRouter = require('../shared/base/router'),
     ExpressRouter = require('express').Router,
-    sanitizer = require('sanitizer');
+    sanitizer = require('sanitizer'),
+    ReadableStream = require('stream').Readable;
 
 module.exports = ServerRouter;
 
@@ -87,7 +88,12 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
       res.render(viewPath, viewData, function(err, html) {
         if (err) return next(err);
         res.set(router.getHeadersForRoute(route));
-        res.type('html').end(html);
+
+        if (ReadableStream && html instanceof ReadableStream) {
+          html.pipe(res);
+        } else {
+          res.type('html').end(html);
+        }
       });
     });
   };

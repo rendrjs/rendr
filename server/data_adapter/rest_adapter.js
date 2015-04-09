@@ -124,6 +124,10 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
 
   urlOpts.pathname = api.path || api.pathname;
 
+  // By host we mean hostname: http://nodejs.org/api/url.html#url_url_format_urlobj
+  urlOpts.hostname = urlOpts.host;
+  delete urlOpts.host;
+
   _.defaults(api, {
     method: 'GET',
     url: url.format(urlOpts),

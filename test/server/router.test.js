@@ -368,6 +368,37 @@ describe("server/router", function() {
         });
       });
 
+      it("should call action with custom status & headers", function() {
+        handler = this.router.getHandler(function(params, callback) {
+          callback(null, 'template/path', {}, { 
+            status: 404,
+            headers: {
+              'Content-Type': 'application/xml',
+              'Cache-Control': 'no-cache'
+            }
+          });
+        }, this.pattern, {});
+        var res = { 
+          render: function(vp, vd, cb){
+            cb(null, {});
+          }, 
+          status: sinon.spy(), set: sinon.spy(), end: sinon.spy(),
+          type: function() { return this; }
+        }
+        
+        handler(this.req, res);
+
+        res.status.should.have.been.calledOnce;
+        res.status.should.have.been.calledWith(404);
+        res.set.should.have.been.calledOnce;
+        res.set.should.have.been.calledWith({
+          'Content-Type': 'application/xml',
+          'Cache-Control': 'no-cache'
+        });
+        res.end.should.have.been.calledOnce;
+        res.end.should.have.been.calledWith({});
+      });
+
       describe('render', function () {
         var action, middleware, res, getHeadersForRoute, next;
 

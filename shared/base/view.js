@@ -128,7 +128,7 @@ module.exports = BaseView = Backbone.View.extend({
    * Get template function
    */
   getTemplate: function() {
-    return this.app.templateAdapter.getTemplate(this.getTemplateName());
+    return this.app.templateAdapter.getTemplate(this.getTemplateName(), {app: this.app});
   },
 
   /**

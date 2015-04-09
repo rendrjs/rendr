@@ -229,7 +229,7 @@ Fetcher.prototype.bootstrapData = function(modelMap, callback) {
       fetcher = this;
 
   async.forEach(_.keys(modelMap), function(name, cb) {
-    var map = modelMap[name];
+    var map = fetcher.app.modelUtils.deepUnescape(modelMap[name]);
     fetcher.getModelOrCollectionForSpec(map.summary, map.data, _.pick(map.summary, 'params', 'meta'), function(modelOrCollection) {
       results[name] = modelOrCollection;
       cb(null);

@@ -71,7 +71,7 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
       }
     };
 
-    action.call(context, params, function(err, viewPath, locals) {
+    action.call(context, params, function(err, viewPath, locals, opts) {
       if (err) return next(err);
 
       var defaults = router.defaultHandlerParams(viewPath, locals, route);
@@ -86,7 +86,15 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
 
       res.render(viewPath, viewData, function(err, html) {
         if (err) return next(err);
-        res.set(router.getHeadersForRoute(route));
+        var headers = {};
+        if (opts && opts.headers) {
+          headers = opts.headers;
+        }
+        _.defaults(headers, router.getHeadersForRoute(route));
+        if (opts && opts.status) {
+          res.status(opts.status);
+        }
+        res.set(headers);
         res.type('html').end(html);
       });
     });

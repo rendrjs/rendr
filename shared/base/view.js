@@ -423,6 +423,15 @@ BaseView.getView = function(viewName, entryPath, callback) {
   }
 };
 
+BaseView.getViewCallback = function (ViewClass, options, $el, parentView, cb) {
+  if (!$el.data('view-attached')) {
+    var view = BaseView.attachNewChildView(ViewClass, options, $el, parentView);
+    cb(null, view);
+  } else {
+    cb(null, null);
+  }
+};
+
 BaseView.getViewOptions = function ($el) {
   var parsed,
     options = $el.data();
@@ -438,6 +447,13 @@ BaseView.getViewOptions = function ($el) {
   });
 
   return options;
+};
+
+BaseView.attachNewChildView = function(ViewClass, options, $el, parentView) {
+  var view = new ViewClass(options);
+  view.attachOrRender($el, parentView);
+
+  return view;
 };
 
 BaseView.attach = function(app, parentView, callback) {
@@ -457,9 +473,7 @@ BaseView.attach = function(app, parentView, callback) {
       app.fetcher.hydrate(fetchSummary, { app: app }, function (err, results) {
         options = _.extend(options, results);
         BaseView.getView(viewName, app.options.entryPath, function(ViewClass) {
-          var view = new ViewClass(options);
-          view.attachOrRender($el, parentView);
-          cb(null, view);
+          BaseView.getViewCallback(ViewClass, options, $el, parentView, cb);
         });
       });
     } else {

@@ -5,3 +5,4 @@ coverage
 *.sw?
 .DS_Store
 runtime.json
+.idea

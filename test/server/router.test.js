@@ -43,6 +43,19 @@ describe("server/router", function() {
 
       headers.should.deep.equal(expectedHeaders);
     })
+
+    it("should set other headers passed into the route's definition", function () {
+      var maxAge = 1000,
+          customHeaders = {
+            'Vary': 'User-Agent', 
+            'Cache-Control': 'no-transform,public,max-age=300,s-maxage=900',
+            'ETag': '12345678'
+          },
+        headers = this.router.getHeadersForRoute({headers: customHeaders, maxAge: maxAge});
+
+      headers.should.deep.equal(customHeaders);
+    })
+
   });
 
   describe("route", function() {

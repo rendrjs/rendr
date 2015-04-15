@@ -544,4 +544,65 @@ describe('BaseView', function() {
     });
 
   });
+
+  describe('getViewCallback', function() {
+
+    var ViewClass, parentView, cb, attachNewChildView;
+
+    beforeEach(function() {
+
+      ViewClass = BaseView.extend({});
+      parentView = 'parentView';
+      cb = sinon.spy();
+      sinon.stub(BaseView, 'attachNewChildView').returns('view');
+
+    });
+
+    afterEach(function() {
+
+      BaseView.attachNewChildView.restore();
+      cb = null;
+
+    });
+
+    it('should call callback with null and view arguments if the view is not yet attached', function() {
+
+      var $el = $('<div>');
+
+      BaseView.getViewCallback(ViewClass, {app: this.app}, $el, parentView, cb);
+      cb.should.have.been.calledWithExactly(null, 'view');
+
+    });
+
+    it('should call callback with null and null arguments if the view is already attached', function() {
+
+      var $el = $('<div data-view-attached="true"></div>');
+
+      BaseView.getViewCallback(ViewClass, {app: this.app}, $el, parentView, cb);
+      cb.should.have.been.calledWithExactly(null, null);
+
+    });
+
+  });
+
+  describe('attachNewChildView', function() {
+    var ViewClass, baseView;
+
+    beforeEach(function() {
+      baseView = new BaseView({app: this.app});
+
+      ViewClass = this.MyTopView;
+      sinon.stub(baseView, 'attachOrRender');
+    });
+
+    afterEach(function() {
+      baseView.attachOrRender.restore();
+    });
+
+    it('should create a new instance of ViewClass', function() {
+
+      var newChildView = BaseView.attachNewChildView(ViewClass, {app: this.app}, 'foo', 'bar');
+      expect(newChildView).to.be.an.instanceOf(ViewClass);
+    });
+  });
 });

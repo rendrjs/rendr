@@ -545,7 +545,7 @@ describe('BaseView', function() {
 
   });
 
-  describe('getViewCallback', function() {
+  describe('createChildView', function() {
 
     var ViewClass, parentView, cb, attachNewChildView;
 
@@ -569,7 +569,7 @@ describe('BaseView', function() {
 
       var $el = $('<div>');
 
-      BaseView.getViewCallback(ViewClass, {app: this.app}, $el, parentView, cb);
+      BaseView.createChildView(ViewClass, {app: this.app}, $el, parentView, cb);
       cb.should.have.been.calledWithExactly(null, 'view');
 
     });
@@ -578,7 +578,7 @@ describe('BaseView', function() {
 
       var $el = $('<div data-view-attached="true"></div>');
 
-      BaseView.getViewCallback(ViewClass, {app: this.app}, $el, parentView, cb);
+      BaseView.createChildView(ViewClass, {app: this.app}, $el, parentView, cb);
       cb.should.have.been.calledWithExactly(null, null);
 
     });

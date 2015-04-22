@@ -107,4 +107,22 @@ describe('ViewEngine', function() {
       data.should.deep.equal({});
     });
   });
+
+  describe('getBaseLayoutName', function() {
+    context('a baseLayoutName is provided', function() {
+      it('it should return the value of baseLayoutName', function() {
+        app = {options: {baseLayoutName: 'myLayout'}};
+        var baseLayoutName = viewEngine.getBaseLayoutName(app);
+        baseLayoutName.should.be.deep.equal('myLayout');
+      });
+    });
+
+    context('a baseLayoutName is provided', function() {
+      it('it should return __layout', function() {
+        app = {options: {baseLayoutName: undefined}};
+        var baseLayoutName = viewEngine.getBaseLayoutName(app);
+        baseLayoutName.should.be.deep.equal('__layout');
+      });
+    });
+  });
 });

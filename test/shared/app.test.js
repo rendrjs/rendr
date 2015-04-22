@@ -28,6 +28,46 @@ describe('BaseApp', function() {
   });
 
   describe('constructor', function() {
+
+    it('calls the initializeTemplateAdapter method with proper arguments', function() {
+      var myTemplateAdapter = {};
+      var MyApp = App.extend({
+        initializeTemplateAdapter: sinon.spy()
+      });
+      var app = new MyApp(null, {templateAdapterInstance: myTemplateAdapter, entryPath: 'entryPath'});
+
+      app.initializeTemplateAdapter.should.have.been.calledWith('entryPath', {});
+    });
+  });
+
+  describe('initializeTemplateAdapter', function() {
+    context('with a concrete templateAdapterInstance', function() {
+
+      it('uses the supplied templateAdapterInstance', function() {
+        var myTemplateAdapter = {};
+        var app = new App(null, {templateAdapterInstance: myTemplateAdapter});
+
+        expect(app.templateAdapter).to.equal(myTemplateAdapter);
+      });
+
+      it('does not try to require a template adapter by name', function () {
+        new App({
+          templateAdapter: 'non existent module name - should throw'
+        }, {
+          templateAdapterInstance: {}
+        });
+      });
+
+      it('calls setTemplateFinder', function() {
+        var MyApp = App.extend({
+          getTemplateFinder: sinon.spy()
+        });
+        var app = new MyApp(null, {});
+
+        app.getTemplateFinder.should.have.been.called;
+      });
+    });
+
     context('with a custom templateAdapter module name', function() {
       beforeEach(function () {
         this.attributes = {templateAdapter: '../test/fixtures/app/template_adapter'};
@@ -45,22 +85,14 @@ describe('BaseApp', function() {
         expect(app.templateAdapter).to.have.deep.property('suppliedOptions.entryPath', 'myEntryPath');
       });
     });
+  });
 
-    context('with a concrete templateAdapterInstance', function() {
-      it('uses the supplied templateAdapterInstance', function() {
-        var myTemplateAdapter = {};
-        var app = new App(null, {templateAdapterInstance: myTemplateAdapter});
-
-        expect(app.templateAdapter).to.equal(myTemplateAdapter);
-      });
-
-      it('does not try to require a template adapter by name', function () {
-        new App({
-          templateAdapter: 'non existent module name - should throw'
-        }, {
-          templateAdapterInstance: {}
-        });
-      });
+  describe('getTemplateFinder', function() {
+    it('returns null', function() {
+      var app = new App(null, {});
+      var templateFinder = app.getTemplateFinder();
+      expect(templateFinder).to.be.null;
     });
+
   });
 });

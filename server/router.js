@@ -86,8 +86,9 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
 
       res.render(viewPath, viewData, function(err, html) {
         if (err) return next(err);
+        res.type('html');
         res.set(router.getHeadersForRoute(route));
-        res.type('html').end(html);
+        res.end(html);
       });
     });
   };
@@ -102,8 +103,14 @@ ServerRouter.prototype.addExpressRoute = function(routeObj) {
 
 ServerRouter.prototype.getHeadersForRoute = function(definition) {
   var headers = {};
+
   if (definition.maxAge != null) {
     headers['Cache-Control'] = "public, max-age=" + definition.maxAge;
   }
+
+  if (definition.headers) {
+    _.extend(headers, definition.headers);
+  }
+
   return headers;
 };

@@ -367,7 +367,7 @@ module.exports = BaseView = Backbone.View.extend({
     // Remove all child views in case we are re-rendering through
     // manual .render() or 'refresh' being triggered on the view.
     this.removeChildViews();
-    BaseView.attach(this.app, this, function(views) {
+    BaseView.getChildViews(this.app, this, function(views) {
       _baseView.childViews = views;
     });
   },
@@ -423,6 +423,15 @@ BaseView.getView = function(viewName, entryPath, callback) {
   }
 };
 
+BaseView.createChildView = function (ViewClass, options, $el, parentView, cb) {
+  if (!$el.data('view-attached')) {
+    var view = BaseView.attachNewChildView(ViewClass, options, $el, parentView);
+    cb(null, view);
+  } else {
+    cb(null, null);
+  }
+};
+
 BaseView.getViewOptions = function ($el) {
   var parsed,
     options = $el.data();
@@ -440,7 +449,14 @@ BaseView.getViewOptions = function ($el) {
   return options;
 };
 
-BaseView.attach = function(app, parentView, callback) {
+BaseView.attachNewChildView = function(ViewClass, options, $el, parentView) {
+  var view = new ViewClass(options);
+  view.attachOrRender($el, parentView);
+
+  return view;
+};
+
+BaseView.getChildViews = function(app, parentView, callback) {
   var scope = parentView ? parentView.$el : null,
       list = Backbone.$('[data-view]', scope).toArray();
 
@@ -457,9 +473,7 @@ BaseView.attach = function(app, parentView, callback) {
       app.fetcher.hydrate(fetchSummary, { app: app }, function (err, results) {
         options = _.extend(options, results);
         BaseView.getView(viewName, app.options.entryPath, function(ViewClass) {
-          var view = new ViewClass(options);
-          view.attachOrRender($el, parentView);
-          cb(null, view);
+          BaseView.createChildView(ViewClass, options, $el, parentView, cb);
         });
       });
     } else {

@@ -4,6 +4,7 @@
  */
 
 var Backbone = require('backbone'),
+    _ = require('underscore'),
     Fetcher = require('./fetcher'),
     ModelUtils = require('./modelUtils'),
     isServer = (typeof window === 'undefined'),
@@ -104,9 +105,7 @@ module.exports = Backbone.Model.extend({
    * Noop
    * override this in app/app returning custom template finder
    */
-  getTemplateFinder: function() {
-    return null;
-  },
+  getTemplateFinder: _.noop,
 
   /**
    * @shared

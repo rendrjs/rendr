@@ -91,7 +91,7 @@ describe('BaseApp', function() {
     it('returns null', function() {
       var app = new App(null, {});
       var templateFinder = app.getTemplateFinder();
-      expect(templateFinder).to.be.null;
+      expect(templateFinder).to.be.undefined;
     });
 
   });

@@ -25,6 +25,7 @@ module.exports = function(appAttributes, options) {
        */
       req: req,
       entryPath: options.entryPath,
+      baseLayoutName: options.baseLayoutName,
       modelUtils: options.modelUtils
     };
 

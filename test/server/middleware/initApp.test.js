@@ -48,12 +48,14 @@ describe('initApp', function() {
         var options = {
             entryPath: 'fake/',
             modelUtils: {},
-            apiPath: 'MyApiPath'
+            apiPath: 'MyApiPath',
+            baseLayoutName: 'layout'
           },
           expectedAppOptions = {
             entryPath: 'fake/',
             modelUtils: {},
-            req: req
+            req: req,
+            baseLayoutName: 'layout'
           };
 
         middleware = initApp(null, options);

@@ -111,6 +111,7 @@ Server.prototype.configure = function(fn) {
   this.expressApp.use(this.initApp(this.options.appData, {
     apiPath: this.options.apiPath,
     entryPath: this.options.entryPath,
+    baseLayoutName: this.options.baseLayoutName,
     modelUtils: this.options.modelUtils
   }));
 

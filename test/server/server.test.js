@@ -77,7 +77,8 @@ describe('server/server', function() {
       var expectedOptions = {
         apiPath: server.options.apiPath,
         entryPath: server.options.entryPath,
-        modelUtils: server.options.modelUtils
+        modelUtils: server.options.modelUtils,
+        baseLayoutName: server.options.baseLayoutName
       };
 
       server.configure();

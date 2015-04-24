@@ -4,6 +4,7 @@
  */
 
 var Backbone = require('backbone'),
+    _ = require('underscore'),
     Fetcher = require('./fetcher'),
     ModelUtils = require('./modelUtils'),
     isServer = (typeof window === 'undefined'),
@@ -49,19 +50,7 @@ module.exports = Backbone.Model.extend({
       this.req = this.options.req;
     }
 
-    /**
-     * Initialize the `templateAdapter`, allowing application developers to use whichever
-     * templating system they want.
-     *
-     * We can't use `this.get('templateAdapter')` here because `Backbone.Model`'s
-     * constructor has not yet been called.
-     */
-    if (this.options.templateAdapterInstance) {
-      this.templateAdapter = options.templateAdapterInstance;
-    } else {
-      var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter;
-      this.templateAdapter = require(templateAdapterModule)({entryPath: entryPath});
-    }
+    this.initializeTemplateAdapter(entryPath, attributes);
 
     /**
      * Instantiate the `Fetcher`, which is used on client and server.
@@ -87,6 +76,43 @@ module.exports = Backbone.Model.extend({
     }
 
     Backbone.Model.apply(this, arguments);
+  },
+
+  /**
+   * @shared
+   *
+   * Initialize the `templateAdapter`, allowing application developers to use whichever
+   * templating system they want.
+   *
+   * We can't use `this.get('templateAdapter')` here because `Backbone.Model`'s
+   * constructor has not yet been called.
+   */
+  initializeTemplateAdapter: function(entryPath, attributes) {
+    if (this.options.templateAdapterInstance) {
+      this.templateAdapter = this.options.templateAdapterInstance;
+    } else {
+      var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter,
+      templateAdapterOptions = {entryPath: entryPath};
+
+      templateAdapterOptions = this.setTemplateFinder(templateAdapterOptions);
+      this.templateAdapter = require(templateAdapterModule)(templateAdapterOptions);
+    }
+  },
+
+  /**
+   * @shared
+   * Override this in app/app to return a custom template finder
+   */
+  getTemplateFinder: _.noop,
+
+  /**
+   * @shared
+   */
+  setTemplateFinder: function(templateAdapterOptions) {
+    if (_.isFunction(this.getTemplateFinder) && this.getTemplateFinder !== _.noop) {
+      templateAdapterOptions.templateFinder = this.getTemplateFinder();
+    }
+    return templateAdapterOptions;
   },
 
   /**

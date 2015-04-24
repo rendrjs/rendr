@@ -1,6 +1,7 @@
 var sinon = require('sinon'),
     should = require('chai').should(),
-    App = require('../../shared/app');
+    App = require('../../shared/app'),
+    _ = require('underscore');
 
 describe('BaseApp', function() {
   describe('initialize', function() {
@@ -57,15 +58,6 @@ describe('BaseApp', function() {
           templateAdapterInstance: {}
         });
       });
-
-      it('calls setTemplateFinder', function() {
-        var MyApp = App.extend({
-          getTemplateFinder: sinon.spy()
-        });
-        var app = new MyApp(null, {});
-
-        app.getTemplateFinder.should.have.been.called;
-      });
     });
 
     context('with a custom templateAdapter module name', function() {
@@ -93,6 +85,52 @@ describe('BaseApp', function() {
       var templateFinder = app.getTemplateFinder();
       expect(templateFinder).to.be.undefined;
     });
+  });
 
+  describe('setTemplateFinder', function() {
+    it('calls getTemplatefinder', function() {
+      var MyApp = App.extend({
+        getTemplateFinder: sinon.spy()
+      });
+      var app = new MyApp(null, {});
+
+      app.getTemplateFinder.should.have.been.called;
+    });
+
+    context('if getTemplateFinder is a function and not noop', function() {
+      it('sets the templateFinder option correctly', function() {
+        var myTemplateFinder = {templatePatterns: []};
+        var MyApp = App.extend({
+          getTemplateFinder: function() {return myTemplateFinder;}
+        });
+        var app = new MyApp(null, {});
+
+        var templateAdapterOptions = app.setTemplateFinder({});
+        expect(templateAdapterOptions.templateFinder).to.be.deep.equal(myTemplateFinder);
+      });
+    });
+
+    context('if getTemplateFinder is not a function or is noop', function() {
+      it('leaves the option templateFinder undefined', function() {
+        var MyApp = App.extend({
+          getTemplateFinder: 'myGetTemplateFinder'
+        });
+        var app = new MyApp(null, {});
+        var templateAdapterOptions = app.setTemplateFinder({});
+        expect(templateAdapterOptions.templateFinder).to.be.undefined;
+      });
+    });
+
+    context('if getTemplateFinder is not a function or is noop', function() {
+      it('leaves the option templateFinder undefined', function() {
+        var MyApp = App.extend({
+          getTemplateFinder: _.noop
+        });
+        var app = new MyApp(null, {});
+
+        var templateAdapterOptions = app.setTemplateFinder({});
+        expect(templateAdapterOptions.templateFinder).to.be.undefined;
+      });
+    });
   });
 });

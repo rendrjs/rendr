@@ -94,18 +94,26 @@ module.exports = Backbone.Model.extend({
       var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter,
       templateAdapterOptions = {entryPath: entryPath};
 
-      templateAdapterOptions.templateFinder = this.getTemplateFinder();
-
+      templateAdapterOptions = this.setTemplateFinder(templateAdapterOptions);
       this.templateAdapter = require(templateAdapterModule)(templateAdapterOptions);
     }
   },
 
   /**
    * @shared
-   * Noop
-   * override this in app/app returning custom template finder
+   * Override this in app/app to return a custom template finder
    */
   getTemplateFinder: _.noop,
+
+  /**
+   * @shared
+   */
+  setTemplateFinder: function(templateAdapterOptions) {
+    if (_.isFunction(this.getTemplateFinder) && this.getTemplateFinder !== _.noop) {
+      templateAdapterOptions.templateFinder = this.getTemplateFinder();
+    }
+    return templateAdapterOptions;
+  },
 
   /**
    * @shared

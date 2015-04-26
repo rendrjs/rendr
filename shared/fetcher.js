@@ -163,7 +163,7 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
 };
 
 Fetcher.prototype.fetchFromApi = function(spec, options, callback) {
-  var model = this.getModelOrCollectionForSpec(spec),
+  var model = this.getModelOrCollectionForSpec(spec, null, options),
       fetcher = this;
 
   model.fetch({

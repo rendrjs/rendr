@@ -19,7 +19,7 @@ module.exports = Backbone.Model.extend({
 
   defaults: {
     loading: false,
-    templateSystem: 'handlebars',
+    templateEngine: 'handlebars',
     templateAdapter: 'rendr-handlebars'
   },
 
@@ -94,10 +94,10 @@ module.exports = Backbone.Model.extend({
     } else {
       var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter,
         templateAdapterOptions = {entryPath: entryPath},
-        templateSystem = require(this.defaults.templateSystem);
+        templateEngine = require(this.defaults.templateEngine);
 
       templateAdapterOptions = this.setTemplateFinder(templateAdapterOptions);
-      this.templateAdapter = require(templateAdapterModule)(templateSystem, templateAdapterOptions);
+      this.templateAdapter = require(templateAdapterModule)(templateEngine, templateAdapterOptions);
     }
   },
 

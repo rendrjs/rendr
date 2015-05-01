@@ -111,7 +111,14 @@ Fetcher.prototype._retrieve = function(fetchSpecs, options, callback) {
     batchedRequests[name] = function(cb) {
       var model;
 
-      if (!options.readFromCache) {
+      var readFromCache = options.readFromCache;
+
+      // If present, the individual spec can overwrite the fetchSpec.
+      if (!_.isUndefined(spec.readFromCache) && !_.isNull(spec.readFromCache)) {
+        readFromCache = spec.readFromCache;
+      }
+
+      if (!readFromCache) {
         this.fetchFromApi(spec, options, cb);
       } else {
         model = null;

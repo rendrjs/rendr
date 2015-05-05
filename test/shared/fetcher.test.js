@@ -177,7 +177,7 @@ describe('fetcher', function() {
     });
 
     it("should be able store and hydrate a model", function(done) {
-      var fetchSummary, listing, listing, rawListing, results;
+      var fetchSummary, listing, rawListing, results;
 
       rawListing = {
         id: 9,
@@ -362,6 +362,94 @@ describe('fetcher', function() {
       fetcher.pendingFetches.should.eql(1);
     });
 
+    it("should be able to fetch a collection normally and from cache", function(done) {
+      var fetchSpec;
+      models = [
+        {
+          id: 1,
+          name: 'foo'
+        }, {
+          id: 2,
+          name: 'bar'
+        }
+      ];
+      params = {
+        some: 'key',
+        other: 'value'
+      };
+      var collectionCached = new Listings(models, {
+        params: params
+      });
+      fetcher.collectionStore.set(collectionCached);
+
+      fetchSpec = {
+        collectionNormal: {
+          collection: 'Listings',
+          readFromCache: false
+        },
+        collectionFetchedCached: {
+          collection: 'Listings',
+          params: params,
+          readFromCache: true
+        }
+      };
+      fetcher.pendingFetches.should.eql(0);
+      fetcher.fetch(fetchSpec, function(err, results) {
+        fetcher.pendingFetches.should.eql(0);
+        if (err) return done(err);
+
+        results.collectionNormal.should.be.an.instanceOf(Listings);
+        results.collectionNormal.toJSON().should.eql(buildCollectionResponse());
+
+        results.collectionFetchedCached.should.be.an.instanceOf(Listings);
+        results.collectionFetchedCached.toJSON().should.eql(models);
+
+        done();
+      });
+      fetcher.pendingFetches.should.eql(1);
+    });
+
+    it("should be able to fetch a model normally and from cache", function(done) {
+      var fetchSpec;
+      var listingAttrs = {
+        id: 'myId',
+        name: 'New Name'
+      };
+      var listingName = new Listing(listingAttrs);
+      fetcher.modelStore.set(listingName);
+
+      fetchSpec = {
+        modelNoCache: {
+          model: 'Listing',
+          params: {
+            id: 1
+          },
+          readFromCache: false
+        },
+        modelCached: {
+          model: 'Listing',
+          params: {
+            id: 'myId'
+          },
+          readFromCache: true
+        }
+      };
+
+      fetcher.pendingFetches.should.eql(0);
+      fetcher.fetch(fetchSpec, function(err, results) {
+        fetcher.pendingFetches.should.eql(0);
+        if (err) return done(err);
+        results.modelNoCache.should.be.an.instanceOf(Listing);
+        results.modelNoCache.toJSON().should.eql(getModelResponse('full', 1));
+
+        results.modelCached.should.be.an.instanceOf(Listing);
+        results.modelCached.toJSON().should.eql(listingAttrs);
+
+        done();
+      });
+      fetcher.pendingFetches.should.eql(1);
+    });    
+
     it("should be able to fetch both a model and a collection at the same time", function(done) {
       var fetchSpec;
 
@@ -470,7 +558,7 @@ describe('fetcher', function() {
         results.collection.toJSON().should.eql(buildCollectionResponse());
 
         // Make sure that the basic version is stored in modelStore.
-        var model = results.collection.get(1)
+        var model = results.collection.get(1);
         var storedModel = fetcher.modelStore.get('Listing', 1);
 
         storedModel.should.eql(model);
@@ -666,14 +754,14 @@ describe('fetcher', function() {
     beforeEach(function () {
       modelAttrs = { id: 1 };
 
-      this.expectedModel = new Listing(modelAttrs)
+      this.expectedModel = new Listing(modelAttrs);
       fetcher.modelStore.set(this.expectedModel);
     });
 
     it('should return the models from the given ids', function () {
       // it should be the exact same model
-      this.expectedModel.should.equal(fetcher.retrieveModels('Listing', [1])[0])
-      this.expectedModel.should.deep.equal(fetcher.retrieveModels('Listing', [1])[0])
+      this.expectedModel.should.equal(fetcher.retrieveModels('Listing', [1])[0]);
+      this.expectedModel.should.deep.equal(fetcher.retrieveModels('Listing', [1])[0]);
     });
   });
 

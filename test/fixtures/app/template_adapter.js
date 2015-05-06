@@ -1,6 +1,7 @@
-module.exports = function (templateEngine, options) {
+module.exports = function (options, templateEngine) {
   return {
     name: 'Test template adapter',
-    suppliedOptions: options
+    suppliedOptions: options,
+    suppliedTemplateEngine: templateEngine
   };
 }

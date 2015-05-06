@@ -94,10 +94,10 @@ module.exports = Backbone.Model.extend({
     } else {
       var templateAdapterModule = attributes.templateAdapter || this.defaults.templateAdapter,
         templateAdapterOptions = {entryPath: entryPath},
-        templateEngine = require(this.defaults.templateEngine);
+        templateEngine = require(attributes.templateEngine || this.defaults.templateEngine);
 
       templateAdapterOptions = this.setTemplateFinder(templateAdapterOptions);
-      this.templateAdapter = require(templateAdapterModule)(templateEngine, templateAdapterOptions);
+      this.templateAdapter = require(templateAdapterModule)(templateAdapterOptions, templateEngine);
     }
   },
 

@@ -342,7 +342,7 @@ You can tell Rendr which Template Engine to use.  This represents the node-modul
 
 module.exports = BaseApp.extend({
   defaults: {
-    templateEngine: 'jade'
+    templateEngine: 'handlebars'
   }
 
 });

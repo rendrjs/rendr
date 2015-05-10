@@ -238,6 +238,88 @@ describe('BaseView', function() {
     });
   });
 
+  describe('_postRender', function() {
+    beforeEach(function() {
+      this.app = {
+        modelUtils: modelUtils
+      };
+
+      this.topView = new this.MyTopView({
+        app: this.app
+      });
+    });
+
+    it('should call attachChildViews with a callback function', function() {
+      var spy = sinon.spy(this.topView, 'attachChildViews');
+      this.topView._postRender();
+      var firstArgumentOnFirstCall = spy.args[0][0];
+      expect(typeof firstArgumentOnFirstCall).to.be.deep.equal('function');
+    });
+
+    it('should call postRender', function() {
+      var spy = sinon.spy(this.topView, 'postRender');
+      this.topView._postRender();
+      expect(spy).to.be.called;
+    });
+
+    it("should trigger 'postRender' event", function() {
+      var spy = sinon.spy(this.topView, 'trigger');
+      this.topView._postRender();
+      expect(spy).to.be.calledWith('postRender');
+    });
+  });
+
+  describe('attachChildViews', function() {
+    beforeEach(function() {
+      this.app = {
+        modelUtils: modelUtils
+      };
+
+      this.topView = new this.MyTopView({
+        app: this.app
+      });
+
+      this.callback = sinon.spy();
+    });
+
+    it('should call removeChildViews', function() {
+      var spy = sinon.spy(this.topView, 'removeChildViews');
+      this.topView.attachChildViews(this.callback);
+      spy.should.have.been.called;
+    });
+
+    it('should call BaseView.getChildViews with this and this.app params', function() {
+      var spy = sinon.spy(BaseView, 'getChildViews');
+      this.topView.attachChildViews(this.callback);
+      spy.should.have.been.calledWith(this.topView.app, this.topView);
+      BaseView.getChildViews.restore();
+    });
+
+    it('should call BaseView.getChildViews with a callback function as third param', function() {
+      var spy = sinon.spy(BaseView, 'getChildViews');
+      this.topView.attachChildViews(this.callback);
+      var thirdArgumentOnFirstCall = spy.args[0][2];
+      expect(typeof thirdArgumentOnFirstCall).to.be.deep.equal('function');
+      BaseView.getChildViews.restore();
+    });
+
+    it('should set the chieldViews array with the given views', function() {
+      var myGetChildViews = function(arg1, arg2, callback) {
+        callback(['foo', 'bar']);
+      };
+      sinon.stub(BaseView, 'getChildViews', myGetChildViews);
+
+      this.topView.attachChildViews(this.callback);
+      expect(this.topView.childViews).to.be.deep.equal(['foo', 'bar']);
+      BaseView.getChildViews.restore();
+    });
+
+    it('should call the provided callback with the correct context', function() {
+      this.topView.attachChildViews(this.callback);
+      this.callback.should.have.been.calledOn(this.topView);
+    });
+  });
+
   describe('parseModelAndCollection', function () {
     context('there is a model', function () {
       var MyModel = BaseModel.extend({}),

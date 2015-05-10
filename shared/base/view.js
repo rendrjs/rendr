@@ -291,7 +291,7 @@ module.exports = BaseView = Backbone.View.extend({
    * plugins like sliders, slideshows, etc.
    */
   _postRender: function() {
-    this.attachChildViews(function attachChildViews_callback() {
+    this.attachChildViews(function triggerPostRenderActions() {
       this.postRender();
       this.trigger('postRender');
     });

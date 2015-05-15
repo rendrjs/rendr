@@ -291,9 +291,10 @@ module.exports = BaseView = Backbone.View.extend({
    * plugins like sliders, slideshows, etc.
    */
   _postRender: function() {
-    this.attachChildViews();
-    this.postRender();
-    this.trigger('postRender');
+    this.attachChildViews(function triggerPostRenderActions() {
+      this.postRender();
+      this.trigger('postRender');
+    });
   },
 
   /**
@@ -361,7 +362,7 @@ module.exports = BaseView = Backbone.View.extend({
    * Call this.getView()
    * Attach childView
    */
-  attachChildViews: function() {
+  attachChildViews: function(callback) {
     var _baseView = this;
 
     // Remove all child views in case we are re-rendering through
@@ -369,6 +370,7 @@ module.exports = BaseView = Backbone.View.extend({
     this.removeChildViews();
     BaseView.getChildViews(this.app, this, function(views) {
       _baseView.childViews = views;
+      callback.call(_baseView);
     });
   },
 

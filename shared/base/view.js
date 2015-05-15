@@ -231,7 +231,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     if (this.options.fetch_params) {
       if (!_.isObject(this.options.fetch_params)) {
-        throw new Error('fetch_params must be an object for lazy loaded views')
+        throw new Error('fetch_params must be an object for lazy loaded views');
       }
 
       params = this.options.fetch_params;
@@ -241,7 +241,7 @@ module.exports = BaseView = Backbone.View.extend({
 
     if (this.options.fetch_options) {
       if (!_.isObject(this.options.fetch_options)) {
-        throw new Error('fetch_options must be an object for lazy loaded views')
+        throw new Error('fetch_options must be an object for lazy loaded views');
       }
 
       fetchOptions = this.options.fetch_options;
@@ -270,7 +270,7 @@ module.exports = BaseView = Backbone.View.extend({
     // Allow ability to just pass the full "spec" to a lazy loaded view
     if (this.options.fetch_spec) {
       if (!_.isObject(this.options.fetch_spec)) {
-        throw new Error('fetch_spec must be an object for lazy loaded views')
+        throw new Error('fetch_spec must be an object for lazy loaded views');
       }
 
       fetchSpec = this.options.fetch_spec;

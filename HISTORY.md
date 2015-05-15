@@ -1,3 +1,9 @@
+# 1.0.5
+## 2015-05-15
+* bug fix for require js race condition when rendering views
+* lazy loading now takes fetch_options to set any of the fetchOptions, same object as in the controller
+* lazy loading now takes fetch_spec to allow for multiple models / collections to be loaded for a view on the client-side, this spec is the same as a controllers fetch spec.
+
 # 1.0.4
 ## 2015-05-8
 * Routes can specify custom headers

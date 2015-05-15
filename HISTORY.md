@@ -1,3 +1,13 @@
+# 1.0.4
+## 2015-05-8
+* Routes can specify custom headers
+* Allows for a custom layout filename
+* Bugfix: Case where some views were rendered twice
+* Allow for custom template finder, option for the app
+* allows readFromCache to be set to true / false in the fetch spec
+* Pass a templateEngine to the template adapter, at the application level.
+* Dependency updates
+
 # 1.0.3
 ## 2015-03-27
 * Bug fix for Require.js  Needs to statically analyze the include in shared/app.js for the router.

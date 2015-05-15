@@ -239,36 +239,61 @@ describe('BaseView', function() {
   });
 
   describe('fetchLazy', function () {
-    var fetchParams = { model: 'Foo' },
-        fetchOptions = { readFromCache: false },
-        modelName = 'MyModel',
-        MyView,
-        view,
-        fetchSpec;
-
     beforeEach(function () {
-      fetchSpec = {
-        model: {
-          model: modelName,
-          params: fetchParams
-        }
+      this.app = {
+        fetch: sinon.spy(),
+        modelUtils: modelUtils
       };
 
-      MyView = BaseView.extend({ name: 'A View Name' });
-      myView = new MyView({
-        'app': { fetch: sinon.stub() },
-        'model_name': modelName,
-        'fetch_params': fetchParams,
-        'fetch_options': fetchOptions
-      });
-
-      myView.setLoading = sinon.stub();
-      myView._preRender = sinon.stub();
-      myView.fetchLazy();
+      this.view = new this.MyTopView({ app: this.app });
+      sinon.stub(this.view, 'setLoading');
     });
 
-    it('passes the fetchSpec and fetch_options to the fetch call', function () {
-      expect(myView.app.fetch).to.have.been.calledWith(fetchSpec, fetchOptions, sinon.match.func);
+    context('passed a fetch_spec', function () {
+      var fetchSpec;
+
+      beforeEach(function () {
+        fetchSpec = {
+          model: {
+            model: 'Test',
+            params: { id: 1 }
+          }
+        };
+
+        this.view.options.fetch_spec = fetchSpec;
+      });
+
+      it('overrides the fetchSpec and calls fetch with it.', function () {
+        this.view.fetchLazy();
+        expect(this.app.fetch).to.have.been.calledWith(fetchSpec);
+      });
+    });
+
+    context('passed fetch options', function () {
+      var fetchParams, fetchOptions;
+
+      beforeEach(function () {
+        fetchParams = { id: 1 };
+        fetchOptions = {
+          readFromCache: false,
+          writeToCache: true
+        };
+
+        this.view.options.model_name = 'MyModel';
+        this.view.options.fetch_params = fetchParams;
+        this.view.options.fetch_options = fetchOptions;
+      })
+
+      it('invokes app.fetch with the fetchOptions', function () {
+        this.view.fetchLazy();
+
+        expect(this.app.fetch).to.have.been.calledWith({
+          model: {
+            model: 'MyModel',
+            params: fetchParams
+          }
+        }, fetchOptions);
+      });
     });
   });
 
@@ -643,7 +668,7 @@ describe('BaseView', function() {
       topView.childViews.push(bottomView);
       childViews = topView.getChildViewsByName('my_bottom_view');
       childViews.should.have.length(1);
-      bottomView.remove()
+      bottomView.remove();
       childViews = topView.getChildViewsByName('my_bottom_view');
       childViews.should.be.empty;
     });
@@ -656,49 +681,40 @@ describe('BaseView', function() {
       topView.$el = $('<div>');
       topView.childViews = [];
 
-      expect(topView.remove.bind(topView)).to.not.throw(Error)
+      expect(topView.remove.bind(topView)).to.not.throw(Error);
     });
 
   });
 
   describe('createChildView', function() {
-
     var ViewClass, parentView, cb, attachNewChildView;
 
     beforeEach(function() {
-
       ViewClass = BaseView.extend({});
       parentView = 'parentView';
       cb = sinon.spy();
-      sinon.stub(BaseView, 'attachNewChildView').returns('view');
 
+      sinon.stub(BaseView, 'attachNewChildView').returns('view');
     });
 
     afterEach(function() {
-
       BaseView.attachNewChildView.restore();
       cb = null;
-
     });
 
     it('should call callback with null and view arguments if the view is not yet attached', function() {
-
       var $el = $('<div>');
 
       BaseView.createChildView(ViewClass, {app: this.app}, $el, parentView, cb);
       cb.should.have.been.calledWithExactly(null, 'view');
-
     });
 
     it('should call callback with null and null arguments if the view is already attached', function() {
-
       var $el = $('<div data-view-attached="true"></div>');
 
       BaseView.createChildView(ViewClass, {app: this.app}, $el, parentView, cb);
       cb.should.have.been.calledWithExactly(null, null);
-
     });
-
   });
 
   describe('attachNewChildView', function() {
@@ -716,8 +732,8 @@ describe('BaseView', function() {
     });
 
     it('should create a new instance of ViewClass', function() {
-
       var newChildView = BaseView.attachNewChildView(ViewClass, {app: this.app}, 'foo', 'bar');
+
       expect(newChildView).to.be.an.instanceOf(ViewClass);
     });
   });

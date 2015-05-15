@@ -267,6 +267,15 @@ module.exports = BaseView = Backbone.View.extend({
       };
     }
 
+    // Allow ability to just pass the full "spec" to a lazy loaded view
+    if (this.options.fetch_spec) {
+      if (!_.isObject(this.options.fetch_spec)) {
+        throw new Error('fetch_spec must be an object for lazy loaded views')
+      }
+
+      fetchSpec = this.options.fetch_spec;
+    }
+
     this.setLoading(true);
 
     this._preRender();

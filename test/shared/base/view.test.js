@@ -208,6 +208,38 @@ describe('BaseView', function() {
     });
   });
 
+  describe('fetchLazy', function () {
+    beforeEach(function () {
+      this.app = {
+        fetch: sinon.spy(),
+        modelUtils: modelUtils
+      };
+
+      this.view = new this.MyTopView({ app: this.app });
+      sinon.stub(this.view, 'setLoading')
+    });
+
+    context('passed a fetch_spec', function () {
+      var fetchSpec;
+
+      beforeEach(function () {
+        fetchSpec = {
+          model: {
+            model: 'Test',
+            params: { id: 1 }
+          }
+        };
+
+        this.view.options.fetch_spec = fetchSpec;
+      });
+
+      it('overrides the fetchSpec and calls fetch with it.', function () {
+        this.view.fetchLazy();
+        expect(this.app.fetch).to.have.been.calledWith(fetchSpec);
+      });
+    });
+  });
+
   describe('_fetchLazyCallback', function() {
     beforeEach(function() {
       this.app = {

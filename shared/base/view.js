@@ -226,6 +226,7 @@ module.exports = BaseView = Backbone.View.extend({
    */
   fetchLazy: function() {
     var params = {},
+        fetchOptions,
         fetchSpec;
 
     if (this.options.fetch_params) {
@@ -236,6 +237,14 @@ module.exports = BaseView = Backbone.View.extend({
       params = this.options.fetch_params;
     } else if (this.options.param_name) {
       params[this.options.param_name] = this.options.param_value;
+    }
+
+    if (this.options.fetch_options) {
+      if (!_.isObject(this.options.fetch_options)) {
+        throw new Error('fetch_options must be an object for lazy loaded views')
+      }
+
+      fetchOptions = this.options.fetch_options;
     }
 
     if (this.options.model_id != null) {
@@ -261,7 +270,7 @@ module.exports = BaseView = Backbone.View.extend({
     this.setLoading(true);
 
     this._preRender();
-    this.app.fetch(fetchSpec, this._fetchLazyCallback.bind(this));
+    this.app.fetch(fetchSpec, fetchOptions, this._fetchLazyCallback.bind(this));
   },
 
   _fetchLazyCallback: function(err, results) {

@@ -238,6 +238,40 @@ describe('BaseView', function() {
     });
   });
 
+  describe('fetchLazy', function () {
+    var fetchParams = { model: 'Foo' },
+        fetchOptions = { readFromCache: false },
+        modelName = 'MyModel',
+        MyView,
+        view,
+        fetchSpec;
+
+    beforeEach(function () {
+      fetchSpec = {
+        model: {
+          model: modelName,
+          params: fetchParams
+        }
+      };
+
+      MyView = BaseView.extend({ name: 'A View Name' });
+      myView = new MyView({
+        'app': { fetch: sinon.stub() },
+        'model_name': modelName,
+        'fetch_params': fetchParams,
+        'fetch_options': fetchOptions
+      });
+
+      myView.setLoading = sinon.stub();
+      myView._preRender = sinon.stub();
+      myView.fetchLazy();
+    });
+
+    it('passes the fetchSpec and fetch_options to the fetch call', function () {
+      expect(myView.app.fetch).to.have.been.calledWith(fetchSpec, fetchOptions, sinon.match.func);
+    });
+  });
+
   describe('parseModelAndCollection', function () {
     context('there is a model', function () {
       var MyModel = BaseModel.extend({}),

@@ -1,5 +1,6 @@
 var should = require('chai').should(),
     App = require('../../shared/app'),
+    sinon = require('sinon'),
     clientTestHelper = require('../helpers/client_test');
 
 describe("client/router", function() {
@@ -42,4 +43,36 @@ describe("client/router", function() {
     });
   });
 
+  describe('Redirecting', function(){
+    it("should send a full url out of the app", function(done) {
+      var url = 'http://www.example.com';
+      var stub = sinon.stub(this.router, 'exitApp');
+      this.router.navigate(url);
+      expect(stub.called).to.equal(true);
+      done();
+    });
+    it("should send an unmatched route out of the app", function(done) {
+      var path = '/no/route/match';
+      var stub = sinon.stub(this.router, 'exitApp');
+      this.router.navigate(path);
+      expect(stub.called).to.equal(true);
+      done();
+    });
+    it("should not modify full urls", function(done) {
+      var paths = ['http://www.foo.com', 'https://foo.com', '//foo.com'];
+      var self = this;
+      paths.forEach(function(path){
+        expect(self.router.noRelativePath(path)).to.equal(path);
+      });
+      done();
+    });
+    it("paths should all be prefixed with a /", function(done) {
+      var paths = ['/a/root', 'a/rel/', 'a//rel/', '/a//root/'];
+      var self = this;
+      paths.forEach(function(path){
+        expect(self.router.noRelativePath(path).charAt(0)).to.equal('/');
+      });
+      done();
+    });
+  });
 });

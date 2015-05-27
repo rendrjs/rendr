@@ -206,6 +206,8 @@ ClientRouter.prototype.redirectTo = function(path, options) {
 
   if (options.pushState === false) {
     // Do a full-page redirect.
+    // add a leading slash so path is not appended
+    if (path.charAt(0) !== '/') path = '/' + path;
     window.location.href = path;
   } else {
     // Do a pushState navigation.

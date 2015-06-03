@@ -206,7 +206,7 @@ ClientRouter.prototype.redirectTo = function(path, options) {
 
   if (options.pushState === false) {
     // Do a full-page redirect.
-    window.location.href = path;
+    this.exitApp(path);
   } else {
     // Do a pushState navigation.
     hashParts = path.split('#');
@@ -223,6 +223,19 @@ ClientRouter.prototype.redirectTo = function(path, options) {
     this.navigate(path, options);
   }
 };
+
+ClientRouter.prototype.exitApp = function (path) {
+  var exitPath = this.noRelativePath(path);
+  window.location.href = exitPath;
+}
+
+ClientRouter.prototype.noRelativePath = function (path) {
+  //if it's not a full url or already has a leading slash
+  if (path.indexOf('://') == -1 && path.charAt(0) !== '/') {
+    path = '/' + path;
+  }
+  return path;
+}
 
 ClientRouter.prototype.handleErr = function(err, route) {
   this.trigger('action:error', err, route);

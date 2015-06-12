@@ -9,11 +9,18 @@ describe('Base/View', function () {
   var BaseView;
 
   before(function () {
+    global.document = {
+      createElement: sinon.stub().returns('<div></div>')
+    }
+
     clientTestHelper.before.apply(this, arguments);
     BaseView = require('../../shared/base/view');
   });
 
-  after(clientTestHelper.after);
+  after(function () {
+    global.document = undefined;
+    clientTestHelper.after.apply(this, arguments);
+  });
 
   beforeEach(function () {
     this.app = new App();

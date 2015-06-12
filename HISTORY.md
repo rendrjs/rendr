@@ -1,3 +1,8 @@
+# 1.1.0
+## 2015-06-11
+* update to backbone 1.2.1 and all it's goodness, older versions of lodash *will break* with this change set. lodash.mixin should allow for a fix
+* add x-http-method-override to allow for the 'emulateHTTP' property in backbone.
+
 # 1.0.5
 ## 2015-05-15
 * bug fix for require js race condition when rendering views

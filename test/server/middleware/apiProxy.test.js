@@ -85,6 +85,33 @@ describe('apiProxy', function() {
         incomingHeaders['x-forwarded-for']);
     });
 
+    it('should add an x-http-method-override header to the request if there is one', function () {
+      var incomingHeaders = { 'x-http-method-override': 'PUT' },
+        outgoingHeaders;
+
+      requestFromClient.headers = incomingHeaders;
+
+      proxy(requestFromClient, responseToClient);
+
+      requestToApi.should.have.been.calledOnce;
+      outgoingHeaders = requestToApi.firstCall.args[1].headers;
+      outgoingHeaders['x-http-method-override'].should.eq(incomingHeaders['x-http-method-override']);
+    });
+
+    it('should not add an x-http-method-override header to the request if there is not one', function () {
+      var incomingHeaders = {},
+        outgoingHeaders;
+
+      requestFromClient.headers = incomingHeaders;
+
+      proxy(requestFromClient, responseToClient);
+
+      requestToApi.should.have.been.calledOnce;
+      outgoingHeaders = requestToApi.firstCall.args[1].headers;
+
+      expect(outgoingHeaders['x-http-method-override']).to.be.undefined;
+    });
+
 
    it('should not pass through the host header', function () {
       proxy(requestFromClient, responseToClient);

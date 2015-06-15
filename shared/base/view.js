@@ -284,14 +284,25 @@ module.exports = BaseView = Backbone.View.extend({
 
   _fetchLazyCallback: function(err, results) {
     this.setLoading(false);
+
     if (err) {
-      console.log("FETCH ERR: " + err);
+      this.lazyErrorCallback(err);
     } else if (this.viewing) {
       // It's possible that by the time the XHR returns, the user has navigated
       // away to a new page, check for whether we are viewing first
       this.parseOptions(results);
-      this.render();
+      this.lazyCallback(results);
     }
+  },
+
+  // Override for error in lazy loading
+  lazyErrorCallback: function(err) {
+    console.log("FETCH ERR: " + err);
+  },
+
+  // override for successful lazy load
+  lazyCallback: function (result) {
+    this.render();
   },
 
   /**

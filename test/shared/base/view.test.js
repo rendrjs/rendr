@@ -236,6 +236,56 @@ describe('BaseView', function() {
       this.topView._fetchLazyCallback(null, {});
       this.topView.render.should.have.been.called;
     });
+
+    context('has lazyErrorCallback', function () {
+      beforeEach(function() {
+        sinon.spy(this.topView, 'lazyErrorCallback');
+      });
+
+      afterEach(function () {
+        this.topView.lazyErrorCallback.restore();
+      });
+
+      it('should invoke the callback when there is an error', function () {
+        var err = { err: true };
+        this.topView._fetchLazyCallback(err, {});
+        expect(this.topView.lazyErrorCallback).to.have.been.calledWith(err);
+      });
+
+      it('should not invoke the callback if there is not an error', function () {
+        this.topView._fetchLazyCallback(undefined, {});
+        expect(this.topView.lazyErrorCallback).to.not.have.been.called;
+      });
+    });
+
+    context('has lazyCallback', function () {
+      beforeEach(function() {
+        sinon.spy(this.topView, 'lazyCallback');
+        this.topView.viewing = true;
+      });
+
+      afterEach(function () {
+        this.topView.lazyCallback.restore();
+      });
+
+      it('should not invoke the callback if there is an error', function () {
+        var err = { err: true };
+        this.topView._fetchLazyCallback(err, {});
+        expect(this.topView.lazyCallback).to.not.have.been.called;
+      });
+
+      it('should not invoke the callback if there is not an error', function () {
+        var results = { test: true };
+        this.topView._fetchLazyCallback(undefined, results);
+        expect(this.topView.lazyCallback).to.have.been.calledWith(results);
+      });
+
+      it('should not call the callback if the view is not being viewed', function () {
+        this.topView.viewing = false;
+        this.topView._fetchLazyCallback(undefined, {});
+        expect(this.topView.lazyCallback).to.not.have.been.called;
+      });
+    });
   });
 
   describe('fetchLazy', function () {

@@ -59,7 +59,13 @@ describe("client/router", function() {
       done();
     });
     it("should not modify full urls", function(done) {
-      var paths = ['http://www.foo.com', 'https://foo.com', '//foo.com'];
+      var paths = [
+        'mailto:foo@example.com', 
+        'tel:415-215-1234',
+        'http://www.foo.com',
+        'https://foo.com',
+        '//foo.com'
+      ];
       var self = this;
       paths.forEach(function(path){
         expect(self.router.noRelativePath(path)).to.equal(path);

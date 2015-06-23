@@ -372,6 +372,8 @@ We'd love to see what the community can come up with! There are no doubt a numbe
 
 Rendr was originally developed by [@braitz](https://github.com/braitz) and [@spikebrehm](https://github.com/spikebrehm), and now has a healthy list of [contributors](https://github.com/rendrjs/rendr/graphs/contributors).
 
+Please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms.
+
 ## License
 
 MIT

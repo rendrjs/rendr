@@ -343,6 +343,56 @@ describe('fetcher', function() {
       fetcher.pendingFetches.should.eql(1);
     });
 
+    it("should propagate timeout option to model fetch", function(done) {
+      var timeoutSpy = sinon.spy();
+      var Test = BaseModel.extend({
+        jsonKey: 'timeout',
+        fetch: timeoutSpy
+      });
+      Test.id = 'Timeout';
+      addClassMapping.add('Timeout', Test);
+      var fetchSpec;
+
+      fetchSpec = {
+        model: {
+          model: 'Timeout',
+          params: {
+            id: 1
+          }
+        }
+      };
+
+      fetcher.fetch(fetchSpec, { timeout: 1000 }, function(err, results) { });
+      done();
+
+      timeoutSpy.should.be.calledWith(sinon.match({ timeout: 1000 }))
+    });
+
+    it("should set default timeout to 0 in options to model fetch", function(done) {
+      var timeoutSpy = sinon.spy();
+      var Test = BaseModel.extend({
+        jsonKey: 'timeout',
+        fetch: timeoutSpy
+      });
+      Test.id = 'Timeout';
+      addClassMapping.add('Timeout', Test);
+      var fetchSpec;
+
+      fetchSpec = {
+        model: {
+          model: 'Timeout',
+          params: {
+            id: 1
+          }
+        }
+      };
+
+      fetcher.fetch(fetchSpec, function(err, results) { });
+      done();
+
+      timeoutSpy.should.be.calledWith(sinon.match({ timeout: 0 }))
+    });
+
     it("should be able to fetch a collection", function(done) {
       var fetchSpec;
 

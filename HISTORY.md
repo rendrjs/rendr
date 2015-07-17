@@ -1,3 +1,8 @@
+# 1.1.1
+* added lazy loading callback handlers
+* support for xhr timeouts
+* added a code of conduct
+
 # 1.1.0
 ## 2015-06-11
 * update to backbone 1.2.1 and all it's goodness, older versions of lodash *will break* with this change set. lodash.mixin should allow for a fix

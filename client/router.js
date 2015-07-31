@@ -231,7 +231,7 @@ ClientRouter.prototype.exitApp = function (path) {
 
 ClientRouter.prototype.noRelativePath = function (path) {
   //if path doesn't have a protocol and lacks a leading slash
-  if (/^[a-z]+:/.test(path) === false && path.charAt(0) !== '/') {
+  if (/^[a-z]+:/i.test(path) === false && path.charAt(0) !== '/') {
     path = '/' + path;
   }
   return path;

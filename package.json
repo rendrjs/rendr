@@ -1,6 +1,6 @@
 {
   "name": "rendr",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Render your Backbone.js apps on the client and the server.",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "jsdom": "^3.1.0",
     "mocha": "*",
     "proxyquire": "^1.4.0",
-    "rendr-handlebars": "^1.0.1",
+    "rendr-handlebars": "^2.0.1",
     "sinon": "~1.14.1",
     "sinon-chai": "^2.7.0"
   },

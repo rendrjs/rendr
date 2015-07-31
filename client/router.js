@@ -230,8 +230,8 @@ ClientRouter.prototype.exitApp = function (path) {
 }
 
 ClientRouter.prototype.noRelativePath = function (path) {
-  //if it's not a full url or already has a leading slash
-  if (path.indexOf('://') == -1 && path.charAt(0) !== '/') {
+  //if path doesn't have a protocol and lacks a leading slash
+  if (/^[a-z]+:/i.test(path) === false && path.charAt(0) !== '/') {
     path = '/' + path;
   }
   return path;

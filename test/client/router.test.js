@@ -64,6 +64,9 @@ describe("client/router", function() {
         'tel:415-215-1234',
         'http://www.foo.com',
         'https://foo.com',
+        'HTTP://bar.com',
+        'TEL:415-215-1234',
+        'MAILTO:bar@example.com'
         '//foo.com'
       ];
       var self = this;

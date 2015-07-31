@@ -66,7 +66,7 @@ describe("client/router", function() {
         'https://foo.com',
         'HTTP://bar.com',
         'TEL:415-215-1234',
-        'MAILTO:bar@example.com'
+        'MAILTO:bar@example.com',
         '//foo.com'
       ];
       var self = this;

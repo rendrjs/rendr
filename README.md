@@ -33,7 +33,7 @@ Our hypothesis is that there has to be a better way to build rich web apps today
 
 ## The Goals
 
-Rendr is intended to be a building block along the way to this envisionsed future of web apps that can be run on either side of the wire according to the needs of your application.
+Rendr is intended to be a building block along the way to this envisioned future of web apps that can be run on either side of the wire according to the needs of your application.
 
 Some specific design goals:
 

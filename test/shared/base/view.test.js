@@ -131,6 +131,21 @@ describe('BaseView', function() {
       });
     });
 
+    it ('should handle view.attributes being an object with fetch_params', function () {
+      var view = new this.View({app: this.app});
+
+      view.attributes = {
+        fetch_params: {foo: 1}
+      };
+
+      view.getAttributes().should.deep.equal({
+        id: 'aViewId',
+        'class': 'aClassName',
+        'data-view': 'A View Name',
+        fetch_params: {foo: 1}
+      });
+    });
+
     it('should handle view.attributes being a function', function () {
       var view = new this.View({app: this.app});
 

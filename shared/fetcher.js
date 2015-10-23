@@ -170,27 +170,27 @@ Fetcher.prototype.isMissingKeys = function(modelData, keys) {
 };
 
 Fetcher.prototype.fetchFromApi = function(spec, options, callback) {
-  var model = this.getModelOrCollectionForSpec(spec, null, options),
-      fetcher = this;
+  var fetcher = this;
+  this.getModelOrCollectionForSpec(spec, null, options, function(model) {
+    model.fetch({
+      headers: options.headers || {},
+      timeout: options.timeout || 0,
+      data: spec.params,
+      success: function(model, body) {
+        callback(null, model);
+      },
+      error: function(model, resp, options) {
+        var body, respOutput, err;
 
-  model.fetch({
-    headers: options.headers || {},
-    timeout: options.timeout || 0,
-    data: spec.params,
-    success: function(model, body) {
-      callback(null, model);
-    },
-    error: function(model, resp, options) {
-      var body, respOutput, err;
-
-      body = resp.body;
-      resp.body = typeof body === 'string' ? body.slice(0, 150) : body;
-      respOutput = JSON.stringify(resp);
-      err = new Error("ERROR fetching model '" + fetcher.modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
-      err.status = resp.status;
-      err.body = body;
-      callback(err);
-    }
+        body = resp.body;
+        resp.body = typeof body === 'string' ? body.slice(0, 150) : body;
+        respOutput = JSON.stringify(resp);
+        err = new Error("ERROR fetching model '" + fetcher.modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
+        err.status = resp.status;
+        err.body = body;
+        callback(err);
+      }
+    });
   });
 };
 

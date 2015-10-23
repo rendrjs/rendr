@@ -498,7 +498,7 @@ describe('fetcher', function() {
         done();
       });
       fetcher.pendingFetches.should.eql(1);
-    });    
+    });
 
     it("should be able to fetch both a model and a collection at the same time", function(done) {
       var fetchSpec;
@@ -827,6 +827,33 @@ describe('fetcher', function() {
       var result = fetcher.getCollectionForSpec(spec);
       expect(result.params).to.deep.equal(params);
       expect(result.options.params).to.deep.equal(params);
+    });
+  });
+
+  describe('fetchFromApi', function(done) {
+    var spec, options, callbackSpy, modelMock;
+
+    beforeEach(function () {
+      spec = { model: 'SomeModel' };
+      options = {readFromCache: false};
+      callbackSpy = sinon.spy();
+      modelMock = {fetch: sinon.spy()};
+    });
+
+    it('should call the getModelOrCollectionForSpec with callback', function (done) {
+      var lastCall, getModelOrCollectionForSpecStub = sinon.stub(fetcher, 'getModelOrCollectionForSpec');
+      getModelOrCollectionForSpecStub.callsArgWith(3, modelMock);
+
+      fetcher.fetchFromApi(spec, options, callbackSpy);
+
+      callbackSpy.should.have.not.been.called;
+
+      getModelOrCollectionForSpecStub.should.have.been.calledOnce;
+      getModelOrCollectionForSpecStub.should.have.been.calledWith(spec, null, options);
+
+      modelMock.fetch.should.have.been.calledOnce;
+
+      done();
     });
   });
 });

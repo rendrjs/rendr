@@ -1,3 +1,9 @@
+# 1.1.3
+* Bug fixes for AMD environments
+
+# 1.1.2
+* Bug fix for broken build, companion dependency was incorrect.
+
 # 1.1.1
 * added lazy loading callback handlers
 * support for xhr timeouts

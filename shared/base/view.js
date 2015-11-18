@@ -491,7 +491,7 @@ BaseView.getChildViews = function(app, parentView, callback) {
   var scope = parentView ? parentView.$el : null,
       list = Backbone.$('[data-view]', scope).toArray();
 
-  async.map(list, function(el, cb) {
+  async.mapSeries(list, function(el, cb) {
     var $el, options, viewName, fetchSummary;
     $el = Backbone.$(el);
     if (!$el.data('view-attached')) {

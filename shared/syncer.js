@@ -48,7 +48,8 @@ function clientSync(method, model, options) {
       }
       resp = {
         body: body,
-        status: xhr.status
+        status: xhr.status,
+        statusText: xhr.statusText
       };
       error(resp);
     }

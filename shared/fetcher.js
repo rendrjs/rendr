@@ -187,6 +187,7 @@ Fetcher.prototype.fetchFromApi = function(spec, options, callback) {
         respOutput = JSON.stringify(resp);
         err = new Error("ERROR fetching model '" + fetcher.modelUtils.modelName(model.constructor) + "' with options '" + JSON.stringify(options) + "'. Response: " + respOutput);
         err.status = resp.status;
+        err.statusText = resp.statusText;
         err.body = body;
         callback(err);
       }

@@ -255,6 +255,7 @@ describe('syncer', function() {
             fakeXhr = {
               responseText: '{"foo": "bar"}',
               status: 418,
+              statusText: 0,
               getResponseHeader: sinon.stub()
             };
             options.error = syncErrorHandler;
@@ -264,7 +265,8 @@ describe('syncer', function() {
           it('should call the original error handler with status and body', function () {
             var expectedResponse = {
               body: fakeXhr.responseText,
-              status: fakeXhr.status
+              status: fakeXhr.status,
+              statusText: fakeXhr.statusText
             };
 
             syncer.clientSync.call(model, 'read', model, options);
@@ -276,7 +278,8 @@ describe('syncer', function() {
           it('should parse the payload if content-type is "application/json"', function () {
             var expectedResponse = {
               body: JSON.parse(fakeXhr.responseText),
-              status: fakeXhr.status
+              status: fakeXhr.status,
+              statusText: fakeXhr.statusText,
             };
 
             fakeXhr.getResponseHeader.withArgs('content-type').returns('application/json');
@@ -334,6 +337,7 @@ describe('syncer', function() {
               fakeXhr = {
                 responseText: '{"foo": "bar"}',
                 status: 418,
+                statusText: 0,
                 getResponseHeader: sinon.stub()
               };
               options.error = syncErrorHandler;
@@ -343,7 +347,8 @@ describe('syncer', function() {
             it('should call the original error handler with status and body', function () {
               var expectedResponse = {
                 body: fakeXhr.responseText,
-                status: fakeXhr.status
+                status: fakeXhr.status,
+                statusText: fakeXhr.statusText
               };
 
               syncer.clientSync.call(model, 'read', model, options);
@@ -355,7 +360,8 @@ describe('syncer', function() {
             it('should parse the payload if content-type is "application/json"', function () {
               var expectedResponse = {
                 body: JSON.parse(fakeXhr.responseText),
-                status: fakeXhr.status
+                status: fakeXhr.status,
+                statusText: fakeXhr.statusText
               };
 
               fakeXhr.getResponseHeader.withArgs('content-type').returns('application/json');

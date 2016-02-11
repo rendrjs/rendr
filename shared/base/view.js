@@ -468,7 +468,7 @@ BaseView.getViewOptions = function ($el) {
     options = $el.data();
 
   _.each(options, function(value, key) {
-    if (_.isString(value)) {
+    if (_.isString(value) && key !== '_block') {
       parsed = _.unescape(value);
       try {
         parsed = JSON.parse(parsed);
@@ -476,6 +476,10 @@ BaseView.getViewOptions = function ($el) {
       options[key] = parsed;
     }
   });
+
+  if (options && options._block && options._block.string) {
+    options._block = options._block.string;
+  }
 
   return options;
 };

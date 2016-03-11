@@ -787,4 +787,26 @@ describe('BaseView', function() {
       expect(newChildView).to.be.an.instanceOf(ViewClass);
     });
   });
+
+  describe('BaseView.getViewOptions', function() {
+    it('should not unescape escaped data', function() {
+      var fakeEl = {
+        data: _.constant({
+          normalOption: 'Normal data',
+          jsonOption: '{"json":"data"}',
+          escapedOption: 'I am &lt;span&gt;escaped&lt;/span&gt;',
+          escapedJsonOption: '{"escapedData":"I am &lt;span&gt;escaped&lt;/span&gt;"}'
+        })
+      }
+
+      var parsedOptions = BaseView.getViewOptions(fakeEl);
+
+      expect(parsedOptions).to.deep.equal({
+        normalOption: 'Normal data',
+        jsonOption: {json: 'data'},
+        escapedOption: 'I am &lt;span&gt;escaped&lt;/span&gt;',
+        escapedJsonOption: {escapedData: 'I am &lt;span&gt;escaped&lt;/span&gt;'}
+      });
+    });
+  });
 });

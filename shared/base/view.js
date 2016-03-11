@@ -464,16 +464,14 @@ BaseView.createChildView = function (ViewClass, options, $el, parentView, cb) {
 };
 
 BaseView.getViewOptions = function ($el) {
-  var parsed,
-    options = $el.data();
+  var options = $el.data();
 
   _.each(options, function(value, key) {
     if (_.isString(value)) {
-      parsed = _.unescape(value);
       try {
-        parsed = JSON.parse(parsed);
+        value = JSON.parse(value);
       } catch (err) {}
-      options[key] = parsed;
+      options[key] = value;
     }
   });
 

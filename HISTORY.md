@@ -1,3 +1,7 @@
+# 1.1.4
+* Bug fix for views being attached async vs in series
+* Bug fix for possible XSS issue on client-side routing
+
 # 1.1.3
 * Bug fixes for AMD environments
 

@@ -188,7 +188,7 @@ syncer.interpolateParams = function interpolateParams(model, url, params) {
       } else {
         value = model.get(property);
       }
-      url = url.replace(param, value);
+      url = url.replace(param, encodeURIComponent(value));
 
       /**
        * Delete the param from params hash, so we don't get urls like:

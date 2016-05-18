@@ -70,6 +70,24 @@ describe('syncer', function() {
           request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
         });
 
+        it('should encode non-latin param values', function () {
+          model.set('id', 'президент');
+
+          var expectedRequestOptions = {
+            method: 'GET',
+            path: '/listings/%D0%BF%D1%80%D0%B5%D0%B7%D0%B8%D0%B4%D0%B5%D0%BD%D1%82',
+            query: { baz: { quux: 'doh' } },
+            headers: { foo: 'bar' },
+            api: 'foo',
+            body: {}
+          };
+
+          syncer.serverSync.call(model, 'read', model, options);
+
+          request.should.have.been.calledOnce;
+          request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+        });
+
         it('should send the correct payload on PUT or POST requests', function () {
           var expectedRequestOptions = {
             method: 'PUT',
@@ -100,6 +118,24 @@ describe('syncer', function() {
             var expectedRequestOptions = {
               method: 'GET',
               path: '/listings/0',
+              query: { baz: { quux: 'doh' } },
+              headers: { foo: 'bar' },
+              api: 'foo',
+              body: {}
+            };
+
+            syncer.serverSync.call(model, 'read', model, options);
+
+            request.should.have.been.calledOnce;
+            request.should.have.been.calledWith(model.app.req, expectedRequestOptions)
+          });
+
+          it('should encode non-latin param values', function () {
+            model.set('id', 'президент');
+
+            var expectedRequestOptions = {
+              method: 'GET',
+              path: '/listings/%D0%BF%D1%80%D0%B5%D0%B7%D0%B8%D0%B4%D0%B5%D0%BD%D1%82',
               query: { baz: { quux: 'doh' } },
               headers: { foo: 'bar' },
               api: 'foo',

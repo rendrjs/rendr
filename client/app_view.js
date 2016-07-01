@@ -35,7 +35,7 @@ module.exports = BaseView.extend({
   },
 
   _bindInterceptClick: function() {
-    this.$el.on('click', 'a:not([data-pass-thru])', this._interceptClick.bind(this));
+    this.$el.on('click', 'a:not([data-pass-thru="true"])', this._interceptClick.bind(this));
   },
 
   _interceptClick: function(e) {

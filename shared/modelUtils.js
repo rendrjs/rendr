@@ -5,6 +5,8 @@
  */
 var BaseModel = require("./base/model"),
     BaseCollection = require("./base/collection");
+    sanitizer = require("sanitizer");
+    _ = require("underscore");
 
 var typePath = {
   model: "app/models/",
@@ -135,4 +137,32 @@ ModelUtils.prototype.modelIdAttribute = function(modelName, callback) {
   this.getModelConstructor(modelName, function(constructor) {
     callback(constructor.prototype.idAttribute);
   });
+};
+
+ModelUtils.prototype.deepApply = function(modelOrCollection, fn, seen) {
+  // Keep track of objects we've seen in order to handle cycles
+  seen = seen || [];
+  if(_.contains(seen, modelOrCollection)) {
+    return modelOrCollection;
+  }
+
+  seen.push(modelOrCollection);
+
+  _.each(modelOrCollection, function(value, key) {
+    if(_.isString(value)) {
+      modelOrCollection[key] = fn(value);
+    } else if (_.isObject(value)) {
+      modelOrCollection[key] = this.deepApply(value, fn, seen);
+    }
+  }.bind(this));
+
+  return modelOrCollection;
+};
+
+ModelUtils.prototype.deepEscape = function(modelOrCollection) {
+  return this.deepApply(modelOrCollection, sanitizer.escape);
+};
+
+ModelUtils.prototype.deepUnescape = function(modelOrCollection) {
+  return this.deepApply(modelOrCollection, sanitizer.unescapeEntities);
 };

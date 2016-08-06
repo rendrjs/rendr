@@ -320,4 +320,65 @@ describe('modelUtils', function () {
       });
     });
   });
+  describe('deepEscape', function () {
+    it('should escape attributes of a model JSON', function() {
+      var data = {foo: '<bar>', id: 321},
+          expectedData = {foo: '&lt;bar&gt;', id: 321 };
+
+      modelUtils.deepEscape(data).should.deep.equal(expectedData);
+    });
+    it('should escape attributes of a collection JSON', function() {
+      var data = [{foo: '<bar>', id: 321},{foo: '<blah>', id: 322}],
+          expectedData = [{foo: '&lt;bar&gt;', id: 321 }, {foo: '&lt;blah&gt;', id: 322}];
+
+      modelUtils.deepEscape(data).should.deep.equal(expectedData);
+    });
+
+    it('should not recurse infinitely while escaping', function() {
+      var foo = {};
+      var bar = {bar: '<blah>'};
+      foo.bar = bar;
+      bar.foo = foo;
+
+      var data = foo,
+        expectedData = {
+          bar: {
+            bar: '&lt;blah&gt;',
+            foo: foo
+          }
+        };
+      modelUtils.deepEscape(data).should.deep.equal(expectedData);
+    });
+
+  });
+  describe('deepUnescape', function () {
+    it('should unescape attributes of a model JSON', function() {
+      var expectedData = {foo: '<bar>', id: 321},
+          data = {foo: '&lt;bar&gt;', id: 321 };
+
+      modelUtils.deepUnescape(data).should.deep.equal(expectedData);
+    });
+    it('should unescape attributes of a collection JSON', function() {
+      var expectedData = [{foo: '<bar>', id: 321},{foo: '<blah>', id: 322}],
+          data = [{foo: '&lt;bar&gt;', id: 321 }, {foo: '&lt;blah&gt;', id: 322}];
+
+      modelUtils.deepUnescape(data).should.deep.equal(expectedData);
+    });
+
+    it('should not recurse infinitely while unescaping', function() {
+      var foo = {};
+      var bar = {bar: '&lt;blah&gt;'};
+      foo.bar = bar;
+      bar.foo = foo;
+
+      var data = foo,
+        expectedData = {
+          bar: {
+            bar: '<blah>',
+            foo: foo
+          }
+        };
+      modelUtils.deepUnescape(data).should.deep.equal(expectedData);
+    });
+  });
 });

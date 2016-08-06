@@ -1,0 +1,110 @@
+{
+  "type": "Collection",
+  "typeLabel": "Collection",
+  "order": 0,
+  "properties": {
+    "login": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "login",
+      "name": "login"
+    },
+    "id": {
+      "type": "number",
+      "typeLabel": "number",
+      "id": "id",
+      "name": "id"
+    },
+    "avatar_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "avatar_url",
+      "name": "avatar_url"
+    },
+    "gravatar_id": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "gravatar_id",
+      "name": "gravatar_id"
+    },
+    "url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "url",
+      "name": "url"
+    },
+    "html_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "html_url",
+      "name": "html_url"
+    },
+    "followers_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "followers_url",
+      "name": "followers_url"
+    },
+    "following_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "following_url",
+      "name": "following_url"
+    },
+    "gists_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "gists_url",
+      "name": "gists_url"
+    },
+    "starred_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "starred_url",
+      "name": "starred_url"
+    },
+    "subscriptions_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "subscriptions_url",
+      "name": "subscriptions_url"
+    },
+    "organizations_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "organizations_url",
+      "name": "organizations_url"
+    },
+    "repos_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "repos_url",
+      "name": "repos_url"
+    },
+    "events_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "events_url",
+      "name": "events_url"
+    },
+    "received_events_url": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "received_events_url",
+      "name": "received_events_url"
+    },
+    "type": {
+      "type": "string",
+      "typeLabel": "string",
+      "id": "type",
+      "name": "type"
+    },
+    "site_admin": {
+      "type": "boolean",
+      "typeLabel": "boolean",
+      "id": "site_admin",
+      "name": "site_admin"
+    }
+  },
+  "path": "/users"
+}

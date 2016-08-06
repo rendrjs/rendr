@@ -1,0 +1,14 @@
+{
+  "db": {
+    "host": "localhost",
+    "name": "mydb",
+    "options": {
+      "server": {
+        "auto_reconnect": true,
+        "socketOptions": {
+          "keepAlive": 1
+        }
+      }
+    }
+  }
+}

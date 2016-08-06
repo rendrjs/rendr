@@ -135,6 +135,10 @@ module.exports = BaseView = Backbone.View.extend({
    * Any options not to create data-attributes for.
    */
   nonAttributeOptions: ['id', 'className', 'tagName'],
+  /**
+   * Any options to serialize as JSON (instead of omitting).
+   */
+  jsonAttributeOptions: ['fetch_params'],
 
   /**
    * Get HTML attributes to add to el.
@@ -142,6 +146,7 @@ module.exports = BaseView = Backbone.View.extend({
   getAttributes: function() {
     var attributes = {},
         fetchSummary = {},
+        jsonAttributeOptions = this.jsonAttributeOptions,
         modelUtils = this.app.modelUtils,
         nonAttributeOptions = this.nonAttributeOptions;
 
@@ -163,8 +168,12 @@ module.exports = BaseView = Backbone.View.extend({
     // as well as any non-object option values.
     _.each(this.options, function(value, key) {
 
-        if (!_.isObject(value) && !_.include(nonAttributeOptions, key)) {
-          attributes["data-" + key] = value;
+        if (!_.include(nonAttributeOptions, key)) {
+          if (!_.isObject(value)) {
+            attributes["data-" + key] = value;
+          } else if (_.include(jsonAttributeOptions, key)) {
+            attributes["data-" + key] = JSON.stringify(value);
+          }
         }
     });
     fetchSummary = BaseView.extractFetchSummary(modelUtils, this.options);

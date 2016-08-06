@@ -195,7 +195,7 @@ module.exports = BaseView = Backbone.View.extend({
    * Get the HTML for the view, including the wrapper element.
    */
   getHtml: function() {
-    var html = this.getInnerHtml(),
+    var html = this.options.lazy ? '' : this.getInnerHtml(),
         attributes = this.getAttributes(),
         tagName = _.result(this, "tagName"),
         attrString;

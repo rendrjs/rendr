@@ -151,6 +151,38 @@ describe('BaseView', function() {
     });
   });
 
+  describe('getHtml', function() {
+    var view;
+
+    beforeEach(function() {
+      this.View = BaseView.extend({
+        id: 'aViewId',
+        className: 'aClassName',
+        name: 'A View Name'
+      });
+    });
+
+    context('is not a lazy-loaded view', function() {
+      it('should get the HTML for the view, including the wrapper element', function() {
+        view = new this.View({app: this.app});
+        sinon.stub(view, 'getInnerHtml').returns('INNER HTML');
+
+        view.getHtml().should.equal('<div id="aViewId" class="aClassName" data-view="A View Name">INNER HTML</div>');
+        view.getInnerHtml.should.have.been.called;
+      });
+    });
+
+    context('is a lazy-loaded view', function() {
+      it('should only return the wrapper element HTML', function() {
+        view = new this.View({lazy: true, app: this.app});
+        sinon.stub(view, 'getInnerHtml').returns('INNER HTML');
+
+        view.getHtml().should.equal('<div id="aViewId" class="aClassName" data-view="A View Name" data-lazy="true"></div>');
+        view.getInnerHtml.should.not.have.been.called;
+      });
+    });
+  });
+
   describe('parseOptions', function () {
     var view;
 

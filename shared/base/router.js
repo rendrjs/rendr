@@ -30,7 +30,6 @@ function parseRouteDefinitions(definitions) {
  * Base router class shared between ClientRouter and ServerRouter.
  */
 function BaseRouter(options) {
-  this.route = this.route.bind(this);
   this._routes = [];
   this._initOptions(options);
 }

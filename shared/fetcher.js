@@ -279,7 +279,20 @@ Fetcher.prototype.hydrate = function(summaries, options, callback) {
       // Also support getting all models for a collection.
       fetcher.collectionStore.get(summary.collection, summary.params, function(collection) {
         if (collection == null) {
-          throw new Error("Collection of type \"" + summary.collection + "\" not found for params: " + JSON.stringify(summary.params));
+          return fetcher.fetch({
+            collection: {
+              collection: summary.collection,
+              params: summary.params
+            }
+          }, null, function(err, res){
+            if (err) {
+              cb(err);
+            } else {
+              results[name] = res.collection;
+              cb(null);
+            }
+          });
+
         }
 
         results[name] = collection;

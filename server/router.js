@@ -86,7 +86,11 @@ ServerRouter.prototype.getHandler = function(action, pattern, route) {
 
       res.render(viewPath, viewData, function(err, html) {
         if (err) return next(err);
-        res.type('html');
+        
+        if(!res.get('content-type')) {
+            res.type('html');
+        }
+
         res.set(router.getHeadersForRoute(route));
         res.end(html);
       });

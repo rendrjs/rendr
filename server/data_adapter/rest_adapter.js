@@ -126,6 +126,7 @@ RestAdapter.prototype.apiDefaults = function(api, req) {
 
   _.defaults(api, {
     method: 'GET',
+    timeout: 15000, // 15 seconds default
     url: url.format(urlOpts),
     headers: {}
   });

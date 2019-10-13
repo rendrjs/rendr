@@ -155,7 +155,7 @@ Inherits from `BaseRouter`.
 
 ### Server Config
 
-####Example
+#### Example
 
 ```
 var config = {
@@ -230,7 +230,7 @@ Either a ``dataAdapter`` or ``dataAdapterConfig`` must be present.
 This configuration is passed to the current DataAdapter, which by default is the [RestAdapter](https://github.com/rendrjs/rendr/blob/master/server/data_adapter/rest_adapter.js).
 
 
-####Example
+#### Example
 
 **Simple**
 
@@ -289,14 +289,14 @@ rendr.configure(function(expressApp) {
 
 Provides a way for Rendr to utilize custom html template engines (see also Template Engines section below).  Rendr's [ViewEngine](https://github.com/rendrjs/rendr/blob/master/server/viewEngine.js) will delegate to the [Template Adapter](https://github.com/rendrjs/rendr-handlebars/blob/master/index.js). You can build your own to provide your template engine of choice (i.e. Jade, Underscore templates, etc).
 
-####Available Template Adapters
+#### Available Template Adapters
 
 - [rendr-handlebars](https://github.com/rendrjs/rendr-handlebars) - [Handlebars.js](https://github.com/wycats/handlebars.js) support.  This is the default adapter.
 
 - [rendr-emblem](https://github.com/modalstudios/rendr-emblem) - [Emblem.js](https://github.com/machty/emblem.js/) with [Handlebars.js](https://github.com/wycats/handlebars.js) fallback support.
 
 
-####Using Custom Adapters
+#### Using Custom Adapters
 
 You can tell Rendr which Template Adapter to use.  This represents the node-module that contains the adapter.
 
@@ -333,7 +333,7 @@ E.g.
   
 ```
 
-####Using Custom Template Engines
+#### Using Custom Template Engines
 
 You can tell Rendr which Template Engine to use.  This represents the node-module that contains the engine.
 
